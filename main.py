@@ -202,7 +202,7 @@ def vcspam():
     chanid = input ('Voice channel ID: ')
     if os.path.isfile('.\\spammer\\file.wav'):
         os.remove('.\\spammer\\file.wav')
-        print ("Removed old mp3.")
+        print ("Removed old .wav.")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([ytlink])
     tcounter = 0
