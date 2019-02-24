@@ -101,6 +101,7 @@ def main():
 
 def joiner():
     clear()
+    print (colored("Discord invite joiner.","red"))
     link = input('Discord Invite Link: ')
     if len(link) > 7:
         link = link[19:]
@@ -111,6 +112,7 @@ def joiner():
 
 def leaver():
     clear()
+    print (colored("Discord server leaver.","red"))
     ID = input ('ID of the server to leave: ')
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -153,6 +155,7 @@ def tokencheck():
 
 def messagespam():
     clear()
+    print (colored("Discord Server message spammer.","red"))
     SERVER = input ("Server ID: ")
     chan = input ("Channel to spam in: ")
     msgtxt = input ("Text to spam: ")
@@ -170,6 +173,7 @@ def asciispam():
     print (colored("This works, although due to the high ammount of ascii characters the http request usually becomes malformed.","blue"))
     input ("Press enter to continue...")
     clear()
+    print (colored("Discord server ascii spammer.","red"))
     SERVER = input('Server ID: ')
     chan = input ("Channel to spam in: ")
     tcounter = 0
@@ -184,6 +188,7 @@ def asciispam():
     
 def massmentioner():
     clear()
+    print (colored("Discord server mass mentioner.","red"))
     SERVER = input('Server ID: ')
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -197,6 +202,7 @@ def massmentioner():
 def vcspam():
     clear()
     tcounter = 0
+    print (colored("Discord VC joiner/spammer.","red"))
     ytlink = input ('YouTube Link to play: ')
     SERVER = input('Server ID: ')
     chanid = input ('Voice channel ID: ')
@@ -216,7 +222,8 @@ def vcspam():
 
 def dmspam():
     clear()
-    user = input ("Users name and tag eg: 'username#0001': ")
+    print (colored("Discord user DM spammer.","red"))
+    user = input ("User's ID: ")
     msgtxt = input ("Text to spam: ")
     tcounter = 0
     tokenlist = open("./tokens.txt").read().splitlines()
@@ -229,6 +236,7 @@ def dmspam():
 
 def friender(): #finally it works
     clear()
+    print (colored("Discord user mass friender.","red"))
     userid = input("User's ID: ")
     tokenlist = open("tokens.txt").read().splitlines()
     tcounter = 0
@@ -241,6 +249,7 @@ def friender(): #finally it works
 
 def imagespam():
     clear()
+    print (colored("Discord server image spammer.","red"))
     SERVER = input ("Server ID: ")
     chan = input ("Channel to spam in: ")
     tcounter = 0
@@ -253,6 +262,7 @@ def imagespam():
     p.wait()
 
 def wew():
+    print (colored(";)","red"))
     if os.path.isfile('.\\spammer\\file.wav'):
         os.remove('.\\spammer\\file.wav')
     e = ['https://www.youtube.com/watch?v=-cCPZQ3mvck', 'https://www.youtube.com/watch?v=bQ_z8MNApz4', 'https://www.youtube.com/watch?v=rPhte_IRb2o', 'https://www.youtube.com/watch?v=dAtnNLyeP-8', 'https://www.youtube.com/watch?v=IWEpkRoxK0o']
@@ -263,4 +273,3 @@ def wew():
     main()
 
 main()
-
