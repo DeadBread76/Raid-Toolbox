@@ -43,7 +43,7 @@ else:
 def main():
     clear()
     print (colored("+-------------------------------------------------------+","red"))
-    print (colored("|           Welcome to DeadBread's Raid Toolbox         |","red"))
+    print (colored("|         Welcome to DeadBread's Raid Toolbox           |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|           There are "+str(tcounter)+" tokens available.              |","red"))
     print (colored("+-------------------------------------------------------+","red"))
@@ -54,32 +54,42 @@ def main():
     print (colored("|           5. Ascii spammer (Buggy)                    |","red"))
     print (colored("|           6. Mass mention spammer                     |","red"))
     print (colored("|           7. Voice Chat Spammer                       |","red"))
+    print (colored("|           8. DM Spammer                               |","red"))
+    print (colored("|           9. Friend Request Spammer                   |","red"))
     print (colored("|                                                       |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|        Please enter the number of your choice.        |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     choice = input()
-    if int(choice) == 1:
-        joiner() 
-    elif int(choice) == 2:
-        leaver()
-    elif int(choice) == 3:
-        tokencheck()
-    elif int(choice) == 4:
-        messagespam()
-    elif int(choice) == 5:
-        asciispam()
-    elif int(choice) == 6:
-        massmentioner()
-    elif int(choice) == 7:
-        vcspam()
-    else:
+    try:
+        if int(choice) == 1:
+            joiner() 
+        elif int(choice) == 2:
+            leaver()
+        elif int(choice) == 3:
+            tokencheck()
+        elif int(choice) == 4:
+            messagespam()
+        elif int(choice) == 5:
+            asciispam()
+        elif int(choice) == 6:
+            massmentioner()
+        elif int(choice) == 7:
+            vcspam()
+        elif int(choice) == 8:
+            dmspam()
+        elif int(choice) == 9:
+            friender()
+        else:
+            clear()
+            print (colored('Invalid Option.',"yellow"))
+            input()
+            main()
+    except Exception:
         clear()
-        print (colored('Invalid Option.',"yellow"))
-        time.sleep(2)
+        print (colored('Invalid Input.',"yellow"))
+        input()
         main()
-
-
 
 
 def joiner():
@@ -150,7 +160,7 @@ def messagespam():
 
 def asciispam():
     clear()
-    print (colored("This works, although due to the high ammount of ascii characters the http requests usually becomes malformed.","blue"))
+    print (colored("This works, although due to the high ammount of ascii characters the http request usually becomes malformed.","blue"))
     input ("Press enter to continue...")
     clear()
     SERVER = input('Server ID: ')
@@ -197,12 +207,27 @@ def vcspam():
         time.sleep(0.1)
     p.wait()
 
-      
-def friender(): #i will be adding this in the future, i just need to figure out how to get it working
+def dmspam():
     clear()
-    userid = input('Users ID: ')
-    tokenlist = open("tokens.txt").read().splitlines()
+    user = input ("Users name and tag eg: 'username#0001': ")
+    msgtxt = input ("Text to spam: ")
+    tcounter = 0
+    tokenlist = open("./tokens.txt").read().splitlines()
     for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user],shell=True)
+    p.wait()
+
+
+def friender(): #finally it works
+    clear()
+    userid = input("User's ID: ")
+    tokenlist = open("tokens.txt").read().splitlines()
+    tcounter = 0
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\friender.py',token,userid],shell=True)
     p.wait()
     main()
