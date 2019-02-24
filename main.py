@@ -2,20 +2,22 @@ import os
 import re
 import sys
 import time
+import random
 import discord
 import asyncio
 import requests
+import winsound
 import youtube_dl
 import subprocess
 from colorama import init
 from termcolor import colored
 
 ydl_opts = {
-    'outtmpl': '.\\spammer\\file.mp3',
+    'outtmpl': '.\\spammer\\file.webm',
     'format': 'bestaudio/best',
     'postprocessors': [{
         'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
+        'preferredcodec': 'wav',
         'preferredquality': '192',
     }],
 }
@@ -56,6 +58,7 @@ def main():
     print (colored("|           7. Voice Chat Spammer                       |","red"))
     print (colored("|           8. DM Spammer                               |","red"))
     print (colored("|           9. Friend Request Spammer                   |","red"))
+    print (colored("|           10. Image Spammer                           |","red"))
     print (colored("|                                                       |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|        Please enter the number of your choice.        |","red"))
@@ -80,6 +83,10 @@ def main():
             dmspam()
         elif int(choice) == 9:
             friender()
+        elif int(choice) == 10:
+            imagespam()
+        elif int(choice) == 986:
+            wew()
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
@@ -193,8 +200,8 @@ def vcspam():
     ytlink = input ('YouTube Link to play: ')
     SERVER = input('Server ID: ')
     chanid = input ('Voice channel ID: ')
-    if os.path.isfile('.\\spammer\\file.mp3'):
-        os.remove('.\\spammer\\file.mp3')
+    if os.path.isfile('.\\spammer\\file.wav'):
+        os.remove('.\\spammer\\file.wav')
         print ("Removed old mp3.")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([ytlink])
@@ -232,7 +239,28 @@ def friender(): #finally it works
     p.wait()
     main()
 
+def imagespam():
+    clear()
+    SERVER = input ("Server ID: ")
+    chan = input ("Channel to spam in: ")
+    tcounter = 0
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan],shell=True)
+        time.sleep(0.1)
+    p.wait()
 
+def wew():
+    if os.path.isfile('.\\spammer\\file.wav'):
+        os.remove('.\\spammer\\file.wav')
+    e = ['https://www.youtube.com/watch?v=-cCPZQ3mvck', 'https://www.youtube.com/watch?v=bQ_z8MNApz4', 'https://www.youtube.com/watch?v=rPhte_IRb2o', 'https://www.youtube.com/watch?v=dAtnNLyeP-8', 'https://www.youtube.com/watch?v=IWEpkRoxK0o']
+    file = (random.choice(e))
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([file])
+    p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
+    main()
 
 main()
 
