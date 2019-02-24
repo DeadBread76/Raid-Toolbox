@@ -1,5 +1,9 @@
 # Raid-Toolbox
 
-yes
+A big toolkit of spamming tools for discord.
 
-cbf to write documentation, come back later i might have written it
+You need the modules stated in requirements.txt
+
+to use the Voice Spammer, unzip the FFmpeg files from the .zip files.
+
+I will be adding more stuff to this in the future
