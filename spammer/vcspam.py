@@ -1,7 +1,6 @@
 import discord
 import asyncio
 import youtube_dl
-import time
 import sys
 import os
 
@@ -20,7 +19,7 @@ async def on_ready():
     await client.loop.create_task(main())
 
 async def main():
-    time.sleep(8)
+    await asyncio.sleep(6)
     voice_channel = client.get_channel(voice_id)
     try:
         vc = await client.join_voice_channel(voice_channel)
