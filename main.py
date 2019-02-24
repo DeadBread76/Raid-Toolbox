@@ -157,14 +157,20 @@ def messagespam():
     clear()
     print (colored("Discord Server message spammer.","red"))
     SERVER = input ("Server ID: ")
-    chan = input ("Channel to spam in: ")
+    chan = input ("Channel to spam in (type 'all' for all channels): ")
+    if chan.lower() == "all":
+        print (colored("Spamming all channels","blue"))
+        allchan = 'true'
     msgtxt = input ("Text to spam: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan],shell=True)
+        if allchan == 'true':
+            p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan],shell=True)
+        else:   
+            p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan],shell=True)
         time.sleep(0.1)
     p.wait()
 
@@ -273,3 +279,4 @@ def wew():
     main()
 
 main()
+
