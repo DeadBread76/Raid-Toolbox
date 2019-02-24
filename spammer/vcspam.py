@@ -23,7 +23,7 @@ async def main():
     voice_channel = client.get_channel(voice_id)
     try:
         vc = await client.join_voice_channel(voice_channel)
-        player = vc.create_ffmpeg_player('.\\spammer\\file.mp3')
+        player = vc.create_ffmpeg_player('.\\spammer\\file.wav')
         player.start()
     except Exception:
         print('Failed to join voice channel')
