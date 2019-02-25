@@ -14,7 +14,7 @@ userid = sys.argv[4]
 async def on_ready():
     print ("Token " + str(tokenno) + " logged in!")
     user = await client.get_user_info(userid)
-    while True:
+    while not client.is_closed:
         await client.send_message(user, msgtxt)
 
 client.run(token, bot=False)
