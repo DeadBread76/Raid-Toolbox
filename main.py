@@ -220,6 +220,7 @@ def vcspam():
     ytlink = input ('YouTube Link to play: ')
     SERVER = input('Server ID: ')
     chanid = input ('Voice channel ID: ')
+    tokencount = input ('Number of tokens to use: ')
     if os.path.isfile('.\\spammer\\file.wav'):
         os.remove('.\\spammer\\file.wav')
         print ("Removed old .wav.")
@@ -231,6 +232,8 @@ def vcspam():
         tcounter += 1
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,SERVER,number,chanid],shell=True)
+        if number == str(tokencount):
+            break
         time.sleep(0.1)
     p.wait()
 
@@ -290,7 +293,7 @@ def gamechange():
 def asciinick():
     clear()
     print (colored("Discord random ascii nickname.","red"))
-    print (colored("This will probably slow down some attacks.","blue"))
+    print (colored("This will probably slow down some attacks, and it seems to get tokens banned quickly.","blue"))
     SERVER = input ("Server ID: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
