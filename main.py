@@ -49,6 +49,7 @@ def main():
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|           There are "+str(tcounter)+" tokens available.              |","red"))
     print (colored("+-------------------------------------------------------+","red"))
+    print (colored("|           0. Exit                                     |","red"))
     print (colored("|           1. Joiner                                   |","red"))
     print (colored("|           2. Leaver                                   |","red"))
     print (colored("|           3. Token Checker                            |","red"))
@@ -59,13 +60,17 @@ def main():
     print (colored("|           8. DM Spammer                               |","red"))
     print (colored("|           9. Friend Request Spammer                   |","red"))
     print (colored("|           10. Image Spammer                           |","red"))
+    print (colored("|           11. Playing game changer                    |","red"))
+    print (colored("|           12. Ascii Nickname (Spams Audit log)        |","red"))
     print (colored("|                                                       |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|        Please enter the number of your choice.        |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     choice = input()
     try:
-        if int(choice) == 1:
+        if int(choice) == 0:
+            os.system("taskkill /f /im python.exe")
+        elif int(choice) == 1:
             joiner() 
         elif int(choice) == 2:
             leaver()
@@ -85,6 +90,10 @@ def main():
             friender()
         elif int(choice) == 10:
             imagespam()
+        elif int(choice) == 11:
+            gamechange()
+        elif int(choice) == 12:
+            asciinick()
         elif int(choice) == 986:
             wew()
         else:
@@ -97,7 +106,6 @@ def main():
         print (colored('Invalid Input.',"yellow"))
         input()
         main()
-
 
 def joiner():
     clear()
@@ -266,6 +274,32 @@ def imagespam():
         p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan],shell=True)
         time.sleep(0.1)
     p.wait()
+
+def gamechange():
+    clear()
+    print (colored("Discord game playing changer.","red"))
+    print (colored("This will probably slow down some attacks.","blue"))
+    print ('Name of game to play: ')
+    game = input ('Playing ')
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        p = subprocess.Popen(['python','.\\spammer\\gamechange.py',token,game],shell=True)
+    time.sleep(5)
+    main()
+
+def asciinick():
+    clear()
+    print (colored("Discord random ascii nickname.","red"))
+    print (colored("This will probably slow down some attacks.","blue"))
+    SERVER = input ("Server ID: ")
+    tcounter = 0
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER],shell=True)
+    time.sleep(5)
+    main()
 
 def wew():
     print (colored(";)","red"))
