@@ -29,7 +29,7 @@ async def on_ready():
                 except:
                     print("Token " + str(tokenno) + ': Error sending message.')
     else:
-        while True:
+        while not client.is_closed:
             await client.send_message(txtchan, msgtxt)
 
 client.run(token, bot=False)

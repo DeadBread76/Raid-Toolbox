@@ -17,7 +17,7 @@ async def on_ready():
                 num = random.randrange(13000)
                 asc = asc + chr(num)
             await client.change_nickname(server.me, asc)
-            await asyncio.sleep(1)
+            await asyncio.sleep(5)
         except Exception:
             continue
 client.run(token, bot=False)
