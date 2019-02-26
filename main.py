@@ -6,7 +6,6 @@ import random
 import discord
 import asyncio
 import requests
-import winsound
 import youtube_dl
 import subprocess
 from colorama import init
@@ -62,6 +61,7 @@ def main():
     print (colored("|           10. Image Spammer                           |","red"))
     print (colored("|           11. Playing game changer                    |","red"))
     print (colored("|           12. Ascii Nickname (Spams Audit log)        |","red"))
+    print (colored("|           13. Embed Spammer                           |","red"))
     print (colored("|                                                       |","red"))
     print (colored("+-------------------------------------------------------+","red"))
     print (colored("|        Please enter the number of your choice.        |","red"))
@@ -94,6 +94,8 @@ def main():
             gamechange()
         elif int(choice) == 12:
             asciinick()
+        elif int(choice) == 13:
+            embedspam()
         elif int(choice) == 986:
             wew()
         else:
@@ -198,8 +200,7 @@ def asciispam():
         p = subprocess.Popen(['python','.\\spammer\\asciispam.py',token,SERVER,number,chan],shell=True)
         time.sleep(0.1)
     p.wait()
-    
-    
+      
 def massmentioner():
     clear()
     print (colored("Discord server mass mentioner.","red"))
@@ -249,7 +250,6 @@ def dmspam():
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user],shell=True)
     p.wait()
-
 
 def friender(): #finally it works
     clear()
@@ -304,14 +304,25 @@ def asciinick():
     time.sleep(5)
     main()
 
+def embedspam():
+    clear()
+    print (colored("Discord embed spammer.","red"))
+    print (colored("Will probably bypass some bots that have word and image restrictions.","red"))
+    title = input ("Embed Title: ")
+    author = input ("Embed Author: ")
+    iconurl = input ("Author Icon URL: ")
+    thumburl = input ("Thumbnail image URL: ")
+    footer = input ("Embed Footer Text: ")
+    textchan = input ("Text Channel to spam in: ")
+    tcounter = 0
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\embedspam.py',token,title,author,iconurl,thumburl,footer,textchan],shell=True)
+    p.wait()
+
 def wew():
-    print (colored(";)","red"))
-    if os.path.isfile('.\\spammer\\file.wav'):
-        os.remove('.\\spammer\\file.wav')
-    e = ['https://www.youtube.com/watch?v=-cCPZQ3mvck', 'https://www.youtube.com/watch?v=bQ_z8MNApz4', 'https://www.youtube.com/watch?v=rPhte_IRb2o', 'https://www.youtube.com/watch?v=dAtnNLyeP-8', 'https://www.youtube.com/watch?v=IWEpkRoxK0o']
-    file = (random.choice(e))
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([file])
     p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
     main()
 
