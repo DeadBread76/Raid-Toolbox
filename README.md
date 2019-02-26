@@ -12,4 +12,4 @@ to use the Voice Spammer, unzip the FFmpeg files from the .zip files.
 I will be adding more stuff to this in the future
 
 
-![Dm spammed](i.imgur.com/FoVOBQml.jpg)
+![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
