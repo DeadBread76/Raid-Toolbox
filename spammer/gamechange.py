@@ -12,7 +12,7 @@ async def on_ready():
     try:
         while not client.is_closed:
             await client.change_presence(game=discord.Game(name=game))
-            await asyncio.sleep(5)
+            await asyncio.sleep(30)
     except Exception:
         e = "e"
 client.run(token, bot=False)
