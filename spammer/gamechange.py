@@ -14,5 +14,5 @@ async def on_ready():
             await client.change_presence(game=discord.Game(name=game))
             await asyncio.sleep(5)
     except Exception:
-        continue
+        e = "e"
 client.run(token, bot=False)
