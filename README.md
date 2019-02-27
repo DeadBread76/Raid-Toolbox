@@ -3,7 +3,7 @@
 A big toolkit of spamming tools for discord.
 
 Screenshot:
-![Screenshot](http://i.imgur.com/Slv02tt.png)
+![Screenshot](http://i.imgur.com/6Donu9q.png)
 
 You need the modules stated in requirements.txt `pip install -r requirements.txt`
 
