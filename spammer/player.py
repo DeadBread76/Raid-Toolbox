@@ -23,10 +23,10 @@ print (colored(";)","red"))
 if os.path.isfile('.\\spammer\\song.wav'):
     os.remove('.\\spammer\\song.wav')
 music = ['https://www.youtube.com/watch?v=t7WAPIR67xc',
+         'https://www.youtube.com/watch?v=F2BpaeIcVHo',
          'https://www.youtube.com/watch?v=-cCPZQ3mvck',
          'https://www.youtube.com/watch?v=bQ_z8MNApz4',
          'https://www.youtube.com/watch?v=rPhte_IRb2o',
-         'https://www.youtube.com/watch?v=dAtnNLyeP-8',
          'https://www.youtube.com/watch?v=IWEpkRoxK0o',
          'https://www.youtube.com/watch?v=CFbpQ14xkt4',
          'https://www.youtube.com/watch?v=UiVb7KrSQ2c',
