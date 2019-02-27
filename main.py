@@ -164,6 +164,8 @@ def tokencheck():
     clear()
     vcounter = 0
     icounter = 0
+    if os.path.isdir('.\\tokens\\') == False:
+        os.mkdir('.\\tokens\\') 
     print ("Checking tokens...")
     with open('tokens.txt','r') as handle:
         tokens = handle.readlines()
@@ -177,12 +179,12 @@ def tokencheck():
                 if src.status_code == 200:
                     print (colored(token + ' Valid.',"green"))
                     vcounter +=1
-                    with open('valid.txt','a') as handle:
+                    with open('.\\tokens\\valid.txt','a') as handle:
                         handle.write(token + '\n')
                 else:
                     print(colored(token + ' Invalid.',"red"))
                     icounter +=1
-                    with open('invalid.txt','a') as handle:
+                    with open('.\\tokens\\invalid.txt','a') as handle:
                         handle.write(token + '\n')
             except Exception:
                 print("Yeah we can't contact discordapp.com")
@@ -190,6 +192,7 @@ def tokencheck():
         print (colored("Number of valid tokens: " + str(vcounter),"green"))
         print (colored("Number of invalid tokens: " + str(icounter),"red"))
         print (colored("tokens.txt has been sorted.","green"))
+        print (colored("Check the tokens directory for results.","green"))
         print ("---------------------------------------")
         input("Press enter to return to menu.")
         main()
