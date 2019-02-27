@@ -12,7 +12,7 @@ import subprocess
 from colorama import init
 from termcolor import colored
 from config import*
-now = datetime.datetime.now()
+
 ydl_opts = {
     'outtmpl': '.\\spammer\\file.webm',
     'format': 'bestaudio/best',
@@ -44,6 +44,7 @@ else:
         sys.exit()
 
 def main():
+    now = datetime.datetime.now()
     clear()
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
