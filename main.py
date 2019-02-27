@@ -43,85 +43,30 @@ else:
         time.sleep(5)
         sys.exit()
 
-def animation():
-    clear()
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    time.sleep(0.02)
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("██                                                                                                ██","red"))
-    time.sleep(0.02)
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    time.sleep(0.2)
-    main()
-
 def main():
     clear()
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
     print (colored("██                                                                                                ██","red"))
-    print (colored("██                            Welcome to DeadBread's Raid Toolbox                                 ██","red"))
+    print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██","red"))
     print (colored("██                                                                                                ██","red"))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██                              There are "+str(tcounter)+" tokens available.                 "+now.strftime("%Y-%m-%d %H:%M:%S")+"██","red"))
+    print (colored("██                                                                                                ██","red"))
+    print (colored("██                                 There are "+str(tcounter)+" tokens available.              "+now.strftime("%Y-%m-%d %H:%M:%S")+"██","red"))
     print (colored("██                                                                                                ██","red"))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██         0. Exit                           ▓▓         11. Playing game changer                  ██","red"))
-    print (colored("██         1. Joiner                         ▓▓         12. Ascii Nickname (Spams Audit log)      ██","red"))
-    print (colored("██         2. Leaver                         ▓▓         13. Embed Spammer                         ██","red"))
-    print (colored("██         3. Token Checker                  ▓▓         14. TrafficLight status effect            ██","red"))
-    print (colored("██         4. Message spammer                ▓▓         15. Role Mass Mentioner                   ██","red"))
-    print (colored("██         5. Ascii spammer                  ▓▓         16. Channel Message Cleaner               ██","red"))
-    print (colored("██         6. Mass mention spammer           ▓▓                                                   ██","red"))
-    print (colored("██         7. Voice Chat Spammer             ▓▓                                                   ██","red"))
-    print (colored("██         8. DM Spammer                     ▓▓                                                   ██","red"))
-    print (colored("██         9. Friend Request Spammer         ▓▓                                                   ██","red"))
-    print (colored("██         10. Image Spammer                 ▓▓                                                   ██","red"))
-    print (colored("██                                           ▓▓                                                   ██","red"))
-    print (colored("██                                           ▓▓                                                   ██","red"))
+    print (colored("██         0. Exit                               ▓▓         11. Image Spammer                     ██","red"))
+    print (colored("██         1. Joiner                             ▓▓         12. Playing game changer              ██","red"))
+    print (colored("██         2. Leaver                             ▓▓         13. Ascii Nickname (Spams Audit log)  ██","red"))
+    print (colored("██         3. Group DM leaver                    ▓▓         14. Embed Spammer                     ██","red"))
+    print (colored("██         4. Token Checker                      ▓▓         15. TrafficLight status effect        ██","red"))
+    print (colored("██         5. Message spammer                    ▓▓         16. Role Mass Mentioner               ██","red"))
+    print (colored("██         6. Ascii spammer                      ▓▓         17. Channel Message Cleaner           ██","red"))
+    print (colored("██         7. Mass mention spammer               ▓▓                                               ██","red"))
+    print (colored("██         8. Voice Chat Spammer                 ▓▓                                               ██","red"))
+    print (colored("██         9. User DM Spammer                    ▓▓                                               ██","red"))
+    print (colored("██         10. Friend Request Spammer            ▓▓                                               ██","red"))
+    print (colored("██                                               ▓▓                                               ██","red"))
+    print (colored("██                                               ▓▓                                               ██","red"))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
     print (colored("██                                                                                                ██","red"))
     print (colored("██                            Please enter the number of your choice.                             ██","red"))
@@ -136,33 +81,36 @@ def main():
         elif int(choice) == 2:
             leaver()
         elif int(choice) == 3:
-            tokencheck()
+            groupleaver()
         elif int(choice) == 4:
-            messagespam()
+            tokencheck()
         elif int(choice) == 5:
-            asciispam()
+            messagespam()
         elif int(choice) == 6:
-            massmentioner()
+            asciispam()
         elif int(choice) == 7:
-            vcspam()
+            massmentioner()
         elif int(choice) == 8:
-            dmspam()
+            vcspam()
         elif int(choice) == 9:
-            friender()
+            dmspam()
         elif int(choice) == 10:
-            imagespam()
+            friender()
         elif int(choice) == 11:
-            gamechange()
+            imagespam()
         elif int(choice) == 12:
-            asciinick()
+            gamechange()
         elif int(choice) == 13:
-            embedspam()
+            asciinick()
         elif int(choice) == 14:
-            trafficlight()
+            embedspam()
         elif int(choice) == 15:
-            rolemassmention()
+            trafficlight()
         elif int(choice) == 16:
+            rolemassmention()
+        elif int(choice) == 17:
             cleanup()
+        
         elif int(choice) == 986:
             wew()
         elif choice == '.':
@@ -198,6 +146,16 @@ def leaver():
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\leaver.py',token,ID],shell=True)
+    time.sleep(3)
+    main()
+
+def groupleaver():
+    clear()
+    print (colored("Discord server leaver.","red"))
+    ID = input ('ID of the group DM to leave: ')
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        p = subprocess.Popen(['python','.\\spammer\\groupleaver.py',token,ID],shell=True)
     time.sleep(3)
     main()
 
@@ -435,12 +393,11 @@ def cleanup():
     time.sleep(5)
     main()
 
+
     
 def wew():
     p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
     main()
-if playanimation == True:
-    animation()
-else:
-    main()
+
+main()
 
