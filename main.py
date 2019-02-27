@@ -45,33 +45,33 @@ else:
 
 def main():
     clear()
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("██                                 There are "+str(tcounter)+" tokens available.              "+now.strftime("%Y-%m-%d %H:%M:%S")+"██","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██         0. Exit                               ▓▓         11. Image Spammer                     ██","red"))
-    print (colored("██         1. Joiner                             ▓▓         12. Playing game changer              ██","red"))
-    print (colored("██         2. Leaver                             ▓▓         13. Ascii Nickname (Spams Audit log)  ██","red"))
-    print (colored("██         3. Group DM leaver                    ▓▓         14. Embed Spammer                     ██","red"))
-    print (colored("██         4. Token Checker                      ▓▓         15. TrafficLight status effect        ██","red"))
-    print (colored("██         5. Message spammer                    ▓▓         16. Role Mass Mentioner               ██","red"))
-    print (colored("██         6. Ascii spammer                      ▓▓         17. Channel Message Cleaner           ██","red"))
-    print (colored("██         7. Mass mention spammer               ▓▓                                               ██","red"))
-    print (colored("██         8. Voice Chat Spammer                 ▓▓                                               ██","red"))
-    print (colored("██         9. User DM Spammer                    ▓▓                                               ██","red"))
-    print (colored("██         10. Friend Request Spammer            ▓▓                                               ██","red"))
-    print (colored("██                                               ▓▓                                               ██","red"))
-    print (colored("██                                               ▓▓                                               ██","red"))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("██                            Please enter the number of your choice.                             ██","red"))
-    print (colored("██                                                                                                ██","red"))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████","red"))
+    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("██                                 There are "+str(tcounter)+" tokens available.              "+now.strftime("%Y-%m-%d %H:%M:%S")+"██",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+    print (colored("██         0. Exit                               ▓▓         11. Image Spammer                     ██",menucolour))
+    print (colored("██         1. Joiner                             ▓▓         12. Playing game changer              ██",menucolour))
+    print (colored("██         2. Leaver                             ▓▓         13. Ascii Nickname (Spams Audit log)  ██",menucolour))
+    print (colored("██         3. Group DM leaver                    ▓▓         14. Embed Spammer                     ██",menucolour))
+    print (colored("██         4. Token Checker                      ▓▓         15. TrafficLight status effect        ██",menucolour))
+    print (colored("██         5. Message spammer                    ▓▓         16. Role Mass Mentioner               ██",menucolour))
+    print (colored("██         6. Ascii spammer                      ▓▓         17. Channel Message Cleaner           ██",menucolour))
+    print (colored("██         7. Mass mention spammer               ▓▓                                               ██",menucolour))
+    print (colored("██         8. Voice Chat Spammer                 ▓▓                                               ██",menucolour))
+    print (colored("██         9. User DM Spammer                    ▓▓                                               ██",menucolour))
+    print (colored("██         10. Friend Request Spammer            ▓▓                                               ██",menucolour))
+    print (colored("██                                               ▓▓                                               ██",menucolour))
+    print (colored("██                                               ▓▓                                               ██",menucolour))
+    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("██                            Please enter the number of your choice.                             ██",menucolour))
+    print (colored("██                                                                                                ██",menucolour))
+    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     choice = input()
     try:
         if int(choice) == 0:
@@ -129,7 +129,7 @@ def main():
 
 def joiner():
     clear()
-    print (colored("Discord invite joiner.","red"))
+    print (colored("Discord invite joiner.",menucolour))
     link = input('Discord Invite Link: ')
     if len(link) > 7:
         link = link[19:]
@@ -141,7 +141,7 @@ def joiner():
 
 def leaver():
     clear()
-    print (colored("Discord server leaver.","red"))
+    print (colored("Discord server leaver.",menucolour))
     ID = input ('ID of the server to leave: ')
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -151,7 +151,7 @@ def leaver():
 
 def groupleaver():
     clear()
-    print (colored("Discord server leaver.","red"))
+    print (colored("Discord server leaver.",menucolour))
     ID = input ('ID of the group DM to leave: ')
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -195,7 +195,7 @@ def tokencheck():
 
 def messagespam():
     clear()
-    print (colored("Discord Server message spammer.","red"))
+    print (colored("Discord Server message spammer.",menucolour))
     SERVER = input ("Server ID: ")
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
@@ -216,7 +216,7 @@ def messagespam():
 
 def asciispam(): #no longer bugged
     clear()
-    print (colored("Discord server ascii spammer.","red"))
+    print (colored("Discord server ascii spammer.",menucolour))
     chan = input ("Channel to spam in: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -229,7 +229,7 @@ def asciispam(): #no longer bugged
       
 def massmentioner():
     clear()
-    print (colored("Discord server mass mentioner.","red"))
+    print (colored("Discord server mass mentioner.",menucolour))
     SERVER = input('Server ID: ')
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -243,7 +243,7 @@ def massmentioner():
 def vcspam():
     clear()
     tcounter = 0
-    print (colored("Discord VC joiner/spammer.","red"))
+    print (colored("Discord VC joiner/spammer.",menucolour))
     ytlink = input ('YouTube Link to play: ')
     SERVER = input('Server ID: ')
     chanid = input ('Voice channel ID: ')
@@ -266,7 +266,7 @@ def vcspam():
 
 def dmspam():
     clear()
-    print (colored("Discord user DM spammer.","red"))
+    print (colored("Discord user DM spammer.",menucolour))
     user = input ("User's ID: ")
     msgtxt = input ("Text to spam: ")
     tcounter = 0
@@ -279,7 +279,7 @@ def dmspam():
 
 def friender(): #finally it works
     clear()
-    print (colored("Discord user mass friender.","red"))
+    print (colored("Discord user mass friender.",menucolour))
     userid = input("User's ID: ")
     tokenlist = open("tokens.txt").read().splitlines()
     tcounter = 0
@@ -292,7 +292,7 @@ def friender(): #finally it works
 
 def imagespam():
     clear()
-    print (colored("Discord server image spammer.","red"))
+    print (colored("Discord server image spammer.",menucolour))
     SERVER = input ("Server ID: ")
     chan = input ("Channel to spam in: ")
     tcounter = 0
@@ -306,7 +306,7 @@ def imagespam():
 
 def gamechange():
     clear()
-    print (colored("Discord game playing changer.","red"))
+    print (colored("Discord game playing changer.",menucolour))
     print (colored("This will probably slow down some attacks.","blue"))
     print ('Name of game to play: ')
     game = input ('Playing ')
@@ -318,7 +318,7 @@ def gamechange():
 
 def asciinick():
     clear()
-    print (colored("Discord random ascii nickname.","red"))
+    print (colored("Discord random ascii nickname.",menucolour))
     print (colored("This will probably slow down some attacks, and it seems to get tokens banned quickly.","blue"))
     SERVER = input ("Server ID: ")
     tcounter = 0
@@ -332,8 +332,8 @@ def asciinick():
 
 def embedspam():
     clear()
-    print (colored("Discord embed spammer.","red"))
-    print (colored("Will probably bypass some bots that have word and image restrictions.","red"))
+    print (colored("Discord embed spammer.",menucolour))
+    print (colored("Will probably bypass some bots that have word and image restrictions.",menucolour))
     title = input ("Embed Title: ")
     author = input ("Embed Author: ")
     iconurl = input ("Author Icon URL: ")
@@ -366,8 +366,8 @@ def trafficlight():
     
 def rolemassmention():
     clear()
-    print (colored("Discord role mass mentioner.","red"))
-    print (colored("This will spam mention all roles that are mentionable.","red"))
+    print (colored("Discord role mass mentioner.",menucolour))
+    print (colored("This will spam mention all roles that are mentionable.",menucolour))
     SERVER = input('Server ID: ')
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -380,8 +380,8 @@ def rolemassmention():
 
 def cleanup():
     clear()
-    print (colored("Clean up messages sent by a token","red"))
-    print (colored("This will delete all the messages sent by the token.","red"))
+    print (colored("Clean up messages sent by a token",menucolour))
+    print (colored("This will delete all the messages sent by the token.",menucolour))
     SERVER = input('Server ID: ')
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
