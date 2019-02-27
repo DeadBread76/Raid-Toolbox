@@ -14,4 +14,4 @@ channame = "https://github.com/deadbread76"
 channelno = "50"
 spammethod = "massment" #"massment" for mass mention, "asc" for random ascii spam
 gimmieadmin = True #True Gives you an admin role.
-me = '545295679992627211' #put your client ID here if you enable gimmieadmin
+me = 'Your Client ID here' #put your client ID here if you enable gimmieadmin
