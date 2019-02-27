@@ -62,7 +62,7 @@ def main():
     print (colored("██         4. Token Checker                      ▓▓         15. TrafficLight status effect        ██",menucolour))
     print (colored("██         5. Message spammer                    ▓▓         16. Role Mass Mentioner               ██",menucolour))
     print (colored("██         6. Ascii spammer                      ▓▓         17. Channel Message Cleaner           ██",menucolour))
-    print (colored("██         7. Mass mention spammer               ▓▓                                               ██",menucolour))
+    print (colored("██         7. Mass mention spammer               ▓▓         18. Server Smasher (Single bot token) ██",menucolour))
     print (colored("██         8. Voice Chat Spammer                 ▓▓                                               ██",menucolour))
     print (colored("██         9. User DM Spammer                    ▓▓                                               ██",menucolour))
     print (colored("██         10. Friend Request Spammer            ▓▓                                               ██",menucolour))
@@ -111,7 +111,8 @@ def main():
             rolemassmention()
         elif int(choice) == 17:
             cleanup()
-        
+        elif int(choice) == 18:
+            serversmasher()
         elif int(choice) == 986:
             wew()
         elif choice == '.':
@@ -397,8 +398,12 @@ def cleanup():
     time.sleep(5)
     main()
 
+def serversmasher():
+    clear()
+    print ("The config file for this option is located: \spammer\smconfig.py")
+    p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'],shell=True)
+    p.wait()
 
-    
 def wew():
     p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
     main()
