@@ -31,7 +31,8 @@ music = ['https://www.youtube.com/watch?v=t7WAPIR67xc',
          'https://www.youtube.com/watch?v=UiVb7KrSQ2c',
          'https://www.youtube.com/watch?v=KoVG-F8mekE',
          'https://www.youtube.com/watch?v=68wk6m05ojw',
-         'https://www.youtube.com/watch?v=LcpQkOV-kKc']
+         'https://www.youtube.com/watch?v=LcpQkOV-kKc',
+         'https://www.youtube.com/watch?v=ovmLApMzkbE']
 file = (random.choice(music))
 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
     ydl.download([file])

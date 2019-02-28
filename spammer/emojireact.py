@@ -15,15 +15,14 @@ if useproxies == 'True':
 else:
     client = discord.Client()
 token = sys.argv[1]
-tokenno = sys.argv[2]
-msgtxt = sys.argv[3]
-userid = sys.argv[4]
+messageid = sys.argv[2]
+emojiname = sys.argv[3]
+tokenno = sys.argv[4]
 
 @client.event
 async def on_ready():
-    print ("Token " + str(tokenno) + " logged in!")
-    user = await client.get_user_info(userid)
-    while not client.is_closed:
-        await client.send_message(user, msgtxt)
+    emoji = ':' + emojiname + ':'
+    await client.add_reaction(messageid, emoji)
+    client.close()
 
 client.run(token, bot=False)

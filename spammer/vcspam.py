@@ -3,10 +3,17 @@ import asyncio
 import youtube_dl
 import sys
 import os
+import random
+import aiohttp
 
-
-client = discord.Client()
-
+useproxies = sys.argv[5] #proxies for voice chats smh
+if useproxies == 'True':
+    proxy_list = open("proxies.txt").read().splitlines()
+    proxy = random.choice(proxy_list)
+    con = aiohttp.ProxyConnector(proxy="http://"+proxy)
+    client = discord.Client(connector=con)
+else:
+    client = discord.Client()
 token = sys.argv[1]
 SERVER = sys.argv[2]
 tokenno = sys.argv[3]
