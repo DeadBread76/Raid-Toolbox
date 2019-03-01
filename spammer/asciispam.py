@@ -27,15 +27,14 @@ SERVER = sys.argv[5]
 async def on_ready():
     print ("Token " + str(tokenno) + " logged in!")
     txtchan = client.get_channel(textchan)
-    while True:
-        if allchan == 'true':
+    if allchan == 'true': #wew no sleep
+        while not client.is_closed:
             for c in client.get_server(SERVER).channels:
                 if c.type != discord.ChannelType.text:
                     continue
                 myperms = c.permissions_for(client.get_server(SERVER).get_member(client.user.id))
                 if not myperms.send_messages:
                     continue
-            while not client.is_closed:
                 asc = ''
                 for x in range(1999):
                     num = random.randrange(13000)
@@ -44,15 +43,15 @@ async def on_ready():
                     await client.send_message(c, asc)
                 except Exception:
                     print("Token " + str(tokenno) + ': Error sending message.')
-        else:
-            while not client.is_closed:
-                asc = ''
-                for x in range(1999):
-                    num = random.randrange(13000)
-                    asc = asc + chr(num)
-                try:
-                    await client.send_message(txtchan, asc)
-                except Exception:
-                        print("Token " + str(tokenno) + ': Error sending message.')
+    else:
+        while not client.is_closed:
+            asc = ''
+            for x in range(1999):
+                num = random.randrange(13000)
+                asc = asc + chr(num)
+            try:
+                await client.send_message(txtchan, asc)
+            except Exception:
+                    print("Token " + str(tokenno) + ': Error sending message.')
 
 client.run(token, bot=False)
