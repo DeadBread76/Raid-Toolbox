@@ -3,6 +3,7 @@ import re
 import sys
 import time
 import ctypes
+ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
 import random
 import datetime
 import discord
