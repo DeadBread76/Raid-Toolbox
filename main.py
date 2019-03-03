@@ -1,20 +1,24 @@
-import os
-import re
-import sys
-import time
-import ctypes
-ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
-import random
-import datetime
-import discord
-import asyncio
-import requests
-import youtube_dl
-import subprocess
-from colorama import init
-from termcolor import colored
-from config import*
-
+try:
+    import os
+    import re
+    import sys
+    import time
+    import ctypes
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+    import random
+    import datetime
+    import discord
+    import asyncio
+    import requests
+    import youtube_dl
+    import subprocess
+    from colorama import init
+    from termcolor import colored
+    from config import*
+except Exception as i:
+    print ("Module error: " + str(i))
+    input ()
+    sys.exit()
 ydl_opts = {
     'outtmpl': '.\\spammer\\file.webm',
     'format': 'bestaudio/best',
@@ -121,7 +125,9 @@ def main():
         elif int(choice) == 18:
             serversmasher()
         elif int(choice) == 19:
-            emoji()
+            print ("no")
+            input()
+            main()
         elif int(choice) == 986:
             wew()
         #wew i actually had what was left of a multi page menu i was working on left here lmao       
@@ -270,7 +276,6 @@ def vcspam():
     tcounter = 0
     print (colored("Discord VC joiner/spammer.",menucolour))
     ytlink = input ('YouTube Link to play: ')
-    SERVER = input('Server ID: ')
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
     if os.path.isfile('.\\spammer\\file.wav'):
@@ -283,7 +288,7 @@ def vcspam():
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,SERVER,number,chanid,useproxies],shell=True)
+        p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],shell=True)
         if number == str(tokencount):
             break
         time.sleep(0.1)
@@ -432,6 +437,21 @@ def serversmasher():
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | SERVER SMASHER")
     print ("The config file for this option is located: \spammer\smconfig.py")
     p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'],shell=True)
+    p.wait()
+    
+def vcjoinspammer(): #another failed attempt
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Join Spammer")
+    tcounter = 0
+    print (colored("Discord VC join spammer. Joins a channel then leaves.",menucolour))
+    chanid = input ('Voice channel ID: ')
+    tcounter = 0
+    tokenlist = open("./tokens.txt").read().splitlines()
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\vcjoinspam.py',token,number,chanid,useproxies],shell=True)
+        time.sleep(0.1)
     p.wait()
 
 def emoji(): #IM WORKING ON IT FUCK
