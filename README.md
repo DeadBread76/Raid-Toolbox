@@ -2,6 +2,8 @@
 
 A big toolkit of spamming tools for discord.
 
+Only compatible with Windows at the moment.
+
 Screenshot:
 
 ![Screenshot](http://i.imgur.com/FpkBjA9.png)
