@@ -25,4 +25,7 @@ async def on_ready():
     await client.add_reaction(messageid, emoji)
     client.close()
 
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)

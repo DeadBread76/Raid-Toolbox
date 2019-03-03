@@ -53,5 +53,7 @@ async def on_ready():
                 await client.send_message(txtchan, asc)
             except Exception:
                     print("Token " + str(tokenno) + ': Error sending message.')
-
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)

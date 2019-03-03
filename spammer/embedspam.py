@@ -34,6 +34,9 @@ async def on_ready():
             await client.send_message(txtchan, embed=embed)
     except Exception:
         return ''
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
 
-client.run(token, bot=False)
 

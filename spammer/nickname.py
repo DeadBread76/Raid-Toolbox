@@ -29,4 +29,8 @@ async def on_ready():
             await asyncio.sleep(5)
         except Exception:
             continue
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
+

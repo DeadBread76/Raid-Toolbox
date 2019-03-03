@@ -35,6 +35,7 @@ async def on_ready(): #the prints are commented out so it is silent and we can r
                     #print ("Token " + str(tokenno) + ": Cleaned " + channame)
     client.close()
 
-
-client.run(token, bot=False)
-
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)

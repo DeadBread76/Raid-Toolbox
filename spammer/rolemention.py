@@ -44,4 +44,8 @@ async def on_ready():
                         print("Token " + str(tokenno) + ': Error sending role mass mention.')
     except Exception:
         return ''
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
+

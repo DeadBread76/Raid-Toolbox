@@ -24,6 +24,13 @@ async def on_ready():
     print ("Token " + str(tokenno) + " logged in!")
     user = await client.get_user_info(userid)
     while not client.is_closed:
-        await client.send_message(user, msgtxt)
+        try:
+            await client.send_message(user, msgtxt)
+        except Exception as e:
+            print (str(tokenno) + "error: " + e)
+            
 
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)

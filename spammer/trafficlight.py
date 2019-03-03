@@ -30,5 +30,7 @@ async def on_ready():
         elif presence == '3':
             await client.change_presence(status=discord.Status.do_not_disturb)
             await asyncio.sleep(3)
-
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)

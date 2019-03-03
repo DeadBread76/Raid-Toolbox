@@ -42,5 +42,9 @@ async def on_ready():
         while not client.is_closed:
             await client.send_message(txtchan, msgtxt)
 
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
+
 

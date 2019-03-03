@@ -37,4 +37,8 @@ async def on_ready():
             print ("Error sending file, slowing down.")
             counter += 5
 
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
+

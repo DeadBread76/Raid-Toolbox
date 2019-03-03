@@ -42,5 +42,9 @@ async def on_ready():
     except Exception:
         time.sleep(1)
     
-client.run(token, bot=False)
+try:
+    client.run(token, bot=False)
+except Exception as c:
+    print (c)
+
 
