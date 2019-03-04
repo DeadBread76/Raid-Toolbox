@@ -14,9 +14,11 @@ try:
     import subprocess
     from colorama import init
     from termcolor import colored
+    from proxyscrape import create_collector
     from config import*
 except Exception as i:
     print ("Module error: " + str(i))
+    print ("Please check that the module is installed.")
     input ()
     sys.exit()
 ydl_opts = {
@@ -32,6 +34,7 @@ ydl_opts = {
 init()
 tcounter = 0
 clear = lambda: os.system('cls')
+collector = create_collector('my-collector', 'https')
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -74,7 +77,7 @@ def main():
     print (colored("██         5. Message spammer                    ██         16. Role Mass Mentioner               ██",menucolour))
     print (colored("██         6. Ascii spammer                      ██         17. Channel Message Cleaner           ██",menucolour))
     print (colored("██         7. Mass mention spammer               ██         18. Server Smasher (Single bot token) ██",menucolour))
-    print (colored("██         8. Voice Chat Spammer                 ██                                               ██",menucolour))
+    print (colored("██         8. Voice Chat Spammer                 ██         19. Proxy Scraper                     ██",menucolour))
     print (colored("██         9. User DM Spammer                    ██                                               ██",menucolour))
     print (colored("██         10. Friend Request Spammer            ██                                               ██",menucolour))
     print (colored("██                                               ██                                               ██",menucolour))
@@ -125,9 +128,7 @@ def main():
         elif int(choice) == 18:
             serversmasher()
         elif int(choice) == 19:
-            print ("no")
-            input()
-            main()
+            proxyscrape(useproxies)
         elif int(choice) == 986:
             wew()
         #wew i actually had what was left of a multi page menu i was working on left here lmao       
@@ -136,9 +137,10 @@ def main():
             print (colored('Invalid Option.',"yellow"))
             input()
             main()
-    except Exception:
+    except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
+        print (colored(i,"yellow"))
         input()
         main()
 
@@ -438,7 +440,25 @@ def serversmasher():
     print ("The config file for this option is located: \spammer\smconfig.py")
     p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'],shell=True)
     p.wait()
-    
+
+def proxyscrape(useproxies):
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxy Scraper")
+    print (colored("RTB Proxy Scraper.",menucolour))
+    print (colored("I recommend that you get enough proxies for the ammount of tokens you have.",menucolour))
+    amm = input ("Ammount of proxies to scrape: ")
+    for x in range(int(amm)):
+        proxy = collector.get_proxy()
+        port = proxy[1]
+        proxy = proxy[0]
+        proxy = proxy + ":" + port
+        print (proxy)
+        with open ('proxies.txt','a+') as handle:
+            handle.write(proxy+'\n')
+    print (colored(str(amm) + "proxies have been scraped.",menucolour))
+    input ()
+    main()
+'''
 def vcjoinspammer(): #another failed attempt
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Join Spammer")
@@ -467,6 +487,7 @@ def emoji(): #IM WORKING ON IT FUCK
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\emojireact.py',token,messageid,emojiname,number,useproxies],shell=True)
     time.sleep(5)
+'''    
 def wew():
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
