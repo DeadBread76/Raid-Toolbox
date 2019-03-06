@@ -38,7 +38,7 @@ if menucolour.lower() == 'random':
 tcounter = 0
 clear = lambda: os.system('cls')
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.1.1"
+rtbversion = "0.1.2"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
