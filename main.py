@@ -32,9 +32,13 @@ ydl_opts = {
 }
 
 init()
+if menucolour.lower() == 'random':
+    colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
+    menucolour = random.choice(colours)
 tcounter = 0
 clear = lambda: os.system('cls')
 collector = create_collector('my-collector', 'https')
+rtbversion = "0.1.1"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -60,13 +64,29 @@ def main():
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxies Enabled")
     else:
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox")
+    if len(str(tcounter)) == 1:
+        menublank = "  "
+    if len(str(tcounter)) == 2:
+        menublank = " "
+    if len(str(tcounter)) == 3:
+        menublank = ""
+    if len(str(tcounter)) == 4:
+        menublank = ""
+        print (colored("Um, thats too many tokens. Remove some to use Raid ToolBox.","red"))
+        lem = input ()
+        if lem == 'lemme in':
+            print (colored("This will probably kill your PC, but whatever ¯\_(ツ)_/¯","red"))
+            input()
+            clear()
+        else:
+            sys.exit()
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
-    print (colored("██                                 There are "+str(tcounter)+" tokens available.              "+now.strftime("%Y-%m-%d %H:%M:%S")+"██",menucolour))
+    print (colored("██                                 There are "+str(tcounter)+" tokens available.            "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██         0. Exit                               ██         11. Image Spammer                     ██",menucolour))
@@ -89,6 +109,8 @@ def main():
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     choice = input()
     try:
+        if choice.lower() == 'info':
+            info()
         if int(choice) == 0:
             os.system("taskkill /f /im python.exe")
         elif int(choice) == 1:
@@ -131,12 +153,12 @@ def main():
             proxyscrape(useproxies)
         elif int(choice) == 986:
             wew()
-        #wew i actually had what was left of a multi page menu i was working on left here lmao       
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
             input()
             main()
+        #I actually had what was left of a multi page menu i was working on left here lmao       
     except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
@@ -458,6 +480,39 @@ def proxyscrape(useproxies):
     print (colored(str(amm) + "proxies have been scraped.",menucolour))
     input ()
     main()
+
+def info():
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
+    print (colored("  _____       _     _   _______          _ ____            ",menucolour))
+    print (colored(" |  __ \     (_)   | | |__   __|        | |  _ \           ",menucolour))
+    print (colored(" | |__) |__ _ _  __| |    | | ___   ___ | | |_) | _____  __",menucolour))
+    print (colored(" |  _  // _` | |/ _` |    | |/ _ \ / _ \| |  _ < / _ \ \/ /",menucolour))
+    print (colored(" | | \ \ (_| | | (_| |    | | (_) | (_) | | |_) | (_) >  < ",menucolour))
+    print (colored(" |_|  \_\__,_|_|\__,_|    |_|\___/ \___/|_|____/ \___/_/\_\ ",menucolour))
+    print (colored("------------------------------------------------------------",menucolour))
+    print (colored("                                                            ",menucolour))
+    print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour))
+    print (colored("                                                            ",menucolour))
+    print (colored("Raid ToolBox version: "+rtbversion,menucolour))
+    print (colored("Discord.py version: "+ discord.__version__,menucolour))
+    print (colored("                                                            ",menucolour))
+    print (colored("------------------------------------------------------------",menucolour))
+    ack = input("Press enter to return to menu.")
+    if ack == "d":
+        print('7RtuZEe')
+        input()
+        info()
+    main()
+    
+
+def wew():
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
+    p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
+    main()
+
+main()
+
 '''
 def vcjoinspammer(): #another failed attempt
     clear()
@@ -488,10 +543,6 @@ def emoji(): #IM WORKING ON IT FUCK
         p = subprocess.Popen(['python','.\\spammer\\emojireact.py',token,messageid,emojiname,number,useproxies],shell=True)
     time.sleep(5)
 '''    
-def wew():
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
-    p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
-    main()
 
-main()
+
 
