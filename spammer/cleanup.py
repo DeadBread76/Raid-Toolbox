@@ -33,7 +33,7 @@ async def on_ready(): #the prints are commented out so it is silent and we can r
                 if x.author.id == str(client.user.id):
                     await client.delete_message(x)
                     #print ("Token " + str(tokenno) + ": Cleaned " + channame)
-    client.close()
+    await client.close()
 
 try:
     client.run(token, bot=False)
