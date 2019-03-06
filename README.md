@@ -16,7 +16,7 @@ You can change the menu colour by changing the value in `config.py`
 
 To enable proxies, add a text file called `proxies.txt` in the folder where `tokens.txt` is located, and set the value in `config.py` to 'True'
 
-To use the Voice Spammer, unzip the FFmpeg files from the .zip files.
+To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path
 
 I will be adding more stuff to this in the future
 
