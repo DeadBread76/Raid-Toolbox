@@ -16,6 +16,7 @@ try:
     from termcolor import colored
     from proxyscrape import create_collector
     from config import*
+    from rtbplugins import*
 except Exception as i:
     print ("Module error: " + str(i))
     print ("Please check that the module is installed.")
@@ -38,7 +39,7 @@ if menucolour.lower() == 'random':
 tcounter = 0
 clear = lambda: os.system('cls')
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.1.2"
+rtbversion = "0.2.0"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -56,8 +57,9 @@ else:
         time.sleep(5)
         sys.exit()
 
+currentattacks = []
 
-def main():
+def main(currentattacks):
     now = datetime.datetime.now()
     clear()
     if useproxies == 'True':
@@ -65,11 +67,11 @@ def main():
     else:
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox")
     if len(str(tcounter)) == 1:
-        menublank = "  "
+        menublank = "   "
     if len(str(tcounter)) == 2:
-        menublank = " "
+        menublank = "  "
     if len(str(tcounter)) == 3:
-        menublank = ""
+        menublank = " "
     if len(str(tcounter)) == 4:
         menublank = ""
         print (colored("Um, thats too many tokens. Remove some to use Raid ToolBox.","red"))
@@ -86,21 +88,21 @@ def main():
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
-    print (colored("██                                 There are "+str(tcounter)+" tokens available.            "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
+    print (colored("██                                 There are "+str(tcounter)+" tokens available.           "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██         0. Exit                               ██         11. Image Spammer                     ██",menucolour))
-    print (colored("██         1. Joiner                             ██         12. Playing game changer              ██",menucolour))
-    print (colored("██         2. Leaver                             ██         13. Ascii Nickname (Spams Audit log)  ██",menucolour))
-    print (colored("██         3. Group DM leaver                    ██         14. Embed Spammer                     ██",menucolour))
-    print (colored("██         4. Token Checker                      ██         15. TrafficLight status effect        ██",menucolour))
-    print (colored("██         5. Message spammer                    ██         16. Role Mass Mentioner               ██",menucolour))
-    print (colored("██         6. Ascii spammer                      ██         17. Channel Message Cleaner           ██",menucolour))
-    print (colored("██         7. Mass mention spammer               ██         18. Server Smasher (Single bot token) ██",menucolour))
-    print (colored("██         8. Voice Chat Spammer                 ██         19. Proxy Scraper                     ██",menucolour))
-    print (colored("██         9. User DM Spammer                    ██                                               ██",menucolour))
-    print (colored("██         10. Friend Request Spammer            ██                                               ██",menucolour))
-    print (colored("██                                               ██                                               ██",menucolour))
+    print (colored("██         0. Exit                               ██         12. Image Spammer                     ██",menucolour))
+    print (colored("██         1. Joiner                             ██         13. Playing game changer              ██",menucolour))
+    print (colored("██         2. Leaver                             ██         14. Ascii Nickname (Spams Audit log)  ██",menucolour))
+    print (colored("██         3. Group DM leaver                    ██         15. Embed Spammer                     ██",menucolour))
+    print (colored("██         4. Token Checker                      ██         16. TrafficLight status effect        ██",menucolour))
+    print (colored("██         5. Message spammer                    ██         17. Role Mass Mentioner               ██",menucolour))
+    print (colored("██         6. Ascii spammer                      ██         18. Channel Message Cleaner           ██",menucolour))
+    print (colored("██         7. Mass mention spammer               ██         19. Server Smasher (Single bot token) ██",menucolour))
+    print (colored("██         8. Voice Chat Spammer                 ██         20. Proxy Scraper                     ██",menucolour))
+    print (colored("██         9. User DM Spammer                    ██         21. Voice chat join and spam          ██",menucolour))
+    print (colored("██         10. Friend Request Spammer            ██         22. View Running Attacks              ██",menucolour))
+    print (colored("██         11. Group DM spammer                  ██         23. Custom attack plugins             ██",menucolour))
     print (colored("██                                               ██                                               ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
@@ -110,63 +112,71 @@ def main():
     choice = input()
     try:
         if choice.lower() == 'info':
-            info()
+            info(currentattacks)
         if int(choice) == 0:
             os.system("taskkill /f /im python.exe")
         elif int(choice) == 1:
-            joiner() 
+            joiner(currentattacks) 
         elif int(choice) == 2:
-            leaver()
+            leaver(currentattacks)
         elif int(choice) == 3:
-            groupleaver()
+            groupleaver(currentattacks)
         elif int(choice) == 4:
-            tokencheck()
+            tokencheck(currentattacks)
         elif int(choice) == 5:
-            messagespam()
+            messagespam(currentattacks)
         elif int(choice) == 6:
-            asciispam()
+            asciispam(currentattacks)
         elif int(choice) == 7:
-            massmentioner()
+            massmentioner(currentattacks)
         elif int(choice) == 8:
-            vcspam()
+            vcspam(currentattacks)
         elif int(choice) == 9:
-            dmspam()
+            dmspam(currentattacks)
         elif int(choice) == 10:
-            friender()
+            friender(currentattacks)
         elif int(choice) == 11:
-            imagespam()
+            groupdmspam(currentattacks)  
         elif int(choice) == 12:
-            gamechange()
+            imagespam(currentattacks)
         elif int(choice) == 13:
-            asciinick()
+            gamechange(currentattacks)
         elif int(choice) == 14:
-            embedspam()
+            asciinick(currentattacks)
         elif int(choice) == 15:
-            trafficlight()
+            embedspam(currentattacks)
         elif int(choice) == 16:
-            rolemassmention()
+            trafficlight(currentattacks)
         elif int(choice) == 17:
-            cleanup()
+            rolemassmention(currentattacks)
         elif int(choice) == 18:
-            serversmasher()
+            cleanup(currentattacks)
         elif int(choice) == 19:
+            serversmasher(currentattacks)
+        elif int(choice) == 20:
             proxyscrape(useproxies)
+        elif int(choice) == 21:
+            vcjoinspammer(currentattacks)
+        elif int(choice) == 22:
+            viewcurrentat(currentattacks)
+        elif int(choice) == 23:
+            customplugins(currentattacks,pluginlist)
         elif int(choice) == 986:
-            wew()
+            wew(currentattacks)
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
             input()
-            main()
+            main(currentattacks)
         #I actually had what was left of a multi page menu i was working on left here lmao       
     except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
         print (colored(i,"yellow"))
         input()
-        main()
+        main(currentattacks)
 
-def joiner():
+def joiner(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Invite Joiner")
     print (colored("Discord invite joiner.",menucolour))
@@ -177,9 +187,9 @@ def joiner():
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\joiner.py',token,link,useproxies],shell=True)
     time.sleep(3)
-    main()
+    main(currentattacks)
 
-def leaver():
+def leaver(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Leaver")
     print (colored("Discord server leaver.",menucolour))
@@ -188,9 +198,9 @@ def leaver():
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\leaver.py',token,ID,useproxies],shell=True)
     time.sleep(3)
-    main()
+    main(currentattacks)
 
-def groupleaver():
+def groupleaver(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Leaver")
     print (colored("Discord group DM leaver.",menucolour))
@@ -199,9 +209,9 @@ def groupleaver():
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\groupleaver.py',token,ID,useproxies],shell=True)
     time.sleep(3)
-    main()
+    main(currentattacks)
 
-def tokencheck(): #not even going to add proxy support for this because of how fucking slow this shit goes with proxies
+def tokencheck(currentattacks): #not even going to add proxy support for this because of how fucking slow this shit goes with proxies
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Checker")
     vcounter = 0
@@ -237,9 +247,9 @@ def tokencheck(): #not even going to add proxy support for this because of how f
         print (colored("Check the tokens directory for results.","green"))
         print ("---------------------------------------")
         input("Press enter to return to menu.")
-        main()
+        main(currentattacks)
 
-def messagespam():
+def messagespam(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Spammer")
     print (colored("Discord Server message spammer.",menucolour))
@@ -258,9 +268,11 @@ def messagespam():
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],shell=True)
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Message Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def asciispam(): #no longer bugged
+def asciispam(currentattacks): #no longer bugged
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Spammer")
     print (colored("Discord server ascii spammer.",menucolour))
@@ -278,9 +290,11 @@ def asciispam(): #no longer bugged
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\asciispam.py',token,number,chan,allchan,SERVER,useproxies],shell=True)
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Ascii Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
       
-def massmentioner():
+def massmentioner(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Mass Mentioner")
     print (colored("Discord server mass mentioner.",menucolour))
@@ -292,9 +306,11 @@ def massmentioner():
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\massmention.py',token,SERVER,number,useproxies],shell=True)
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Mass Mention Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def vcspam():
+def vcspam(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Spammer")
     tcounter = 0
@@ -312,13 +328,13 @@ def vcspam():
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],shell=True)
+        p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],shell=False)
         if number == str(tokencount):
             break
         time.sleep(0.1)
     p.wait()
 
-def dmspam():
+def dmspam(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | DM Spammer")
     print (colored("Discord user DM spammer.",menucolour))
@@ -330,9 +346,11 @@ def dmspam():
         tcounter += 1
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user,useproxies],shell=True)
-    p.wait()
+    currentattacks.append("DM Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def friender(): #finally it works
+def friender(currentattacks): #finally it works
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Friend Request Spammer")
     print (colored("Discord user mass friender.",menucolour))
@@ -344,9 +362,9 @@ def friender(): #finally it works
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\friender.py',token,userid,useproxies],shell=True)
     p.wait()
-    main()
+    main(currentattacks)
 
-def imagespam():
+def imagespam(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Image Spammer")
     print (colored("Discord server image spammer.",menucolour))
@@ -359,9 +377,11 @@ def imagespam():
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan,useproxies],shell=True)
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Image Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def gamechange():
+def gamechange(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Playing Status Changer")
     print (colored("Discord game playing status changer.",menucolour))
@@ -371,14 +391,15 @@ def gamechange():
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\gamechange.py',token,game,useproxies],shell=True)
+    currentattacks.append("Playing status change with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main()
+    main(currentattacks)
 
-def asciinick():
+def asciinick(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Nickname Changer")
     print (colored("Discord random ascii nickname.",menucolour))
-    print (colored("This will probably slow down some attacks, and it seems to get tokens banned quickly.","blue"))
+    print (colored("This will probably slow down some attacks.","blue"))
     SERVER = input ("Server ID: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -386,10 +407,11 @@ def asciinick():
         tcounter += 1
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER,useproxies],shell=True)
+    currentattacks.append("Ascii Nickname Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main()
+    main(currentattacks)
 
-def embedspam():
+def embedspam(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Embed Spammer")
     print (colored("Discord embed spammer.",menucolour))
@@ -406,14 +428,17 @@ def embedspam():
         tcounter += 1
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],shell=True)
-    p.wait()
+    currentattacks.append("Embed Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def trafficlight():
+def trafficlight(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | TrafficLight Status Effect")
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         p = subprocess.Popen(['python','.\\spammer\\trafficlight.py',token,useproxies],shell=True)
+    currentattacks.append("TrafficLight effect with "+ str(tcounter) + " tokens.")
     time.sleep(3)
     print (colored("Started traffic Light effect.","green"))
     time.sleep(0.5)
@@ -423,9 +448,9 @@ def trafficlight():
     clear()
     print (colored("Started traffic Light effect.","red"))
     time.sleep(0.5)
-    main()
+    main(currentattacks)
     
-def rolemassmention():
+def rolemassmention(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Role Mass Mentioner")
     print (colored("Discord role mass mentioner.",menucolour))
@@ -438,9 +463,11 @@ def rolemassmention():
         number = str(tcounter)
         p = subprocess.Popen(['python','.\\spammer\\rolemention.py',token,SERVER,number,useproxies],shell=True)
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Role Mass Mention with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
 
-def cleanup():
+def cleanup(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Cleaner")
     print (colored("Clean up messages sent by a token",menucolour))
@@ -454,14 +481,15 @@ def cleanup():
         p = subprocess.Popen(['python','.\\spammer\\cleanup.py',token,SERVER,number,useproxies],shell=True)
         time.sleep(0.1)
     time.sleep(5)
-    main()
+    main(currentattacks)
 
-def serversmasher():
+def serversmasher(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | SERVER SMASHER")
     print ("The config file for this option is located: \spammer\smconfig.py")
     p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'],shell=True)
     p.wait()
+    main(currentattacks)
 
 def proxyscrape(useproxies):
     clear()
@@ -479,9 +507,90 @@ def proxyscrape(useproxies):
             handle.write(proxy+'\n')
     print (colored(str(amm) + "proxies have been scraped.",menucolour))
     input ()
-    main()
+    main(currentattacks)
 
-def info():
+def vcjoinspammer(currentattacks): #wew its here
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join and spam")
+    print (colored("Discord Voice chat join and spam . Joins all the channels in a server, and can spam messages.",menucolour))
+    SERVER = input ('Server ID: ')
+    spammsg = input ("Spam Messages?(Y/N)")
+    if spammsg.lower() == "y":
+        chan = input ("Channel to spam in (type 'all' for all channels): ")
+        if chan.lower() == "all":
+            print (colored("Spamming all channels","blue"))
+            allchan = 'true'
+        else:
+            allchan = 'false'
+        msgtxt = input ("Text to spam: ")
+    tcounter = 0
+    tokenlist = open("tokens.txt").read().splitlines()
+    if spammsg.lower() == "y":
+        for token in tokenlist:
+            tcounter += 1
+            number = str(tcounter)
+            p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],shell=True)
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\vcjoinspam.py',token,number,SERVER,useproxies],shell=True)
+        time.sleep(0.1)
+    currentattacks.append("Voice chat join and spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
+
+def groupdmspam(currentattacks):
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
+    print (colored("Discord Group DM message spammer.",menucolour))
+    group = input ("Group ID: ")
+    msgtxt = input ("Text to spam: ")
+    tcounter = 0
+    tokenlist = open("tokens.txt").read().splitlines()
+    for token in tokenlist:
+        tcounter += 1
+        number = str(tcounter)
+        p = subprocess.Popen(['python','.\\spammer\\groupdmspam.py',token,group,number,msgtxt,useproxies],shell=True)
+        time.sleep(0.1)
+    currentattacks.append("Group DM spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks)
+    
+def viewcurrentat(currentattacks):
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Current Attacks")
+    print (colored("Current Attacks:",menucolour))
+    print (colored("---------------------",menucolour))
+    for attack in currentattacks:
+        print (colored(attack,"green"))
+    print (colored("Type 'killall' to end all current attacks.",menucolour))
+    attackkill = input ()
+    if attackkill.lower() == 'killall':
+        PyIds = [int(line.split()[1]) for line in os.popen('tasklist').readlines()[3:] if line.split()[0] == "python.exe"]
+        PyIdsToKill = [id for id in PyIds if id != os.getpid()]
+        for pid in PyIdsToKill:
+            os.system("taskkill /F /pid %i" % pid)
+            currentattacks = []
+    main(currentattacks)
+
+def customplugins(currentattacks,pluginlist):
+    clear()
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
+    pluginno = -1
+    print (colored("Installed Plugins:",menucolour))
+    for plugin in pluginlist:
+        pluginno += 1
+        print (str(pluginno) +". "+ plugin)
+    plug = input ("Choice of plugin: ")
+    if plug.lower() == 'back':
+        main(currentattacks)
+    plugchoice = pluginlist[int(plug)]
+    clear()
+    p = subprocess.Popen(['python','.\\plugins\\'+plugchoice],shell=True)
+    p.wait()
+    
+
+def info(currentattacks):
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
     print (colored("  _____       _     _   _______          _ ____            ",menucolour))
@@ -502,47 +611,16 @@ def info():
     if ack == "d":
         print('7RtuZEe')
         input()
-        info()
-    main()
-    
+        info(currentattacks)
+    main(currentattacks)
 
-def wew():
+def wew(currentattacks):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
-    main()
+    main(currentattacks)
 
-main()
+main(currentattacks)
 
-'''
-def vcjoinspammer(): #another failed attempt
-    clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Join Spammer")
-    tcounter = 0
-    print (colored("Discord VC join spammer. Joins a channel then leaves.",menucolour))
-    chanid = input ('Voice channel ID: ')
-    tcounter = 0
-    tokenlist = open("./tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\vcjoinspam.py',token,number,chanid,useproxies],shell=True)
-        time.sleep(0.1)
-    p.wait()
-
-def emoji(): #IM WORKING ON IT FUCK
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Emoji Reactor")
-    print (colored("Reacts to a message with an emoji",menucolour))
-    messageid = input ("Message ID: ")
-    emojiname = input ("Emoji name(Eg. thinking): ")
-    emojiname = emojiname.lower()
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\emojireact.py',token,messageid,emojiname,number,useproxies],shell=True)
-    time.sleep(5)
-'''    
 
 
 
