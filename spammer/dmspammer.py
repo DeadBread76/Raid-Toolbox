@@ -21,13 +21,12 @@ userid = sys.argv[4]
 
 @client.event
 async def on_ready():
-    print ("Token " + str(tokenno) + " logged in!")
     user = await client.get_user_info(userid)
     while not client.is_closed:
         try:
             await client.send_message(user, msgtxt)
         except Exception as e:
-            print (str(tokenno) + "error: " + e)
+            return ''
             
 
 try:

@@ -21,16 +21,16 @@ tokenno = sys.argv[3]
 
 @client.event
 async def on_ready():
-    print ("Token " + str(tokenno) + " logged in!")
+    server = client.get_server(SERVER)
     try:
         msg = ' '
-        for m in client.get_server(SERVER).members:
+        for m in server.members:
             msg += m.mention + ' '
         while not client.is_closed:
-           for c in client.get_server(SERVER).channels:
+           for c in server.channels:
                 if c.type != discord.ChannelType.text:
                    continue
-                myperms = c.permissions_for(client.get_server(SERVER).get_member(client.user.id))
+                myperms = c.permissions_for(server.get_member(client.user.id))
                 if not myperms.send_messages:
                     continue
                 print('Token ' + str(tokenno) + ' mass mentioning in: '+c.name)
@@ -38,7 +38,7 @@ async def on_ready():
                     try:
                         await client.send_message(c, m)
                     except:
-                        print("Token " + str(tokenno) + ': Error sending mass mention.')
+                        return ''
     except Exception:
         time.sleep(1)
     

@@ -25,7 +25,6 @@ SERVER = sys.argv[5]
 #i had asc = "" up here instead of in the loop
 @client.event
 async def on_ready():
-    print ("Token " + str(tokenno) + " logged in!")
     txtchan = client.get_channel(textchan)
     if allchan == 'true': #wew no sleep
         while not client.is_closed:
@@ -42,7 +41,8 @@ async def on_ready():
                 try:
                     await client.send_message(c, asc)
                 except Exception:
-                    print("Token " + str(tokenno) + ': Error sending message.')
+                    return ''
+                    
     else:
         while not client.is_closed:
             asc = ''
@@ -52,7 +52,7 @@ async def on_ready():
             try:
                 await client.send_message(txtchan, asc)
             except Exception:
-                    print("Token " + str(tokenno) + ': Error sending message.')
+                    return ''
 try:
     client.run(token, bot=False)
 except Exception as c:

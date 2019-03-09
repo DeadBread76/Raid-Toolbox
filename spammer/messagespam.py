@@ -24,7 +24,6 @@ allchan = sys.argv[6]
 
 @client.event
 async def on_ready():
-    print ("Token " + str(tokenno) + " logged in!")
     txtchan = client.get_channel(textchan)
     if allchan == 'true':
         while not client.is_closed:
@@ -37,7 +36,7 @@ async def on_ready():
                 try:
                     await client.send_message(c, msgtxt)
                 except:
-                    print("Token " + str(tokenno) + ': Error sending message.')
+                    return ''
     else:
         while not client.is_closed:
             await client.send_message(txtchan, msgtxt)

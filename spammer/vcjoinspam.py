@@ -1,6 +1,5 @@
 import discord
 import asyncio
-import youtube_dl
 import sys
 import os
 import random
@@ -16,19 +15,29 @@ else:
     client = discord.Client()
 token = sys.argv[1]
 tokenno = sys.argv[2]
-voice_id = sys.argv[3]
+SERVER = sys.argv[3]
+CHANNELS = []
 
 @client.event
 async def on_ready():
-    voice_channel = client.get_channel(voice_id)
+    server = client.get_server(SERVER)
+    for chan in server.channels:
+        if chan.type != discord.ChannelType.voice:
+            continue
+        myperms = chan.permissions_for(server.get_member(client.user.id))
+        if not myperms.connect:
+            continue
+        CHANNELS.append(chan)
     while not client.is_closed:
-        await client.join_voice_channel(voice_channel)
-        await asyncio.sleep(1)
-        await client.join_voice_channel(voice_channel).disconnect()
-        await asyncio.sleep(3)
-
+        try:
+            voicechannel = random.choice(CHANNELS)
+            vc = await client.join_voice_channel(voicechannel)
+            await asyncio.sleep(0.1)
+            await vc.disconnect()
+        except Exception:
+            await on_ready()
 try:
     client.run(token, bot=False)
 except Exception as c:
-    print (c)
+    print ("Token " + str(tokenno)+ ": " +c)
 
