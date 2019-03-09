@@ -6,7 +6,7 @@ Only compatible with Windows at the moment.
 
 Screenshot:
 
-![Screenshot](http://i.imgur.com/EjAzSrK.png)
+![Screenshot](http://i.imgur.com/Barkl3X.png)
 
 You need the modules stated in requirements.txt `pip install -r requirements.txt`
 
