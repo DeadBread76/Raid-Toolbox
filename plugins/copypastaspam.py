@@ -4,7 +4,7 @@ import time
 import sys
 import os
 import random
-
+#make sure you use the order of when subprocess opens this file with sys.argv 
 token = sys.argv[1]
 SERVER = sys.argv[2]
 tokenno = sys.argv[3]
