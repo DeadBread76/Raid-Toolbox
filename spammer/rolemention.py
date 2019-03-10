@@ -30,7 +30,7 @@ async def on_ready():
             else:
                 continue
         while not client.is_closed:
-            for c in server).channels:
+            for c in server.channels:
                 if c.type != discord.ChannelType.text:
                     continue
                 myperms = c.permissions_for(server.get_member(client.user.id))
