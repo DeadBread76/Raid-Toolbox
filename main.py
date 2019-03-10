@@ -7,11 +7,11 @@ try:
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
     import random
     import datetime
-    import discord
+    import subprocess
     import asyncio
+    import discord
     import requests
     import youtube_dl
-    import subprocess
     from colorama import init
     from termcolor import colored
     from proxyscrape import create_collector
@@ -20,8 +20,11 @@ try:
 except Exception as i:
     print ("Module error: " + str(i))
     print ("Please check that the module is installed.")
-    input ()
-    sys.exit()
+    install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
+    if install.lower() == 'y':
+        installation = subprocess.Popen(['pip','install','-r','requirements.txt'],shell=True)
+    else:
+        sys.exit()
 ydl_opts = {
     'outtmpl': '.\\spammer\\file.webm',
     'format': 'bestaudio/best',
