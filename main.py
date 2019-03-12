@@ -508,7 +508,7 @@ def proxyscrape(useproxies):
         print (proxy)
         with open ('proxies.txt','a+') as handle:
             handle.write(proxy+'\n')
-    print (colored(str(amm) + "proxies have been scraped.",menucolour))
+    print (colored(str(amm) + " proxies have been scraped.",menucolour))
     input ()
     main(currentattacks)
 
