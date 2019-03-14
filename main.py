@@ -43,7 +43,7 @@ if menucolour.lower() == 'random':
 tcounter = 0
 clear = lambda: os.system('cls')
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.1"
+rtbversion = "0.2.2"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -224,6 +224,7 @@ def tokencheck(currentattacks): #not even going to add proxy support for this be
     clear()
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Checker")
     vcounter = 0
+    ucounter = 0
     icounter = 0
     validtokens = []
     print (colored("Checking tokens...",menucolour))
@@ -234,17 +235,20 @@ def tokencheck(currentattacks): #not even going to add proxy support for this be
             headers={
                 'Authorization': token
                 }
-            src = requests.get('https://discordapp.com/api/v6/auth/login', headers=headers)
+            src = requests.post('https://discordapp.com/api/v6/invite/r3sSKJJ', headers=headers)
             try:
-                if src.status_code == 200:
+                if "You need to verify your account in order to perform this action." in str(src.content):
+                    print (colored(token + ' Unverified.',"yellow"))
+                    ucounter +=1
+                elif "401: Unauthorized" in str(src.content):
+                    print (colored(token + ' Invalid.',"red"))
+                    icounter +=1
+                else:
                     print (colored(token + ' Valid.',"green"))
                     vcounter +=1
                     if token in validtokens:
                         continue
                     validtokens.append(token)
-                else:
-                    print(colored(token + ' Invalid.',"red"))
-                    icounter +=1
             except Exception as exc:
                 print (exc)
         with open('tokens.txt','w') as handle:
@@ -252,6 +256,7 @@ def tokencheck(currentattacks): #not even going to add proxy support for this be
                 handle.write(token+'\n')     
         print ("---------------------------------------")
         print (colored("Number of valid tokens: " + str(vcounter),"green"))
+        print (colored("Number of unverified tokens: " + str(ucounter),"yellow"))
         print (colored("Number of invalid tokens: " + str(icounter),"red"))
         print ("---------------------------------------")
         input("Press enter to return to menu.")
