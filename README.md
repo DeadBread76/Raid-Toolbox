@@ -8,7 +8,7 @@ Screenshot:
 
 ![Screenshot](http://i.imgur.com/Barkl3X.png)
 
-You need the modules stated in requirements.txt `pip install -r requirements.txt`
+You need the modules stated in requirements.txt `pip install -r requirements.txt` or just let Raid Toolbox install them for you.
 
 And you need Python 3.6 (I use 3.6.7) https://www.python.org/downloads/release/python-367/
 
