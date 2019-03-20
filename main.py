@@ -4,11 +4,20 @@ try:
     import sys
     import time
     import ctypes
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+    else:
+        print ("Unsupported OS.")
+        input()
+        sys.exit()
     import random
     import datetime
+    import platform
     import subprocess
     import asyncio
+    import signal
     import discord
     import requests
     import youtube_dl
@@ -22,10 +31,17 @@ except Exception as i:
     print ("Please check that the module is installed.")
     install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
     if install.lower() == 'y':
-        installation = subprocess.Popen(['pip','install','-r','requirements.txt'],shell=True)
+        if sys.platform.startswith('win32'):
+            installation = subprocess.Popen(['pip','install','-r','requirements.txt','--user'])
+        elif sys.platform.startswith('linux'):
+            installation = subprocess.Popen(['pip3','install','-r','requirements.txt'])
         installation.wait()
+        print("Please Restart Raid Toolbox.")
+        input()
+        sys.exit()
     else:
         sys.exit()
+
 ydl_opts = {
     'outtmpl': '.\\spammer\\file.webm',
     'format': 'bestaudio/best',
@@ -41,9 +57,14 @@ if menucolour.lower() == 'random':
     colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
     menucolour = random.choice(colours)
 tcounter = 0
-clear = lambda: os.system('cls')
+if sys.platform.startswith('win32'):
+    clear = lambda: os.system('cls')
+elif sys.platform.startswith('linux'):
+    clear = lambda: os.system('clear')
+
+
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.2"
+rtbversion = "0.2.3"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -62,8 +83,9 @@ else:
         sys.exit()
 
 currentattacks = []
+spawnedpids = []
 
-def main(currentattacks):
+def main(currentattacks,spawnedpids):
     tcounter = 0
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -72,9 +94,15 @@ def main(currentattacks):
     now = datetime.datetime.now()
     clear()
     if useproxies == 'True':
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxies Enabled")
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxies Enabled")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Proxies Enabled\x07")
     else:
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox")
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox\x07")
     if len(str(tcounter)) == 1:
         menublank = "   "
     if len(str(tcounter)) == 2:
@@ -121,108 +149,140 @@ def main(currentattacks):
     choice = input()
     try:
         if choice.lower() == 'info':
-            info(currentattacks)
+            info(currentattacks,spawnedpids)
         if int(choice) == 0:
-            os.system("taskkill /f /im python.exe")
+            for pid in spawnedpids:
+                if sys.platform.startswith('win32'):
+                        os.system("taskkill /F /pid "+str(pid))
+                elif sys.platform.startswith('linux'):
+                        os.kill(int(pid), signal.SIGKILL)
+            sys.exit()
         elif int(choice) == 1:
-            joiner(currentattacks) 
+            joiner(currentattacks,spawnedpids) 
         elif int(choice) == 2:
-            leaver(currentattacks)
+            leaver(currentattacks,spawnedpids)
         elif int(choice) == 3:
-            groupleaver(currentattacks)
+            groupleaver(currentattacks,spawnedpids)
         elif int(choice) == 4:
-            tokencheck(currentattacks)
+            tokencheck(currentattacks,spawnedpids)
         elif int(choice) == 5:
-            messagespam(currentattacks)
+            messagespam(currentattacks,spawnedpids)
         elif int(choice) == 6:
-            asciispam(currentattacks)
+            asciispam(currentattacks,spawnedpids)
         elif int(choice) == 7:
-            massmentioner(currentattacks)
+            massmentioner(currentattacks,spawnedpids)
         elif int(choice) == 8:
-            vcspam(currentattacks)
+            vcspam(currentattacks,spawnedpids)
         elif int(choice) == 9:
-            dmspam(currentattacks)
+            dmspam(currentattacks,spawnedpids)
         elif int(choice) == 10:
-            friender(currentattacks)
+            friender(currentattacks,spawnedpids)
         elif int(choice) == 11:
-            groupdmspam(currentattacks)  
+            groupdmspam(currentattacks,spawnedpids)  
         elif int(choice) == 12:
-            imagespam(currentattacks)
+            imagespam(currentattacks,spawnedpids)
         elif int(choice) == 13:
-            gamechange(currentattacks)
+            gamechange(currentattacks,spawnedpids)
         elif int(choice) == 14:
-            asciinick(currentattacks)
+            asciinick(currentattacks,spawnedpids)
         elif int(choice) == 15:
-            embedspam(currentattacks)
+            embedspam(currentattacks,spawnedpids)
         elif int(choice) == 16:
-            trafficlight(currentattacks)
+            trafficlight(currentattacks,spawnedpids)
         elif int(choice) == 17:
-            rolemassmention(currentattacks)
+            rolemassmention(currentattacks,spawnedpids)
         elif int(choice) == 18:
-            cleanup(currentattacks)
+            cleanup(currentattacks,spawnedpids)
         elif int(choice) == 19:
-            serversmasher(currentattacks)
+            serversmasher(currentattacks,spawnedpids)
         elif int(choice) == 20:
-            proxyscrape(useproxies)
+            proxyscrape(currentattacks,spawnedpids)
         elif int(choice) == 21:
-            vcjoinspammer(currentattacks)
+            vcjoinspammer(currentattacks,spawnedpids)
         elif int(choice) == 22:
-            viewcurrentat(currentattacks)
+            viewcurrentat(currentattacks,spawnedpids)
         elif int(choice) == 23:
-            customplugins(currentattacks,pluginlist)
+            customplugins(currentattacks,pluginlist,spawnedpids)
         elif int(choice) == 986:
-            wew(currentattacks)
+            wew(currentattacks,spawnedpids)
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
             input()
-            main(currentattacks)
+            main(currentattacks,spawnedpids)
         #I actually had what was left of a multi page menu i was working on left here lmao       
     except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
         print (colored(i,"yellow"))
         input()
-        main(currentattacks)
+        main(currentattacks,spawnedpids)
 
-def joiner(currentattacks):
+def joiner(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Invite Joiner")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Invite Joiner")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Invite Joiner\x07")
     print (colored("Discord invite joiner.",menucolour))
     link = input('Discord Invite Link: ')
+    if link.lower() == 'b':
+        main(currentattacks,spawnedpids)
     if len(link) > 7:
         link = link[19:]
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
-        p = subprocess.Popen(['python','.\\spammer\\joiner.py',token,link,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\joiner.py',token,link,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/joiner.py',token,link,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     time.sleep(3)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def leaver(currentattacks):
+def leaver(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Leaver")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Leaver")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Leaver\x07")
     print (colored("Discord server leaver.",menucolour))
     ID = input ('ID of the server to leave: ')
+    if str(ID).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
-        p = subprocess.Popen(['python','.\\spammer\\leaver.py',token,ID,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\leaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/leaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     time.sleep(3)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def groupleaver(currentattacks):
+def groupleaver(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Leaver")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Leaver")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Leaver\x07")
     print (colored("Discord group DM leaver.",menucolour))
     ID = input ('ID of the group DM to leave: ')
+    if str(ID).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
-        p = subprocess.Popen(['python','.\\spammer\\groupleaver.py',token,ID,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\groupleaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/groupleaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     time.sleep(3)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def tokencheck(currentattacks): #not even going to add proxy support for this because of how fucking slow this shit goes with proxies
+def tokencheck(currentattacks,spawnedpids): #not even going to add proxy support for this because of how fucking slow this shit goes with proxies
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Checker")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Checker")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Checker\x07")
     vcounter = 0
     ucounter = 0
     icounter = 0
@@ -260,13 +320,18 @@ def tokencheck(currentattacks): #not even going to add proxy support for this be
         print (colored("Number of invalid tokens: " + str(icounter),"red"))
         print ("---------------------------------------")
         input("Press enter to return to menu.")
-        main(currentattacks)
+        main(currentattacks,spawnedpids)
 
-def messagespam(currentattacks):
+def messagespam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Spammer\x07")
     print (colored("Discord Server message spammer.",menucolour))
     SERVER = input ("Server ID: ")
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
@@ -279,17 +344,26 @@ def messagespam(currentattacks):
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Message Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def asciispam(currentattacks): #no longer bugged
+def asciispam(currentattacks,spawnedpids): #no longer bugged
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Spammer\x07")
     print (colored("Discord server ascii spammer.",menucolour))
     SERVER = input('Server ID: ')
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
@@ -301,34 +375,52 @@ def asciispam(currentattacks): #no longer bugged
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\asciispam.py',token,number,chan,allchan,SERVER,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\asciispam.py',token,number,chan,allchan,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/asciispam.py',token,number,chan,allchan,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Ascii Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
       
-def massmentioner(currentattacks):
+def massmentioner(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Mass Mentioner")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Mass Mentioner")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Mass Mentioner\x07")
     print (colored("Discord server mass mentioner.",menucolour))
     SERVER = input('Server ID: ')
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\massmention.py',token,SERVER,number,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\massmention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/massmention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Mass Mention Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def vcspam(currentattacks):
+def vcspam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice Chat Spammer\x07")
     tcounter = 0
     print (colored("Discord VC joiner/spammer.",menucolour))
     ytlink = input ('YouTube Link to play: ')
+    if ytlink.lower() == 'b':
+        main(currentattacks,spawnedpids)
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
     if os.path.isfile('.\\spammer\\file.wav'):
@@ -341,95 +433,150 @@ def vcspam(currentattacks):
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],shell=False)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/vcspamlinux.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         if number == str(tokencount):
             break
         time.sleep(0.1)
-    p.wait()
+    currentattacks.append("Voice Chat Spam with "+ str(tcounter) + " tokens.")
+    time.sleep(5)
+    main(currentattacks,spawnedpids)
 
-def dmspam(currentattacks):
+def dmspam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | DM Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | DM Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | DM Spammer\x07")
     print (colored("Discord user DM spammer.",menucolour))
     user = input ("User's ID: ")
+    if str(user).lower() == 'b':
+        main(currentattacks,spawnedpids)
     msgtxt = input ("Text to spam: ")
     tcounter = 0
     tokenlist = open("./tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
     currentattacks.append("DM Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def friender(currentattacks): #finally it works
+def friender(currentattacks,spawnedpids): #finally it works
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Friend Request Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Friend Request Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Friend Request Spammer\x07")
     print (colored("Discord user mass friender.",menucolour))
     userid = input("User's ID: ")
+    if str(userid).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     tcounter = 0
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\friender.py',token,userid,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\friender.py',token,userid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/friender.py',token,userid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     p.wait()
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def imagespam(currentattacks):
+def imagespam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Image Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Image Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Image Spammer\x07")
     print (colored("Discord server image spammer.",menucolour))
     SERVER = input ("Server ID: ")
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','/spammer/imagespamlinux.py',token,SERVER,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Image Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def gamechange(currentattacks):
+def gamechange(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Playing Status Changer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Playing Status Changer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Playing Status Changer\x07")
     print (colored("Discord game playing status changer.",menucolour))
     print (colored("This will probably slow down some attacks.","blue"))
     print ('Name of game to play: ')
     game = input ('Playing ')
+    if game.lower() == 'b':
+        main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
-        p = subprocess.Popen(['python','.\\spammer\\gamechange.py',token,game,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\gamechange.py',token,game,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/gamechange.py',token,game,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
     currentattacks.append("Playing status change with "+ str(tcounter) + " tokens.")
     time.sleep(5)
     main(currentattacks)
 
-def asciinick(currentattacks):
+def asciinick(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Nickname Changer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Nickname Changer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Nickname Changer\x07")
     print (colored("Discord random ascii nickname.",menucolour))
     print (colored("This will probably slow down some attacks.","blue"))
     SERVER = input ("Server ID: ")
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
     currentattacks.append("Ascii Nickname Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def embedspam(currentattacks):
+def embedspam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Embed Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Embed Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Embed Spammer\x07")
     print (colored("Discord embed spammer.",menucolour))
     print (colored("Will probably bypass some bots that have word and image restrictions.",menucolour))
     title = input ("Embed Title: ")
+    if title.lower() == 'b':
+        main(currentattacks,spawnedpids)
     author = input ("Embed Author: ")
     iconurl = input ("Author Icon URL: ")
     thumburl = input ("Thumbnail image URL: ")
@@ -440,17 +587,28 @@ def embedspam(currentattacks):
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
     currentattacks.append("Embed Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def trafficlight(currentattacks):
+def trafficlight(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | TrafficLight Status Effect")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | TrafficLight Status Effect")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | TrafficLight Status Effect\x07")
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
-        p = subprocess.Popen(['python','.\\spammer\\trafficlight.py',token,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\trafficlight.py',token,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/trafficlight.py',token,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
     currentattacks.append("TrafficLight effect with "+ str(tcounter) + " tokens.")
     time.sleep(3)
     print (colored("Started traffic Light effect.","green"))
@@ -461,55 +619,84 @@ def trafficlight(currentattacks):
     clear()
     print (colored("Started traffic Light effect.","red"))
     time.sleep(0.5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
     
-def rolemassmention(currentattacks):
+def rolemassmention(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Role Mass Mentioner")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Role Mass Mentioner")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Role Mass Mentioner\x07")
     print (colored("Discord role mass mentioner.",menucolour))
     print (colored("This will spam mention all roles that are mentionable.",menucolour))
     SERVER = input('Server ID: ')
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\rolemention.py',token,SERVER,number,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\rolemention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/rolemention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Role Mass Mention with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def cleanup(currentattacks):
+def cleanup(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Cleaner")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Cleaner")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Cleaner\x07")
     print (colored("Clean up messages sent by a token",menucolour))
     print (colored("This will delete all the messages sent by the token.",menucolour))
     SERVER = input('Server ID: ')
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\cleanup.py',token,SERVER,number,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\cleanup.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/cleanup.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     time.sleep(5)
     main(currentattacks)
 
-def serversmasher(currentattacks):
+def serversmasher(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | SERVER SMASHER")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | SERVER SMASHER")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | SERVER SMASHER\x07")
     print ("The config file for this option is located: \spammer\smconfig.py")
-    p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'],shell=True)
+    if sys.platform.startswith('win32'):
+        p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'])
+    elif sys.platform.startswith('linux'):
+        p = subprocess.Popen(['python3','spammer/serversmasherlinux.py'])
     p.wait()
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def proxyscrape(useproxies):
+def proxyscrape(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxy Scraper")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Proxy Scraper")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Proxy Scraper\x07")
     print (colored("RTB Proxy Scraper.",menucolour))
     print (colored("I recommend that you get enough proxies for the ammount of tokens you have.",menucolour))
     amm = input ("Ammount of proxies to scrape: ")
+    if str(amm).lower() == 'b':
+        main(currentattacks,spawnedpids)
     for x in range(int(amm)):
         proxy = collector.get_proxy()
         port = proxy[1]
@@ -520,13 +707,18 @@ def proxyscrape(useproxies):
             handle.write(proxy+'\n')
     print (colored(str(amm) + " proxies have been scraped.",menucolour))
     input ()
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def vcjoinspammer(currentattacks): #wew its here
+def vcjoinspammer(currentattacks,spawnedpids): #wew its here
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join and spam")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join and spam")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice chat join and spam\x07")
     print (colored("Discord Voice chat join and spam . Joins all the channels in a server, and can spam messages.",menucolour))
     SERVER = input ('Server ID: ')
+    if str(SERVER).lower() == 'b':
+        main(currentattacks,spawnedpids)
     spammsg = input ("Spam Messages?(Y/N)")
     if spammsg.lower() == "y":
         chan = input ("Channel to spam in (type 'all' for all channels): ")
@@ -542,36 +734,56 @@ def vcjoinspammer(currentattacks): #wew its here
         for token in tokenlist:
             tcounter += 1
             number = str(tcounter)
-            p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],shell=True)
+            if sys.platform.startswith('win32'):
+                p = subprocess.Popen(['python','.\\spammer\\messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            elif sys.platform.startswith('linux'):
+                p = subprocess.Popen(['python3','spammer/messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            spawnedpids.append(p.pid)
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\vcjoinspam.py',token,number,SERVER,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\vcjoinspam.py',token,number,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/vcjoinspam.py',token,number,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Voice chat join and spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def groupdmspam(currentattacks):
+def groupdmspam(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Spammer\x07")
     print (colored("Discord Group DM message spammer.",menucolour))
     group = input ("Group ID: ")
+    if str(group).lower() == 'b':
+        main(currentattacks,spawnedpids)
     msgtxt = input ("Text to spam: ")
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
-        p = subprocess.Popen(['python','.\\spammer\\groupdmspam.py',token,group,number,msgtxt,useproxies],shell=True)
+        if sys.platform.startswith('win32'):
+            p = subprocess.Popen(['python','.\\spammer\\groupdmspam.py',token,group,number,msgtxt,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        elif sys.platform.startswith('linux'):
+            p = subprocess.Popen(['python3','spammer/groupdmspam.py',token,group,number,msgtxt,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Group DM spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
     
-def viewcurrentat(currentattacks):
+def viewcurrentat(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Current Attacks")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Current Attacks")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Current Attacks\x07")
     print (colored("Current Attacks:",menucolour))
     print (colored("---------------------",menucolour))
     for attack in currentattacks:
@@ -579,16 +791,22 @@ def viewcurrentat(currentattacks):
     print (colored("Type 'killall' to end all current attacks.",menucolour))
     attackkill = input ()
     if attackkill.lower() == 'killall':
-        PyIds = [int(line.split()[1]) for line in os.popen('tasklist').readlines()[3:] if line.split()[0] == "python.exe"]
-        PyIdsToKill = [id for id in PyIds if id != os.getpid()]
-        for pid in PyIdsToKill:
-            os.system("taskkill /F /pid %i" % pid)
+        for pid in spawnedpids:
+            if sys.platform.startswith('win32'):
+                    os.system("taskkill /F /pid "+str(pid))
+                    currentattacks = []
+            elif sys.platform.startswith('linux'):
+                    os.kill(int(pid), signal.SIGKILL)
             currentattacks = []
-    main(currentattacks)
+            spawnedpids = []
+    main(currentattacks,spawnedpids)
 
-def customplugins(currentattacks,pluginlist):
+def customplugins(currentattacks,pluginlist,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins\x07")
     pluginno = -1
     print (colored("Installed Plugins:",menucolour))
     for plugin in pluginlist:
@@ -599,13 +817,19 @@ def customplugins(currentattacks,pluginlist):
         main(currentattacks)
     plugchoice = pluginlist[int(plug)]
     clear()
-    p = subprocess.Popen(['python','.\\plugins\\'+plugchoice],shell=True)
+    if sys.platform.startswith('win32'):
+        p = subprocess.Popen(['python','.\\plugins\\'+plugchoice])
+    elif sys.platform.startswith('linux'):
+        p = subprocess.Popen(['python3','plugins/'+plugchoice])
     p.wait()
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
-def info(currentattacks):
+def info(currentattacks,spawnedpids):
     clear()
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Info\x07")
     print (colored("  _____       _     _   _______          _ ____            ",menucolour))
     print (colored(" |  __ \     (_)   | | |__   __|        | |  _ \           ",menucolour))
     print (colored(" | |__) |__ _ _  __| |    | | ___   ___ | | |_) | _____  __",menucolour))
@@ -616,23 +840,99 @@ def info(currentattacks):
     print (colored("                                                            ",menucolour))
     print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour))
     print (colored("                                                            ",menucolour))
-    print (colored("Raid ToolBox version: "+rtbversion,menucolour))
+    if sys.platform.startswith('win32'):
+        print (colored("Raid ToolBox version: "+rtbversion,menucolour))
+    elif sys.platform.startswith('linux'):
+        print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour))
     print (colored("Discord.py version: "+ discord.__version__,menucolour))
     print (colored("                                                            ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
-    ack = input("Press enter to return to menu.")
-    if ack == "d":
+    inf = input("Press enter to return to menu.\n")
+    if inf == "d":
         print('7RtuZEe')
         input()
-        info(currentattacks)
-    main(currentattacks)
+        info(currentattacks,spawnedpids)
+    elif inf.lower() == 'diag':
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Diagnostics")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Diagnostics\x07")
+        try:
+            import speedtest
+        except Exception:
+            if sys.platform.startswith('win32'):
+                installation = subprocess.Popen(['pip','install','speedtest-cli','--user'])
+            elif sys.platform.startswith('linux'):
+                installation = subprocess.Popen(['pip3','install','speedtest-cli'])
+            installation.wait()
+            import speedtest
+        clear()
+        tcounter = 0
+        with open('tokens.txt','r') as handle:
+            line = handle.readlines()
+        for x in line:
+            tcounter += 1
+        testtoken = line[0]
+        print ("Running Speedtest...")
+        servers = []
+        s = speedtest.Speedtest()
+        s.get_servers(servers)
+        print ("Testing Ping...")
+        s.get_best_server()
+        print ("Testing Download Speed...")
+        s.download()
+        print ("Testing Upload Speed...")
+        s.upload()
+        s.results.share()
+        results_dict = s.results.dict()
+        d = results_dict["download"]
+        u = results_dict["upload"]
+        p = results_dict["ping"]
+        print('Download Speed: {:.2f} Kb/s'.format(d / 1024))
+        print('Upload Speed: {:.2f} Kb/s'.format(u / 1024))
+        print('Ping: {}'.format(p))
+        now = datetime.datetime.now()
+        with open ("Diagnostics " + str(now.strftime("%d %m %Y %H %M %S"))+".txt", 'w+') as handle:
+            handle.write("Raid Toolbox Diagnostics test "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
+            handle.write("=====================================================\n")
+            handle.write("RTB VERSION: " + rtbversion + "\n")
+            handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
+            handle.write("---------------\n")
+            handle.write("Python Info:\n\n")
+            handle.write("Python Version: " + sys.version+"\n")
+            handle.write("Discord.py version: " + discord.__version__ + "\n")
+            handle.write("---------------\n")
+            handle.write("OS info:\n\n")
+            handle.write("Platform: " + platform.platform()+"\n")
+            handle.write("Processor: " + platform.processor()+"\n")
+            handle.write("---------------\n")
+            handle.write("SpeedTest Results: \n\n")
+            handle.write('Download Speed: {:.2f} Kb/s\n'.format(d / 1024))
+            handle.write('Upload Speed: {:.2f} Kb/s\n'.format(u / 1024))
+            handle.write('Ping: {}\n'.format(p))
+            handle.write("---------------\n")
+            handle.write("RTB Dump:\n\n")
+            handle.write(menucolour+"\n")
+            handle.write(useproxies+"\n")
+            for plugin in pluginlist:
+                handle.write(plugin+"\n")
+            for attack in currentattacks:
+                handle.write(attack+"\n")
+            for pid in spawnedpids:
+                handle.write(str(pid)+"\n")
+            handle.write("---------------\n")
+        print ("Diagnostics Written to file.")
+        input()
+    main(currentattacks,spawnedpids)
 
-def wew(currentattacks):
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
-    p = subprocess.Popen(['python','.\\spammer\\player.py'],shell=True)
-    main(currentattacks)
+def wew(currentattacks,spawnedpids):
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
+    p = subprocess.Popen(['python','.\\spammer\\player.py'])
+    main(currentattacks,spawnedpids)
 
-main(currentattacks)
+main(currentattacks,spawnedpids)
 
 
 

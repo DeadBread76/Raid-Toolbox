@@ -1,0 +1,15 @@
+Raid ToolBox version 0.2.3
+===================================
+Changes:
+You can now return to the menu when using the Voice Chat spammer.
+main.py and main_linux.py have been merged.
+Changed the way the attacks are stopped, It will not kill all python processes anymore.
+
+Fixes:
+Module Auto installer should work now.
+If spawned processes error it should't appear on the menu.
+Fixed bug where the running attacks would be cleared when scraping for proxies.
+
+Additions:
+Type "b" to return to the main menu on an option
+Diagnostics test in the info selection of RTB
