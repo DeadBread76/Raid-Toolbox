@@ -10,7 +10,7 @@ Screenshot:
 
 You need the modules stated in requirements.txt `pip install -r requirements.txt`
 
-And you need python 3.6 (I use 3.6.7)
+And you need Python 3.6 (I use 3.6.7) https://www.python.org/downloads/release/python-367/
 
 You can change the menu colour by changing the value in `config.py`
 
