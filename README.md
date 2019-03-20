@@ -2,7 +2,7 @@
 
 A big toolkit of spamming tools for discord.
 
-Now supports Linux too.
+Supports Both Windows and Linux.
 
 Screenshot:
 
