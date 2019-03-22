@@ -1,3 +1,17 @@
+Raid ToolBox version 0.2.4 | 23/03/2019 3:36 AM
+===================================
+Changes:
+Server Smasher uses threading now, which makes it 800x faster tahn what it was.
+
+Fixes:
+Fixed a typo in the playing game changer
+
+Additions:
+@everyone spam for the server destroyer
+A few minor additions for the server destroyer
+
+
+
 Raid ToolBox version 0.2.3
 ===================================
 Changes:
@@ -12,4 +26,4 @@ Fixed bug where the running attacks would be cleared when scraping for proxies.
 
 Additions:
 Type "b" to return to the main menu on an option
-Diagnostics test in the info selection of RTB
+Diagnostics test in the info selection of RTB, Type 'info' on the main menu.
