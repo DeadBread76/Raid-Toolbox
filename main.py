@@ -64,7 +64,7 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.3"
+rtbversion = "0.2.4"
 
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -539,7 +539,7 @@ def gamechange(currentattacks,spawnedpids):
         spawnedpids.append(p.pid)
     currentattacks.append("Playing status change with "+ str(tcounter) + " tokens.")
     time.sleep(5)
-    main(currentattacks)
+    main(currentattacks,spawnedpids)
 
 def asciinick(currentattacks,spawnedpids):
     clear()
@@ -682,7 +682,7 @@ def serversmasher(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'])
     elif sys.platform.startswith('linux'):
-        p = subprocess.Popen(['python3','spammer/serversmasherlinux.py'])
+        p = subprocess.Popen(['python3','spammer/serversmasher.py'])
     p.wait()
     main(currentattacks,spawnedpids)
 
