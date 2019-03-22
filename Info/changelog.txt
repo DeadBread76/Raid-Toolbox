@@ -1,7 +1,7 @@
 Raid ToolBox version 0.2.4 | 23/03/2019 3:36 AM
 ===================================
 Changes:
-Server Smasher uses threading now, which makes it 800x faster tahn what it was.
+Server Smasher uses threading now, which makes it 800x faster than what it was.
 
 Fixes:
 Fixed a typo in the playing game changer
