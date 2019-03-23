@@ -19,6 +19,7 @@ createchan = True #True creates channels, using the method below
 chanmethod = "set" #'ascii' for random ascii name, 'set' for set name below, 'voice' for a voice channel with the name below(If voice and channel deletion is enabled you will not be able to use spam methods).
 channame = "Channel Name here" #Name of the channels to create
 channelno = "70" #ammount of channels, the limit for discord is 500
+usespam = True #True enables spam after everything is complete.
 spammethod = "everyone" #"massment" for mass mention, "asc" for random ascii spam, "text" for custom text spam, everyone for fast @everyone spam.
 usetts = "false" #(true or false), for the spam.
 customtxt = "custom text here" #only if you use text spam method
