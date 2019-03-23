@@ -64,23 +64,16 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.4"
-
+rtbversion = "0.2.5"
+smversion = "0.0.4"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
         for x in line:
             tcounter += 1
-        
-        if tcounter == 0:
-            print ("Please add some tokens to the tokens.txt file.")
-            time.sleep(5)
-            sys.exit()
 else:
     with open('tokens.txt','w+') as handle:
-        print ("Please add some tokens to the tokens.txt file that was just created")
-        time.sleep(5)
-        sys.exit()
+        print ("Created Tokens.txt")
 
 currentattacks = []
 spawnedpids = []
@@ -100,9 +93,9 @@ def main(currentattacks,spawnedpids):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Proxies Enabled\x07")
     else:
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{}\x07".format(rtbversion))
     if len(str(tcounter)) == 1:
         menublank = "   "
     if len(str(tcounter)) == 2:
@@ -675,9 +668,9 @@ def cleanup(currentattacks,spawnedpids):
 def serversmasher(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | SERVER SMASHER")
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Smasher v{}".format(smversion))
     elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | SERVER SMASHER\x07")
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Smasher v{}\x07".format(smversion))
     print ("The config file for this option is located: \spammer\smconfig.py")
     if sys.platform.startswith('win32'):
         p = subprocess.Popen(['python','.\\spammer\\serversmasher.py'])
@@ -844,6 +837,7 @@ def info(currentattacks,spawnedpids):
         print (colored("Raid ToolBox version: "+rtbversion,menucolour))
     elif sys.platform.startswith('linux'):
         print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour))
+    print (colored("Server Smasher version: "+smversion,menucolour))
     print (colored("Discord.py version: "+ discord.__version__,menucolour))
     print (colored("                                                            ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
@@ -897,6 +891,7 @@ def info(currentattacks,spawnedpids):
             handle.write("Raid Toolbox Diagnostics test "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
             handle.write("=====================================================\n")
             handle.write("RTB VERSION: " + rtbversion + "\n")
+            handle.write("SM VERSION: " + smversion + "\n")
             handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
             handle.write("---------------\n")
             handle.write("Python Info:\n\n")
