@@ -10,7 +10,7 @@ Screenshot:
 
 You need the modules stated in requirements.txt `pip install -r requirements.txt` or just let Raid Toolbox install them for you.
 
-And you need Python 3.6 (I use 3.6.7) https://www.python.org/downloads/release/python-367/
+And you need Python 3.6 (I use 3.6.8) https://www.python.org/downloads/release/python-367/
 
 You can change the menu colour by changing the value in `config.py`
 
