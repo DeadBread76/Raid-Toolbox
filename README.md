@@ -20,7 +20,4 @@ To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or downloa
 
 If on linux, run the command `sudo apt-get install ffmpeg`.
 
-I will be adding more stuff to this in the future
-
-
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
