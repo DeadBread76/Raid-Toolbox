@@ -300,7 +300,7 @@ async def main(SERVER):
 
                         if toggleopts['namechange'] == True:
                             print('Changing server name...')
-                            await client.edit_server(server=server, name=str(servname))
+                            await client.edit_server(server=server, name=str(toggleopts['servname']))
 
                         if toggleopts['iconbegone'] == True:
                             print('Removing icon...')
