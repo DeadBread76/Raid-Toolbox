@@ -1,3 +1,20 @@
+Raid ToolBox version 0.2.5 | 24/03/2019 3:13 AM
+===================================
+Changes:
+You can start Raid Toolbox without tokens now, you just won't be able to do anything(ofc)
+
+Fixes:
+None
+
+Additions:
+Server Smasher toggleable menu
+An option for spamming or not for server smasher
+Version number for Server Smasher (v0.0.4)
+Member count on server smasher servers
+Added version on main menu title
+
+
+
 Raid ToolBox version 0.2.4 | 23/03/2019 3:36 AM
 ===================================
 Changes:
