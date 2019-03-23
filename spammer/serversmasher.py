@@ -1,6 +1,7 @@
 try:
     import os
     import sys
+    import json
     import time
     import random
     import string
@@ -70,8 +71,6 @@ class ThreadPool:
         self.tasks.join()
 
 pool = ThreadPool(int(threadcount))
-lists = []
-users = []
 channellist = []
 client = discord.Client()
 
@@ -103,7 +102,8 @@ def deleterole(role,server):
         time.sleep(3)
         deleterole(role,server)
         
-def senddmtouser(user):
+def senddmtouser(user,content):
+    dmlist = []
     if clienttype == 'bot':
         headers={ 'Authorization': 'Bot '+token}
     else:
@@ -114,13 +114,15 @@ def senddmtouser(user):
     }
     src = requests.post('https://discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
     userdm = src.content.decode()
-    userdm = userdm[60:] #this works for now, will fix later.
-    userdm = userdm[:18]
-    payload = {"content" : dmcontent,"tts" : usetts,"mention_everyone" : "true"}
+    jsonstring = json.loads(userdm).values()
+    for x in jsonstring: 
+        dmlist.append(x) #boat floating
+    userdm = dmlist[2] 
+    payload = {"content" : content,"tts" : usetts,"mention_everyone" : "true"}
     src = requests.post("https://discordapp.com/api/v6/channels/"+userdm+"/messages", headers=headers, json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
-        senddmtouser(user)
+        senddmtouser(user,content)
 
 def banuser(user,server):
     if clienttype == 'bot':
@@ -154,30 +156,45 @@ def sendspam(channel,msgcontent):
         time.sleep(1)
         sendspam(channel,msgcontent)
 
-print ("Make Sure you have modified smconfig.py before starting.")
+print ("Starting...")
 @client.event
 async def on_ready():
     if changegameonlogin == True:
         await client.change_presence(game=discord.Game(name=logingame))
     clear()
-    print("Logged in as")
-    print("User: "+str(client.user.name))
-    print("Bot is in the following channels: ")
+    print (colored("Login success!","green"))
+    await serverselect()
+
+async def serverselect():
+    lists = []
+    clear()
+    if clienttype == "bot":
+        usert = "Bot"
+    else:
+        usert = "User"
+    print("Logged in as {}".format(client.user.name+"#"+client.user.discriminator))
+    print("{} is in the following channels: \n".format(usert))
     counter = -1
-    for x in client.servers:
+    membcount = 0
+    for serv in client.servers:
+        for member in serv.members:
+            membcount += 1
         counter += 1
-        print(str(counter)+'. ('+str(x.id)+') '+str(x)+'\n')
-        lists.append(x.id)
+        print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount)+'\n',"green"))
+        lists.append(serv.id)
     print('----------------------------------------')
     servernum = input('Select the server to configure bot actions: ')
     if servernum.lower() == 'back':
         print ("Returning to Raid ToolBox.")
         await client.logout()
-    if servernum.lower() == 'b':
+    elif servernum.lower() == 'b':
         print ("Returning to Raid ToolBox.")
         await client.logout()
     else:
-        SERVER = lists[int(servernum)]
+        try:
+            SERVER = lists[int(servernum)]
+        except:
+            await serverselect()
     await main(SERVER)
 
 async def main(SERVER):
@@ -188,12 +205,293 @@ async def main(SERVER):
     print ("Server ID: " + str(SERVER))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 0. Return to server select. \n 1. Destroy with config settings. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu","green"))
+    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Destroy with config settings.  \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Raid ToolBox Menu","green"))
     opts = input ("Select the number for your option: ")
+    toggleopts = {
+        'namechange' : False,
+        'servname' : '',
+        'iconbegone' : False,
+        'changeicon' : False,
+        'iconfile' : '',
+        'chandel' : False,
+        'roledel' : False,
+        'userban' : False,
+        'banreason' : '',
+        'userid' : [],
+        'senddm' : False,
+        'dmcontent' : '',
+        'createchan' : False,
+        'chanmethod' : 'set',
+        'channame' : '',
+        'channelno' : '20',
+        'usespam' : False,
+        'spammethod' : 'text',
+        'usetts' : 'false',
+        'customtxt' : '',
+        'gimmieadmin' : False,
+        'me' : '',
+        'giveeveryoneadmin' : False
+        }
     try:
         if int(opts) == 0:
-               await on_ready()
+               await serverselect()
+
         elif int(opts) == 1:
+            async def changesettings(toggleopts,SERVER):
+                clear()
+                #print (colored(". : {}".format(toggleopts['']),"green"))
+                print (colored("0.  Go back","green"))
+                print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
+                print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
+                print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),"green"))
+                print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),"green"))
+                print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),"green"))
+                print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),"green"))
+                print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),"green"))
+                print (colored("8.  Ban all members: {}".format(toggleopts['userban']),"green"))
+                print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),"green"))
+                print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),"green"))
+                print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),"green"))
+                print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),"green"))
+                print (colored("13. Create Channels: {}".format(toggleopts['createchan']),"green"))
+                print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),"green"))
+                print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),"green"))
+                print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),"green"))
+                print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),"green"))
+                print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),"green"))
+                print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),"green"))
+                print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),"green"))
+                print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
+                print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
+                print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
+                toga = input("Item to toggle or change:\n")
+                try:
+                    if toga.lower() == "start":
+                        channellist = []
+                        for c in server.channels:
+                            myperms = c.permissions_for(server.get_member(client.user.id))
+                        if myperms.administrator:
+                            channellist.append(c)
+                        else:
+                            print (colored("You do not have the permissions to destroy this server.","red"))
+                            input ()
+                            await main(SERVER)
+                        if toggleopts['chandel'] == True:
+                            print('Deleting channels.')
+                            for channel in server.channels:
+                                print (colored("Deleting " + str(channel.name),"blue"))
+                                pool.add_task(deletechannel,channel.id)
+                            pool.wait_completion()
+                            print('Finished deleting channels.')
+                           
+                        if toggleopts['roledel'] == True:
+                           print ('Deleting Roles.')
+                           for role in server.roles:
+                                print (colored("Deleting role: " + role.name,"blue"))
+                                pool.add_task(deleterole,role.id,SERVER)
+                           pool.wait_completion()
+                           print('Finished deleting roles.')
+                           
+                        if toggleopts['senddm'] == True:
+                            for user in server.members:
+                                print (colored('Sending DM to ' + user.name,"blue"))
+                                pool.add_task(senddmtouser,user.id,toggleopts['dmcontent'])
+                            pool.wait_completion()
+
+                        if toggleopts['namechange'] == True:
+                            print('Changing server name...')
+                            await client.edit_server(server=server, name=str(servname))
+
+                        if toggleopts['iconbegone'] == True:
+                            print('Removing icon...')
+                            await client.edit_server(server=server, icon=None)
+                            
+                        if toggleopts['changeicon'] == True:
+                            print('Changing icon...')
+                            if sys.platform.startswith('win32'):
+                                icofile = ".\\spammer\\serversmasher\\" + toggleopts['iconfile']
+                            elif sys.platform.startswith('linux'):
+                                icofile = "spammer/serversmasher/" + toggleopts['iconfile']
+                            with open(icofile, 'rb') as handle:
+                                icon = handle.read()
+                                await client.edit_server(server, icon=icon)
+                                
+                        if toggleopts['giveeveryoneadmin'] == True:
+                            print('Giving everyone admin...')
+                            for role in server.roles:
+                                if role.name == '@everyone':
+                                    await client.edit_role(server=server, role=role,permissions=Permissions.all())
+                                    break
+                                
+                        if toggleopts['userban'] == True:
+                            print('Banning users...')
+                            for user in server.members:
+                                if str(user) in user.name:
+                                    print (colored("Not Banning " + str(user.name),"green"))
+                                else:
+                                    print (colored('Banning ' + str(user.name),"blue"))
+                                    pool.add_task(banuser,user.id,SERVER)
+                            pool.wait_completion()
+
+                        if toggleopts['gimmieadmin'] == True:
+                            print('Giving you admin...')
+                            role = await client.create_role(server, name="Admin", permissions=Permissions.all())
+                            user = server.get_member(me)
+                            await client.add_roles(user, role)
+                            
+                        if toggleopts['createchan'] == True:
+                            print('Creating channels.')
+                            for x in range(int(toggleopts['channelno'])):
+                                if toggleopts['chanmethod'].lower() == "ascii":
+                                    asc = ""
+                                    for x in range(60):
+                                        num = random.randrange(13000)
+                                        asc = asc + chr(num)
+                                    pool.add_task(createchannel,SERVER,asc,"text")
+                                if toggleopts['chanmethod'].lower() == "set":
+                                    pool.add_task(createchannel,SERVER,toggleopts['channame'],"text")
+                                
+                                if toggleopts['chanmethod'].lower() == "voice":
+                                    pool.add_task(createchannel,SERVER,toggleopts['channame'],"voice")
+                            pool.wait_completion()
+                            
+                            print ('Channels Created.')
+                            
+                        if toggleopts['chanmethod'].lower() == "voice":
+                            if toggleopts['chandel'] == True:
+                                print (colored("Not spamming, due to there only being voice channels in this server.","red"))
+                                input ()
+                                await main(SERVER)
+
+                        if toggleopts['usespam'] == True:
+                            print('Preparing for next stage.')
+                            if toggleopts['spammethod'] == "asc":
+                                await ascii_spam(SERVER)
+                            if toggleopts['spammethod'] == "massment":
+                                await mass_tag(SERVER)
+                            if toggleopts['spammethod'] == "text":
+                                await text_spam(SERVER,customtxt)
+                            if toggleopts['spammethod'] == "everyone":
+                                await everyonespam(SERVER)
+                        else:
+                            print ("Finished!")
+                            input()
+                            await main(SERVER)
+                    if int(toga) == 0:
+                        await main(SERVER)
+                    elif int(toga) == 1:
+                        if toggleopts['namechange'] == True:
+                            toggleopts['namechange'] = False
+                        else:
+                            toggleopts['namechange'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 2:
+                        toggleopts['servname'] = input ("New Server name: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 3:
+                        if toggleopts['iconbegone'] == True:
+                            toggleopts['iconbegone'] = False
+                        else:
+                            toggleopts['iconbegone'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 4:
+                        if toggleopts['changeicon'] == True:
+                            toggleopts['changeicon'] = False
+                        else:
+                            toggleopts['changeicon'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 5:
+                        toggleopts['iconfile'] = input ("Name of the icon: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 6:
+                        if toggleopts['chandel'] == True:
+                            toggleopts['chandel'] = False
+                        else:
+                            toggleopts['chandel'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 7:
+                        if toggleopts['roledel'] == True:
+                            toggleopts['roledel'] = False
+                        else:
+                            toggleopts['roledel'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 8:
+                        if toggleopts['userban'] == True:
+                            toggleopts['userban'] = False
+                        else:
+                            toggleopts['userban'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 9:
+                        toggleopts['banreason'] = input ("Ban Reason: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 10:
+                        appen = input ("Username and Descriminator: ")
+                        toggleopts['userid'].append(appen)
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 11:
+                        if toggleopts['senddm'] == True:
+                            toggleopts['senddm'] = False
+                        else:
+                            toggleopts['senddm'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 12:
+                        toggleopts['dmcontent']  = input ("DM Content: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 13:
+                        if toggleopts['createchan'] == True:
+                            toggleopts['createchan'] = False
+                        else:
+                            toggleopts['createchan'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 14:
+                        toggleopts['chanmethod']  = input ("Channel Creation method (set,ascii,voice): ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 15:
+                        toggleopts['channame']  = input ("Name of created channels: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 16:
+                        toggleopts['channelno'] = input ("Number of Channels to create: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 17:
+                        if toggleopts['usespam'] == True:
+                            toggleopts['usespam'] = False
+                        else:
+                            toggleopts['usespam'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 18:
+                        toggleopts['spammethod']  = input ("Spamming method (text,asc,everyone): ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 19:
+                        toggleopts['customtxt']  = input ("Text to spam: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 20:
+                        if toggleopts['usetts'] == 'true':
+                            toggleopts['usetts'] = 'false'
+                        else:
+                            toggleopts['usetts'] = 'true'
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 21:
+                        if toggleopts['gimmieadmin'] == True:
+                            toggleopts['gimmieadmin'] = False
+                        else:
+                            toggleopts['gimmieadmin'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 22:
+                        toggleopts['me']  = input ("Your ID for giving admin: ")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 23:
+                        if toggleopts['giveeveryoneadmin'] == True:
+                            toggleopts['giveeveryoneadmin'] = False
+                        else:
+                            toggleopts['giveeveryoneadmin'] = True
+                        await changesettings(toggleopts,SERVER)
+                except Exception as er:
+                    print (er)
+                    input ()
+                    await changesettings(toggleopts,SERVER)
+            await changesettings(toggleopts,SERVER)
+
+        elif int(opts) == 2:
             #actions
             for c in server.channels:
                 myperms = c.permissions_for(server.get_member(client.user.id))
@@ -203,9 +501,6 @@ async def main(SERVER):
                     print (colored("You do not have the permissions to destroy this server.","red"))
                     input ()
                     await main(SERVER)
-            for i in server.members:
-                users.append(i)
-
             if chandel == True:
                 print('Deleting channels.')
                 for channel in server.channels:
@@ -225,7 +520,7 @@ async def main(SERVER):
             if senddm == True:
                 for user in server.members:
                     print (colored('Sending DM to ' + user.name,"blue"))
-                    pool.add_task(senddmtouser,user.id)
+                    pool.add_task(senddmtouser,user.id,dmcontent)
                 pool.wait_completion()
             if namechange == True:
                 print('Changing server name...')
@@ -292,17 +587,22 @@ async def main(SERVER):
                     input ()
                     await main(SERVER)
 
-            print('Preparing for next stage.')
-            if spammethod == "asc":
-                await ascii_spam(SERVER)
-            if spammethod == "massment":
-                await mass_tag(SERVER)
-            if spammethod == "text":
-                await text_spam(SERVER,customtxt)
-            if spammethod == "everyone":
-                await everyonespam(SERVER)
-                
-        elif int(opts) == 2:
+            if usespam == True:
+                print('Preparing for next stage.')
+                if spammethod == "asc":
+                    await ascii_spam(SERVER)
+                if spammethod == "massment":
+                    await mass_tag(SERVER)
+                if spammethod == "text":
+                    await text_spam(SERVER,customtxt)
+                if spammethod == "everyone":
+                    await everyonespam(SERVER)
+            else:
+                print ("Finished!")
+                input()
+                await main(SERVER)
+           
+        elif int(opts) == 3:
             for channel in server.channels:
                 if channel.type == discord.ChannelType.text:
                     invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
@@ -320,21 +620,22 @@ async def main(SERVER):
                     input ()
                     await main(SERVER)
                     
-        elif int(opts) == 3:
+        elif int(opts) == 4:
             play = input ("Playing ")
             await client.change_presence(game=discord.Game(name=play))
             await main(SERVER)
             
-        elif int(opts) == 4:
+        elif int(opts) == 5:
             print ("Are you sure you want to leave this server? (Y/N): ")
             yn = input()
             if yn.lower() == 'y':
                 await client.leave_server(server)
-                await on_ready()
+                await asyncio.sleep(3)
+                await serverselect()
             else:
                 await main(SERVER)
                 
-        elif int(opts) == 5:
+        elif int(opts) == 6:
             print ("Returning to Raid ToolBox.")
             await client.logout()
             
