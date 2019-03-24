@@ -165,6 +165,12 @@ async def on_ready():
     print (colored("Login success!","green"))
     await serverselect()
 
+        
+@client.event
+async def on_message(message):
+    with open ("serversmasher.log","a+",errors='ignore') as handle:
+        handle.write(str(message.author.name)+"#"+str(message.author.discriminator)+": "+str(message.content)+"\n")
+
 async def serverselect():
     lists = []
     clear()
@@ -175,8 +181,8 @@ async def serverselect():
     print("Logged in as {}".format(client.user.name+"#"+client.user.discriminator))
     print("{} is in the following channels: \n".format(usert))
     counter = -1
-    membcount = 0
     for serv in client.servers:
+        membcount = 0
         for member in serv.members:
             membcount += 1
         counter += 1
@@ -208,74 +214,80 @@ async def main(SERVER):
     print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Destroy with config settings.  \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Raid ToolBox Menu","green"))
     opts = input ("Select the number for your option: ")
     toggleopts = {
-        'namechange' : False,
-        'servname' : '',
-        'iconbegone' : False,
-        'changeicon' : False,
-        'iconfile' : '',
-        'chandel' : False,
-        'roledel' : False,
-        'userban' : False,
-        'banreason' : '',
-        'userid' : [],
-        'senddm' : False,
-        'dmcontent' : '',
-        'createchan' : False,
-        'chanmethod' : 'set',
-        'channame' : '',
-        'channelno' : '20',
-        'usespam' : False,
-        'spammethod' : 'text',
-        'usetts' : 'false',
-        'customtxt' : '',
-        'gimmieadmin' : False,
-        'me' : '',
-        'giveeveryoneadmin' : False
+        'namechange' : namechange,
+        'servname' : servname,
+        'iconbegone' : iconbegone,
+        'changeicon' : changeicon,
+        'iconfile' : iconfile,
+        'chandel' : chandel,
+        'roledel' : roledel,
+        'userban' : userban,
+        'banreason' : banreason,
+        'userid' : userid,
+        'senddm' : senddm,
+        'dmcontent' : dmcontent,
+        'createchan' : createchan,
+        'chanmethod' : chanmethod,
+        'channame' : channame,
+        'channelno' : channelno,
+        'usespam' : usespam,
+        'spammethod' : spammethod,
+        'usetts' : usetts,
+        'customtxt' : customtxt,
+        'gimmieadmin' : gimmieadmin,
+        'me' : me,
+        'giveeveryoneadmin' : giveeveryoneadmin
         }
     try:
         if int(opts) == 0:
                await serverselect()
 
         elif int(opts) == 1:
+            @client.event
+            async def on_message(message):
+                with open ("serversmasher.log","a+",errors='ignore') as handle:
+                    handle.write(str(message.author.name)+"#"+str(message.author.discriminator)+": "+str(message.content)+"\n")
             async def changesettings(toggleopts,SERVER):
-                clear()
-                #print (colored(". : {}".format(toggleopts['']),"green"))
-                print (colored("0.  Go back","green"))
-                print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
-                print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
-                print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),"green"))
-                print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),"green"))
-                print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),"green"))
-                print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),"green"))
-                print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),"green"))
-                print (colored("8.  Ban all members: {}".format(toggleopts['userban']),"green"))
-                print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),"green"))
-                print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),"green"))
-                print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),"green"))
-                print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),"green"))
-                print (colored("13. Create Channels: {}".format(toggleopts['createchan']),"green"))
-                print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),"green"))
-                print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),"green"))
-                print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),"green"))
-                print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),"green"))
-                print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),"green"))
-                print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),"green"))
-                print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),"green"))
-                print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
-                print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
-                print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
-                toga = input("Item to toggle or change:\n")
                 try:
+                    clear()
+                    server = client.get_server(SERVER)
+                    print (colored("Type 'start' to start the smashing","green"))
+                    print (colored("0.  Go back","green"))
+                    print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
+                    print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
+                    print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),"green"))
+                    print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),"green"))
+                    print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),"green"))
+                    print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),"green"))
+                    print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),"green"))
+                    print (colored("8.  Ban all members: {}".format(toggleopts['userban']),"green"))
+                    print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),"green"))
+                    print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),"green"))
+                    print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),"green"))
+                    print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),"green"))
+                    print (colored("13. Create Channels: {}".format(toggleopts['createchan']),"green"))
+                    print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),"green"))
+                    print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),"green"))
+                    print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),"green"))
+                    print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),"green"))
+                    print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),"green"))
+                    print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),"green"))
+                    print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),"green"))
+                    print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
+                    print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
+                    print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
+                    toga = input("Item to toggle or change:\n")
                     if toga.lower() == "start":
                         channellist = []
+                        sc = 0
                         for c in server.channels:
                             myperms = c.permissions_for(server.get_member(client.user.id))
-                        if myperms.administrator:
-                            channellist.append(c)
-                        else:
-                            print (colored("You do not have the permissions to destroy this server.","red"))
-                            input ()
-                            await main(SERVER)
+                            if myperms.administrator:
+                                channellist.append(c)
+                            else:
+                                print (colored("You do not have the permissions to destroy this server.","red"))
+                                input ()
+                                await main(SERVER)
                         if toggleopts['chandel'] == True:
                             print('Deleting channels.')
                             for channel in server.channels:
@@ -364,13 +376,13 @@ async def main(SERVER):
                                 await main(SERVER)
 
                         if toggleopts['usespam'] == True:
-                            print('Preparing for next stage.')
+                            print('Spam will start in 5 seconds.')
                             if toggleopts['spammethod'] == "asc":
                                 await ascii_spam(SERVER)
                             if toggleopts['spammethod'] == "massment":
                                 await mass_tag(SERVER)
                             if toggleopts['spammethod'] == "text":
-                                await text_spam(SERVER,customtxt)
+                                await text_spam(SERVER,toggleopts['customtxt'])
                             if toggleopts['spammethod'] == "everyone":
                                 await everyonespam(SERVER)
                         else:
@@ -485,10 +497,9 @@ async def main(SERVER):
                         else:
                             toggleopts['giveeveryoneadmin'] = True
                         await changesettings(toggleopts,SERVER)
-                except Exception as er:
-                    print (er)
-                    input ()
-                    await changesettings(toggleopts,SERVER)
+                except Exception as e:
+                    print (e)
+                    input()
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
@@ -545,12 +556,11 @@ async def main(SERVER):
                 for role in server.roles:
                     if role.name == '@everyone':
                         await client.edit_role(server=server, role=role,permissions=Permissions.all())
-                        break
                     
             if userban == True:
                 print('Banning users...')
                 for user in server.members:
-                    if str(user) in user.name:
+                    if str(user) in userid:
                         print (colored("Not Banning " + str(user.name),"green"))
                     else:
                         print (colored('Banning ' + str(user.name),"blue"))
@@ -588,7 +598,7 @@ async def main(SERVER):
                     await main(SERVER)
 
             if usespam == True:
-                print('Preparing for next stage.')
+                print('Spam will start in 5 seconds.')
                 if spammethod == "asc":
                     await ascii_spam(SERVER)
                 if spammethod == "massment":
