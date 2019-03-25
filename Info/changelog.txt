@@ -1,3 +1,16 @@
+Raid ToolBox version 0.2.6 | 25/03/2019 7:58 PM
+===================================
+Changes:
+None
+
+Fixes:
+None
+
+Additions:
+Update Feature
+
+
+
 Raid ToolBox version 0.2.5 | 24/03/2019 3:13 AM
 ===================================
 Changes:
