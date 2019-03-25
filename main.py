@@ -931,7 +931,8 @@ def info(currentattacks,spawnedpids):
         clear()
         u = input("Are you sure you want to update?\n")
         if u.lower() == 'y':
-            print ("Downloading latest version from GitHub")
+            clear()
+            print ("Downloading latest version from GitHub...")
             update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
             with open("update.zip", "wb") as handle:
                 handle.write(update.content)
@@ -940,6 +941,12 @@ def info(currentattacks,spawnedpids):
                 copy_tree(".\\Raid-Toolbox-master\\", ".\\")
                 os.remove(".\\update.zip")
                 shutil.rmtree(".\\Raid-Toolbox-master\\")
+                shutil.unpack_archive("ffmpeg.zip")
+                shutil.unpack_archive("ffplay.zip")
+                shutil.unpack_archive("ffprobe.zip")
+                os.remove("ffmpeg.zip")
+                os.remove("ffplay.zip")
+                os.remove("ffprobe.zip")
                 print ("Update complete, exiting.")
                 time.sleep(5)
                 sys.exit()
@@ -947,9 +954,14 @@ def info(currentattacks,spawnedpids):
                 copy_tree("Raid-Toolbox-master/", ".")
                 os.remove("update.zip")
                 shutil.rmtree("Raid-Toolbox-master/")
+                os.remove("ffmpeg.zip")
+                os.remove("ffplay.zip")
+                os.remove("ffprobe.zip")
                 print ("Update complete, exiting.")
                 time.sleep(5)
                 sys.exit()
+        else:
+            info(currentattacks,spawnedpids)
     main(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
