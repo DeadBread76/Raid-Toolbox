@@ -1,6 +1,5 @@
 try:
     import os
-    import re
     import sys
     import time
     import ctypes
@@ -15,8 +14,8 @@ try:
     import random
     import datetime
     import platform
+    import shutil
     import subprocess
-    import asyncio
     import signal
     import discord
     import requests
@@ -24,6 +23,7 @@ try:
     from colorama import init
     from termcolor import colored
     from proxyscrape import create_collector
+    from distutils.dir_util import copy_tree
     from config import*
     from rtbplugins import*
 except Exception as i:
@@ -64,8 +64,8 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.5"
-smversion = "0.0.4"
+rtbversion = "0.2.6"
+smversion = "0.1.0"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -151,7 +151,7 @@ def main(currentattacks,spawnedpids):
                         os.kill(int(pid), signal.SIGKILL)
             sys.exit()
         elif int(choice) == 1:
-            joiner(currentattacks,spawnedpids) 
+            joiner(currentattacks,spawnedpids)
         elif int(choice) == 2:
             leaver(currentattacks,spawnedpids)
         elif int(choice) == 3:
@@ -171,7 +171,7 @@ def main(currentattacks,spawnedpids):
         elif int(choice) == 10:
             friender(currentattacks,spawnedpids)
         elif int(choice) == 11:
-            groupdmspam(currentattacks,spawnedpids)  
+            groupdmspam(currentattacks,spawnedpids)
         elif int(choice) == 12:
             imagespam(currentattacks,spawnedpids)
         elif int(choice) == 13:
@@ -203,7 +203,7 @@ def main(currentattacks,spawnedpids):
             print (colored('Invalid Option.',"yellow"))
             input()
             main(currentattacks,spawnedpids)
-        #I actually had what was left of a multi page menu i was working on left here lmao       
+        #I actually had what was left of a multi page menu i was working on left here lmao
     except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
@@ -306,7 +306,7 @@ def tokencheck(currentattacks,spawnedpids): #not even going to add proxy support
                 print (exc)
         with open('tokens.txt','w') as handle:
             for token in validtokens:
-                handle.write(token+'\n')     
+                handle.write(token+'\n')
         print ("---------------------------------------")
         print (colored("Number of valid tokens: " + str(vcounter),"green"))
         print (colored("Number of unverified tokens: " + str(ucounter),"yellow"))
@@ -377,7 +377,7 @@ def asciispam(currentattacks,spawnedpids): #no longer bugged
     currentattacks.append("Ascii Spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
     main(currentattacks,spawnedpids)
-      
+
 def massmentioner(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
@@ -613,7 +613,7 @@ def trafficlight(currentattacks,spawnedpids):
     print (colored("Started traffic Light effect.","red"))
     time.sleep(0.5)
     main(currentattacks,spawnedpids)
-    
+
 def rolemassmention(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
@@ -770,7 +770,7 @@ def groupdmspam(currentattacks,spawnedpids):
     currentattacks.append("Group DM spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
     main(currentattacks,spawnedpids)
-    
+
 def viewcurrentat(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
@@ -846,6 +846,14 @@ def info(currentattacks,spawnedpids):
         print('7RtuZEe')
         input()
         info(currentattacks,spawnedpids)
+    elif inf.lower() == 'repair':
+        if sys.platform.startswith('win32'):
+            installation = subprocess.Popen(['pip','install','-r','requirements.txt','--user'])
+        elif sys.platform.startswith('linux'):
+            installation = subprocess.Popen(['pip3','install','-r','requirements.txt'])
+        installation.wait()
+        input("Installation Complete.")
+        info(currentattacks,spawnedpids)
     elif inf.lower() == 'diag':
         clear()
         if sys.platform.startswith('win32'):
@@ -919,16 +927,39 @@ def info(currentattacks,spawnedpids):
             handle.write("---------------\n")
         print ("Diagnostics Written to file.")
         input()
+    elif inf.lower() == 'update':
+        clear()
+        u = input("Are you sure you want to update?\n")
+        if u.lower() == 'y':
+            print ("Downloading latest version from GitHub")
+            update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+            with open("update.zip", "wb") as handle:
+                handle.write(update.content)
+            shutil.unpack_archive("update.zip")
+            if sys.platform.startswith('win32'):
+                copy_tree(".\\Raid-Toolbox-master\\", ".\\")
+                os.remove(".\\update.zip")
+                shutil.rmtree(".\\Raid-Toolbox-master\\")
+                print ("Update complete, exiting.")
+                time.sleep(5)
+                sys.exit()
+            elif sys.platform.startswith('linux'):
+                copy_tree("Raid-Toolbox-master/", ".")
+                os.remove("update.zip")
+                shutil.rmtree("Raid-Toolbox-master/")
+                print ("Update complete, exiting.")
+                time.sleep(5)
+                sys.exit()
     main(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
-    p = subprocess.Popen(['python','.\\spammer\\player.py'])
+    else:
+        main(currentattacks,spawnedpids)
+    p = subprocess.Popen(['python','.\\spammer\\player.py'],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks.append("Music!")
+    spawnedpids.append(p.pid)
     main(currentattacks,spawnedpids)
 
 main(currentattacks,spawnedpids)
-
-
-
-
