@@ -15,10 +15,9 @@ def proxyleave():
         requests.delete(apilink, headers=headers, proxies={"http": proxy, "https": proxy})
     except Exception:
         proxyleave()
-    
 apilink = "https://discordapp.com/api/v6/channels/" + str(ID)
-headers={
-'Authorization': token
+headers = {
+    'Authorization': token
 }
 if useproxies == 'True':
     proxyleave()

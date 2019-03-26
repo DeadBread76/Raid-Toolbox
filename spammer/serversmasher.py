@@ -170,7 +170,7 @@ def complete_pool():
 @client.event
 async def on_ready():
     if changegameonlogin == True:
-        await client.change_presence(game=discord.Game(name=logingame))
+        await client.change_presence(activity=discord.Game(name=logingame))
     clear()
     print (colored("Login success!","green"))
     await serverselect()

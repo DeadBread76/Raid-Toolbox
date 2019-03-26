@@ -4,7 +4,6 @@ import random
 import sys
 import aiohttp
 
-
 token = sys.argv[1]
 SERVER = sys.argv[2]
 useproxies = sys.argv[3]

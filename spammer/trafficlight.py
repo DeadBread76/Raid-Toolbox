@@ -18,7 +18,7 @@ token = sys.argv[1]
 
 @client.event
 async def on_ready():
-    while not client.is_closed:
+    while not client.is_closed():
         randoms = ['1','2','3']
         presence = (random.choice(randoms))
         if presence == '1':
