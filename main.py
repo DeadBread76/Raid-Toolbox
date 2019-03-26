@@ -895,7 +895,7 @@ def info(currentattacks,spawnedpids):
         print('Upload Speed: {:.2f} Kb/s'.format(u / 1024))
         print('Ping: {}'.format(p))
         now = datetime.datetime.now()
-        with open ("Diagnostics " + str(now.strftime("%d %m %Y %H %M %S"))+".txt", 'w+') as handle:
+        with open ("Diagnostics" + str(now.strftime("%d%m%Y%H%M%S"))+".txt", 'w+') as handle:
             handle.write("Raid Toolbox Diagnostics test "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
             handle.write("=====================================================\n")
             handle.write("RTB VERSION: " + rtbversion + "\n")
@@ -929,7 +929,7 @@ def info(currentattacks,spawnedpids):
         input()
     elif inf.lower() == 'update':
         clear()
-        u = input("Are you sure you want to update?\n")
+        u = input("Are you sure you want to update?(Y/N)\n")
         if u.lower() == 'y':
             clear()
             print ("Downloading latest version from GitHub...")
