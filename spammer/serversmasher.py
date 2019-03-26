@@ -295,7 +295,7 @@ async def main(SERVER):
                             print('Deleting channels.')
                             for channel in server.channels:
                                 print (colored("Deleting " + str(channel.name),"blue"))
-                                pool.add_task(deletechannel,channel.id)
+                                pool.add_task(deletechannel,str(channel.id))
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                             print('Finished deleting channels.')
 
@@ -303,7 +303,7 @@ async def main(SERVER):
                            print ('Deleting Roles.')
                            for role in server.roles:
                                 print (colored("Deleting role: " + role.name,"blue"))
-                                pool.add_task(deleterole,role.id,SERVER)
+                                pool.add_task(deleterole,str(role.id),SERVER)
                            pool.wait_completion()
                            print('Finished deleting roles.')
 
@@ -329,30 +329,30 @@ async def main(SERVER):
                                 icofile = "spammer/serversmasher/" + toggleopts['iconfile']
                             with open(icofile, 'rb') as handle:
                                 icon = handle.read()
-                                await client.edit_server(server, icon=icon)
+                                await server.edit(icon=icon)
 
                         if toggleopts['giveeveryoneadmin'] == True:
                             print('Giving everyone admin...')
                             for role in server.roles:
                                 if role.name == '@everyone':
-                                    await client.edit_role(server=server, role=role,permissions=Permissions.all())
+                                    await role.edit(permissions=Permissions.all())
                                     break
 
                         if toggleopts['userban'] == True:
                             print('Banning users...')
                             for user in server.members:
-                                if toggleopts['userid'] in user.name:
+                                if str(user.name+"#"+user.discriminator) in toggleopts['userid']:
                                     print (colored("Not Banning " + str(user.name),"green"))
                                 else:
                                     print (colored('Banning ' + str(user.name),"blue"))
-                                    pool.add_task(banuser,user.id,SERVER)
+                                    pool.add_task(banuser,str(user.id),SERVER)
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['gimmieadmin'] == True:
                             print('Giving you admin...')
-                            role = await client.create_role(server, name="Admin", permissions=Permissions.all())
-                            user = server.get_member(toggleopts['me'])
-                            await client.add_roles(user, role)
+                            role = await server.create_role(name="Admin", permissions=Permissions.all())
+                            user = server.get_member(int(toggleopts['me']))
+                            await user.add_roles(role)
 
                         if toggleopts['createchan'] == True:
                             print('Creating channels.')
@@ -375,7 +375,7 @@ async def main(SERVER):
                         if toggleopts['chanmethod'].lower() == "voice":
                             if toggleopts['chandel'] == True:
                                 print (colored("Not spamming, due to there only being voice channels in this server.","red"))
-                                input ()
+                                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                                 await main(SERVER)
 
                         if toggleopts['usespam'] == True:
@@ -390,7 +390,7 @@ async def main(SERVER):
                                 await everyonespam(SERVER,toggleopts['usetts'])
                         else:
                             print ("Finished!")
-                            input()
+                            await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                             await main(SERVER)
                     if int(toga) == 0:
                         await main(SERVER)
@@ -502,37 +502,38 @@ async def main(SERVER):
                         await changesettings(toggleopts,SERVER)
                 except Exception as e:
                     print (e)
-                    input()
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
-            for channel in server.channels:
-                if channel.type == discord.ChannelType.text:
-                    invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
-                    invite = invitelinknew.url
-                    pyperclip.copy(invite)
-                    print (invite + " copied to clipboard.")
-                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-                    await main(SERVER)
-
-                elif channel.type == discord.ChannelType.voice:
-                    invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
-                    invite = invitelinknew.url
-                    pyperclip.copy(invite)
-                    print (invite + " copied to clipboard.")
-                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-                    await main(SERVER)
+            for channel in server.text_channels:
+                invitelink = await channel.create_invite()
+                invite = invitelink.url
+                pyperclip.copy(invite)
+                print (invite + " copied to clipboard.")
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                await main(SERVER)
+            for channel in server.voice_channels:
+                invitelink = await channel.create_invite()
+                invite = invitelink.url
+                pyperclip.copy(invite)
+                print (invite + " copied to clipboard.")
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                await main(SERVER)
+            print ("Unable to create invite.")
+            await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+            await main(SERVER)
 
         elif int(opts) == 3:
-            play = input ("Playing ")
-            await client.change_presence(game=discord.Game(name=play))
+            play = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Playing ')
+            await client.change_presence(activity=discord.Game(name=play))
             await main(SERVER)
 
         elif int(opts) == 4:
             print ("Are you sure you want to leave this server? (Y/N): ")
             yn = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             if yn.lower() == 'y':
-                await client.leave_server(server)
+                await server.leave()
                 await asyncio.sleep(3)
                 await serverselect()
             else:
@@ -549,73 +550,61 @@ async def main(SERVER):
         await main(SERVER)
 
 async def mass_tag(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
-    await client.wait_until_ready()
-    msg = ' '
-    for m in server.members:
-        msg += m.mention + ' '
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    server = client.get_guild(int(SERVER))
+    msg = ''
+    for member in server.members:
+        msg += member.mention + ' '
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Mass Mentioning in: '+c.name)
+            print('Mass Mentioning in: '+channel.name)
             for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                pool.add_task(sendspam,c.id,m,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+                pool.add_task(sendspam,str(channel.id),m,usetts)
 
 async def ascii_spam(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Ascii Spamming in: '+c.name)
+            print('Ascii Spamming in: '+channel.name)
             asc = ""
             for x in range(1999):
                 num = random.randrange(13000)
                 asc = asc + chr(num)
-            pool.add_task(sendspam,c.id,asc,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            pool.add_task(sendspam,str(channelid),asc,usetts)
 
 async def text_spam(SERVER,customtxt,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Text Spamming in: '+c.name)
-            pool.add_task(sendspam,c.id,customtxt,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            print('Text Spamming in: '+channel.name)
+            pool.add_task(sendspam,str(channel.id),customtxt,usetts)
+
 
 async def everyonespam(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
             message = "@everyone"
-            print('@everyone Spamming in: '+c.name)
-            pool.add_task(sendspam,c.id,message,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            print('@everyone Spamming in: '+channel.name)
+            pool.add_task(sendspam,str(channel.id),message,usetts)
 
 if clienttype.lower() == "user":
     try:
