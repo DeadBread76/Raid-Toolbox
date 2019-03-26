@@ -493,19 +493,18 @@ def imagespam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Image Spammer\x07")
     print (colored("Discord server image spammer.",menucolour))
-    SERVER = input ("Server ID: ")
-    if str(SERVER).lower() == 'b':
-        main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in: ")
+    if str(chan).lower() == 'b':
+        main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
         tcounter += 1
         number = str(tcounter)
         if sys.platform.startswith('win32'):
-            p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,SERVER,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            p = subprocess.Popen(['python','.\\spammer\\imagespam.py',token,number,chan,useproxies])
         elif sys.platform.startswith('linux'):
-            p = subprocess.Popen(['python3','/spammer/imagespamlinux.py',token,SERVER,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            p = subprocess.Popen(['python3','/spammer/imagespamlinux.py',token,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Image Spam with "+ str(tcounter) + " tokens.")
@@ -552,7 +551,7 @@ def asciinick(currentattacks,spawnedpids):
         tcounter += 1
         number = str(tcounter)
         if sys.platform.startswith('win32'):
-            p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            p = subprocess.Popen(['python','.\\spammer\\nickname.py',token,SERVER,useproxies])
         elif sys.platform.startswith('linux'):
             p = subprocess.Popen(['python3','spammer/nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         spawnedpids.append(p.pid)

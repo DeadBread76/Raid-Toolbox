@@ -1,5 +1,4 @@
 import discord
-import time
 import sys
 import random
 import aiohttp
