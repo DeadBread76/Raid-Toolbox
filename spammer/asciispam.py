@@ -25,9 +25,7 @@ async def on_ready():
     server = client.get_guild(int(SERVER))
     if allchan == 'true':
         while not client.is_closed():
-            for channel in server.channels:
-                if not isinstance(channel, discord.TextChannel):
-                    continue
+            for channel in server.text_channels::
                 myperms = channel.permissions_for(server.get_member(client.user.id))
                 if not myperms.send_messages:
                     continue

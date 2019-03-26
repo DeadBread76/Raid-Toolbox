@@ -456,7 +456,7 @@ def dmspam(currentattacks,spawnedpids):
         tcounter += 1
         number = str(tcounter)
         if sys.platform.startswith('win32'):
-            p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            p = subprocess.Popen(['python','.\\spammer\\dmspammer.py',token,number,msgtxt,user,useproxies])
         elif sys.platform.startswith('linux'):
             p = subprocess.Popen(['python3','spammer/dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         spawnedpids.append(p.pid)
