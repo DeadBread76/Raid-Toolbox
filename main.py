@@ -430,7 +430,7 @@ def vcspam(currentattacks,spawnedpids):
         if sys.platform.startswith('win32'):
             p = subprocess.Popen(['python','.\\spammer\\vcspam.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         elif sys.platform.startswith('linux'):
-            p = subprocess.Popen(['python3','spammer/vcspamlinux.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            p = subprocess.Popen(['python3','spammer/vcspam.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         spawnedpids.append(p.pid)
         if number == str(tokencount):
             break
