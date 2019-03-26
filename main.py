@@ -64,7 +64,7 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.2.6"
+rtbversion = "0.3.0b"
 smversion = "0.1.0"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -121,23 +121,25 @@ def main(currentattacks,spawnedpids):
     print (colored("██                                 There are "+str(tcounter)+" tokens available.           "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██         0. Exit                               ██         12. Image Spammer                     ██",menucolour))
-    print (colored("██         1. Joiner                             ██         13. Playing game changer              ██",menucolour))
-    print (colored("██         2. Leaver                             ██         14. Ascii Nickname (Spams Audit log)  ██",menucolour))
-    print (colored("██         3. Group DM leaver                    ██         15. Embed Spammer                     ██",menucolour))
-    print (colored("██         4. Token Checker                      ██         16. TrafficLight status effect        ██",menucolour))
-    print (colored("██         5. Message spammer                    ██         17. Role Mass Mentioner               ██",menucolour))
-    print (colored("██         6. Ascii spammer                      ██         18. Channel Message Cleaner           ██",menucolour))
-    print (colored("██         7. Mass mention spammer               ██         19. Server Smasher (Single bot token) ██",menucolour))
-    print (colored("██         8. Voice Chat Spammer                 ██         20. Proxy Scraper                     ██",menucolour))
-    print (colored("██         9. User DM Spammer                    ██         21. Voice chat join and spam          ██",menucolour))
-    print (colored("██         10. Friend Request Spammer            ██         22. View Running Attacks              ██",menucolour))
-    print (colored("██         11. Group DM spammer                  ██         23. Custom attack plugins             ██",menucolour))
+    print (colored("██                                               ██                                               ██",menucolour))
+    print (colored("██         0. Exit                               ██         13. Playing game changer              ██",menucolour))
+    print (colored("██         1. Joiner                             ██         14. Ascii Nickname (Spams Audit log)  ██",menucolour))
+    print (colored("██         2. Leaver                             ██         15. Embed Spammer                     ██",menucolour))
+    print (colored("██         3. Group DM leaver                    ██         16. TrafficLight status effect        ██",menucolour))
+    print (colored("██         4. Token Checker                      ██         17. Role Mass Mentioner               ██",menucolour))
+    print (colored("██         5. Message spammer                    ██         18. Channel Message Cleaner           ██",menucolour))
+    print (colored("██         6. Ascii spammer                      ██         19. Server Smasher (Single bot token) ██",menucolour))
+    print (colored("██         7. Mass mention spammer               ██         20. Proxy Scraper                     ██",menucolour))
+    print (colored("██         8. Voice Chat Spammer                 ██         21. Voice chat join and spam          ██",menucolour))
+    print (colored("██         9. User DM Spammer                    ██         22. View Running Attacks              ██",menucolour))
+    print (colored("██         10. Friend Request Spammer            ██         23. Custom attack plugins             ██",menucolour))
+    print (colored("██         11. Group DM spammer                  ██         24. Tools                             ██",menucolour))
+    print (colored("██         12. Image Spammer                     ██                                               ██",menucolour))
     print (colored("██                                               ██                                               ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
-    print (colored("██                            Please enter the number of your choice.                             ██",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
+    print (colored("██                                               ██                                               ██",menucolour))
+    print (colored("██     Please enter the number of your choice.   ██    Type 'info' for Information and Updates    ██",menucolour))
+    print (colored("██                                               ██                                               ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     choice = input()
     try:
@@ -203,7 +205,6 @@ def main(currentattacks,spawnedpids):
             print (colored('Invalid Option.',"yellow"))
             input()
             main(currentattacks,spawnedpids)
-        #I actually had what was left of a multi page menu i was working on left here lmao
     except Exception as i:
         clear()
         print (colored('Invalid Input.',"yellow"))
@@ -841,12 +842,16 @@ def info(currentattacks,spawnedpids):
     print (colored("Discord.py version: "+ discord.__version__,menucolour))
     print (colored("                                                            ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
-    inf = input("Press enter to return to menu.\n")
+    print (colored("Type 'update' to update Raid ToolBox to the latest version.",menucolour))
+    print (colored("Type 'reinstall' to reinstall requirements",menucolour))
+    print (colored("Type 'diag' for diagnostics log.",menucolour))
+    print (colored("------------------------------------------------------------",menucolour))
+    inf = input("")
     if inf == "d":
         print('7RtuZEe')
         input()
         info(currentattacks,spawnedpids)
-    elif inf.lower() == 'repair':
+    elif inf.lower() == 'reinstall':
         if sys.platform.startswith('win32'):
             installation = subprocess.Popen(['pip','install','-r','requirements.txt','--user'])
         elif sys.platform.startswith('linux'):

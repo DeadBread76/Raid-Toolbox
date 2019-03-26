@@ -1,12 +1,16 @@
 import discord
-import asyncio
 import time
 import sys
-import os
 import random
 import aiohttp
+import logging
 
+token = sys.argv[1]
+SERVER = sys.argv[2]
+tokenno = sys.argv[3]
 useproxies = sys.argv[4]
+
+logging.basicConfig(filename='RTB.log', filemode='w', format='Token {}'.format(str(tokenno))+' - %(levelname)s - %(message)s',level=logging.CRITICAL)
 if useproxies == 'True':
     proxy_list = open("proxies.txt").read().splitlines()
     proxy = random.choice(proxy_list)
@@ -15,36 +19,27 @@ if useproxies == 'True':
 else:
     client = discord.Client()
 
-token = sys.argv[1]
-SERVER = sys.argv[2]
-tokenno = sys.argv[3]
-
 @client.event
 async def on_ready():
-    server = client.get_server(SERVER)
-    try:
-        msg = ' '
-        for m in server.members:
-            msg += m.mention + ' '
-        while not client.is_closed:
-           for c in server.channels:
-                if c.type != discord.ChannelType.text:
-                   continue
-                myperms = c.permissions_for(server.get_member(client.user.id))
-                if not myperms.send_messages:
-                    continue
-                print('Token ' + str(tokenno) + ' mass mentioning in: '+c.name)
-                for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                    try:
-                        await client.send_message(c, m)
-                    except:
-                        return ''
-    except Exception:
-        time.sleep(1)
-    
+    server = client.get_guild(int(SERVER))
+    msg = ''
+    for member in server.members:
+        msg += member.mention + ' '
+    while not client.is_closed():
+        for channel in server.channels:
+            if not isinstance(channel, discord.TextChannel):
+                continue
+            myperms = channel.permissions_for(server.get_member(client.user.id))
+            if not myperms.send_messages:
+                continue
+            for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
+                try:
+                    await channel.send(m)
+                except Exception:
+                    pass
+
 try:
     client.run(token, bot=False)
 except Exception as c:
+    logging.critical('Token {} Unable to login: {}'.format(str(tokenno),str(c)))
     print (c)
-
-

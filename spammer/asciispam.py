@@ -1,13 +1,17 @@
 import discord
-import asyncio
 import random
-import time
 import sys
-import os
-import random
 import aiohttp
+import logging
 
+token = sys.argv[1]
+tokenno = sys.argv[2]
+textchan = sys.argv[3]
+allchan = sys.argv[4]
+SERVER = sys.argv[5]
 useproxies = sys.argv[6]
+
+logging.basicConfig(filename='RTB.log', filemode='w', format='Token {}'.format(str(tokenno))+' - %(levelname)s - %(message)s',level=logging.CRITICAL)
 if useproxies == 'True':
     proxy_list = open("proxies.txt").read().splitlines()
     proxy = random.choice(proxy_list)
@@ -16,22 +20,15 @@ if useproxies == 'True':
 else:
     client = discord.Client()
 
-token = sys.argv[1]
-tokenno = sys.argv[2]
-textchan = sys.argv[3]
-allchan = sys.argv[4]
-SERVER = sys.argv[5]
-#fuck i'm stupid
-#i had asc = "" up here instead of in the loop
 @client.event
 async def on_ready():
-    txtchan = client.get_channel(textchan)
-    if allchan == 'true': #wew no sleep
-        while not client.is_closed:
-            for c in client.get_server(SERVER).channels:
-                if c.type != discord.ChannelType.text:
+    server = client.get_guild(int(SERVER))
+    if allchan == 'true':
+        while not client.is_closed():
+            for channel in server.channels:
+                if not isinstance(channel, discord.TextChannel):
                     continue
-                myperms = c.permissions_for(client.get_server(SERVER).get_member(client.user.id))
+                myperms = channel.permissions_for(server.get_member(client.user.id))
                 if not myperms.send_messages:
                     continue
                 asc = ''
@@ -39,21 +36,22 @@ async def on_ready():
                     num = random.randrange(13000)
                     asc = asc + chr(num)
                 try:
-                    await client.send_message(c, asc)
+                    await channel.send(asc)
                 except Exception:
-                    return ''
-                    
+                    pass
     else:
-        while not client.is_closed:
+        txtchan = client.get_channel(int(textchan))
+        while not client.is_closed():
             asc = ''
             for x in range(1999):
                 num = random.randrange(13000)
                 asc = asc + chr(num)
             try:
-                await client.send_message(txtchan, asc)
+                await txtchan.send(asc)
             except Exception:
-                    return ''
+                    pass
 try:
     client.run(token, bot=False)
 except Exception as c:
+    logging.critical('Token {} Unable to login: {}'.format(str(tokenno),str(c)))
     print (c)
