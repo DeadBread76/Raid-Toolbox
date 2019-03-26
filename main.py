@@ -929,7 +929,7 @@ def info(currentattacks,spawnedpids):
         input()
     elif inf.lower() == 'update':
         clear()
-        u = input("Are you sure you want to update?(Y/N)\n")
+        u = input("Are you sure you want to update?(Y/N)\nBe Sure to backup your configs.\n")
         if u.lower() == 'y':
             clear()
             print ("Downloading latest version from GitHub...")
