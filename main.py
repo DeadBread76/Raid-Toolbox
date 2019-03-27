@@ -67,7 +67,7 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.3.0b"
+rtbversion = "0.3.0"
 smversion = "0.1.2"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
