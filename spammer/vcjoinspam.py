@@ -1,11 +1,14 @@
 import discord
 import asyncio
 import sys
-import os
 import random
 import aiohttp
 
-useproxies = sys.argv[4] 
+token = sys.argv[1]
+tokenno = sys.argv[2]
+SERVER = sys.argv[3]
+useproxies = sys.argv[4]
+
 if useproxies == 'True':
     proxy_list = open("proxies.txt").read().splitlines()
     proxy = random.choice(proxy_list)
@@ -13,31 +16,28 @@ if useproxies == 'True':
     client = discord.Client(connector=con)
 else:
     client = discord.Client()
-token = sys.argv[1]
-tokenno = sys.argv[2]
-SERVER = sys.argv[3]
-CHANNELS = []
+
+
 
 @client.event
 async def on_ready():
-    server = client.get_server(SERVER)
-    for chan in server.channels:
-        if chan.type != discord.ChannelType.voice:
-            continue
-        myperms = chan.permissions_for(server.get_member(client.user.id))
+    CHANNELS = []
+    server = client.get_guild(int(SERVER))
+    for channel in server.voice_channels:
+        myperms = channel.permissions_for(server.get_member(client.user.id))
         if not myperms.connect:
             continue
-        CHANNELS.append(chan)
-    while not client.is_closed:
+        CHANNELS.append(channel)
+    while not client.is_closed():
         try:
             voicechannel = random.choice(CHANNELS)
-            vc = await client.join_voice_channel(voicechannel)
+            vc = await voicechannel.connect()
             await asyncio.sleep(0.1)
-            await vc.disconnect()
-        except Exception:
-            await on_ready()
+            await vc.disconnect(force=True)
+        except Exception as e:
+            print (e)
+            pass
 try:
     client.run(token, bot=False)
 except Exception as c:
-    print ("Token " + str(tokenno)+ ": " +c)
-
+    print(c)

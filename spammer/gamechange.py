@@ -1,10 +1,12 @@
 import discord
-import asyncio
 import sys
 import random
 import aiohttp
 
+token = sys.argv[1]
+game = sys.argv[2]
 useproxies = sys.argv[3]
+
 if useproxies == 'True':
     proxy_list = open("proxies.txt").read().splitlines()
     proxy = random.choice(proxy_list)
@@ -13,17 +15,13 @@ if useproxies == 'True':
 else:
     client = discord.Client()
 
-token = sys.argv[1]
-game = sys.argv[2]
-
 @client.event
 async def on_ready():
     try:
-        await client.change_presence(game=discord.Game(name=game))
+        await client.change_presence(activity=discord.Game(name=game))
     except Exception:
-        return ''
+        pass
 try:
     client.run(token, bot=False)
 except Exception as c:
     print (c)
-
