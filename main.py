@@ -139,7 +139,7 @@ def main(currentattacks,spawnedpids):
     print (colored("██         5.  Message spammer                   ██         18. Channel Message Cleaner           ██",menucolour))
     print (colored("██         6.  Ascii spammer                     ██         19. Server Smasher (Single bot token) ██",menucolour))
     print (colored("██         7.  Mass mention spammer              ██         20. Proxy Scraper                     ██",menucolour))
-    print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join and spam          ██",menucolour))
+    print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join spammer           ██",menucolour))
     print (colored("██         9.  User DM Spammer                   ██         22. View Running Attacks              ██",menucolour))
     print (colored("██         10. Friend Request Spammer            ██         23. Custom attack plugins             ██",menucolour))
     print (colored("██         11. Group DM spammer                  ██         24. Tools                             ██",menucolour))
@@ -361,7 +361,7 @@ def messagespam(currentattacks,spawnedpids):
     time.sleep(5)
     main(currentattacks,spawnedpids)
 
-def asciispam(currentattacks,spawnedpids): #no longer bugged
+def asciispam(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Spammer")
@@ -477,7 +477,7 @@ def dmspam(currentattacks,spawnedpids):
     time.sleep(5)
     main(currentattacks,spawnedpids)
 
-def friender(currentattacks,spawnedpids): #finally it works
+def friender(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Friend Request Spammer")
