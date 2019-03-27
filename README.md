@@ -6,7 +6,14 @@ Supports Both Windows and Linux.
 
 Screenshot:
 
-![Screenshot](http://i.imgur.com/Barkl3X.png)
+![Screenshot](http://i.imgur.com/aK6UihK.png)
+
+### `Features:`
+
+
+
+
+
 
 You need the modules stated in requirements.txt `pip install -r requirements.txt` or just let Raid Toolbox install them for you.
 
