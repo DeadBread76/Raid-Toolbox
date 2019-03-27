@@ -967,6 +967,7 @@ def tools(currentattacks,spawnedpids):
     print (colored("0.  Return to menu",menucolour))
     print (colored("1.  HypeSquad House Changer",menucolour))
     print (colored("2.  Avatar Changer",menucolour))
+    print (colored("3.  Token Cleaner",menucolour))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks,spawnedpids)
@@ -1006,6 +1007,25 @@ def tools(currentattacks,spawnedpids):
                 p = subprocess.Popen([linuxpy,'tools/avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         time.sleep(5)
         tools(currentattacks,spawnedpids)
+    elif int(choice) == 3:
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Token Cleaner")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Token Cleaner\x07")
+        print (colored("Token Cleaner: Leaves every server that the token is on, making it faster to login to.",menucolour))
+        choice = input("Clean Tokens?(Y/N): ")
+        if choice.lower() == 'y':
+            tokenlist = open("tokens.txt").read().splitlines()
+            for token in tokenlist:
+                if sys.platform.startswith('win32'):
+                    p = subprocess.Popen([winpy,'.\\tools\\cleaner.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                elif sys.platform.startswith('linux'):
+                    p = subprocess.Popen([linuxpy,'tools/cleaner.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            time.sleep(3)
+            tools(currentattacks,spawnedpids)
+        else:
+            tools(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
