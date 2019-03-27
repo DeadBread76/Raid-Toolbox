@@ -1,3 +1,20 @@
+Raid ToolBox version 0.3.0 | 28/03/2019 1:43 AM
+===================================
+Changes:
+Discord.py Version, Using Rewrite.
+General TUI changes
+Server Smasher no longer has "Destroy From Config" option.
+
+Fixes:
+None
+
+Additions:
+Remove Bans Option For Server Smasher
+Tools Section: Added 2 tools.
+Window Resizing on Windows. (Will Come to linux soon.)
+Voice Chat Spammer is now really really loud.
+
+
 Raid ToolBox version 0.2.6 | 25/03/2019 7:58 PM
 ===================================
 Changes:
