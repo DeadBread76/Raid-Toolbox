@@ -4,6 +4,7 @@ try:
     import json
     import time
     import random
+    import ctypes
     import asyncio
     import discord
     import requests
@@ -20,6 +21,13 @@ except Exception as e:
     input()
     sys.exit()
 
+smversion = sys.argv[1]
+menucolour = sys.argv[2]
+
+if sys.platform.startswith('win32'):
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Smasher v{}".format(smversion))
+elif sys.platform.startswith('linux'):
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Smasher v{}\x07".format(smversion))
 class Worker(Thread):
     """
     Pooling
@@ -176,21 +184,23 @@ async def on_ready():
     await serverselect()
 
 async def serverselect():
+    if sys.platform.startswith('win32'):
+        os.system('mode con:cols=70 lines=30')
     lists = []
     clear()
     if clienttype == "bot":
         usert = "Bot"
     else:
         usert = "User"
-    print("Logged in as {}".format(client.user.name+"#"+client.user.discriminator))
-    print("{} is in the following channels: \n".format(usert))
+    print (colored("Logged in as {}".format(client.user.name+"#"+client.user.discriminator,menucolour)))
+    print (colored("{} is in the following channels: \n".format(usert),menucolour))
     counter = -1
     for serv in client.guilds:
         membcount = 0
         for member in serv.members:
             membcount += 1
         counter += 1
-        print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount)+'\n',"green"))
+        print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount),menucolour))
         lists.append(serv.id)
     print('----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
@@ -210,6 +220,8 @@ async def serverselect():
     await main(SERVER)
 
 async def main(SERVER):
+    if sys.platform.startswith('win32'):
+        os.system('mode con:cols=70 lines=30')
     #options
     clear()
     server = client.get_guild(int(SERVER))
@@ -217,7 +229,7 @@ async def main(SERVER):
     print ("Server ID: " + str(SERVER))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu","green"))
+    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange' : namechange,
@@ -250,34 +262,36 @@ async def main(SERVER):
 
         elif int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
+                if sys.platform.startswith('win32'):
+                    os.system('mode con:cols=70 lines=30')
                 try:
                     clear()
                     server = client.get_guild(int(SERVER))
-                    print (colored("Type 'start' to start.","green"))
-                    print (colored("0.  Go back","green"))
-                    print (colored("1.  Change server name: {}".format(toggleopts['namechange']),"green"))
-                    print (colored("2.  New Server Name: {}".format(toggleopts['servname']),"green"))
-                    print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),"green"))
-                    print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),"green"))
-                    print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),"green"))
-                    print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),"green"))
-                    print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),"green"))
-                    print (colored("8.  Ban all members: {}".format(toggleopts['userban']),"green"))
-                    print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),"green"))
-                    print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),"green"))
-                    print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),"green"))
-                    print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),"green"))
-                    print (colored("13. Create Channels: {}".format(toggleopts['createchan']),"green"))
-                    print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),"green"))
-                    print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),"green"))
-                    print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),"green"))
-                    print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),"green"))
-                    print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),"green"))
-                    print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),"green"))
-                    print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),"green"))
-                    print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),"green"))
-                    print (colored("22. Your ID: {}".format(toggleopts['me']),"green"))
-                    print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),"green"))
+                    print (colored("Type 'start' to start.",menucolour))
+                    print (colored("0.  Go back",menucolour))
+                    print (colored("1.  Change server name: {}".format(toggleopts['namechange']),menucolour))
+                    print (colored("2.  New Server Name: {}".format(toggleopts['servname']),menucolour))
+                    print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),menucolour))
+                    print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),menucolour))
+                    print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),menucolour))
+                    print (colored("6.  Delete all channels: {}".format(toggleopts['chandel']),menucolour))
+                    print (colored("7.  Delete all roles: {}".format(toggleopts['roledel']),menucolour))
+                    print (colored("8.  Ban all members: {}".format(toggleopts['userban']),menucolour))
+                    print (colored("9.  Ban Reason: {}".format(toggleopts['banreason']),menucolour))
+                    print (colored("10. Users to not Ban: {}".format(toggleopts['userid']),menucolour))
+                    print (colored("11. Send DM to everyone: {}".format(toggleopts['senddm']),menucolour))
+                    print (colored("12. DM Content: {}".format(toggleopts['dmcontent']),menucolour))
+                    print (colored("13. Create Channels: {}".format(toggleopts['createchan']),menucolour))
+                    print (colored("14. Channel Creation type: {}".format(toggleopts['chanmethod']),menucolour))
+                    print (colored("15. Name for the created channels: {}".format(toggleopts['channame']),menucolour))
+                    print (colored("16. Number of channels to create: {}".format(toggleopts['channelno']),menucolour))
+                    print (colored("17. Spam after destruction: {}".format(toggleopts['usespam']),menucolour))
+                    print (colored("18. Spamming method: {}".format(toggleopts['spammethod']),menucolour))
+                    print (colored("19. Text to spam: {}".format(toggleopts['customtxt']),menucolour))
+                    print (colored("20. Use text to speech in message: {}".format(toggleopts['usetts']),menucolour))
+                    print (colored("21. Give yourself admin: {}".format(toggleopts['gimmieadmin']),menucolour))
+                    print (colored("22. Your ID: {}".format(toggleopts['me']),menucolour))
+                    print (colored("23. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),menucolour))
                     toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
                     if toga.lower() == "start":
                         for channel in server.channels:
