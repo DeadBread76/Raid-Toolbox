@@ -79,6 +79,8 @@ currentattacks = []
 spawnedpids = []
 
 def main(currentattacks,spawnedpids):
+    if sys.platform.startswith('win32'):
+        os.system('mode con:cols=100 lines=30')
     tcounter = 0
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -964,6 +966,7 @@ def tools(currentattacks,spawnedpids):
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
+        clear()
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     else:
         main(currentattacks,spawnedpids)
