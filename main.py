@@ -24,6 +24,8 @@ try:
     from termcolor import colored
     from proxyscrape import create_collector
     from distutils.dir_util import copy_tree
+    from tkinter import *
+    from tkinter.filedialog import *
     from config import*
     from rtbplugins import*
 except Exception as i:
@@ -216,8 +218,10 @@ def main(currentattacks,spawnedpids):
             main(currentattacks,spawnedpids)
     except Exception as i:
         clear()
-        print (colored('Invalid Input.',"yellow"))
-        print (colored(i,"yellow"))
+        if 'invalid literal for int()' in str(i):
+            print (colored('Invalid Option.',"yellow"))
+        else:
+            print (colored(i,"yellow"))
         input()
         main(currentattacks,spawnedpids)
 
@@ -865,16 +869,11 @@ def info(currentattacks,spawnedpids):
             installation.wait()
             import speedtest
         clear()
-        tcounter = 0
         with open('tokens.txt','r') as handle:
-            line = handle.readlines()
-        for x in line:
-            tcounter += 1
-        testtoken = line[0]
+            lines = handle.readlines()
+        tcounter = len(lines)
         print ("Running Speedtest...")
-        servers = []
         s = speedtest.Speedtest()
-        s.get_servers(servers)
         print ("Testing Ping...")
         s.get_best_server()
         print ("Testing Download Speed...")
@@ -961,8 +960,54 @@ def info(currentattacks,spawnedpids):
 
 def tools(currentattacks,spawnedpids):
     clear()
-    input("Soon")
-    main(currentattacks,spawnedpids)
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools\x07")
+    print (colored("Raid Toolbox Tools",menucolour))
+    print (colored("-------------------",menucolour))
+    print (colored("0.  Return to menu",menucolour))
+    print (colored("1.  HypeSquad House Changer",menucolour))
+    print (colored("2.  Avatar Changer",menucolour))
+    choice = input('Selection: ')
+    if int(choice) == 0:
+        main(currentattacks,spawnedpids)
+    elif int(choice) == 1:
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | HypeSquad Changer")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | HypeSquad Changer\x07")
+        print (colored("1. Bravery",menucolour))
+        print (colored("2. Brilliance",menucolour))
+        print (colored("3. Ballance",menucolour))
+        choice = input('Selection: ')
+        tokenlist = open("tokens.txt").read().splitlines()
+        for token in tokenlist:
+            if sys.platform.startswith('win32'):
+                p = subprocess.Popen(['python','.\\tools\\hypesquad.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            elif sys.platform.startswith('linux'):
+                p = subprocess.Popen(['python3','tools/hypesquad.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        p.wait()
+        tools(currentattacks,spawnedpids)
+    elif int(choice) == 2:
+        Tk().withdraw()
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Avatar Changer")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Avatar Changer\x07")
+        avatar = askopenfilename(initialdir = os.getcwd(),title = "Select avatar to change",filetypes = (("PNG Files",".png"),("All files","*.*")))
+        if avatar is None:
+            tools(currentattacks,spawnedpids)
+        tokenlist = open("tokens.txt").read().splitlines()
+        for token in tokenlist:
+            if sys.platform.startswith('win32'):
+                p = subprocess.Popen(['python','.\\tools\\avatarchange.py',token,avatar])
+            elif sys.platform.startswith('linux'):
+                p = subprocess.Popen(['python3','tools/avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        time.sleep(5)
+        tools(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
