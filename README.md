@@ -6,15 +6,71 @@ Supports Both Windows and Linux.
 
 Screenshot:
 
-![Screenshot](http://i.imgur.com/Barkl3X.png)
+![Screenshot](http://i.imgur.com/25WPvb9.png)
 
-You need the modules stated in requirements.txt `pip install -r requirements.txt` or just let Raid Toolbox install them for you.
+# `Features:`
 
-And you need Python 3.6 (I use 3.6.8) https://www.python.org/downloads/release/python-367/
+**Proxy Support**
 
-You can change the menu colour by changing the value in `config.py`
+**Joiner and Leaver**
 
-To enable proxies, add a text file called `proxies.txt` in the folder where `tokens.txt` is located, and set the value in `config.py` to 'True'
+**Token Checker**
+
+**Message Spammer**
+
+**Ascii Spammer**
+
+**Mass Mentioner**
+
+**Voice Chat Spammer**
+
+**DM Spammer**
+
+**Group DM Spammer**
+
+**Image Spammer**
+
+**Embed Spammer**
+
+**Role Mass Mentioner**
+
+
+
+# `Installation:`
+### `Modules:`
+
+discord.py (Rewrite Version)
+
+requests
+
+pynacl
+
+termcolor
+
+colorama
+
+youtube_dl
+
+pyperclip
+
+proxyscrape
+
+`(Raid ToolBox can install these itself.)`
+
+### `Python:`
+
+Python 3.6 and 3.7 are compatible, you can get them here:
+
+[Python 3.6.8](https://www.python.org/downloads/release/python-368/)
+
+[Python 3.7.2](https://www.python.org/downloads/release/python-373/)
+
+
+### `Configuration:`
+
+Menu Colour can be changed by changing the value in `config.py`, You can also enable proxies and change the python command there too.
+
+### `Voice Chat Spammer Usage and FFmpeg:`
 
 To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path
 
