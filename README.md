@@ -61,9 +61,9 @@ proxyscrape
 
 Python 3.6 and 3.7 are compatible, you can get them here:
 
-https://www.python.org/downloads/release/python-373/
+[Python 3.6.8](https://www.python.org/downloads/release/python-368/)
 
-https://www.python.org/downloads/release/python-368/
+[Python 3.7.2](https://www.python.org/downloads/release/python-373/)
 
 
 ### `Configuration:`
