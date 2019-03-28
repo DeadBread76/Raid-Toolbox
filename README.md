@@ -77,3 +77,7 @@ To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or downloa
 If on linux, run the command `sudo apt-get install ffmpeg`.
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
+
+#**Disclaimer**
+
+I am not responsible for any bans you might recieve using Raid ToolBox.
