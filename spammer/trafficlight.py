@@ -2,7 +2,6 @@ import discord
 import asyncio
 import random
 import sys
-import random
 import aiohttp
 
 useproxies = sys.argv[2]

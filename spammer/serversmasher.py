@@ -162,7 +162,7 @@ def createchannel(server,channelname,channeltype):
     src = requests.post("https://discordapp.com/api/v6/guilds/"+str(server)+"/channels", headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
-        createchannel(channelname)
+        createchannel(server,channelname,channeltype)
 
 def sendspam(channel,msgcontent,usetts):
     if clienttype == 'bot':
@@ -214,19 +214,10 @@ async def serverselect():
         lists.append(serv.id)
     print('----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
-    if servernum.lower() == 'back':
-        print ("Returning to Raid ToolBox.")
-        await client.close()
-        await asyncio.sleep(2)
-    elif servernum.lower() == 'b':
-        print ("Returning to Raid ToolBox.")
-        await client.close()
-        await asyncio.sleep(2)
-    else:
-        try:
-            SERVER = lists[int(servernum)]
-        except:
-            await serverselect()
+    try:
+        SERVER = lists[int(servernum)]
+    except Exception:
+        await serverselect()
     await main(SERVER)
 
 async def main(SERVER):
@@ -236,10 +227,10 @@ async def main(SERVER):
     clear()
     server = client.get_guild(int(SERVER))
     print ("Server: " + server.name)
-    print ("Server ID: " + str(SERVER))
+    print ("Server ID: " + colored(str(SERVER),menucolour))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 0. Return to server select. \n 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Raid ToolBox Menu",menucolour))
+    print (colored(" 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Server Select",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange' : namechange,
@@ -268,10 +259,7 @@ async def main(SERVER):
         'giveeveryoneadmin' : giveeveryoneadmin
         }
     try:
-        if int(opts) == 0:
-               await serverselect()
-
-        elif int(opts) == 1:
+        if int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
                     os.system('mode con:cols=70 lines=30')
@@ -438,7 +426,7 @@ async def main(SERVER):
                             toggleopts['namechange'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 2:
-                        toggleopts['servname'] = input ("New Server name: ")
+                        toggleopts['servname'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Server name: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 3:
                         if toggleopts['iconbegone'] == True:
@@ -453,7 +441,7 @@ async def main(SERVER):
                             toggleopts['changeicon'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 5:
-                        toggleopts['iconfile'] = input ("Name of the icon: ")
+                        toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of the icon: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 6:
                         if toggleopts['rembans'] == True:
@@ -493,7 +481,7 @@ async def main(SERVER):
                             toggleopts['senddm'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 13:
-                        toggleopts['dmcontent']  = input ("DM Content: ")
+                        toggleopts['dmcontent']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'DM Content: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 14:
                         if toggleopts['createchan'] == True:
@@ -502,13 +490,13 @@ async def main(SERVER):
                             toggleopts['createchan'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 15:
-                        toggleopts['chanmethod']  = input ("Channel Creation method (set,ascii,voice): ")
+                        toggleopts['chanmethod']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Channel Creation method (set,ascii,voice): ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 16:
-                        toggleopts['channame']  = input ("Name of created channels: ")
+                        toggleopts['channame']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created channels: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 17:
-                        toggleopts['channelno'] = input ("Number of Channels to create: ")
+                        toggleopts['channelno'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of Channels to create: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 18:
                         if toggleopts['usespam'] == True:
@@ -517,10 +505,10 @@ async def main(SERVER):
                             toggleopts['usespam'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 19:
-                        toggleopts['spammethod']  = input ("Spamming method (text,asc,everyone): ")
+                        toggleopts['spammethod']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Spamming method (text,asc,everyone): ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 20:
-                        toggleopts['customtxt']  = input ("Text to spam: ")
+                        toggleopts['customtxt'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Text to spam: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 21:
                         if toggleopts['usetts'] == 'true':
@@ -535,7 +523,7 @@ async def main(SERVER):
                             toggleopts['gimmieadmin'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 23:
-                        toggleopts['me']  = input ("Your ID for giving admin: ")
+                        toggleopts['me']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Your ID for giving admin: ')
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 24:
                         if toggleopts['giveeveryoneadmin'] == True:
@@ -546,6 +534,7 @@ async def main(SERVER):
                 except Exception as e:
                     print (e)
                     await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                    await changesettings(toggleopts,SERVER)
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
@@ -583,9 +572,7 @@ async def main(SERVER):
                 await main(SERVER)
 
         elif int(opts) == 5:
-            print ("Returning to Raid ToolBox.")
-            await client.close()
-
+            await serverselect()
     except Exception as e:
         print (colored("Error:","red"))
         print (colored(e,"red"))

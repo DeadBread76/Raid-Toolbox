@@ -1,3 +1,17 @@
+Raid ToolBox version 0.3.1 | 29/03/2019 2:23 AM
+===================================
+Changes:
+0 is now back to menu on everything
+Removed Return to Raid ToolBox in Server Smasher
+
+Fixes:
+main() typos
+Got rid of the blocking input()s in Server Smasher
+
+Additions:
+Quick checker in tools (inaccurate but fast)
+
+
 Raid ToolBox version 0.3.0 | 28/03/2019 1:43 AM
 ===================================
 Changes:

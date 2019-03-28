@@ -2,6 +2,7 @@ try:
     import os
     import sys
     import time
+    import json
     import ctypes
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
@@ -67,8 +68,8 @@ elif sys.platform.startswith('linux'):
 
 
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.3.0"
-smversion = "0.1.2"
+rtbversion = "0.3.1"
+smversion = "0.1.3"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -232,8 +233,9 @@ def joiner(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Invite Joiner\x07")
     print (colored("Discord invite joiner.",menucolour))
+    print (colored("0: Back",menucolour))
     link = input('Discord Invite Link: ')
-    if link.lower() == 'b':
+    if link == '0':
         main(currentattacks,spawnedpids)
     if len(link) > 7:
         link = link[19:]
@@ -253,8 +255,9 @@ def leaver(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Leaver\x07")
     print (colored("Discord server leaver.",menucolour))
+    print (colored("0: Back",menucolour))
     ID = input ('ID of the server to leave: ')
-    if str(ID).lower() == 'b':
+    if str(ID) == '0':
         main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -272,8 +275,9 @@ def groupleaver(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Leaver\x07")
     print (colored("Discord group DM leaver.",menucolour))
+    print (colored("0: Back",menucolour))
     ID = input ('ID of the group DM to leave: ')
-    if str(ID).lower() == 'b':
+    if str(ID) == '0':
         main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -299,25 +303,24 @@ def tokencheck(currentattacks,spawnedpids):
         tokens = handle.readlines()
         for x in tokens:
             token = x.rstrip()
-            headers={
-                'Authorization': token
-                }
-            src = requests.post('https://discordapp.com/api/v6/invite/RTBCHECKER', headers=headers)
-            try:
-                if "You need to verify your account in order to perform this action." in str(src.content):
-                    print (colored(token + ' Unverified.',"yellow"))
-                    ucounter +=1
-                elif "401: Unauthorized" in str(src.content):
-                    print (colored(token + ' Invalid.',"red"))
-                    icounter +=1
-                else:
-                    print (colored(token + ' Valid.',"green"))
+            apilink = 'https://discordapp.com/api/v6/users/@me'
+            headers = {'Authorization': token, 'Content-Type': 'application/json'}
+            src = requests.get(apilink, headers=headers)
+            if "401: Unauthorized" in str(src.content):
+                print(colored(token + " Invalid","red"))
+                icounter +=1
+            else:
+                response = json.loads(src.content.decode())
+                if response["verified"]:
+                    print(colored(token + " Valid","green"))
                     vcounter +=1
                     if token in validtokens:
                         continue
-                    validtokens.append(token)
-            except Exception as exc:
-                print (exc)
+                    else:
+                        validtokens.append(token)
+                else:
+                    print(colored(token + " Unverified","yellow"))
+                    ucounter +=1
         with open('tokens.txt','w') as handle:
             for token in validtokens:
                 handle.write(token+'\n')
@@ -336,8 +339,9 @@ def messagespam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Spammer\x07")
     print (colored("Discord Server message spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input ("Server ID: ")
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
@@ -368,8 +372,9 @@ def asciispam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Spammer\x07")
     print (colored("Discord server ascii spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input('Server ID: ')
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
@@ -399,8 +404,9 @@ def massmentioner(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Mass Mentioner\x07")
     print (colored("Discord server mass mentioner.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input('Server ID: ')
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -425,8 +431,9 @@ def vcspam(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice Chat Spammer\x07")
     tcounter = 0
     print (colored("Discord VC joiner/spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     ytlink = input ('YouTube Link to play: ')
-    if ytlink.lower() == 'b':
+    if ytlink == '0':
         main(currentattacks,spawnedpids)
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
@@ -459,8 +466,9 @@ def dmspam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | DM Spammer\x07")
     print (colored("Discord user DM spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     user = input ("User's ID: ")
-    if str(user).lower() == 'b':
+    if str(user) == '0':
         main(currentattacks,spawnedpids)
     msgtxt = input ("Text to spam: ")
     tcounter = 0
@@ -484,8 +492,9 @@ def friender(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Friend Request Spammer\x07")
     print (colored("Discord user mass friender.",menucolour))
+    print (colored("0: Back",menucolour))
     userid = input("User's ID: ")
-    if str(userid).lower() == 'b':
+    if str(userid) == '0':
         main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     tcounter = 0
@@ -506,8 +515,9 @@ def imagespam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Image Spammer\x07")
     print (colored("Discord server image spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     chan = input ("Channel to spam in: ")
-    if str(chan).lower() == 'b':
+    if str(chan) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -532,9 +542,10 @@ def gamechange(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Playing Status Changer\x07")
     print (colored("Discord game playing status changer.",menucolour))
     print (colored("This will probably slow down some attacks.","blue"))
+    print (colored("0: Back",menucolour))
     print ('Name of game to play: ')
     game = input ('Playing ')
-    if game.lower() == 'b':
+    if game == '0':
         main(currentattacks,spawnedpids)
     tokenlist = open("tokens.txt").read().splitlines()
     for token in tokenlist:
@@ -555,8 +566,9 @@ def asciinick(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Nickname Changer\x07")
     print (colored("Discord random ascii nickname.",menucolour))
     print (colored("This will probably slow down some attacks.","blue"))
+    print (colored("0: Back",menucolour))
     SERVER = input ("Server ID: ")
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -580,8 +592,9 @@ def embedspam(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Embed Spammer\x07")
     print (colored("Discord embed spammer.",menucolour))
     print (colored("Will probably bypass some bots that have word and image restrictions.",menucolour))
+    print (colored("0: Back",menucolour))
     title = input ("Embed Title: ")
-    if title.lower() == 'b':
+    if title == '0':
         main(currentattacks,spawnedpids)
     author = input ("Embed Author: ")
     iconurl = input ("Author Icon URL: ")
@@ -635,8 +648,9 @@ def rolemassmention(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Role Mass Mentioner\x07")
     print (colored("Discord role mass mentioner.",menucolour))
     print (colored("This will spam mention all roles that are mentionable.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input('Server ID: ')
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -661,8 +675,9 @@ def cleanup(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Cleaner\x07")
     print (colored("Clean up messages sent by a token",menucolour))
     print (colored("This will delete all the messages sent by the token.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input('Server ID: ')
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -696,8 +711,9 @@ def proxyscrape(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Proxy Scraper\x07")
     print (colored("RTB Proxy Scraper.",menucolour))
     print (colored("I recommend that you get enough proxies for the ammount of tokens you have.",menucolour))
+    print (colored("0: Back",menucolour))
     amm = input ("Ammount of proxies to scrape: ")
-    if str(amm).lower() == 'b':
+    if str(amm) == '0':
         main(currentattacks,spawnedpids)
     for x in range(int(amm)):
         proxy = collector.get_proxy()
@@ -714,12 +730,13 @@ def proxyscrape(currentattacks,spawnedpids):
 def vcjoinspammer(currentattacks,spawnedpids): #wew its here
     clear()
     if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join and spam")
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join spammer")
     elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice chat join and spam\x07")
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice chat join spammer\x07")
     print (colored("Discord Voice chat join spammer. Joins random voice channels in a server.",menucolour))
+    print (colored("0: Back",menucolour))
     SERVER = input ('Server ID: ')
-    if str(SERVER).lower() == 'b':
+    if str(SERVER) == '0':
         main(currentattacks,spawnedpids)
     tcounter = 0
     tokenlist = open("tokens.txt").read().splitlines()
@@ -743,8 +760,9 @@ def groupdmspam(currentattacks,spawnedpids):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Spammer\x07")
     print (colored("Discord Group DM message spammer.",menucolour))
+    print (colored("0: Back",menucolour))
     group = input ("Group ID: ")
-    if str(group).lower() == 'b':
+    if str(group) == '0':
         main(currentattacks,spawnedpids)
     msgtxt = input ("Text to spam: ")
     tcounter = 0
@@ -796,9 +814,10 @@ def customplugins(currentattacks,pluginlist,spawnedpids):
     for plugin in pluginlist:
         pluginno += 1
         print (str(pluginno) +". "+ plugin)
+    print (colored("\nb: Back",menucolour))
     plug = input ("Choice of plugin: ")
-    if plug.lower() == 'back':
-        main(currentattacks)
+    if plug == 'b':
+        main(currentattacks,spawnedpids)
     plugchoice = pluginlist[int(plug)]
     clear()
     if sys.platform.startswith('win32'):
@@ -968,6 +987,7 @@ def tools(currentattacks,spawnedpids):
     print (colored("1.  HypeSquad House Changer",menucolour))
     print (colored("2.  Avatar Changer",menucolour))
     print (colored("3.  Token Cleaner",menucolour))
+    print (colored("4.  Quick Checker",menucolour))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks,spawnedpids)
@@ -996,8 +1016,8 @@ def tools(currentattacks,spawnedpids):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Avatar Changer")
         elif sys.platform.startswith('linux'):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Avatar Changer\x07")
-        avatar = askopenfilename(initialdir = os.getcwd(),title = "Select avatar to change",filetypes = (("PNG Files",".png"),("All files","*.*")))
-        if avatar is None:
+        avatar = askopenfilename(initialdir = os.getcwd(),title = "Select avatar to change")
+        if avatar == "":
             tools(currentattacks,spawnedpids)
         tokenlist = open("tokens.txt").read().splitlines()
         for token in tokenlist:
@@ -1026,6 +1046,23 @@ def tools(currentattacks,spawnedpids):
             tools(currentattacks,spawnedpids)
         else:
             tools(currentattacks,spawnedpids)
+    elif int(choice) == 4:
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Quick Checker")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Quick Checker\x07")
+        tokenlist = open("tokens.txt").read().splitlines()
+        for token in tokenlist:
+            if sys.platform.startswith('win32'):
+                p = subprocess.Popen([winpy,'.\\tools\\quickchecker.py',token])
+                time.sleep(0.07)
+            elif sys.platform.startswith('linux'):
+                p = subprocess.Popen([linuxpy,'tools/quickchecker.py',token])
+                time.sleep(0.07)
+        p.wait()
+        input("Checking complete.")
+        tools(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
