@@ -212,7 +212,7 @@ async def serverselect():
         counter += 1
         print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount),menucolour))
         lists.append(serv.id)
-    print('----------------------------------------')
+    print('\n----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
     try:
         SERVER = lists[int(servernum)]
@@ -226,8 +226,23 @@ async def main(SERVER):
     #options
     clear()
     server = client.get_guild(int(SERVER))
-    print ("Server: " + server.name)
+    print ("Server: " + colored(server.name,menucolour))
     print ("Server ID: " + colored(str(SERVER),menucolour))
+    membercount = 0
+    tchancount = 0
+    vchancount = 0
+    rolecount = 0
+    for member in server.members:
+        membercount += 1
+    for channel in server.text_channels:
+        tchancount += 1
+    for channel in server.voice_channels:
+        vchancount += 1
+    for role in server.roles:
+        rolecount += 1
+    print (colored("{} Members".format(membercount),menucolour))
+    print (colored("{} Roles".format(rolecount),menucolour))
+    print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
     print ("----------------------------------------")
     print ("Options:")
     print (colored(" 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Server Select",menucolour))
