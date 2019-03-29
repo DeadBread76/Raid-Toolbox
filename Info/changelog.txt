@@ -1,3 +1,16 @@
+Raid ToolBox version 0.3.2 | 29/03/2019 8:13 PM
+===================================
+Changes:
+Plugin system is more stable and works better
+Updated The example copypasta plugin.
+
+Fixes:
+Server Smasher Fixes
+
+Additions:
+None
+
+
 Raid ToolBox version 0.3.1 | 29/03/2019 2:23 AM
 ===================================
 Changes:

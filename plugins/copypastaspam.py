@@ -1,26 +1,20 @@
 import discord
-import asyncio
-import time
 import sys
-import os
-import random
-#make sure you use the order of when subprocess opens this file with sys.argv 
+
+# make sure you use the order of when subprocess opens this file with sys.argv
 token = sys.argv[1]
-SERVER = sys.argv[2]
-tokenno = sys.argv[3]
-text = sys.argv[4]
-textchan = sys.argv[5]
+tokenno = sys.argv[2]
+text = sys.argv[3]
+textchan = sys.argv[4]
 client = discord.Client()
+wordList = text.split()
 @client.event
 async def on_ready():
-    txtchan = client.get_channel(textchan)
-    server = client.get_server(SERVER)
-    while not client.is_closed:
-        for word in text:
-            await client.send_message(txtchan, word)
-
+    txtchan = client.get_channel(int(textchan))
+    while not client.is_closed():
+        for word in wordList:
+            await txtchan.send(word)
 try:
     client.run(token, bot=False)
 except Exception as c:
-    print (c)
-
+    print(c)

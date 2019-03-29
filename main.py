@@ -29,7 +29,6 @@ try:
     from tkinter import *
     from tkinter.filedialog import *
     from config import*
-    from rtbplugins import*
 except Exception as i:
     print ("Module error: " + str(i))
     print ("Please check that the module is installed.")
@@ -66,9 +65,20 @@ if sys.platform.startswith('win32'):
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 
-
+if os.path.isfile("pluginpids"):
+    os.remove("pluginpids")
+if os.path.isfile("ffmpeg.zip"):
+    try:
+        shutil.unpack_archive("ffmpeg.zip")
+        shutil.unpack_archive("ffplay.zip")
+        shutil.unpack_archive("ffprobe.zip")
+        os.remove("ffmpeg.zip")
+        os.remove("ffplay.zip")
+        os.remove("ffprobe.zip")
+    except Exception:
+        pass
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.3.1"
+rtbversion = "0.3.2"
 smversion = "0.1.3"
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
@@ -81,7 +91,6 @@ else:
 
 currentattacks = []
 spawnedpids = []
-
 
 def main(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
@@ -158,7 +167,7 @@ def main(currentattacks,spawnedpids):
         if int(choice) == 0:
             for pid in spawnedpids:
                 if sys.platform.startswith('win32'):
-                        os.system("taskkill /F /pid "+str(pid))
+                        os.kill(int(pid), 9)
                 elif sys.platform.startswith('linux'):
                         os.kill(int(pid), signal.SIGKILL)
             sys.exit()
@@ -207,7 +216,7 @@ def main(currentattacks,spawnedpids):
         elif int(choice) == 22:
             viewcurrentat(currentattacks,spawnedpids)
         elif int(choice) == 23:
-            customplugins(currentattacks,pluginlist,spawnedpids)
+            customplugins(currentattacks,spawnedpids)
         elif int(choice) == 24:
             tools(currentattacks,spawnedpids)
         elif int(choice) == 986:
@@ -790,42 +799,60 @@ def viewcurrentat(currentattacks,spawnedpids):
     print (colored("---------------------",menucolour))
     for attack in currentattacks:
         print (colored(attack,"green"))
-    print (colored("Type 'killall' to end all current attacks.",menucolour))
+    if currentattacks == []:
+        print (colored('None',"green"))
+    print (colored("---------------------\nType 'killall' to end all current attacks.",menucolour))
     attackkill = input ()
     if attackkill.lower() == 'killall':
         for pid in spawnedpids:
             if sys.platform.startswith('win32'):
-                    os.system("taskkill /F /pid "+str(pid))
-                    currentattacks = []
+                os.kill(int(pid), 9)
             elif sys.platform.startswith('linux'):
-                    os.kill(int(pid), signal.SIGKILL)
-            currentattacks = []
-            spawnedpids = []
+                os.kill(int(pid), signal.SIGKILL)
+        currentattacks = []
+        spawnedpids = []
     main(currentattacks,spawnedpids)
 
-def customplugins(currentattacks,pluginlist,spawnedpids):
+def customplugins(currentattacks,spawnedpids):
     clear()
+    pluginlist = []
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
+        plugindir = os.listdir('.\\plugins\\')
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins\x07")
+        plugindir = os.listdir('plugins/')
     pluginno = -1
     print (colored("Installed Plugins:",menucolour))
+    print (colored("----------------------",menucolour))
+    for file in plugindir:
+        if str(file).startswith("main_"):
+            pluginlist.append(file)
     for plugin in pluginlist:
         pluginno += 1
-        print (str(pluginno) +". "+ plugin)
-    print (colored("\nb: Back",menucolour))
+        print (str(pluginno) +". "+ plugin[5:])
+    print (colored("----------------------\nb: Back",menucolour))
+    print (colored("e: Kill all plugins",menucolour))
     plug = input ("Choice of plugin: ")
     if plug == 'b':
         main(currentattacks,spawnedpids)
+    if plug == 'e':
+        pluginpids = open("pluginpids").readlines()
+        for pid in pluginpids:
+            if sys.platform.startswith('win32'):
+                    os.kill(int(pid), 9)
+            elif sys.platform.startswith('linux'):
+                    os.kill(int(pid), signal.SIGKILL)
+        os.remove('pluginpids')
+        customplugins(currentattacks,spawnedpids)
     plugchoice = pluginlist[int(plug)]
     clear()
     if sys.platform.startswith('win32'):
-        p = subprocess.Popen([winpy,'.\\plugins\\'+plugchoice])
+        p = subprocess.Popen([winpy,'.\\plugins\\'+plugchoice,menucolour])
     elif sys.platform.startswith('linux'):
-        p = subprocess.Popen([linuxpy,'plugins/'+plugchoice])
+        p = subprocess.Popen([linuxpy,'plugins/'+plugchoice,menucolour])
     p.wait()
-    main(currentattacks,spawnedpids)
+    customplugins(currentattacks,spawnedpids)
 
 def info(currentattacks,spawnedpids):
     clear()

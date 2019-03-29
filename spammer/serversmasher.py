@@ -196,7 +196,7 @@ async def on_ready():
 async def serverselect():
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=70 lines=30')
-    lists = []
+    serverlist = []
     clear()
     if clienttype == "bot":
         usert = "Bot"
@@ -204,18 +204,19 @@ async def serverselect():
         usert = "User"
     print (colored("Logged in as {}".format(client.user.name+"#"+client.user.discriminator,menucolour)))
     print (colored("{} is in the following channels: \n".format(usert),menucolour))
-    counter = -1
+    counter = 0
+    serverlist.append("0")
     for serv in client.guilds:
         membcount = 0
         for member in serv.members:
             membcount += 1
         counter += 1
         print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount),menucolour))
-        lists.append(serv.id)
+        serverlist.append(serv.id)
     print('\n----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
     try:
-        SERVER = lists[int(servernum)]
+        SERVER = serverlist[int(servernum)]
     except Exception:
         await serverselect()
     await main(SERVER)
