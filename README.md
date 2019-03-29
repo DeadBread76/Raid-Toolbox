@@ -12,6 +12,10 @@ Screenshot:
 
 **Proxy Support**
 
+**Server Smasher**
+
+**Plugins**
+
 **Joiner and Leaver**
 
 **Token Checker**
