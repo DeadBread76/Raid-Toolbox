@@ -1,3 +1,10 @@
+# Raid Toolbox
+# Author: DeadBread76
+# Feb 23rd, 2019
+
+rtbversion = "0.3.3"
+smversion = "0.1.4"
+
 try:
     import os
     import sys
@@ -44,16 +51,26 @@ except Exception as i:
         sys.exit()
     else:
         sys.exit()
-
-ydl_opts = {
-    'outtmpl': '.\\spammer\\file.webm',
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'wav',
-        'preferredquality': '192',
-    }],
-}
+if sys.platform.startswith('win32'):
+    ydl_opts = {
+        'outtmpl': '.\\spammer\\file.webm',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '192',
+        }],
+    }
+elif sys.platform.startswith('linux'):
+    ydl_opts = {
+        'outtmpl': 'spammer/file.webm',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '192',
+        }],
+    }
 
 init()
 if menucolour.lower() == 'random':
@@ -78,8 +95,7 @@ if os.path.isfile("ffmpeg.zip"):
     except Exception:
         pass
 collector = create_collector('my-collector', 'https')
-rtbversion = "0.3.2"
-smversion = "0.1.3"
+
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -307,31 +323,42 @@ def tokencheck(currentattacks,spawnedpids):
     ucounter = 0
     icounter = 0
     validtokens = []
-    print (colored("Checking tokens...",menucolour))
+    unverified = []
     with open('tokens.txt','r') as handle:
         tokens = handle.readlines()
+        if len(tokens) > 50:
+            print("I'd Recommend using the quick checker for {} tokens.".format(len(tokens)))
+            tok = input("Press enter to continue anyway, or type 0 to return to menu.\n")
+            if tok == '0':
+                main(currentattacks, spawnedpids)
+        print (colored("Checking tokens...",menucolour))
         for x in tokens:
             token = x.rstrip()
-            apilink = 'https://discordapp.com/api/v6/users/@me'
-            headers = {'Authorization': token, 'Content-Type': 'application/json'}
-            src = requests.get(apilink, headers=headers)
-            if "401: Unauthorized" in str(src.content):
-                print(colored(token + " Invalid","red"))
-                icounter +=1
-            else:
-                response = json.loads(src.content.decode())
-                if response["verified"]:
-                    print(colored(token + " Valid","green"))
+            headers={
+                'Authorization': token
+                }
+            src = requests.post('https://discordapp.com/api/v6/invite/RTBCHECKER', headers=headers)
+            try:
+                if "You need to verify your account in order to perform this action." in str(src.content):
+                    print (colored(token + ' Unverified.',"yellow"))
+                    ucounter +=1
+                    unverified.append(token)
+                elif "401: Unauthorized" in str(src.content):
+                    print (colored(token + ' Invalid.',"red"))
+                    icounter +=1
+                else:
+                    print (colored(token + ' Valid.',"green"))
                     vcounter +=1
                     if token in validtokens:
                         continue
-                    else:
-                        validtokens.append(token)
-                else:
-                    print(colored(token + " Unverified","yellow"))
-                    ucounter +=1
+                    validtokens.append(token)
+            except Exception as exc:
+                print (exc)
         with open('tokens.txt','w') as handle:
             for token in validtokens:
+                handle.write(token+'\n')
+        with open('unverified_tokens.txt','a') as handle:
+            for token in unverified:
                 handle.write(token+'\n')
         print ("---------------------------------------")
         print (colored("Number of valid tokens: " + str(vcounter),"green"))
@@ -1049,7 +1076,7 @@ def tools(currentattacks,spawnedpids):
         tokenlist = open("tokens.txt").read().splitlines()
         for token in tokenlist:
             if sys.platform.startswith('win32'):
-                p = subprocess.Popen([winpy,'.\\tools\\avatarchange.py',token,avatar])
+                p = subprocess.Popen([winpy,'.\\tools\\avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
             elif sys.platform.startswith('linux'):
                 p = subprocess.Popen([linuxpy,'tools/avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         time.sleep(5)
