@@ -183,9 +183,15 @@ def main(currentattacks,spawnedpids):
         if int(choice) == 0:
             for pid in spawnedpids:
                 if sys.platform.startswith('win32'):
+                    try:
                         os.kill(int(pid), 9)
+                    except Exception:
+                        pass
                 elif sys.platform.startswith('linux'):
+                    try:
                         os.kill(int(pid), signal.SIGKILL)
+                    except Exception:
+                        pass
             sys.exit()
         elif int(choice) == 1:
             joiner(currentattacks,spawnedpids)
@@ -833,9 +839,15 @@ def viewcurrentat(currentattacks,spawnedpids):
     if attackkill.lower() == 'killall':
         for pid in spawnedpids:
             if sys.platform.startswith('win32'):
-                os.kill(int(pid), 9)
+                try:
+                    os.kill(int(pid), 9)
+                except Exception:
+                    pass
             elif sys.platform.startswith('linux'):
-                os.kill(int(pid), signal.SIGKILL)
+                try:
+                    os.kill(int(pid), signal.SIGKILL)
+                except Exception:
+                    pass
         currentattacks = []
         spawnedpids = []
     main(currentattacks,spawnedpids)
