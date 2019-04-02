@@ -67,7 +67,7 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 [Python 3.6.8](https://www.python.org/downloads/release/python-368/)
 
-[Python 3.7.2](https://www.python.org/downloads/release/python-373/)
+[Python 3.7.2](https://www.python.org/downloads/release/python-373/) (Python 3.7 has issues with Raid ToolBox, if you encounter these use 3.6.)
 
 
 ### `Configuration:`
