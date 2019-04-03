@@ -43,7 +43,7 @@ Screenshot:
 # `Installation:`
 ### `Modules:`
 
-discord.py (Rewrite Version)
+discord.py (Rewrite Version, You will need git for this, [Get it here.](https://git-scm.com/downloads))
 
 requests
 
