@@ -1091,7 +1091,7 @@ def info(currentattacks,spawnedpids):
         print('Ping: {}'.format(p))
         now = datetime.datetime.now()
         with open ("Diagnostics" + str(now.strftime("%d%m%Y%H%M%S"))+".txt", 'w+') as handle:
-            handle.write("Raid Toolbox Diagnostics test "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
+            handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
             handle.write("=====================================================\n")
             handle.write("RTB VERSION: " + rtbversion + "\n")
             handle.write("SM VERSION: " + smversion + "\n")
@@ -1113,7 +1113,11 @@ def info(currentattacks,spawnedpids):
             handle.write("RTB Dump:\n\n")
             handle.write(menucolour+"\n")
             handle.write(useproxies+"\n")
-            for plugin in pluginlist:
+            if sys.platform.startswith('win32'):
+                plugindir = os.listdir('.\\plugins\\')
+            elif sys.platform.startswith('linux'):
+                plugindir = os.listdir('plugins/')
+            for plugin in plugindir:
                 handle.write(plugin+"\n")
             for attack in currentattacks:
                 handle.write(attack+"\n")
