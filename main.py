@@ -1,56 +1,168 @@
 # Raid Toolbox
-# Author: DeadBread76
-# Feb 23rd, 2019
+# Author: DeadBread76 - https://github.com/DeadBread76/
+# Febuary 23rd, 2019
 
-rtbversion = "0.3.3"
-smversion = "0.1.4"
+rtbversion = "0.3.4"
+smversion = "0.1.4r1"
 
-try:
-    import os
-    import sys
-    import time
-    import json
-    import ctypes
-    if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
-    elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
-    else:
-        print ("Unsupported OS.")
-        input()
-        sys.exit()
-    import random
-    import datetime
-    import platform
-    import shutil
-    import subprocess
-    import signal
-    import discord
-    import requests
-    import youtube_dl
-    from colorama import init
-    from termcolor import colored
-    from proxyscrape import create_collector
-    from distutils.dir_util import copy_tree
-    from subprocess import CREATE_NEW_CONSOLE
-    from tkinter import *
-    from tkinter.filedialog import *
-    from config import*
-except Exception as i:
-    print ("Module error: " + str(i))
-    print ("Please check that the module is installed.")
-    install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
-    if install.lower() == 'y':
+from config import*
+
+if verbose == 1:
+    try:
+        with open ("load.log", "w+") as handle:
+            print ("Loading system modules...")
+            import os
+            print ("Loaded os")
+            handle.write("Loaded os\n")
+            import sys
+            print ("Loaded sys")
+            handle.write("Loaded sys\n")
+            import time
+            print ("Loaded time")
+            handle.write("Loaded time\n")
+            import json
+            print ("Loaded json")
+            handle.write("Loaded json\n")
+            import ctypes
+            print ("Loaded ctypes")
+            handle.write("Loaded ctypes\n")
+            if sys.platform.startswith('win32'):
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
+                handle.write("Set Title, Windows, ctypes\n")
+            elif sys.platform.startswith('linux'):
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
+                handle.write("Set Title, Linux, sys\n")
+            import random
+            print ("Loaded random")
+            handle.write("Loaded random\n")
+            import datetime
+            print ("Loaded datetime")
+            handle.write("Loaded datetime\n")
+            import platform
+            print ("Loaded platform")
+            handle.write("Loaded platform\n")
+            import shutil
+            print ("Loaded shutil")
+            handle.write("Loaded shutil\n")
+            import subprocess
+            print ("Loaded subprocess")
+            handle.write("Loaded subprocess\n")
+            import signal
+            print ("Loaded signal")
+            handle.write("Loaded signal\n")
+            from distutils.dir_util import copy_tree
+            print ("Loaded copy_tree")
+            handle.write("Loaded copy_tree\n")
+            from subprocess import CREATE_NEW_CONSOLE
+            print ("Loaded CREATE_NEW_CONSOLE")
+            handle.write("Loaded CREATE_NEW_CONSOLE\n")
+            from tkinter import *
+            print ("Loaded tkinter")
+            handle.write("Loaded tkinter\n")
+            from tkinter.filedialog import *
+            print ("Loaded tkinter.filedialog")
+            handle.write("Loaded tkinter.filedialog\n")
+    except Exception as i:
+        print ("Error loading system module, Exception: "+str(i))
+        with open ("load.log", "a") as handle:
+            handle.write(str(i)+"\n")
+    with open ("load.log", "a") as handle:
+        try:
+            print ("Loading discord.py...")
+            import discord
+            print ("Loaded discord.py")
+            handle.write("Loaded discord.py\n")
+        except Exception as i:
+            print ("Error Loading discord.py")
+            handle.write("Error Loading discord.py\n")
+        try:
+            print ("Loading requests...")
+            import requests
+            print ("Loaded requests")
+            handle.write("Loaded requests\n")
+        except Exception as i:
+            print ("Error Loading requests")
+            handle.write("Error Loading requests\n")
+        try:
+            print ("Loading youtube-dl...")
+            import youtube_dl
+            print ("Loaded youtube-dl")
+            handle.write("Loaded youtube-dl\n")
+        except Exception as i:
+            print ("Error Loading youtube-dl")
+            handle.write("Error Loading youtube-dl\n")
+        try:
+            print ("Loading colorama...")
+            from colorama import init
+            print ("Loaded colorama")
+            handle.write("Loaded colorama\n")
+        except Exception as i:
+            print ("Error Loading colorama")
+            handle.write("Error Loading colorama\n")
+        try:
+            print ("Loading termcolor...")
+            from termcolor import colored
+            print ("Loaded termcolor")
+            handle.write("Loaded termcolor\n")
+        except Exception as i:
+            print ("Error Loading termcolor")
+            handle.write("Error Loading termcolor\n")
+        try:
+            print ("Loading proxyscrape...")
+            from proxyscrape import create_collector
+            print ("Loaded proxyscrape")
+            handle.write("Loaded proxyscrape\n")
+        except Exception as i:
+            print ("Error Loading proxyscrape")
+            handle.write("Error Loading proxyscrape\n")
+    print ("Starting...")
+
+else:
+    try:
+        import os
+        import sys
+        import time
+        import json
+        import ctypes
         if sys.platform.startswith('win32'):
-            installation = subprocess.Popen([winpip,'install','-r','requirements.txt','--user'])
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
         elif sys.platform.startswith('linux'):
-            installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
-        installation.wait()
-        print("Please Restart Raid Toolbox.")
-        input()
-        sys.exit()
-    else:
-        sys.exit()
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+        else:
+            print ("Unsupported OS.")
+            input()
+            sys.exit()
+        import random
+        import datetime
+        import platform
+        import shutil
+        import subprocess
+        import signal
+        import discord
+        import requests
+        import youtube_dl
+        from colorama import init
+        from termcolor import colored
+        from proxyscrape import create_collector
+        from distutils.dir_util import copy_tree
+        from subprocess import CREATE_NEW_CONSOLE
+        from tkinter import *
+        from tkinter.filedialog import *
+    except Exception as i:
+        print ("Module error: " + str(i))
+        print ("Please check that the module is installed.")
+        install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
+        if install.lower() == 'y':
+            if sys.platform.startswith('win32'):
+                installation = subprocess.Popen([winpip,'install','-r','requirements.txt','--user'])
+            elif sys.platform.startswith('linux'):
+                installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
+            installation.wait()
+            print("Please Restart Raid Toolbox.")
+            input()
+            sys.exit()
+        else:
+            sys.exit()
 if sys.platform.startswith('win32'):
     ydl_opts = {
         'outtmpl': '.\\spammer\\file.webm',
@@ -879,9 +991,15 @@ def customplugins(currentattacks,spawnedpids):
         pluginpids = open("pluginpids").readlines()
         for pid in pluginpids:
             if sys.platform.startswith('win32'):
+                try:
                     os.kill(int(pid), 9)
+                except Exception:
+                    pass
             elif sys.platform.startswith('linux'):
+                try:
                     os.kill(int(pid), signal.SIGKILL)
+                except Exception:
+                    pass
         os.remove('pluginpids')
         customplugins(currentattacks,spawnedpids)
     plugchoice = pluginlist[int(plug)]
@@ -1054,6 +1172,7 @@ def tools(currentattacks,spawnedpids):
     print (colored("2.  Avatar Changer",menucolour))
     print (colored("3.  Token Cleaner",menucolour))
     print (colored("4.  Quick Checker",menucolour))
+    print (colored("5.  Nickname Changer",menucolour))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks,spawnedpids)
@@ -1129,6 +1248,26 @@ def tools(currentattacks,spawnedpids):
         p.wait()
         input("Checking complete.")
         tools(currentattacks,spawnedpids)
+    elif int(choice) == 5:
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Nickname Changer")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Nickname Changer\x07")
+        print (colored("Server Nickname Changer",menucolour))
+        print (colored("0: Back",menucolour))
+        SERVER = input("Server ID: ")
+        if SERVER == "0":
+            tools(currentattacks,spawnedpids)
+        nick = input("New Nickname: ")
+        tokenlist = open("tokens.txt").read().splitlines()
+        for token in tokenlist:
+            if sys.platform.startswith('win32'):
+                p = subprocess.Popen([winpy,'.\\tools\\changenickname.py',token,SERVER,nick],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            elif sys.platform.startswith('linux'):
+                p = subprocess.Popen([linuxpy,'tools/changenickname.py',token,SERVER,nick],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        time.sleep(5)
+        tools(currentattacks,spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
@@ -1136,7 +1275,7 @@ def wew(currentattacks,spawnedpids):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     else:
         main(currentattacks,spawnedpids)
-    p = subprocess.Popen([winpy,'.\\spammer\\player.py'],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([winpy,'.\\spammer\\player.py',winpy],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     currentattacks.append("Music!")
     spawnedpids.append(p.pid)
     main(currentattacks,spawnedpids)

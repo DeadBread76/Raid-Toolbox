@@ -258,9 +258,7 @@ async def serverselect():
     counter = 0
     serverlist.append("0")
     for serv in client.guilds:
-        membcount = 0
-        for member in serv.members:
-            membcount += 1
+        membcount = len(serv.members)
         counter += 1
         print(colored(str(counter)+'. ('+str(serv.id)+') '+str(serv)+" ({} members)".format(membcount),menucolour))
         serverlist.append(serv.id)
@@ -282,18 +280,10 @@ async def main(SERVER):
     server = client.get_guild(int(SERVER))
     print ("Server: " + colored(server.name,menucolour))
     print ("Server ID: " + colored(str(SERVER),menucolour))
-    membercount = 0
-    tchancount = 0
-    vchancount = 0
-    rolecount = 0
-    for member in server.members:
-        membercount += 1
-    for channel in server.text_channels:
-        tchancount += 1
-    for channel in server.voice_channels:
-        vchancount += 1
-    for role in server.roles:
-        rolecount += 1
+    membercount = len(server.members)
+    tchancount = len(server.text_channels)
+    vchancount = len(server.voice_channels)
+    rolecount = len(server.roles)
     print (colored("{} Members".format(membercount),menucolour))
     print (colored("{} Roles".format(rolecount),menucolour))
     print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
