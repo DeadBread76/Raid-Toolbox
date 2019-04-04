@@ -29,6 +29,17 @@ if verbose == 1:
             if sys.platform.startswith('win32'):
                 ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
                 handle.write("Set Title, Windows, ctypes\n")
+                if runasadmin == 1:
+                    def is_admin():
+                        try:
+                            return ctypes.windll.shell32.IsUserAnAdmin()
+                        except:
+                            return False
+                    if is_admin():
+                        pass
+                    else:
+                        ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+                        sys.exit()
             elif sys.platform.startswith('linux'):
                 sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
                 handle.write("Set Title, Linux, sys\n")
@@ -126,6 +137,17 @@ else:
         import ctypes
         if sys.platform.startswith('win32'):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+            if runasadmin == 1:
+                def is_admin():
+                    try:
+                        return ctypes.windll.shell32.IsUserAnAdmin()
+                    except:
+                        return False
+                if is_admin():
+                    pass
+                else:
+                    ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, __file__, None, 1)
+                    sys.exit()
         elif sys.platform.startswith('linux'):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
         else:

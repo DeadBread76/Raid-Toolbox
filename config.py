@@ -15,5 +15,6 @@ linuxpip = "pip3"
 # banned as quick or you will be able to bypass IP bans.
 useproxies = "False"
 
-###VERBOSE MODULE LOADING###
+###DEBUG OPTIONS###
 verbose = 0
+runasadmin = 0  # Only Works on windows.
