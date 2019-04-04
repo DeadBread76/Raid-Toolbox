@@ -248,6 +248,7 @@ def massnick(server,user,nick):
         time.sleep(5)
         massnick(server,user,nick)
 
+clear()
 print ("Starting...")
 
 def inputselection(text):
