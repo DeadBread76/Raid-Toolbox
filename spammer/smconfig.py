@@ -1,4 +1,4 @@
-usemultiple = True #Use multiple tokens, add them into the text file called "smtokens.txt" (Only for bot accounts)
+usemultiple = False #Use multiple tokens, add them into the text file called "smtokens.txt" (Only for bot accounts)
 token = "TOKEN HERE" #Supports user accounts, although it is untested
 clienttype = "bot" #'bot' is for bot accounts, 'user' is for user accounts (with the perms)
 threadcount = 800 #Ammount of threads to use, You shouldnt need to change this.
