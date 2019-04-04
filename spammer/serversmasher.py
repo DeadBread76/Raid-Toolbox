@@ -226,6 +226,28 @@ def sendspam(channel,msgcontent,usetts):
         time.sleep(1)
         sendspam(channel,msgcontent,usetts)
 
+def mover(server,user,channel):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'channel_id': str(channel)}
+    src = requests.patch("https://discordapp.com/api/v6/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        mover(server,user,channel)
+
+def massnick(server,user,nick):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'nick': str(nick)}
+    src = requests.patch("https://discordapp.com/api/v6/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(5)
+        massnick(server,user,nick)
+
 print ("Starting...")
 
 def inputselection(text):
@@ -275,7 +297,6 @@ async def serverselect():
 async def main(SERVER):
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=70 lines=35')
-    #options
     clear()
     server = client.get_guild(int(SERVER))
     print ("Server: " + colored(server.name,menucolour))
@@ -289,7 +310,7 @@ async def main(SERVER):
     print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 1. Configure then destroy. \n 2. Create Server Invite. \n 3. Change What the bot is playing. \n 4. Leave server. \n 5. Return to Server Select",menucolour))
+    print (colored(" 1. Configure then destroy. \n 2. Chaos options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange': namechange,
@@ -490,6 +511,7 @@ async def main(SERVER):
                             print ("Finished!")
                             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                             await main(SERVER)
+
                     if int(toga) == 0:
                         await main(SERVER)
                     elif int(toga) == 1:
@@ -648,6 +670,60 @@ async def main(SERVER):
             await changesettings(toggleopts,SERVER)
 
         elif int(opts) == 2:
+            clear()
+            print(colored("Chaos options",menucolour))
+            print(colored("0.  Back",menucolour))
+            print(colored("1.  Move People in VC",menucolour))
+            print(colored("2.  Mass Nickname Change",menucolour))
+            print(colored("3.  Make server Raidable and insecure",menucolour))
+            sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
+            if int(sel) == 0:
+                await main(SERVER)
+            elif int(sel) == 1:
+                clear()
+                print("Moving members in voice channels.")
+                while not client.is_closed():
+                    channellist = []
+                    memberlist = []
+                    for channel in server.voice_channels:
+                        channellist.append(channel)
+                    for channel in channellist:
+                        for member in channel.members:
+                            memberlist.append(member)
+                    for member in memberlist:
+                        try:
+                            channel = random.choice(channellist)
+                            channel = channel
+                            pool.add_task(mover,server.id,member.id,channel.id)
+                            await asyncio.sleep(0.1)
+                        except Exception:
+                            pass
+                    await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+            elif int(sel) == 2:
+                clear()
+                newnick = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Nickname: ')
+                print(colored("Changing Nicknames, Please wait...",menucolour))
+                for member in server.members:
+                    pool.add_task(massnick,server.id,member.id,newnick)
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+                print(colored("Finished Changing nicknames.",menucolour))
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
+                await main(SERVER)
+            elif int(sel) == 3:
+                clear()
+                print(colored("Modifying server rules, Please wait...",menucolour))
+                if clienttype == 'bot':
+                    headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+                else:
+                    headers={ 'Authorization': token,'Content-Type': 'application/json'}
+                payload = {'default_message_notifications': 0,'explicit_content_filter': 0,'verification_level': 0}
+                requests.patch('https://discordapp.com/api/v6/guilds/'+str(server.id),headers=headers,json=payload)
+                (colored("Rules modified.",menucolour))
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
+                await main(SERVER)
+            else:
+                await main(SERVER)
+        elif int(opts) == 3:
             for channel in server.text_channels:
                 invitelink = await channel.create_invite()
                 invite = invitelink.url
@@ -666,12 +742,12 @@ async def main(SERVER):
             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             await main(SERVER)
 
-        elif int(opts) == 3:
+        elif int(opts) == 4:
             play = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Playing ')
             await client.change_presence(activity=discord.Game(name=play))
             await main(SERVER)
 
-        elif int(opts) == 4:
+        elif int(opts) == 5:
             print ("Are you sure you want to leave this server? (Y/N): ")
             yn = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
             if yn.lower() == 'y':
@@ -681,7 +757,7 @@ async def main(SERVER):
             else:
                 await main(SERVER)
 
-        elif int(opts) == 5:
+        elif int(opts) == 6:
             await serverselect()
     except Exception as e:
         print (colored("Error:","red"))
