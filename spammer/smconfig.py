@@ -1,3 +1,7 @@
+# Server Smasher Config File
+# The options here should be used for quick destruction presets.
+# If You somehow messed up this file, get a replacement here: https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/smconfig.py
+
 usemultiple = False #Use multiple tokens, add them into the text file called "smtokens.txt" (Only for bot accounts)
 token = "TOKEN HERE" #Supports user accounts, although it is untested
 clienttype = "bot" #'bot' is for bot accounts, 'user' is for user accounts (with the perms)
@@ -14,7 +18,7 @@ chandel = False #True deletes all channels
 roledel = False #True deletes all roles underneath the bots role
 userban = False #True bans all members, except the ones below. you can add as many as you like.
 banreason = "Ban Reason here"
-userid = ['user#3981','user#7579']
+userid = [] # Example: ['user#3981','user#7579']
 senddm = False #True sends everyone a DM, specified below.
 dmcontent = "DM HERE"
 createchan = False #True creates channels, using the method below
@@ -32,3 +36,7 @@ createroles = False #True creates roles, amount specified below
 crolecount = 100 #Amount of roles to create
 rolesname = "ascii" #'set' for custom names, 'ascii' for random ascii names.
 custrolename = 'ROLE NAME HERE' #Name for the set roles
+deleteemojis = False
+createemojis = False
+emojipath = 'Path to emoji image here'
+emojinum = 30

@@ -9,11 +9,13 @@ try:
     import json
     import time
     import random
+    import string
     import ctypes
     import asyncio
     import discord
     import requests
     import pyperclip
+    from base64 import b64encode
     from smconfig import *
     from tkinter import *
     from tkinter.filedialog import *
@@ -94,7 +96,7 @@ client = discord.Client()
 
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
-    os.system('mode con:cols=70 lines=35')
+    os.system('mode con:cols=70 lines=40')
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 init()
@@ -248,8 +250,37 @@ def massnick(server,user,nick):
         time.sleep(5)
         massnick(server,user,nick)
 
+def removeemoji(server,emoji):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    src = requests.delete('https://discordapp.com/api/v6/guilds/'+str(server)+'/emojis/'+str(emoji),headers=headers)
+    print (src.content)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        removeemoji(server,emoji)
+
+def addemoji(server,encoded,name):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'image': encoded, 'name': name}
+    src = requests.post('https://discordapp.com/api/v6/guilds/'+str(server)+'/emojis',headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        addemoji(server,encoded,name)
+
 clear()
 print ("Starting...")
+
+def asciigen(length):
+    asc = ''
+    for x in range(int(length)):
+        num = random.randrange(13000)
+        asc = asc + chr(num)
+    return asc
 
 def inputselection(text):
     output = input(text)
@@ -258,6 +289,25 @@ def inputselection(text):
 def complete_pool():
     pool.wait_completion()
     return None
+
+def gen(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+def get_mime(data): # From Discord.py
+    if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
+        return 'image/png'
+    elif data[6:10] in (b'JFIF', b'Exif'):
+        return 'image/jpeg'
+    elif data.startswith((b'\x47\x49\x46\x38\x37\x61', b'\x47\x49\x46\x38\x39\x61')):
+        return 'image/gif'
+    elif data.startswith(b'RIFF') and data[8:12] == b'WEBP':
+        return 'image/webp'
+
+def bytes_to_base64_data(data): # From Discord.py
+    fmt = 'data:{mime};base64,{data}'
+    mime = get_mime(data)
+    b64 = b64encode(data).decode('ascii')
+    return fmt.format(mime=mime, data=b64)
 
 @client.event
 async def on_ready():
@@ -269,7 +319,7 @@ async def on_ready():
 
 async def serverselect():
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=70 lines=35')
+        os.system('mode con:cols=70 lines=40')
     serverlist = []
     clear()
     if clienttype == "bot":
@@ -297,7 +347,7 @@ async def serverselect():
 
 async def main(SERVER):
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=70 lines=35')
+        os.system('mode con:cols=70 lines=40')
     clear()
     server = client.get_guild(int(SERVER))
     print ("Server: " + colored(server.name,menucolour))
@@ -341,13 +391,17 @@ async def main(SERVER):
         'createroles': createroles,
         'crolecount': crolecount,
         'rolesname': rolesname,
-        'custrolename': custrolename
+        'custrolename': custrolename,
+        'deleteemojis': deleteemojis,
+        'createemojis': createemojis,
+        'emojipath': emojipath,
+        'emojinum': emojinum
         }
     try:
         if int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
-                    os.system('mode con:cols=70 lines=35')
+                    os.system('mode con:cols=70 lines=40')
                 try:
                     clear()
                     server = client.get_guild(int(SERVER))
@@ -381,7 +435,14 @@ async def main(SERVER):
                     print (colored("26. Number of roles to create: {}".format(toggleopts['crolecount']),menucolour))
                     print (colored("27. Role Creation type: {}".format(toggleopts['rolesname']),menucolour))
                     print (colored("28. Name of roles: {}".format(toggleopts['custrolename']),menucolour))
+                    print (colored("29. Delete Emojis: {}".format(toggleopts['deleteemojis']),menucolour))
+                    print (colored("30. Create Emojis: {}".format(toggleopts['createemojis']),menucolour))
+                    print (colored("31. Created emoji image path: {}".format(toggleopts['emojipath']),menucolour))
+                    print (colored("32. Number of created emojis: {}".format(toggleopts['emojinum']),menucolour))
                     toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
+                    if toga == 'E':
+                        while True:
+                            print(asciigen(10000))
                     if toga.lower() == "start":
                         for channel in server.channels:
                             myperms = channel.permissions_for(server.get_member(client.user.id))
@@ -417,6 +478,12 @@ async def main(SERVER):
                             for ban in bans:
                                 for user in ban:
                                     pool.add_task(removeban,str(server.id),str(user.id))
+
+                        if toggleopts['deleteemojis'] == True:
+                            print ("Deleting Emojis.")
+                            for emoji in server.emojis:
+                                pool.add_task(removeemoji,server.id,emoji.id)
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['senddm'] == True:
                             for user in server.members:
@@ -465,11 +532,7 @@ async def main(SERVER):
                             print('Creating channels.')
                             for x in range(int(toggleopts['channelno'])):
                                 if toggleopts['chanmethod'].lower() == "ascii":
-                                    asc = ""
-                                    for x in range(60):
-                                        num = random.randrange(13000)
-                                        asc = asc + chr(num)
-                                    pool.add_task(createchannel,SERVER,asc,"text")
+                                    pool.add_task(createchannel,SERVER,asciigen(60),"text")
                                 if toggleopts['chanmethod'].lower() == "set":
                                     pool.add_task(createchannel,SERVER,toggleopts['channame'],"text")
 
@@ -483,13 +546,16 @@ async def main(SERVER):
                             for x in range(int(toggleopts['crolecount'])):
                                 if toggleopts['rolesname'] == "set":
                                     pool.add_task(createrole,toggleopts['custrolename'],server.id)
-
                                 if toggleopts['rolesname'] == "ascii":
-                                    asc = ""
-                                    for x in range(60):
-                                        num = random.randrange(13000)
-                                        asc = asc + chr(num)
-                                    pool.add_task(createrole,asc,server.id)
+                                    pool.add_task(createrole,asciigen(60),server.id)
+                            await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+
+                        if toggleopts['createemojis'] == True:
+                            print ("Creating Emojis")
+                            with open(toggleopts['emojipath'], "rb") as handle:
+                                encoded = bytes_to_base64_data(handle.read())
+                            for x in range(int(toggleopts['emojinum'])):
+                                pool.add_task(addemoji,server.id,encoded,gen())
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['chanmethod'].lower() == "voice":
@@ -660,6 +726,24 @@ async def main(SERVER):
                     elif int(toga) == 28:
                         toggleopts['custrolename'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created roles: ')
                         await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 29:
+                        if toggleopts['deleteemojis'] == True:
+                            toggleopts['deleteemojis'] = False
+                        else:
+                            toggleopts['deleteemojis'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 30:
+                        if toggleopts['createemojis'] == True:
+                            toggleopts['createemojis'] = False
+                        else:
+                            toggleopts['createemojis'] = True
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 31:
+                        toggleopts['emojipath'] = askopenfilename(initialdir = os.getcwd(),title = "Select emoji")
+                        await changesettings(toggleopts,SERVER)
+                    elif int(toga) == 32:
+                        toggleopts['emojinum']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of created emojis: ')
+                        await changesettings(toggleopts,SERVER)
                     else:
                         print ("Invalid option")
                         await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
@@ -791,11 +875,7 @@ async def ascii_spam(SERVER,usetts): # "oh god you scrambled that server"
             if not myperms.send_messages:
                 continue
             print('Ascii Spamming in: '+channel.name)
-            asc = ""
-            for x in range(1999):
-                num = random.randrange(13000)
-                asc = asc + chr(num)
-            pool.add_task(sendspam,str(channelid),asc,usetts)
+            pool.add_task(sendspam,str(channel.id),asciigen(1999),usetts)
 
 async def text_spam(SERVER,customtxt,usetts):
     await asyncio.sleep(5)
