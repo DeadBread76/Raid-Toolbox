@@ -125,6 +125,11 @@ if usemultiple == True:
     clear()
     count = -1
     print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
+    if sys.platform.startswith('win32'):
+        if len(useable) > 40:
+            screensize = 5
+            screensize += len(useable)
+            os.system('mode con:cols=70 lines={}'.format(str(screensize)))
     for bot in useable:
         count += 1
         print(colored(str(count)+". "+bot,menucolour))
@@ -256,12 +261,11 @@ def removeemoji(server,emoji):
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     src = requests.delete('https://discordapp.com/api/v6/guilds/'+str(server)+'/emojis/'+str(emoji),headers=headers)
-    print (src.content)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         removeemoji(server,emoji)
 
-def addemoji(server,encoded,name):
+def addemoji(server,encoded,name): # This has pretty huge rate limits, be careful using it.
     if clienttype == 'bot':
         headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
     else:
