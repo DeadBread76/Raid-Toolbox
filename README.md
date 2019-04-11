@@ -4,6 +4,8 @@ A big toolkit of spamming tools for discord.
 
 Supports Both Windows and Linux.
 
+I am working on Mac OS as of 4/11/2019
+
 Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
