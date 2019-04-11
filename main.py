@@ -2,7 +2,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.4"
+rtbversion = "0.3.4r1"
 smversion = "0.1.6r2"
 
 from config import*
@@ -613,8 +613,12 @@ def vcspam(currentattacks,spawnedpids):
         main(currentattacks,spawnedpids)
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
-    if os.path.isfile('.\\spammer\\file.wav'):
-        os.remove('.\\spammer\\file.wav')
+    if sys.platform.startswith('win32'):
+        if os.path.isfile('.\\spammer\\file.wav'):
+            os.remove('.\\spammer\\file.wav')
+    elif sys.platform.startswith('linux'):
+        if os.path.isfile('spammer/file.wav'):
+            os.remove('spammer/file.wav')
         print ("Removed old .wav.")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
         ydl.download([ytlink])
