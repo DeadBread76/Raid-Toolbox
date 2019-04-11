@@ -127,7 +127,7 @@ if usemultiple == True:
     print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
     if sys.platform.startswith('win32'):
         if len(useable) > 40:
-            screensize = 5
+            screensize = 7
             screensize += len(useable)
             os.system('mode con:cols=70 lines={}'.format(str(screensize)))
     for bot in useable:
@@ -193,7 +193,7 @@ def senddmtouser(user,content,usetts):
     userdm = src.content.decode()
     jsonstring = json.loads(userdm).values()
     for x in jsonstring:
-        dmlist.append(x) #boat floating
+        dmlist.append(x)
     userdm = dmlist[2]
     payload = {"content" : content,"tts" : usetts,"mention_everyone" : "true"}
     src = requests.post("https://discordapp.com/api/v6/channels/"+userdm+"/messages", headers=headers, json=payload)
@@ -323,7 +323,9 @@ async def on_ready():
 
 async def serverselect():
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=70 lines=40')
+        window = len(client.guilds)
+        window += 9
+        os.system('mode con:cols=85 lines={}'.format(str(window)))
     serverlist = []
     clear()
     if clienttype == "bot":
@@ -453,7 +455,7 @@ async def main(SERVER):
                             if myperms.administrator:
                                 pass
                             else:
-                                print (colored("You do not have the permissions to destroy this server.","red"))
+                                print (colored("You do not have admin permissions on this server.","red"))
                                 con = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Continue anyway?(Y/N)")
                                 if con.lower() == 'y':
                                     break
@@ -479,9 +481,12 @@ async def main(SERVER):
                         if toggleopts['rembans'] == True:
                             print ("Removing bans.")
                             bans = await server.bans()
-                            for ban in bans:
-                                for user in ban:
-                                    pool.add_task(removeban,str(server.id),str(user.id))
+                            try:
+                                for ban in bans:
+                                    for user in ban:
+                                        pool.add_task(removeban,str(server.id),str(user.id))
+                            except Exception:
+                                pass
 
                         if toggleopts['deleteemojis'] == True:
                             print ("Deleting Emojis.")
@@ -501,7 +506,7 @@ async def main(SERVER):
 
                         if toggleopts['iconbegone'] == True:
                             print('Removing icon...')
-                            await client.edit_server(server=server, icon=None)
+                            await server.edit(icon=None)
 
                         if toggleopts['changeicon'] == True:
                             print('Changing icon...')
@@ -892,7 +897,6 @@ async def text_spam(SERVER,customtxt,usetts):
                 continue
             print('Text Spamming in: '+channel.name)
             pool.add_task(sendspam,str(channel.id),customtxt,usetts)
-
 
 async def everyonespam(SERVER,usetts):
     await asyncio.sleep(5)

@@ -3,7 +3,7 @@
 # Febuary 23rd, 2019
 
 rtbversion = "0.3.4"
-smversion = "0.1.6r1"
+smversion = "0.1.6r2"
 
 from config import*
 
