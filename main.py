@@ -1,9 +1,11 @@
+#!/usr/local/bin/python3
+# coding: utf-8
 # Raid Toolbox
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.4r1"
-smversion = "0.1.6r2"
+rtbversion = "0.3.4r2"
+smversion = "0.1.6r3"
 
 from config import*
 
@@ -64,9 +66,10 @@ if verbose == 1:
             from distutils.dir_util import copy_tree
             print ("Loaded copy_tree")
             handle.write("Loaded copy_tree\n")
-            from subprocess import CREATE_NEW_CONSOLE
-            print ("Loaded CREATE_NEW_CONSOLE")
-            handle.write("Loaded CREATE_NEW_CONSOLE\n")
+            if sys.platform.startswith('win32'):
+                from subprocess import CREATE_NEW_CONSOLE
+                print ("Loaded CREATE_NEW_CONSOLE")
+                handle.write("Loaded CREATE_NEW_CONSOLE\n")
             from tkinter import *
             print ("Loaded tkinter")
             handle.write("Loaded tkinter\n")
@@ -167,7 +170,8 @@ else:
         from termcolor import colored
         from proxyscrape import create_collector
         from distutils.dir_util import copy_tree
-        from subprocess import CREATE_NEW_CONSOLE
+        if sys.platform.startswith('win32'):
+            from subprocess import CREATE_NEW_CONSOLE
         from tkinter import *
         from tkinter.filedialog import *
     except Exception as i:
@@ -879,7 +883,7 @@ def serversmasher(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         p = subprocess.Popen([winpy,'.\\spammer\\serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
     elif sys.platform.startswith('linux'):
-        p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
+        p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour])
     time.sleep(3)
     main(currentattacks,spawnedpids)
 
