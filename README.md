@@ -61,6 +61,19 @@ proxyscrape
 
 `(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself(Sometimes).)`
 
+### `Linux setup:`
+
+On linux, you need pip3, ffmpeg and tkinter.
+
+To install these, run the commands:
+
+`sudo apt-get install ffmpeg`
+
+`sudo apt-get install python3-pip`
+
+`sudo apt-get install python3-tk`
+
+
 ### `Python:`
 
 Python 3.6 and 3.7 are compatible, you can get them here:
