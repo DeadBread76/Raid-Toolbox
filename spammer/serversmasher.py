@@ -100,6 +100,7 @@ if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
     os.system('mode con:cols=70 lines=40')
 elif sys.platform.startswith('linux'):
+    os.system("printf '\033[8;40;70t'")
     clear = lambda: os.system('clear')
 init()
 
@@ -132,6 +133,11 @@ if usemultiple == True:
             screensize = 7
             screensize += len(useable)
             os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+    elif sys.platform.startswith('linux'):
+        if len(useable) > 40:
+            screensize = 7
+            screensize += len(useable)
+            os.system("printf '\033[8;{};70t'".format(str(screensize)))
     for bot in useable:
         count += 1
         print(colored(str(count)+". "+bot,menucolour))
@@ -328,6 +334,10 @@ async def serverselect():
         window = len(client.guilds)
         window += 9
         os.system('mode con:cols=85 lines={}'.format(str(window)))
+    elif sys.platform.startswith('linux'):
+        window = len(client.guilds)
+        window += 9
+        os.system("printf '\033[8;{};85t'".format(str(window)))
     serverlist = []
     clear()
     if clienttype == "bot":
@@ -356,6 +366,8 @@ async def serverselect():
 async def main(SERVER):
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=70 lines=40')
+    elif sys.platform.startswith('linux'):
+        os.system("printf '\033[8;40;70t'")
     clear()
     server = client.get_guild(int(SERVER))
     print ("Server: " + colored(server.name,menucolour))
@@ -410,6 +422,8 @@ async def main(SERVER):
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
                     os.system('mode con:cols=70 lines=40')
+                elif sys.platform.startswith('linux'):
+                    os.system("printf '\033[8;40;70t'")
                 try:
                     clear()
                     server = client.get_guild(int(SERVER))

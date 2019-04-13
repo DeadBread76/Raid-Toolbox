@@ -249,6 +249,8 @@ spawnedpids = []
 def main(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=100 lines=30')
+    elif sys.platform.startswith('linux'):
+        os.system("printf '\033[8;30;100t'")
     tcounter = 0
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -883,7 +885,7 @@ def serversmasher(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         p = subprocess.Popen([winpy,'.\\spammer\\serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
     elif sys.platform.startswith('linux'):
-        p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour])
+        subprocess.call(['gnome-terminal', '-x', linuxpy,'spammer/serversmasher.py',smversion,menucolour])
     time.sleep(3)
     main(currentattacks,spawnedpids)
 
