@@ -4,7 +4,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.4r2"
+rtbversion = "0.3.5"
 smversion = "0.1.6r3"
 
 from config import*
@@ -308,7 +308,7 @@ def main(currentattacks,spawnedpids):
     print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join spammer           ██",menucolour))
     print (colored("██         9.  User DM Spammer                   ██         22. View Running Attacks              ██",menucolour))
     print (colored("██         10. Friend Request Spammer            ██         23. Custom attack plugins             ██",menucolour))
-    print (colored("██         11. Group DM spammer                  ██         24. Tools                             ██",menucolour))
+    print (colored("██         11. Group DM spammer                  ██         24. More Options                      ██",menucolour))
     print (colored("██         12. Image Spammer                     ██                                               ██",menucolour))
     print (colored("██                                               ██                                               ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
@@ -1198,7 +1198,7 @@ def info(currentattacks,spawnedpids):
 def tools(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools")
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | More Options")
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools\x07")
     print (colored("Raid Toolbox Tools",menucolour))
@@ -1209,15 +1209,16 @@ def tools(currentattacks,spawnedpids):
     print (colored("3.  Token Cleaner",menucolour))
     print (colored("4.  Quick Checker",menucolour))
     print (colored("5.  Nickname Changer",menucolour))
+    print (colored("6.  Widget Joiner",menucolour))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks,spawnedpids)
     elif int(choice) == 1:
         clear()
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | HypeSquad Changer")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | HypeSquad Changer")
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | HypeSquad Changer\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | HypeSquad Changer\x07")
         print (colored("1. Bravery",menucolour))
         print (colored("2. Brilliance",menucolour))
         print (colored("3. Ballance",menucolour))
@@ -1234,9 +1235,9 @@ def tools(currentattacks,spawnedpids):
         Tk().withdraw()
         clear()
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Avatar Changer")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Avatar Changer")
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Avatar Changer\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Avatar Changer\x07")
         avatar = askopenfilename(initialdir = os.getcwd(),title = "Select avatar to change")
         if avatar == "":
             tools(currentattacks,spawnedpids)
@@ -1251,9 +1252,9 @@ def tools(currentattacks,spawnedpids):
     elif int(choice) == 3:
         clear()
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Token Cleaner")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Cleaner")
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Token Cleaner\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Cleaner\x07")
         print (colored("Token Cleaner: Leaves every server that the token is on, making it faster to login to.",menucolour))
         choice = input("Clean Tokens?(Y/N): ")
         if choice.lower() == 'y':
@@ -1270,9 +1271,9 @@ def tools(currentattacks,spawnedpids):
     elif int(choice) == 4:
         clear()
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Quick Checker")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Quick Checker")
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Quick Checker\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Quick Checker\x07")
         tokenlist = open("tokens.txt").read().splitlines()
         for token in tokenlist:
             if sys.platform.startswith('win32'):
@@ -1287,9 +1288,9 @@ def tools(currentattacks,spawnedpids):
     elif int(choice) == 5:
         clear()
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Tools | Nickname Changer")
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Nickname Changer")
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools | Nickname Changer\x07")
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Nickname Changer\x07")
         print (colored("Server Nickname Changer",menucolour))
         print (colored("0: Back",menucolour))
         SERVER = input("Server ID: ")
@@ -1304,6 +1305,41 @@ def tools(currentattacks,spawnedpids):
                 p = subprocess.Popen([linuxpy,'tools/changenickname.py',token,SERVER,nick],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         time.sleep(5)
         tools(currentattacks,spawnedpids)
+    elif int(choice) == 6:
+        clear()
+        if sys.platform.startswith('win32'):
+            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Widget Joiner")
+        elif sys.platform.startswith('linux'):
+            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Widget Joiner\x07")
+        print (colored("Server Widget Joiner (Only Works on servers that have widget enabled.)",menucolour))
+        print (colored("0: Back",menucolour))
+        SERVER = input("Server ID: ")
+        if SERVER == "0":
+            tools(currentattacks,spawnedpids)
+        src = requests.get("https://discordapp.com/api/guilds/{}/widget.json".format(SERVER)).text
+        if "is not snowflake." in str(src):
+            print("{} is not a server ID.".format(SERVER))
+            input()
+            tools(currentattacks, spawnedpids)
+        elif "Widget Disabled" in str(src):
+            print("Widget is disabled in this server.")
+            input()
+            tools(currentattacks, spawnedpids)
+        else:
+            split = src.split('"') # ghetto way to do it but fuck it i don't care
+            for string in split:
+                if "https://discordapp.com/invite/" in string:
+                    print("Invite: {}".format(string))
+                    invite = string[30:]
+                    break
+            tokenlist = open("tokens.txt").read().splitlines()
+            for token in tokenlist:
+                if sys.platform.startswith('win32'):
+                    p = subprocess.Popen([winpy,'.\\spammer\\joiner.py',token,invite,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                elif sys.platform.startswith('linux'):
+                    p = subprocess.Popen([linuxpy,'spammer/joiner.py',token,invite,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+            time.sleep(1)
+            tools(currentattacks, spawnedpids)
 
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
