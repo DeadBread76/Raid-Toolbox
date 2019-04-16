@@ -4,6 +4,8 @@ A big toolkit of spamming tools for discord.
 
 Supports Both Windows and Linux.
 
+Telegram Group: https://t.me/DeadBakery
+
 Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
