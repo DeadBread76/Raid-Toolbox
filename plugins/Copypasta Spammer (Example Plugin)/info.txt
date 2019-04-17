@@ -1,0 +1,3 @@
+Copypasta Spammer (Example Plugin)
+Author: DeadBread76
+Description: Basically an example plugin, not much to it.
