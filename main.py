@@ -4,7 +4,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.5"
+rtbversion = "0.3.6"
 smversion = "0.1.6r3"
 
 from config import*
@@ -998,24 +998,30 @@ def viewcurrentat(currentattacks,spawnedpids):
 
 def customplugins(currentattacks,spawnedpids):
     clear()
-    pluginlist = []
+    pluginlist = {}
+    pluginfile = []
+    pluginfolder = []
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
-        plugindir = os.listdir('.\\plugins\\')
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins\x07")
-        plugindir = os.listdir('plugins/')
     pluginno = -1
     print (colored("Installed Plugins:",menucolour))
     print (colored("----------------------",menucolour))
-    for file in plugindir:
-        if str(file).startswith("main_"):
-            pluginlist.append(file)
+    for root, dirs, files in os.walk("plugins/", topdown=False):
+        for folder in dirs:
+            plugdir = os.listdir('plugins/{}/'.format(folder))
+            for file in plugdir:
+                if str(file).startswith("main_"):
+                    pluginlist[folder] = file
     for plugin in pluginlist:
         pluginno += 1
-        print (str(pluginno) +". "+ plugin[5:])
+        pluginfolder.append(plugin)
+        print (str(pluginno) +". "+ plugin)
+    for plugin in pluginlist.items():
+        pluginfile.append(plugin[1])
     print (colored("----------------------\nb: Back",menucolour))
-    print (colored("e: Kill all plugins",menucolour))
+    print (colored("e: Kill all plugins\nd: Download plugins from Repo",menucolour))
     plug = input ("Choice of plugin: ")
     if plug == 'b':
         main(currentattacks,spawnedpids)
@@ -1034,12 +1040,26 @@ def customplugins(currentattacks,spawnedpids):
                     pass
         os.remove('pluginpids')
         customplugins(currentattacks,spawnedpids)
-    plugchoice = pluginlist[int(plug)]
+    if plug == 'd':
+        clear()
+        down = requests.get("https://github.com/DeadBread76/Raid-Toolbox-Plugins/archive/master.zip")
+        with open("plugins/package.zip", "wb") as handle:
+            handle.write(down.content)
+        shutil.unpack_archive("plugins/package.zip","plugins/")
+        os.remove("plugins/package.zip")
+        for root, dirs, files in os.walk("plugins/Raid-Toolbox-Plugins-master/", topdown=False):
+            for folder in dirs:
+                copy_tree("plugins/Raid-Toolbox-Plugins-master/{}/".format(folder), "plugins/{}/".format(folder+"/"))
+        shutil.rmtree("plugins/Raid-Toolbox-Plugins-master/")
+        print("Downloaded plugins from Repo.")
+        input("Press enter to reload plugins")
+        customplugins(currentattacks,spawnedpids)
+    plugchoice = "{}/{}".format(pluginfolder[int(plug)],pluginfile[int(plug)])
     clear()
     if sys.platform.startswith('win32'):
-        p = subprocess.Popen([winpy,'.\\plugins\\'+plugchoice,menucolour])
+        p = subprocess.Popen([winpy,'plugins/'+plugchoice,winpy,menucolour])
     elif sys.platform.startswith('linux'):
-        p = subprocess.Popen([linuxpy,'plugins/'+plugchoice,menucolour])
+        p = subprocess.Popen([linuxpy,'plugins/'+plugchoice,linuxpy,menucolour])
     p.wait()
     customplugins(currentattacks,spawnedpids)
 
