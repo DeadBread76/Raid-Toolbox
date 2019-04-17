@@ -2,7 +2,7 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Both Windows and Linux.
+Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.10)
 
 Telegram Group: https://t.me/DeadBakery
 
@@ -67,7 +67,7 @@ proxyscrape
 
 On linux, you need pip3, ffmpeg and tkinter.
 
-To install these, run the commands:
+To install these, run the commands (Or the equivalent to these commands on the Linux distro you are using):
 
 `sudo apt-get install ffmpeg`
 
