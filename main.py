@@ -4,7 +4,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.6"
+rtbversion = "0.3.6r1"
 smversion = "0.1.6r3"
 
 from config import*
@@ -1010,7 +1010,10 @@ def customplugins(currentattacks,spawnedpids):
     print (colored("----------------------",menucolour))
     for root, dirs, files in os.walk("plugins/", topdown=False):
         for folder in dirs:
-            plugdir = os.listdir('plugins/{}/'.format(folder))
+            try:
+                plugdir = os.listdir('plugins/{}/'.format(folder))
+            except Exception:
+                continue
             for file in plugdir:
                 if str(file).startswith("main_"):
                     pluginlist[folder] = file
