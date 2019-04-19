@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 # coding: utf-8
 # Raid Toolbox
 # Author: DeadBread76 - https://github.com/DeadBread76/
