@@ -6,7 +6,7 @@ Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.1
 
 Telegram Group: https://t.me/DeadBakery
 
-Discord server: discord.gg/e2dc9Pt
+Discord server: ![invite](https://discord.gg/e2dc9Pt)
 
 Screenshot:
 
