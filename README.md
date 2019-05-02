@@ -61,6 +61,8 @@ pyperclip
 
 proxyscrape
 
+animation
+
 `(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself(Sometimes).)`
 
 ### `Linux setup:`
