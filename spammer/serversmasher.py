@@ -1,5 +1,4 @@
-#!/usr/local/bin/python3
-# coding: utf-8
+#!/usr/bin/env python3
 # Raid ToolBox Server Smasher
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Base code (Server Destroyer): Synchronocy - https://github.com/synchronocy

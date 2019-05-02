@@ -17,4 +17,3 @@ useproxies = "False"
 
 ###DEBUG OPTIONS###
 verbose = 0
-runasadmin = 0  # Only Works on windows., There is an issue with this, don't use it.

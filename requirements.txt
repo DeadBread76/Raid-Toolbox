@@ -6,3 +6,4 @@ colorama==0.4.1
 youtube_dl==2019.2.18
 pyperclip==1.7.0
 proxyscrape==0.2.0
+animation==0.0.6
