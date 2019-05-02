@@ -6,13 +6,13 @@ Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.1
 
 Telegram Group: https://t.me/DeadBakery
 
-Discord server: ![invite](https://discord.gg/e2dc9Pt)
+Discord server: [invite](https://discord.gg/e2dc9Pt)
 
 Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
 
-epic demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
+epic demonstration video: [watch it](https://www.youtube.com/watch?v=suMXDkIXWfI)
 
 # `Features:`
 
