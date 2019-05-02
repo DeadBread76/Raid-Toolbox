@@ -12,6 +12,8 @@ Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
 
+demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
+
 # `Features:`
 
 **Proxy Support**
