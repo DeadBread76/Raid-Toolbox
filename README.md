@@ -6,13 +6,13 @@ Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.1
 
 Telegram Group: https://t.me/DeadBakery
 
-Discord server: [invite](https://discord.gg/e2dc9Pt)
+Discord server: https://discord.gg/e2dc9P
 
 Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
 
-epic demonstration video: [watch it](https://www.youtube.com/watch?v=suMXDkIXWfI)
+Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWf
 
 # `Features:`
 
@@ -67,7 +67,7 @@ proxyscrape
 
 animation
 
-`(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself(Sometimes).)`
+`(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself.(Sometimes))`
 
 ### `Linux setup:`
 
@@ -97,9 +97,7 @@ Menu Colour can be changed by changing the value in `config.py`, You can also en
 
 ### `Voice Chat Spammer Usage and FFmpeg:`
 
-To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path
-
-If on linux, run the command `sudo apt-get install ffmpeg`.
+To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path (Windows).
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
