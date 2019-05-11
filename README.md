@@ -12,7 +12,7 @@ Screenshot:
 
 ![Screenshot](http://i.imgur.com/25WPvb9.png)
 
-Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWf
+Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 # `Features:`
 
