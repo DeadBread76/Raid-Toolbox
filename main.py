@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7"
+rtbversion = "0.3.7r1"
 smversion = "0.1.6r3"
 
 try:
@@ -11,7 +11,9 @@ try:
 except Exception:
     print("Unable to import config file.\nImporting necessary modules and checking installation...")
     import os
+    import sys
     import urllib.request
+    import subprocess
     if not os.path.exists("spammer/"):
         print("Spammer Directory not found.")
     if not os.path.exists("tools/"):
@@ -21,10 +23,22 @@ except Exception:
     data = data.decode('utf-8')
     with open("config.py","w+") as handle:
         handle.write(data)
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/requirements.txt')
+    data = response.read()
+    data = data.decode('utf-8')
+    with open("requirements.txt","w+") as handle:
+        handle.write(data)
     try:
         from config import*
     except Exception:
         print("Unable to start.")
+        input()
+        sys.exit()
+    if sys.platform.startswith('win32'):
+        installation = subprocess.Popen([winpip,'install','-r','requirements.txt','--user'])
+    elif sys.platform.startswith('linux'):
+        installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
+    installation.wait()
 
 if verbose == 1:
     try:
@@ -216,16 +230,7 @@ elif sys.platform.startswith('linux'):
 
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
-if os.path.isfile("ffmpeg.zip"):
-    try:
-        shutil.unpack_archive("ffmpeg.zip")
-        shutil.unpack_archive("ffplay.zip")
-        shutil.unpack_archive("ffprobe.zip")
-        os.remove("ffmpeg.zip")
-        os.remove("ffplay.zip")
-        os.remove("ffprobe.zip")
-    except Exception:
-        pass
+
 collector = create_collector('my-collector', 'https')
 
 if os.path.exists('tokens.txt'):
@@ -236,7 +241,37 @@ if os.path.exists('tokens.txt'):
 else:
     with open('tokens.txt','w+') as handle:
         print ("Created Tokens.txt")
-
+if not os.path.exists("spammer"):
+    clear()
+    singlefile = True
+    print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
+    input(colored("Press enter to continue.",menucolour))
+else:
+    singlefile = False
+    if not os.path.isfile("ffmpeg.exe"):
+        print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menucolour))
+        fmpg = input("(Y/N):")
+        if fmpg.lower() == "y":
+            clear()
+            @animation.wait(colored('Downloading FFMpeg, Please Wait ',menucolour))
+            def ffmpegdownload():
+                data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                return data
+            data = ffmpegdownload()
+            print(colored("Download Complete.","green"))
+            with open("ffmpeg.zip", "wb") as handle:
+                handle.write(data.content)
+            shutil.unpack_archive("ffmpeg.zip")
+            time.sleep(0.5)
+            os.remove("ffmpeg.zip")
+            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+            time.sleep(0.5)
+            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+cloudflarecheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+try:
+    json.loads(cloudflarecheck.content)
+except Exception:
+    print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
 currentattacks = []
 spawnedpids = []
 
@@ -278,7 +313,10 @@ def main(currentattacks,spawnedpids):
             sys.exit()
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
-    print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██",menucolour))
+    if singlefile == True:
+        print (colored("██                                   SINGLE FILE MODE IS ACTIVE                                   ██",menucolour))
+    else:
+        print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██",menucolour))
     print (colored("██                                                                                                ██",menucolour))
     print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
     print (colored("██                                                                                                ██",menucolour))
@@ -377,6 +415,18 @@ def main(currentattacks,spawnedpids):
             tools(currentattacks,spawnedpids)
         elif int(choice) == 986:
             wew(currentattacks,spawnedpids)
+        elif int(choice) == 666:
+            aaa()
+        elif int(choice) == 69:
+            clear()
+            colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
+            txt = "Funny guy over here"
+            a = ''
+            for x in txt:
+                a += colored(x,random.choice(colours)) + " "
+            print(a)
+            input()
+            main(currentattacks,spawnedpids)
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
@@ -1072,6 +1122,8 @@ def info(currentattacks,spawnedpids):
     print (colored("                                                            ",menucolour))
     print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour))
     print (colored("                                                            ",menucolour))
+    if singlefile == True:
+        print (colored("SINGLE FILE MODE ACTIVE",menucolour))
     if sys.platform.startswith('win32'):
         print (colored("Raid ToolBox version: "+rtbversion,menucolour))
     elif sys.platform.startswith('linux'):
@@ -1099,6 +1151,10 @@ def info(currentattacks,spawnedpids):
         info(currentattacks,spawnedpids)
     elif inf.lower() == 'diag':
         clear()
+        if singlefile == True:
+            print("Not while Single file mode is active you don't.")
+            input()
+            info(currentattacks, spawnedpids)
         if sys.platform.startswith('win32'):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Diagnostics")
         elif sys.platform.startswith('linux'):
@@ -1131,9 +1187,20 @@ def info(currentattacks,spawnedpids):
         d = results_dict["download"]
         u = results_dict["upload"]
         p = results_dict["ping"]
+        print("Checking if CloudFlare Banned...")
+        cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+        try:
+            json.loads(cloudcheck.content)
+            banned = False
+        except Exception:
+            banned = True
+        clear()
         print('Download Speed: {:.2f} Kb/s'.format(d / 1024))
         print('Upload Speed: {:.2f} Kb/s'.format(u / 1024))
         print('Ping: {}'.format(p))
+        print("CloudFlare Banned: {}".format(banned))
+        if banned == True:
+            print("You are CloudFlare banned.\n This means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
         now = datetime.datetime.now()
         with open ("Diagnostics" + str(now.strftime("%d%m%Y%H%M%S"))+".txt", 'w+') as handle:
             handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
@@ -1141,6 +1208,7 @@ def info(currentattacks,spawnedpids):
             handle.write("RTB VERSION: " + rtbversion + "\n")
             handle.write("SM VERSION: " + smversion + "\n")
             handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
+            handle.write("CloudFlare Banned: {}".format(banned) + "\n")
             handle.write("---------------\n")
             handle.write("Python Info:\n\n")
             handle.write("Python Version: " + sys.version+"\n")
@@ -1370,5 +1438,38 @@ def wew(currentattacks,spawnedpids):
     currentattacks.append("Music!")
     spawnedpids.append(p.pid)
     main(currentattacks,spawnedpids)
+
+def aaa():
+    clear()
+    def asciigen(length):
+        asc = ''
+        for x in range(int(length)):
+            num = random.randrange(13000)
+            asc = asc + chr(num)
+        return asc
+    colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'grey', 'white']
+    while True:
+        try:
+            if sys.platform.startswith('win32'):
+                ctypes.windll.kernel32.SetConsoleTitleW("{}".format(asciigen(random.randint(51,101))))
+            elif sys.platform.startswith('linux'):
+                sys.stdout.write("\x1b]2;{}\x07".format(asciigen(random.randint(1,21))))
+        except Exception:
+            if sys.platform.startswith('win32'):
+                os.system('mode con:cols=100 lines=30')
+            elif sys.platform.startswith('linux'):
+                os.system("printf '\033[8;30;100t'")
+            clear()
+            a = ""
+            for x in range(100):
+                a += "A"
+            for x in range(30):
+                print(colored(a,random.choice(colours)))
+            time.sleep(1)
+            aaa()
+        text = ''
+        for x in range(9999):
+            text += colored(asciigen(1), random.choice(colours))
+        print(text)
 
 main(currentattacks,spawnedpids)
