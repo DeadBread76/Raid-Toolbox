@@ -2,6 +2,8 @@
 # Available colours: grey(literally invisible), red, green, yellow,
 # blue, magenta, cyan, white and random(does not choose grey or white)
 menucolour = "red"
+menucolour2 = "yellow"
+alternatemenu = False  # Alternate menu style, thanks to https://github.com/lav13enrose
 
 ###PYTHON###
 # If you have a custom python command, change it here.

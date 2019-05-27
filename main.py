@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r1"
+rtbversion = "0.3.7r2"
 smversion = "0.1.6r3"
 
 try:
@@ -222,6 +222,9 @@ init()
 if menucolour.lower() == 'random':
     colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
     menucolour = random.choice(colours)
+if menucolour2.lower() == 'random':
+    colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
+    menucolour2 = random.choice(colours)
 tcounter = 0
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
@@ -272,6 +275,7 @@ try:
     json.loads(cloudflarecheck.content)
 except Exception:
     print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
+    input(colored("Press enter to continue.",'red'))
 currentattacks = []
 spawnedpids = []
 
@@ -311,44 +315,82 @@ def main(currentattacks,spawnedpids):
             clear()
         else:
             sys.exit()
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
-    if singlefile == True:
-        print (colored("██                                   SINGLE FILE MODE IS ACTIVE                                   ██",menucolour))
+    if alternatemenu == True:
+            print (colored("                                                                                       ",menucolour))
+            if singlefile == True:
+                print (colored("                                SINGLE FILE MODE IS ACTIVE                                   ",menucolour))
+            print (colored("                                   .s5SSSs.  .s5SSSSs. .s5SSSs.  ",menucolour))
+            print (colored("                                         SS.    SSS          SS. ",menucolour))
+            print (colored("                                   sS    S%S    S%S    sS    S%S ",menucolour))
+            print (colored("                                   SS    S%S    S%S    SS    S%S ",menucolour))
+            print (colored("                                   SS .sS;:'    S%S    SS .sSSS  ",menucolour))
+            print (colored("                                   SS    ;,     S%S    SS    S%S ",menucolour))
+            print (colored("                                   SS    `:;    `:;    SS    `:; ",menucolour))
+            print (colored("                                   SS    ;,.    ;,.    SS    ;,. ",menucolour))
+            print (colored("                                   `:    ;:'    ;:'    `:;;;;;:'",menucolour))
+            print (colored("                                   _____________________________",menucolour))
+            print (colored("                                   Raid ToolBox version "+rtbversion,menucolour))
+            if tcounter == 0:
+                print (colored("                               Tokens : No tokens available."+menublank+now+" ",menucolour))
+            elif tcounter == 1:
+                print (colored("                               Tokens : There is "+str(tcounter)+" token available. "+menublank+" ",menucolour))
+            else:
+                print (colored("                               Tokens : There are "+str(tcounter)+" tokens available. "+menublank+" ",menucolour))
+            print (colored("                                                                                       ",menucolour))
+            print (colored("           [0].  Exit                                [13]. Playing game changer              ",menucolour))
+            print (colored("           [1].  Joiner                              [14]. Ascii Nickname (Spams Audit log)  ",menucolour))
+            print (colored("           [2].  Leaver                              [15]. Embed Spammer                     ",menucolour))
+            print (colored("           [3].  Group DM leaver                     [16]. TrafficLight status effect        ",menucolour))
+            print (colored("           [4].  Token Checker                       [17]. Role Mass Mentioner               ",menucolour))
+            print (colored("           [5].  Message spammer                     [18]. Channel Message Cleaner           ",menucolour))
+            print (colored("           [6].  Ascii spammer                       [19]. Server Smasher (Single bot token) ",menucolour))
+            print (colored("           [7].  Mass mention spammer                [20]. Proxy Scraper                     ",menucolour))
+            print (colored("           [8].  Voice Chat Spammer                  [21]. Voice chat join spammer           ",menucolour))
+            print (colored("           [9].  User DM Spammer                     [22]. View Running Attacks              ",menucolour))
+            print (colored("           [10]. Friend Request Spammer              [23]. Custom attack plugins             ",menucolour))
+            print (colored("           [11]. Group DM spammer                    [24]. More Options                      ",menucolour))
+            print (colored("           [12]. Image Spammer                                                           ",menucolour))
+            print (colored(" ",menucolour))
+            choice = input(colored("    Menu => ",menucolour))
     else:
-        print (colored("██                               Welcome to DeadBread's Raid Toolbox                              ██",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
-    if tcounter == 0:
-        print (colored("██                                      No tokens available.              "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
-    elif tcounter == 1:
-        print (colored("██                                  There is "+str(tcounter)+" token available.           "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
-    else:
-        print (colored("██                                  There are "+str(tcounter)+" tokens available.         "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",menucolour))
-    print (colored("██                                                                                                ██",menucolour))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██                                               ██                                               ██",menucolour))
-    print (colored("██         0.  Exit                              ██         13. Playing game changer              ██",menucolour))
-    print (colored("██         1.  Joiner                            ██         14. Ascii Nickname (Spams Audit log)  ██",menucolour))
-    print (colored("██         2.  Leaver                            ██         15. Embed Spammer                     ██",menucolour))
-    print (colored("██         3.  Group DM leaver                   ██         16. TrafficLight status effect        ██",menucolour))
-    print (colored("██         4.  Token Checker                     ██         17. Role Mass Mentioner               ██",menucolour))
-    print (colored("██         5.  Message spammer                   ██         18. Channel Message Cleaner           ██",menucolour))
-    print (colored("██         6.  Ascii spammer                     ██         19. Server Smasher (Single bot token) ██",menucolour))
-    print (colored("██         7.  Mass mention spammer              ██         20. Proxy Scraper                     ██",menucolour))
-    print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join spammer           ██",menucolour))
-    print (colored("██         9.  User DM Spammer                   ██         22. View Running Attacks              ██",menucolour))
-    print (colored("██         10. Friend Request Spammer            ██         23. Custom attack plugins             ██",menucolour))
-    print (colored("██         11. Group DM spammer                  ██         24. More Options                      ██",menucolour))
-    print (colored("██         12. Image Spammer                     ██                                               ██",menucolour))
-    print (colored("██                                               ██                                               ██",menucolour))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    print (colored("██                                               ██                                               ██",menucolour))
-    print (colored("██     Please enter the number of your choice.   ██    Type 'info' for Information and Updates    ██",menucolour))
-    print (colored("██                                               ██                                               ██",menucolour))
-    print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-    choice = input()
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+        print (colored("██                                                                                                ██",menucolour))
+        if singlefile == True:
+            print (colored("██                                   ",menucolour)+(colored("SINGLE FILE MODE IS ACTIVE",menucolour2)+(colored("                                   ██",menucolour))))
+        else:
+            print (colored("██                               ",menucolour)+colored("Welcome to DeadBread's Raid Toolbox",menucolour2)+colored("                              ██",menucolour))
+        print (colored("██                                                                                                ██",menucolour))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+        print (colored("██                                                                                                ██",menucolour))
+        if tcounter == 0:
+            print (colored("██                                      ",menucolour)+(colored("No tokens available.",menucolour2)+(colored("              "+colored(menublank+now.strftime("%d/%m/%Y %H:%M:%S"),menucolour2)+(colored(" ██",menucolour))))))
+        elif tcounter == 1:
+            print (colored("██                                  ",menucolour)+(colored("There is "+str(tcounter),menucolour2)+(colored(" token available.           ",menucolour2)+(colored(menublank+now.strftime("%d/%m/%Y %H:%M:%S"),menucolour2)+(colored(" ██",menucolour))))))
+        else:
+            print (colored("██                                  ",menucolour)+(colored("There are "+str(tcounter),menucolour2)+(colored(" tokens available.         ",menucolour2)+(colored(menublank+now.strftime("%d/%m/%Y %H:%M:%S"),menucolour2)+(colored(" ██",menucolour))))))
+        print (colored("██                                                                                                ██",menucolour))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+        print (colored("██                                               ██                                               ██",menucolour))
+        print (colored("██         ",menucolour)+(colored("0.  Exit",menucolour2)+colored("                              ██",menucolour)+colored("         13. Playing game changer",menucolour2)+colored("              ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("1.  Joiner",menucolour2)+colored("                            ██",menucolour)+colored("         14. Ascii Nickname (Spams Audit log)",menucolour2)+colored("  ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("2.  Leaver",menucolour2)+colored("                            ██",menucolour)+colored("         15. Embed Spammer",menucolour2)+colored("                     ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("3.  Group DM leaver",menucolour2)+colored("                   ██",menucolour)+colored("         16. TrafficLight status effect",menucolour2)+colored("        ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("4.  Token Checker",menucolour2)+colored("                     ██",menucolour)+colored("         17. Role Mass Mentioner",menucolour2)+colored("               ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("5.  Message spammer",menucolour2)+colored("                   ██",menucolour)+colored("         18. Channel Message Cleaner",menucolour2)+colored("           ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("6.  Ascii spammer",menucolour2)+colored("                     ██",menucolour)+colored("         19. Server Smasher (Single bot token)",menucolour2)+colored(" ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("7.  Mass mention spammer",menucolour2)+colored("              ██",menucolour)+colored("         20. Proxy Scraper",menucolour2)+colored("                     ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("8.  Voice Chat Spammer",menucolour2)+colored("                ██",menucolour)+colored("         21. Voice chat join spammer",menucolour2)+colored("           ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("9.  User DM Spammer",menucolour2)+colored("                   ██",menucolour)+colored("         22. View Running Attacks",menucolour2)+colored("              ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("10. Friend Request Spammer",menucolour2)+colored("            ██",menucolour)+colored("         23. Custom attack plugins",menucolour2)+colored("             ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("11. Group DM spammer",menucolour2)+colored("                  ██",menucolour)+colored("         24. More Options",menucolour2)+colored("                      ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("12. Image Spammer",menucolour2)+colored("                     ██",menucolour)+colored("                                               ██",menucolour)))
+        print (colored("██                                               ██                                               ██",menucolour))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+        print (colored("██                                               ██                                               ██",menucolour))
+        print (colored("██     ",menucolour)+(colored("Please enter the number of your choice.",menucolour2)+colored("   ██    ",menucolour)+(colored("Type 'info' for Information and Updates",menucolour2)+colored("    ██",menucolour))))
+        print (colored("██                                               ██                                               ██",menucolour))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
+        choice = input()
     try:
         if choice.lower() == 'info':
             info(currentattacks,spawnedpids)
