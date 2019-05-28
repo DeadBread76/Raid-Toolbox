@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r2"
+rtbversion = "0.3.7r3"
 smversion = "0.1.6r3"
 
 try:
@@ -219,6 +219,7 @@ ydl_opts = {
 }
 
 init()
+collector = create_collector('my-collector', 'https')
 if menucolour.lower() == 'random':
     colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
     menucolour = random.choice(colours)
@@ -231,11 +232,43 @@ if sys.platform.startswith('win32'):
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 
+vercheck = requests.get("https://pastebin.com/raw/Wn8WvrRb").text
+if not vercheck.rstrip() == rtbversion:
+    print(colored("There is an update for RTB, Download update?", menucolour))
+    verchoice = input(colored("(Y/N): ",menucolour2))
+    if verchoice.lower() == "y":
+        clear()
+        @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
+        def run_update():
+            if sys.platform.startswith('win32'):
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+            elif sys.platform.startswith('linux'):
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+            update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+            clear()
+            print(colored("Update has been downloaded, Installing...",menucolour))
+            return update
+        update = run_update()
+        with open("update.zip", "wb") as handle:
+            handle.write(update.content)
+        try:
+            shutil.copy("config.py", "config_old.py")
+            shutil.copy("spammer/smconfig.py", "smconfig_old.py")
+        except Exception:
+            pass
+        try:
+            shutil.unpack_archive("update.zip")
+            copy_tree("Raid-Toolbox-master/", ".")
+            os.remove("update.zip")
+            shutil.rmtree("Raid-Toolbox-master/")
+            print ("Update complete, exiting.")
+        except Exception as e:
+            print("Error Updating, {}".format(e))
+        time.sleep(3)
+        sys.exit()
+
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
-
-collector = create_collector('my-collector', 'https')
-
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -390,7 +423,7 @@ def main(currentattacks,spawnedpids):
         print (colored("██     ",menucolour)+(colored("Please enter the number of your choice.",menucolour2)+colored("   ██    ",menucolour)+(colored("Type 'info' for Information and Updates",menucolour2)+colored("    ██",menucolour))))
         print (colored("██                                               ██                                               ██",menucolour))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
-        choice = input()
+        choice = input(colored(">",menucolour2))
     try:
         if choice.lower() == 'info':
             info(currentattacks,spawnedpids)
@@ -1162,23 +1195,23 @@ def info(currentattacks,spawnedpids):
     print (colored(" |_|  \_\__,_|_|\__,_|    |_|\___/ \___/|_|____/ \___/_/\_\ ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
     print (colored("                                                            ",menucolour))
-    print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour))
+    print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour2))
     print (colored("                                                            ",menucolour))
     if singlefile == True:
-        print (colored("SINGLE FILE MODE ACTIVE",menucolour))
+        print (colored("SINGLE FILE MODE ACTIVE",menucolour2))
     if sys.platform.startswith('win32'):
-        print (colored("Raid ToolBox version: "+rtbversion,menucolour))
+        print (colored("Raid ToolBox version: "+rtbversion,menucolour2))
     elif sys.platform.startswith('linux'):
-        print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour))
-    print (colored("Server Smasher version: "+smversion,menucolour))
-    print (colored("Discord.py version: "+ discord.__version__,menucolour))
+        print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour2))
+    print (colored("Server Smasher version: "+smversion,menucolour2))
+    print (colored("Discord.py version: "+ discord.__version__,menucolour2))
     print (colored("                                                            ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
-    print (colored("Type 'update' to update Raid ToolBox to the latest version.",menucolour))
-    print (colored("Type 'reinstall' to reinstall requirements",menucolour))
-    print (colored("Type 'diag' for diagnostics log.",menucolour))
+    print (colored("Type 'update' to update Raid ToolBox to the latest version.",menucolour2))
+    print (colored("Type 'reinstall' to reinstall requirements",menucolour2))
+    print (colored("Type 'diag' for diagnostics log.",menucolour2))
     print (colored("------------------------------------------------------------",menucolour))
-    inf = input("")
+    inf = input(colored(">",menucolour2))
     if inf == "d":
         print('7RtuZEe')
         input()
@@ -1296,21 +1329,21 @@ def info(currentattacks,spawnedpids):
             update = run_update()
             with open("update.zip", "wb") as handle:
                 handle.write(update.content)
-            shutil.unpack_archive("update.zip")
-            if sys.platform.startswith('win32'):
+            try:
+                shutil.copy("config.py", "config_old.py")
+                shutil.copy("spammer/smconfig.py", "smconfig_old.py")
+            except Exception:
+                pass
+            try:
+                shutil.unpack_archive("update.zip")
                 copy_tree("Raid-Toolbox-master/", ".")
                 os.remove("update.zip")
                 shutil.rmtree("Raid-Toolbox-master/")
                 print ("Update complete, exiting.")
-                time.sleep(5)
-                sys.exit()
-            elif sys.platform.startswith('linux'):
-                copy_tree("Raid-Toolbox-master/", ".")
-                os.remove("update.zip")
-                shutil.rmtree("Raid-Toolbox-master/")
-                print ("Update complete, exiting.")
-                time.sleep(5)
-                sys.exit()
+            except Exception as e:
+                print("Error Updating, {}".format(e))
+            time.sleep(3)
+            sys.exit()
         else:
             info(currentattacks,spawnedpids)
     main(currentattacks,spawnedpids)
