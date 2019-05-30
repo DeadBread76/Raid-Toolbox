@@ -19,3 +19,8 @@ useproxies = "False"
 
 ###DEBUG OPTIONS###
 verbose = 0
+disablecloudflarecheck = 0
+disabletokenlimit = 0
+disableupdatecheck = 0
+combineuverifiedandverified = 0
+tokenwarningthreshhold = 150

