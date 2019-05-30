@@ -10,7 +10,7 @@ Discord server: https://discord.gg/e2dc9Pt
 
 Screenshot:
 
-![Screenshot](http://i.imgur.com/25WPvb9.png)
+![Screenshot](http://i.imgur.com/Td18com.png)
 
 Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
