@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r4"
+rtbversion = "0.3.7r5"
 smversion = "0.1.6r3"
 
 try:
@@ -331,27 +331,29 @@ if not os.path.exists("spammer"):
     input(colored("Press enter to continue.",menucolour))
 else:
     singlefile = False
-    if not os.path.isfile("ffmpeg.exe"):
-        if verbose == 1:
-            print("FFmpeg is missing")
-        print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menucolour))
-        fmpg = input("(Y/N):")
-        if fmpg.lower() == "y":
-            clear()
-            @animation.wait(colored('Downloading FFMpeg, Please Wait ',menucolour))
-            def ffmpegdownload():
-                data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
-                return data
-            data = ffmpegdownload()
-            print(colored("Download Complete.","green"))
-            with open("ffmpeg.zip", "wb") as handle:
-                handle.write(data.content)
-            shutil.unpack_archive("ffmpeg.zip")
-            time.sleep(0.5)
-            os.remove("ffmpeg.zip")
-            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
-            time.sleep(0.5)
-            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+    if sys.platform.startswith('win32'):
+        if ignoreffmpegmissing == 0:
+            if not os.path.isfile("ffmpeg.exe"):
+                if verbose == 1:
+                    print("FFmpeg is missing")
+                print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menucolour))
+                fmpg = input("(Y/N):")
+                if fmpg.lower() == "y":
+                    clear()
+                    @animation.wait(colored('Downloading FFMpeg, Please Wait ',menucolour))
+                    def ffmpegdownload():
+                        data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                        return data
+                    data = ffmpegdownload()
+                    print(colored("Download Complete.","green"))
+                    with open("ffmpeg.zip", "wb") as handle:
+                        handle.write(data.content)
+                    shutil.unpack_archive("ffmpeg.zip")
+                    time.sleep(0.5)
+                    os.remove("ffmpeg.zip")
+                    copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                    time.sleep(0.5)
+                    shutil.rmtree("ffmpeg-4.1.3-win64-static")
 if disablecloudflarecheck == 1:
     pass
 else:
@@ -1072,10 +1074,18 @@ def serversmasher(currentattacks,spawnedpids):
     clear()
     print ("The config file for the Server Smasher is in spammer/smconfig.py, please add token before starting.")
     if sys.platform.startswith('win32'):
-        p = subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
+        if serversmasherinmainwindow == 1:
+            p = subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour])
+            p.wait()
+        else:
+            subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
     elif sys.platform.startswith('linux'):
-        subprocess.call(['gnome-terminal', '-x', linuxpy,'spammer/serversmasher.py',smversion,menucolour])
-    time.sleep(3)
+        if serversmasherinmainwindow == 1:
+            p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour])
+            p.wait()
+        else:
+            subprocess.call(['gnome-terminal', '-x', linuxpy,'spammer/serversmasher.py',smversion,menucolour])
+    time.sleep(1)
     main(currentattacks,spawnedpids)
 
 def proxyscrape(currentattacks,spawnedpids):

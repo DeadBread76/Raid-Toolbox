@@ -24,3 +24,5 @@ disabletokenlimit = 0
 disableupdatecheck = 0
 combineuverifiedandverified = 0
 tokenwarningthreshhold = 150
+serversmasherinmainwindow = 0  # Useful for running on Putty
+ignoreffmpegmissing = 0
