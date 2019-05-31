@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r5"
+rtbversion = "0.3.7r6"
 smversion = "0.1.6r3"
 
 try:
@@ -239,7 +239,7 @@ else:
         vercheck = requests.get("https://pastebin.com/raw/Fn4s3yr2").text.rstrip().split("|")
         if not vercheck[0] == rtbversion:
             print(colored("There is an update for RTB, Download update?", menucolour))
-            verchoice = input(colored("(Y/N): ",menucolour2))
+            verchoice = input("(Y/N): ")
             if verchoice.lower() == "y":
                 clear()
                 @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
@@ -272,7 +272,7 @@ else:
                 sys.exit()
         if not vercheck[1] == smversion:
             print(colored("There is an update for Server Smasher, Download update?", menucolour))
-            verchoice = input(colored("(Y/N): ",menucolour2))
+            verchoice = input("(Y/N): ")
             if verchoice.lower() == "y":
                 clear()
                 print(colored('Downloading update for Server Smasher, Please Wait...',menucolour))
