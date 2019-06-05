@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r6"
+rtbversion = "0.3.7r7"
 smversion = "0.1.7"
 
 try:
@@ -284,11 +284,11 @@ else:
                     shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
                 except Exception:
                     pass
-                with open("spammer/serversmashertest.py", "wb") as handle:
+                with open("spammer/serversmasher.py", "wb") as handle:
                     handle.write(serversmasherupdate.content)
-                with open("spammer/smconfigtest.py", "wb") as handle:
+                with open("spammer/smconfig.py", "wb") as handle:
                     handle.write(configupdate.content)
-                with open("maintest.py", "wb") as handle:
+                with open("main.py", "wb") as handle:
                     handle.write(mainpatch.content)
                 print(colored("Update Complete.",menucolour))
                 input("Press enter to exit.")
