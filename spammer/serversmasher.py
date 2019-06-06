@@ -298,7 +298,7 @@ def corrupt_channel(channelid,channame):
     src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
-        corrupt_channel(channelid,chanlength)
+        corrupt_channel(channelid,channame)
 
 def corrupt_role(serverid,roleid,rolename):
     if clienttype == 'bot':
