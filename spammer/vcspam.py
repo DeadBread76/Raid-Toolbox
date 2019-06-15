@@ -23,10 +23,7 @@ async def on_ready():
     voice_channel = client.get_channel(int(voice_id))
     while not client.is_closed():
         vc = await voice_channel.connect()
-        if sys.platform.startswith('win32'):
-            vc.play(discord.FFmpegPCMAudio('.\\spammer\\file.wav'))
-        elif sys.platform.startswith('linux'):
-            vc.play(discord.FFmpegPCMAudio('spammer/file.wav'))
+        vc.play(discord.FFmpegPCMAudio('spammer/file.wav'))
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 10.0
         while vc.is_playing():

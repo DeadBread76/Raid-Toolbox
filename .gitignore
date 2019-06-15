@@ -7,3 +7,5 @@ load.log
 *.zip
 ffplay.zip
 ffmpeg.zip
+*.smpreset
+*.mp3
