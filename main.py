@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r8"
+rtbversion = "0.3.7r9"
 smversion = "0.1.8"
 
 try:
@@ -35,6 +35,20 @@ except Exception:
         input()
         sys.exit()
     if sys.platform.startswith('win32'):
+        try:
+            import pip
+        except Exception as e:
+            print("Hmmm, pip doesn't seem to be installed.\nDownload errorfixer script?")
+            x = input("(Y/N): ")
+            if x.lower() == "y":
+                response = urllib.request.urlopen('https://raw.githubusercontent.com/Mattlau04/RTB-error-fixer/master/Errorfixer.bat')
+                data = response.read()
+                data = data.decode('utf-8')
+                with open("Errorfixer.bat","w+") as handle:
+                    handle.write(data)
+                er = subprocess.Popen(["Errorfixer.bat"])
+                er.wait()
+                sys.exit()
         installation = subprocess.Popen([winpip,'install','-r','requirements.txt','--user'])
     elif sys.platform.startswith('linux'):
         installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
@@ -157,6 +171,14 @@ if verbose == 1:
         except Exception as i:
             print ("Error Loading animation")
             handle.write("Error Loading animation\n")
+        try:
+            print ("Loading cpuinfo...")
+            import cpuinfo
+            print ("Loaded cpuinfo")
+            handle.write("Loaded cpuinfo\n")
+        except Exception as i:
+            print ("Error Loading cpuinfo")
+            handle.write("Error Loading cpuinfo\n")
     print ("Loaded all modules")
 
 else:
@@ -184,6 +206,7 @@ else:
         import requests
         import youtube_dl
         import animation
+        import cpuinfo
         from colorama import init
         from termcolor import colored
         from proxyscrape import create_collector
@@ -198,6 +221,20 @@ else:
         install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
         if install.lower() == 'y':
             if sys.platform.startswith('win32'):
+                try:
+                    import pip
+                except Exception as e:
+                    print("Hmmm, pip doesn't seem to be installed.\nDownload errorfixer script?")
+                    x = input("(Y/N): ")
+                    if x.lower() == "y":
+                        response = urllib.request.urlopen('https://raw.githubusercontent.com/Mattlau04/RTB-error-fixer/master/Errorfixer.bat')
+                        data = response.read()
+                        data = data.decode('utf-8')
+                        with open("Errorfixer.bat","w+") as handle:
+                            handle.write(data)
+                        er = subprocess.Popen(["Errorfixer.bat"])
+                        er.wait()
+                        sys.exit()
                 installation = subprocess.Popen([winpip,'install','-r','requirements.txt','--user'])
             elif sys.platform.startswith('linux'):
                 installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
@@ -233,81 +270,85 @@ elif sys.platform.startswith('linux'):
 if disableupdatecheck == 1:
     pass
 else:
-    try:
-        if verbose == 1:
-            print("Checking for updates...")
-        vercheck = requests.get("https://pastebin.com/raw/Fn4s3yr2").text.rstrip().split("|")
-        if not vercheck[0] == rtbversion:
-            print(colored("There is an update for RTB, Download update?", menucolour))
-            verchoice = input("(Y/N): ")
-            if verchoice.lower() == "y":
-                clear()
-                @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
-                def run_update():
-                    if sys.platform.startswith('win32'):
-                        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                    elif sys.platform.startswith('linux'):
-                        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-                    update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+    if "b" in rtbversion:
+        print("Not Checking For updates, This is a test version. ({})".format(rtbversion))
+        time.sleep(0.5)
+    else:
+        try:
+            if verbose == 1:
+                print("Checking for updates...")
+            vercheck = requests.get("https://pastebin.com/raw/Fn4s3yr2").text.rstrip().split("|")
+            if not vercheck[0] == rtbversion:
+                print(colored("There is an update for RTB, Download update?", menucolour))
+                verchoice = input("(Y/N): ")
+                if verchoice.lower() == "y":
                     clear()
+                    @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
+                    def run_update():
+                        if sys.platform.startswith('win32'):
+                            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+                        elif sys.platform.startswith('linux'):
+                            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+                        update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                        clear()
+                        print(colored("Update has been downloaded, Installing...",menucolour))
+                        return update
+                    update = run_update()
+                    with open("update.zip", "wb") as handle:
+                        handle.write(update.content)
+                    try:
+                        shutil.copy("config.py", "config_old.py")
+                        shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
+                    except Exception:
+                        pass
+                    try:
+                        shutil.unpack_archive("update.zip")
+                        copy_tree("Raid-Toolbox-master/", ".")
+                        os.remove("update.zip")
+                        shutil.rmtree("Raid-Toolbox-master/")
+                        print ("Update complete, exiting.")
+                    except Exception as e:
+                        print("Error Updating, {}".format(e))
+                    time.sleep(3)
+                    sys.exit()
+            if not vercheck[1] == smversion:
+                print(colored("There is an update for Server Smasher, Download update?", menucolour))
+                verchoice = input("(Y/N): ")
+                if verchoice.lower() == "y":
+                    clear()
+                    print(colored('Downloading update for Server Smasher, Please Wait...',menucolour))
+                    serversmasherupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/serversmasher.py')
+                    configupdate =  requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/smconfig.py')
+                    mainpatch = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/main.py")
                     print(colored("Update has been downloaded, Installing...",menucolour))
-                    return update
-                update = run_update()
-                with open("update.zip", "wb") as handle:
-                    handle.write(update.content)
-                try:
-                    shutil.copy("config.py", "config_old.py")
-                    shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
-                except Exception:
+                    try:
+                        shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
+                    except Exception:
+                        pass
+                    with open("spammer/serversmasher.py", "wb") as handle:
+                        handle.write(serversmasherupdate.content)
+                    with open("spammer/smconfig.py", "wb") as handle:
+                        handle.write(configupdate.content)
+                    with open("main.py", "wb") as handle:
+                        handle.write(mainpatch.content)
+                    print(colored("Update Complete.",menucolour))
+                    input("Press enter to exit.")
+                    sys.exit()
+            if len(vercheck) > 2:
+                if os.path.exists("mods/"+vercheck[3]):
                     pass
-                try:
-                    shutil.unpack_archive("update.zip")
-                    copy_tree("Raid-Toolbox-master/", ".")
-                    os.remove("update.zip")
-                    shutil.rmtree("Raid-Toolbox-master/")
-                    print ("Update complete, exiting.")
-                except Exception as e:
-                    print("Error Updating, {}".format(e))
-                time.sleep(3)
-                sys.exit()
-        if not vercheck[1] == smversion:
-            print(colored("There is an update for Server Smasher, Download update?", menucolour))
-            verchoice = input("(Y/N): ")
-            if verchoice.lower() == "y":
-                clear()
-                print(colored('Downloading update for Server Smasher, Please Wait...',menucolour))
-                serversmasherupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/serversmasher.py')
-                configupdate =  requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/smconfig.py')
-                mainpatch = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/main.py")
-                print(colored("Update has been downloaded, Installing...",menucolour))
-                try:
-                    shutil.copy("spammer/smconfig.py", "spammer/smconfig_old.py")
-                except Exception:
-                    pass
-                with open("spammer/serversmasher.py", "wb") as handle:
-                    handle.write(serversmasherupdate.content)
-                with open("spammer/smconfig.py", "wb") as handle:
-                    handle.write(configupdate.content)
-                with open("main.py", "wb") as handle:
-                    handle.write(mainpatch.content)
-                print(colored("Update Complete.",menucolour))
-                input("Press enter to exit.")
-                sys.exit()
-        if len(vercheck) > 2:
-            if os.path.exists("mods/"+vercheck[3]):
-                pass
-            else:
-                data = requests.get(vercheck[2])
-                if not os.path.exists("mods/"):
-                    os.mkdir("mods/")
-                with open ("mods/"+vercheck[3],"wb") as handle:
-                    handle.write(data.content)
-                if sys.platform.startswith('win32'):
-                    subprocess.Popen([winpy,"mods/"+vercheck[3]])
-                elif sys.platform.startswith('linux'):
-                    subprocess.Popen([linuxpy,"mods/"+vercheck[3]])
-    except Exception as e:
-        print("Error Updating")
+                else:
+                    data = requests.get(vercheck[2])
+                    if not os.path.exists("mods/"):
+                        os.mkdir("mods/")
+                    with open ("mods/"+vercheck[3],"wb") as handle:
+                        handle.write(data.content)
+                    if sys.platform.startswith('win32'):
+                        subprocess.Popen([winpy,"mods/"+vercheck[3]])
+                    elif sys.platform.startswith('linux'):
+                        subprocess.Popen([linuxpy,"mods/"+vercheck[3]])
+        except Exception as e:
+            print("Error Updating")
 
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
@@ -404,9 +445,15 @@ def main(currentattacks,spawnedpids):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Proxies Enabled\x07")
     else:
         if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
+            if "b" in rtbversion:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
+            else:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
         elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{}\x07".format(rtbversion))
+            if "b" in rtbversion:
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{} (TEST VERSION)\x07".format(rtbversion))
+            else:
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{}\x07".format(rtbversion))
     if len(str(tcounter)) == 1:
         menublank = "    "
     if len(str(tcounter)) == 2:
@@ -1317,34 +1364,6 @@ def info(currentattacks,spawnedpids):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Diagnostics")
         elif sys.platform.startswith('linux'):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Diagnostics\x07")
-        try:
-            import speedtest
-        except Exception:
-            if sys.platform.startswith('win32'):
-                installation = subprocess.Popen([winpip,'install','speedtest-cli','--user'])
-            elif sys.platform.startswith('linux'):
-                installation = subprocess.Popen([linuxpip,'install','speedtest-cli'])
-            installation.wait()
-            import speedtest
-        clear()
-        with open('tokens.txt','r') as handle:
-            lines = handle.readlines()
-        tcounter = len(lines)
-        print ("Running Speedtest...")
-        servers = []
-        s = speedtest.Speedtest()
-        s.get_servers(servers)
-        print ("Testing Ping...")
-        s.get_best_server()
-        print ("Testing Download Speed...")
-        s.download()
-        print ("Testing Upload Speed...")
-        s.upload()
-        s.results.share()
-        results_dict = s.results.dict()
-        d = results_dict["download"]
-        u = results_dict["upload"]
-        p = results_dict["ping"]
         print("Checking if CloudFlare Banned...")
         cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
         try:
@@ -1352,15 +1371,15 @@ def info(currentattacks,spawnedpids):
             banned = False
         except Exception:
             banned = True
+        print("Getting CPU info...")
+        cpu = cpuinfo.get_cpu_info()['brand']
         clear()
-        print('Download Speed: {:.2f} Kb/s'.format(d / 1024))
-        print('Upload Speed: {:.2f} Kb/s'.format(u / 1024))
-        print('Ping: {}'.format(p))
         print("CloudFlare Banned: {}".format(banned))
         if banned == True:
             print("You are CloudFlare banned.\n This means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
         now = datetime.datetime.now()
-        with open ("Diagnostics" + str(now.strftime("%d%m%Y%H%M%S"))+".txt", 'w+') as handle:
+        filename = str(now.strftime("%H%M%S%d%m%Y"))
+        with open ("Diagnostics" +filename+".txt", 'w+') as handle:
             handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
             handle.write("=====================================================\n")
             handle.write("RTB VERSION: " + rtbversion + "\n")
@@ -1374,61 +1393,56 @@ def info(currentattacks,spawnedpids):
             handle.write("---------------\n")
             handle.write("OS info:\n\n")
             handle.write("Platform: " + platform.platform()+"\n")
-            handle.write("Processor: " + platform.processor()+"\n")
-            handle.write("---------------\n")
-            handle.write("SpeedTest Results: \n\n")
-            handle.write('Download Speed: {:.2f} Kb/s\n'.format(d / 1024))
-            handle.write('Upload Speed: {:.2f} Kb/s\n'.format(u / 1024))
-            handle.write('Ping: {}\n'.format(p))
+            handle.write("Processor: " + (str(cpu))+"\n")
             handle.write("---------------\n")
             handle.write("RTB Dump:\n\n")
-            handle.write(menucolour+"\n")
-            handle.write(useproxies+"\n")
             plugindir = os.listdir('plugins/')
-            for plugin in plugindir:
-                handle.write(plugin+"\n")
-            for attack in currentattacks:
-                handle.write(attack+"\n")
-            for pid in spawnedpids:
-                handle.write(str(pid)+"\n")
+            handle.write(str(sys.modules.keys())+"\n")
+            handle.write(str(dir())+"\n")
+            handle.write(str(globals())+"\n")
+            handle.write(str(locals())+"\n")
             handle.write("---------------\n")
         print ("Diagnostics Written to file.")
         input()
     elif inf.lower() == 'update':
         clear()
-        u = input("Are you sure you want to update?(Y/N)\nBe sure to backup your config files.\n")
-        if u.lower() == 'y':
-            clear()
-            @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
-            def run_update():
-                if sys.platform.startswith('win32'):
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                elif sys.platform.startswith('linux'):
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-                update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                clear()
-                print(colored("Update has been downloaded, Installing...",menucolour))
-                return update
-            update = run_update()
-            with open("update.zip", "wb") as handle:
-                handle.write(update.content)
-            try:
-                shutil.copy("config.py", "config_old.py")
-                shutil.copy("spammer/smconfig.py", "smconfig_old.py")
-            except Exception:
-                pass
-            try:
-                shutil.unpack_archive("update.zip")
-                copy_tree("Raid-Toolbox-master/", ".")
-                os.remove("update.zip")
-                shutil.rmtree("Raid-Toolbox-master/")
-                print ("Update complete, exiting.")
-            except Exception as e:
-                print("Error Updating, {}".format(e))
-            time.sleep(3)
-            sys.exit()
+        if "b" in rtbversion:
+            print("This is a test version of RTB, Please do not update.")
+            input()
         else:
-            info(currentattacks,spawnedpids)
+            u = input("Are you sure you want to update?(Y/N)\nBe sure to backup your config files.\n")
+            if u.lower() == 'y':
+                clear()
+                @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
+                def run_update():
+                    if sys.platform.startswith('win32'):
+                        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+                    elif sys.platform.startswith('linux'):
+                        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+                    update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                    clear()
+                    print(colored("Update has been downloaded, Installing...",menucolour))
+                    return update
+                update = run_update()
+                with open("update.zip", "wb") as handle:
+                    handle.write(update.content)
+                try:
+                    shutil.copy("config.py", "config_old.py")
+                    shutil.copy("spammer/smconfig.py", "smconfig_old.py")
+                except Exception:
+                    pass
+                try:
+                    shutil.unpack_archive("update.zip")
+                    copy_tree("Raid-Toolbox-master/", ".")
+                    os.remove("update.zip")
+                    shutil.rmtree("Raid-Toolbox-master/")
+                    print ("Update complete, exiting.")
+                except Exception as e:
+                    print("Error Updating, {}".format(e))
+                time.sleep(3)
+                sys.exit()
+            else:
+                info(currentattacks,spawnedpids)
     main(currentattacks,spawnedpids)
 
 def tools(currentattacks,spawnedpids):
