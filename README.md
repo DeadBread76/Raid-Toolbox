@@ -48,17 +48,7 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 # `Installation:`
 
-### `Linux setup:`
-
-On linux, you need pip3, ffmpeg and tkinter.
-
-To install these, run the commands (Or the equivalent to these commands on the Linux distro you are using):
-
-`sudo apt-get install ffmpeg`
-
-`sudo apt-get install python3-pip`
-
-`sudo apt-get install python3-tk`
+The instruction to install RTB can be found [here](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-install-Python)
 
 
 ### `Python:`
