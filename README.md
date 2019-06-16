@@ -74,10 +74,6 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 Menu Colour can be changed by changing the value in `config.py`, You can also enable proxies and change the python command there too.
 
-### `Voice Chat Spammer Usage and FFmpeg:`
-
-To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path (Windows).
-
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
 # **Disclaimer**
