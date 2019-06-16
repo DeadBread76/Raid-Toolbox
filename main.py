@@ -3,8 +3,8 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r7"
-smversion = "0.1.7r2"
+rtbversion = "0.3.7r8"
+smversion = "0.1.8"
 
 try:
     from config import*
@@ -297,7 +297,6 @@ else:
             if os.path.exists("mods/"+vercheck[3]):
                 pass
             else:
-                print("Found Modification For RTB, Downloading...")
                 data = requests.get(vercheck[2])
                 if not os.path.exists("mods/"):
                     os.mkdir("mods/")

@@ -8,6 +8,7 @@ try:
     import os
     import sys
     import json
+    import ast
     import time
     import random
     import string
@@ -15,6 +16,7 @@ try:
     import asyncio
     import discord
     import requests
+    import youtube_dl
     import pyperclip
     from base64 import b64encode
     from smconfig import *
@@ -39,7 +41,15 @@ if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Smasher v{}".format(smversion))
 elif sys.platform.startswith('linux'):
     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Smasher v{}\x07".format(smversion))
-
+ydl_opts = {
+    'outtmpl': 'spammer/file.webm',
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': '192',
+    }],
+}
 class Worker(Thread):
     """
     Pooling
@@ -92,8 +102,9 @@ class ThreadPool:
 
 pool = ThreadPool(int(threadcount))
 loop = asyncio.get_event_loop()
-channellist = []
 client = discord.Client()
+init()
+channellist = []
 
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
@@ -101,8 +112,10 @@ if sys.platform.startswith('win32'):
 elif sys.platform.startswith('linux'):
     os.system("printf '\033[8;40;70t'")
     clear = lambda: os.system('clear')
-init()
 
+if not os.path.exists("spammer/smtokens.txt"):
+    with open ("smtokens.txt","a+") as handle:
+        handle.write("\n")
 if usemultiple == True:
     useable = []
     useabletokens = []
@@ -124,25 +137,33 @@ if usemultiple == True:
             response = json.loads(src.content.decode())
             useable.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
             useabletokens.append(token.rstrip())
-    clear()
-    count = -1
-    print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
-    if sys.platform.startswith('win32'):
-        if len(useable) > 40:
-            screensize = 7
-            screensize += len(useable)
-            os.system('mode con:cols=70 lines={}'.format(str(screensize)))
-    elif sys.platform.startswith('linux'):
-        if len(useable) > 40:
-            screensize = 7
-            screensize += len(useable)
-            os.system("printf '\033[8;{};70t'".format(str(screensize)))
-    for bot in useable:
-        count += 1
-        print(colored(str(count)+". "+bot,menucolour))
-    print (colored("\n-------------------------",menucolour))
-    botsel = input("\nBot of choice: ")
-    token = useabletokens[int(botsel)]
+    while True:
+        clear()
+        count = -1
+        print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
+        if sys.platform.startswith('win32'):
+            if len(useable) > 40:
+                screensize = 7
+                screensize += len(useable)
+                os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+        elif sys.platform.startswith('linux'):
+            if len(useable) > 40:
+                screensize = 7
+                screensize += len(useable)
+                os.system("printf '\033[8;{};70t'".format(str(screensize)))
+        for bot in useable:
+            count += 1
+            print(colored(str(count)+". "+bot,menucolour))
+        print (colored("\n-------------------------",menucolour))
+        botsel = input("\nBot of choice: ")
+        try:
+            token = useabletokens[int(botsel)]
+        except Exception:
+            clear()
+            print("Invalid Option")
+            input()
+        else:
+            break
 
 #Attacks
 def deletechannel(channel):
@@ -468,6 +489,8 @@ async def main(SERVER):
                     clear()
                     server = client.get_guild(int(SERVER))
                     print (colored("Type 'start' to start.",menucolour))
+                    print (colored("S.  Save Config",menucolour))
+                    print (colored("L.  Load Config",menucolour))
                     print (colored("0.  Go back",menucolour))
                     print (colored("1.  Change server name: {}".format(toggleopts['namechange']),menucolour))
                     print (colored("2.  New Server Name: {}".format(toggleopts['servname']),menucolour))
@@ -658,7 +681,29 @@ async def main(SERVER):
                             print ("Finished!")
                             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"")
                             await main(SERVER)
-
+                    if toga.lower() == 's':
+                        presetname = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name Of Preset: ')
+                        if not os.path.exists("spammer/presets/"):
+                            os.mkdir("spammer/presets/")
+                        with open ("spammer/presets/{}.smpreset".format(presetname),"w+", errors='ignore') as handle:
+                            handle.write(str(toggleopts))
+                        await changesettings(toggleopts,SERVER)
+                    if toga.lower() == 'l':
+                        clear()
+                        presets = []
+                        for file in os.listdir("spammer/presets/"):
+                            if file.endswith(".smpreset"):
+                                presets.append(file)
+                        precount = -1
+                        for pre in presets:
+                            precount += 1
+                            print(colored("{}. {}".format(precount,pre),menucolour))
+                        prechoice = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Preset To load: ')
+                        with open("spammer/presets/{}".format(presets[int(prechoice)]), "r", errors="ignore") as handle:
+                            content = handle.read().splitlines()
+                            toggleopts = ast.literal_eval(content[0])
+                            print("Loaded Config File")
+                        await changesettings(toggleopts,SERVER)
                     if int(toga) == 0:
                         await main(SERVER)
                     elif int(toga) == 1:
@@ -844,6 +889,7 @@ async def main(SERVER):
             print(colored("4.  Check Bot Permissions",menucolour))
             print(colored("5.  Channel Webhook Smasher",menucolour))
             print(colored("6.  Server Corruptor (Destructive)",menucolour))
+            print(colored("7.  Music Player",menucolour))
             sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
             if int(sel) == 0:
                 await main(SERVER)
@@ -893,6 +939,7 @@ async def main(SERVER):
                 clear()
                 for channel in server.channels:
                     myperms = channel.permissions_for(server.get_member(client.user.id))
+                    print("Bot Has the following permissions:")
                     if myperms.administrator:
                         print("Administrator")
                         break
@@ -916,7 +963,7 @@ async def main(SERVER):
             elif int(sel) == 5:
                 clear()
                 print("Webhook Smasher")
-                print("Please Enter the text to spam,\n For random ascii type 'asc' or to go back type 'back' or 'b'\nThis will trigger the rate limit for webhooks instantly.")
+                print(colored("Please Enter the text to spam,\nFor random ascii type 'asc' or to go back type 'back' or 'b'\nThis will trigger the rate limit for webhooks instantly.",menucolour))
                 txtspam = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                 if txtspam.lower() == "back":
                     await main(SERVER)
@@ -965,8 +1012,11 @@ async def main(SERVER):
                     await corruptor(server)
                 else:
                     await main(SERVER)
+            elif int(sel) == 7:
+                await music_player_channel_select(server)
             else:
                 await main(SERVER)
+
         elif int(opts) == 3:
             for channel in server.text_channels:
                 invitelink = await channel.create_invite()
@@ -1003,6 +1053,7 @@ async def main(SERVER):
 
         elif int(opts) == 6:
             await serverselect()
+
     except Exception as e:
         print (colored("Error:","red"))
         print (colored(e,"red"))
@@ -1080,6 +1131,84 @@ async def corruptor(server):
     print("Corrupted the server.")
     await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press enter to return to menu.')
     await main(SERVER)
+
+async def music_player_channel_select(server):
+    channellist = []
+    SERVER = server.id
+    for channel in server.voice_channels:
+        channellist.append(channel)
+    if sys.platform.startswith('win32'):
+        if len(channellist) > 40:
+            screensize = 7
+            screensize += len(channellist)
+            os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+    elif sys.platform.startswith('linux'):
+        if len(channellist) > 40:
+            screensize = 7
+            screensize += len(channellist)
+            os.system("printf '\033[8;{};70t'".format(str(screensize)))
+    while True:
+        chancounter = -1
+        clear()
+        print("b. Return to menu")
+        for channel in channellist:
+            chancounter += 1
+            print("{}. {}".format(chancounter,channel))
+        channelchoice = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Channel of Choice: ')
+        if channelchoice.lower() == "b":
+            await main(SERVER)
+        try:
+            voice_chan = channellist[int(channelchoice)]
+        except Exception:
+            await music_player_channel_select(server)
+        await music_player_main(voice_chan,server)
+
+async def music_player_main(voice_channel,server):
+    vc = await voice_channel.connect()
+    while True:
+        clear()
+        print(colored("Channel: {}".format(voice_channel.name),menucolour))
+        print()
+        print(colored("1. Play YouTube Link.",menucolour))
+        print(colored("2. Pause Player",menucolour))
+        print(colored("3. Resume Player",menucolour))
+        print(colored("4. Stop Player",menucolour))
+        print(colored("5. Volume Adjustment",menucolour))
+        print(colored("6. Disconnect",menucolour))
+        try:
+            player_choice = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Option: ')
+            if int(player_choice) == 1:
+                clear()
+                url = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'YouTube Link to play: ')
+                try:
+                    if os.path.isfile('spammer/file.mp3'):
+                        os.remove('spammer/file.mp3')
+                        print ("Removed old .mp3.")
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        ydl.download([url])
+                    vc.play(discord.FFmpegPCMAudio('spammer/file.mp3'))
+                    vc.source = discord.PCMVolumeTransformer(vc.source)
+                    vc.source.volume = 1.0
+                except Exception as e:
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection, str(e))
+            elif int(player_choice) == 2:
+                vc.pause()
+            elif int(player_choice) == 3:
+                vc.resume()
+            elif int(player_choice) == 4:
+                vc.stop()
+            elif int(player_choice) == 5:
+                clear()
+                newvol = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Volume: ')
+                try:
+                    vc.source.volume = float(int(newvol))
+                except Exception as e:
+                    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,e)
+            elif int(player_choice) == 6:
+                await vc.disconnect(force=True)
+                await music_player_channel_select(server)
+        except Exception as e:
+            continue
 
 if clienttype.lower() == "user":
     try:
