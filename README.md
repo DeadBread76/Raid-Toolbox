@@ -2,7 +2,7 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.10)
+Supports Both Windows and Linux. (Tested on Windows 10 Education/Professional and Ubuntu 18.10)
 
 Telegram Group: https://t.me/DeadBakery
 
