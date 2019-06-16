@@ -4,9 +4,13 @@ A big toolkit of spamming tools for discord.
 
 Supports Both Windows and Linux. (Tested on Windows 10 Education/Professional and Ubuntu 18.10)
 
-Telegram Group: https://t.me/DeadBakery
+Need any help?
 
-Discord server: https://discord.gg/e2dc9Pt
+check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
+
+our [telegram group](https://t.me/DeadBakery)
+
+and our [discord server](https://discord.gg/e2dc9Pt)
 
 Screenshot:
 
@@ -43,7 +47,6 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 **Embed Spammer**
 
 **Role Mass Mentioner**
-
 
 
 # `Installation:`
