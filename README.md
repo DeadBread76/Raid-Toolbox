@@ -47,27 +47,6 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 
 # `Installation:`
-### `Modules:`
-
-discord.py (1.0.1)
-
-requests
-
-pynacl
-
-termcolor
-
-colorama
-
-youtube_dl
-
-pyperclip
-
-proxyscrape
-
-animation
-
-`(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself.(Sometimes))`
 
 ### `Linux setup:`
 
