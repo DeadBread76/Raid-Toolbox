@@ -3,7 +3,7 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r9"
+rtbversion = "0.3.7r10"
 smversion = "0.1.8"
 
 try:
@@ -716,7 +716,7 @@ def tokencheck(currentattacks,spawnedpids):
             headers={
                 'Authorization': token
                 }
-            src = requests.post('https://discordapp.com/api/v6/invite/RTBCHECKER', headers=headers)
+            src = requests.post('https://discordapp.com/api/v6/invite/{}'.format(random.randint(1,9999999)), headers=headers)
             try:
                 if "You need to verify your account in order to perform this action." in str(src.content):
                     print (colored(token + ' Unverified.',"yellow"))
