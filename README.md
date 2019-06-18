@@ -6,11 +6,11 @@ Supports Both Windows and Linux. (Tested on Windows 10 Education/Professional an
 
 ### Need any help?
 
-check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
+Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
 
-our [telegram group](https://t.me/DeadBakery)
+Our [telegram group](https://t.me/DeadBakery)
 
-and our [discord server](https://discord.gg/e2dc9Pt)
+And our [discord server](https://discord.gg/e2dc9Pt)
 
 ### Screenshot:
 
@@ -51,7 +51,7 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 # `Installation:`
 
-The instruction to install RTB can be found [here](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-install-Python)
+The instructions to install RTB can be found [here](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-install-Python)
 
 
 ### `Python:`
