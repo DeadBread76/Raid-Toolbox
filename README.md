@@ -10,7 +10,7 @@ Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
 
 Our [telegram group](https://t.me/DeadBakery)
 
-And our [discord server](https://discord.gg/e2dc9Pt)
+And our [Discord server](https://discord.gg/e2dc9Pt)
 
 ### Screenshot:
 
