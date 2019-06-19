@@ -1412,10 +1412,10 @@ def info(currentattacks,spawnedpids):
                 lunchRTBtime = doneRTBtime - startRTBtime
                 lunchRTBtime2 = "it took " + str(lunchRTBtime) + " seconds for RTB to load"
             except Exception:
-                lunchRTBtime2 = "Couldn't get the time RTB took to lunch"
+                lunchRTBtime2 = "Couldn't get the time RTB took to launch"
                 pass
             if doneRTBtime == "Not set":
-                lunchRTBtime2 = "Couldn't get the time RTB took to lunch"
+                lunchRTBtime2 = "Couldn't get the time RTB took to launch"
             handle.write("Launch time: " + (str(lunchRTBtime2))+"\n")
             handle.write("---------------\n")
             handle.write("RTB Dump:\n\n")
