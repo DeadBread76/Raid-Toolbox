@@ -2,13 +2,17 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Both Windows and Linux. (Tested on Windows 10 Education and Ubuntu 18.10)
+Supports Both Windows and Linux. (Tested on Windows 10 Education/Professional and Ubuntu 18.10)
 
-Telegram Group: https://t.me/DeadBakery
+### Need any help?
 
-Discord server: https://discord.gg/e2dc9Pt
+Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
 
-Screenshot:
+Our [telegram group](https://t.me/DeadBakery)
+
+And our [Discord server](https://discord.gg/e2dc9Pt)
+
+### Screenshot:
 
 ![Screenshot](http://i.imgur.com/Td18com.png)
 
@@ -45,41 +49,9 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 **Role Mass Mentioner**
 
 
-
 # `Installation:`
-### `Modules:`
 
-discord.py (1.0.1)
-
-requests
-
-pynacl
-
-termcolor
-
-colorama
-
-youtube_dl
-
-pyperclip
-
-proxyscrape
-
-animation
-
-`(Run the command in terminal(CMD on Windows) pip install -r requirements.txt), or Raid ToolBox can install them itself.(Sometimes))`
-
-### `Linux setup:`
-
-On linux, you need pip3, ffmpeg and tkinter.
-
-To install these, run the commands (Or the equivalent to these commands on the Linux distro you are using):
-
-`sudo apt-get install ffmpeg`
-
-`sudo apt-get install python3-pip`
-
-`sudo apt-get install python3-tk`
+The instructions to install RTB can be found [here](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-install-Python)
 
 
 ### `Python:`
@@ -94,10 +66,6 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 ### `Configuration:`
 
 Menu Colour can be changed by changing the value in `config.py`, You can also enable proxies and change the python command there too.
-
-### `Voice Chat Spammer Usage and FFmpeg:`
-
-To use the Voice Spammer, unzip the FFmpeg files from the .zip files, or download FFmpeg from here: https://www.ffmpeg.org/download.html add add it to path (Windows).
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
