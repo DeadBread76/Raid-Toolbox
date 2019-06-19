@@ -1416,7 +1416,7 @@ def info(currentattacks,spawnedpids):
                 pass
             if doneRTBtime == "Not set":
                 lunchRTBtime2 = "Couldn't get the time RTB took to lunch"
-            handle.write("Lunch time: " + (str(lunchRTBtime2))+"\n")
+            handle.write("Launch time: " + (str(lunchRTBtime2))+"\n")
             handle.write("---------------\n")
             handle.write("RTB Dump:\n\n")
             plugindir = os.listdir('plugins/')
