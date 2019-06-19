@@ -440,9 +440,10 @@ async def main(SERVER):
     print (colored("{} Members".format(membercount),menucolour))
     print (colored("{} Roles".format(rolecount),menucolour))
     print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
+    print (colored("Nitro Boost Level: {}".format(str(server.premium_tier)),menucolour))
     print ("----------------------------------------")
     print ("Options:")
-    print (colored(" 1. Configure destruction options. \n 2. Other options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
+    print (colored(" 0. More Info\n 1. Configure destruction options. \n 2. Other options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
     opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
     toggleopts = {
         'namechange': namechange,
@@ -479,7 +480,115 @@ async def main(SERVER):
         'emojinum': emojinum
         }
     try:
-        if int(opts) == 1:
+        if int(opts) == 0:
+            clear()
+            print(colored("0: Export Detailed Server Info\n",menucolour))
+            print(colored("Name: {}".format(str(server.name)),menucolour))
+            print(colored("Member Count: {}".format(len(server.members)),menucolour))
+            print(colored("Channel Count: {}".format(len(server.channels)),menucolour))
+            print(colored("Role Count: {}".format(len(server.roles)),menucolour))
+            print(colored("Nitro Boost Level: {}".format(str(server.premium_tier)),menucolour))
+            serverfeat = server.features
+            if "VIP_REGIONS" in serverfeat:
+                print(colored("VIP_REGION: True",menucolour))
+            else:
+                print(colored("VIP_REGION: False",menucolour))
+            if "VANITY_URL" in serverfeat:
+                print(colored("VANITY_URL: True",menucolour))
+            else:
+                print(colored("VANITY_URL: False",menucolour))
+            if "INVITE_SPLASH" in serverfeat:
+                print(colored("INVITE_SPLASH: True",menucolour))
+            else:
+                print(colored("INVITE_SPLASH: False",menucolour))
+            if "VERIFIED" in serverfeat:
+                print(colored("VERIFIED: True",menucolour))
+            else:
+                print(colored("VERIFIED: False",menucolour))
+            if "PARTNERED" in serverfeat:
+                print(colored("PARTNERED: True",menucolour))
+            else:
+                print(colored("PARTNERED: False",menucolour))
+            if "MORE_EMOJI" in serverfeat:
+                print(colored("MORE_EMOJI: True",menucolour))
+            else:
+                print(colored("MORE_EMOJI: False",menucolour))
+            if "DISCOVERABLE" in serverfeat:
+                print(colored("DISCOVERABLE: True",menucolour))
+            else:
+                print(colored("DISCOVERABLE: False",menucolour))
+            if "COMMERCE" in serverfeat:
+                print(colored("COMMERCE: True",menucolour))
+            else:
+                print(colored("COMMERCE: False",menucolour))
+            if "LURKABLE" in serverfeat:
+                print(colored("LURKABLE: True",menucolour))
+            else:
+                print(colored("LURKABLE: False",menucolour))
+            if "NEWS" in serverfeat:
+                print(colored("NEWS: True",menucolour))
+            else:
+                print(colored("NEWS: False",menucolour))
+            if "BANNER" in serverfeat:
+                print(colored("BANNER: True",menucolour))
+            else:
+                print(colored("BANNER: False",menucolour))
+            if "ANIMATED_ICON" in serverfeat:
+                print(colored("ANIMATED_ICON: True",menucolour))
+            else:
+                print(colored("ANIMATED_ICON: False",menucolour))
+            se = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"\n")
+            if se == "0":
+                with open("{} info.txt".format(server.name), "w+", errors='ignore') as handle:
+                    handle.write("Server Name: {}\n".format(str(server.name)))
+                    handle.write("Server ID: {}\n".format(str(server.id)))
+                    handle.write("Server Reigon: {}\n".format(str(server.region)))
+                    handle.write("Server Icon: {}\n".format(str(server.icon_url)))
+                    feature = ''
+                    p = 0
+                    for f in server.features:
+                        p += 1
+                        if p == len(server.features):
+                            feature += "{}".format(f)
+                        else:
+                            feature += "{}, ".format(f)
+                    handle.write("Server Features: {}\n".format(feature))
+                    handle.write("Member Count: {}, see member list below.\n".format(len(server.members)))
+                    handle.write("Channel Count: {}, see channel list below.\n".format(len(server.channels)))
+                    handle.write("Role Count: {}, see role list below.\n".format(len(server.roles)))
+                    handle.write("Ammount of users boosting server: {}\n".format(str(server.premium_subscription_count)))
+                    handle.write("Nitro Boost Level: {}\n".format(str(server.premium_tier)))
+                    handle.write("\n===============================\nText Channels:\n===============================\n\n")
+                    for channel in server.text_channels:
+                        try:
+                            handle.write("Name: {}\nID: {}\nTopic: {}\nSlowmode Delay: {}\nPosition: {}\nCategory: {}\n\n\n-----------------------\n\n\n".format(channel.name,str(channel.id),channel.topic,str(channel.slowmode_delay),str(channel.position),client.get_channel(channel.category_id).name))
+                        except Exception:
+                            pass
+                    handle.write("\n===============================\nVoice Channels:\n===============================\n\n")
+                    for channel in server.voice_channels:
+                        try:
+                            handle.write("Name: {}\nID: {}\nBitrate: {}\nUser limit: {}\nPosition: {}\nCategory: {}\nConnected users:\n".format(channel.name,str(channel.id),str(channel.bitrate),str(channel.user_limit),str(channel.position),client.get_channel(channel.category_id).name))
+                            for u in channel.members:
+                                handle.write("User: {}#{}\nID: {}\nBot: {}\n".format(u.name,u.discriminator,str(u.id),str(u.bot)))
+                                handle.write("\n-----------------------\n\n")
+                        except Exception:
+                            pass
+                    handle.write("\n===============================\nRoles:\n===============================\n\n")
+                    for role in server.roles:
+                        try:
+                            handle.write("Name: {}\nID: {}\nColour: {}\nHoisted: {}\nPositon: {}\nMentionable: {}\nPermissions: {}\n\n\n-----------------------\n\n\n".format(role.name,str(role.id),str(role.colour.value),str(role.hoist),str(role.position),str(role.mentionable),str(role.permissions)))
+                        except Exception:
+                            pass
+                    handle.write("\n===============================\nUsers:\n===============================\n\n")
+                    for user in server.members:
+                        try:
+                            handle.write("Name: {}#{}\nID: {}\nAvatar: {}\nBot: {}\nDate Joined: {}\nNickname: {}\n\n\n-----------------------\n\n\n".format(user.name,str(user.discriminator),str(user.id),str(user.avatar_url),str(user.bot),str(user.joined_at),user.nick))
+                        except Exception:
+                            pass
+                print("Exported to {} info.txt".format(server.name))
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Press enter to return to menu.")
+            await main(SERVER)
+        elif int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
                     os.system('mode con:cols=70 lines=40')

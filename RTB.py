@@ -3,8 +3,8 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r11"
-smversion = "0.1.8"
+rtbversion = "0.3.7r12"
+smversion = "0.1.9"
 
 try:
     from config import*
@@ -56,7 +56,7 @@ except Exception:
 
 if verbose == 1:
     try:
-        with open ("load.log", "w+") as handle:
+        with open ("load.log", "a+") as handle:
             print ("Loading system modules...")
             import os
             print ("Loaded os")
@@ -65,6 +65,7 @@ if verbose == 1:
             print ("Loaded sys")
             handle.write("Loaded sys\n")
             import time
+            t0 = time.time()
             print ("Loaded time")
             handle.write("Loaded time\n")
             import json
@@ -186,6 +187,7 @@ else:
         import os
         import sys
         import time
+        t0 = time.time()
         import json
         import ctypes
         if sys.platform.startswith('win32'):
@@ -410,7 +412,11 @@ else:
     except Exception:
         print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
         input(colored("Press enter to continue.",'red'))
+t1 = time.time()
 if verbose == 1:
+    print("Startup time: {}".format(t1-t0))
+    with open("load.log","a",errors='ignore') as handle:
+        handle.write("================================\nStartup Time: {}\n================================\n\n\n".format(t1-t0))
     print("Starting...")
 try:
     if tcounter > tokenwarningthreshhold and tcounter < 1000:
@@ -1340,6 +1346,8 @@ def info(currentattacks,spawnedpids):
         print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour2))
     print (colored("Server Smasher version: "+smversion,menucolour2))
     print (colored("Discord.py version: "+ discord.__version__,menucolour2))
+    if verbose == 1:
+        print(colored("\nStartup Time: {}".format(t1-t0),menucolour2))
     print (colored("                                                            ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
     print (colored("Type 'update' to update Raid ToolBox to the latest version.",menucolour2))
@@ -1389,6 +1397,7 @@ def info(currentattacks,spawnedpids):
             handle.write("=====================================================\n")
             handle.write("RTB VERSION: " + rtbversion + "\n")
             handle.write("SM VERSION: " + smversion + "\n")
+            handle.write("Startup Time: {}".format(t1-t0)+"\n")
             handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
             handle.write("CloudFlare Banned: {}".format(banned) + "\n")
             handle.write("---------------\n")
