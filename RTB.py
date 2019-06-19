@@ -5,6 +5,13 @@
 
 rtbversion = "0.3.7r11"
 smversion = "0.1.8"
+try:
+    import time
+    startRTBtime = time.time()
+    doneRTBtime = "Not set"
+except Exception as e:
+    print(e)
+    pass
 
 try:
     from config import*
@@ -410,6 +417,7 @@ else:
     except Exception:
         print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
         input(colored("Press enter to continue.",'red'))
+doneRTBtime = time.time()
 if verbose == 1:
     print("Starting...")
 try:
@@ -1399,6 +1407,16 @@ def info(currentattacks,spawnedpids):
             handle.write("OS info:\n\n")
             handle.write("Platform: " + platform.platform()+"\n")
             handle.write("Processor: " + (str(cpu))+"\n")
+            handle.write("---------------\n")
+            try:
+                lunchRTBtime = doneRTBtime - startRTBtime
+                lunchRTBtime2 = "it took " + str(lunchRTBtime) + " seconds for RTB to load"
+            except Exception:
+                lunchRTBtime2 = "Couldn't get the time RTB took to lunch"
+                pass
+            if doneRTBtime == "Not set":
+                lunchRTBtime2 = "Couldn't get the time RTB took to lunch"
+            handle.write("Lunch time: " + (str(lunchRTBtime2))+"\n")
             handle.write("---------------\n")
             handle.write("RTB Dump:\n\n")
             plugindir = os.listdir('plugins/')
