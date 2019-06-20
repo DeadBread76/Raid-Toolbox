@@ -3,8 +3,8 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r12"
-smversion = "0.1.9"
+rtbversion = "0.3.7r13"
+smversion = "0.1.10"
 
 try:
     from config import*
@@ -187,7 +187,7 @@ else:
         import os
         import sys
         import time
-        t0 = time.time()
+        t0 = time.time() # https://github.com/Mattlau04
         import json
         import ctypes
         if sys.platform.startswith('win32'):
@@ -279,7 +279,7 @@ else:
         try:
             if verbose == 1:
                 print("Checking for updates...")
-            vercheck = requests.get("https://pastebin.com/raw/Fn4s3yr2").text.rstrip().split("|")
+            vercheck = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version").text.rstrip().split("|")
             if not vercheck[0] == rtbversion:
                 print(colored("There is an update for RTB, Download update?", menucolour))
                 verchoice = input("(Y/N): ")
@@ -1389,7 +1389,7 @@ def info(currentattacks,spawnedpids):
         clear()
         print("CloudFlare Banned: {}".format(banned))
         if banned == True:
-            print("You are CloudFlare banned.\n This means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
+            print("You are CloudFlare banned.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
         now = datetime.datetime.now()
         filename = str(now.strftime("%H%M%S%d%m%Y"))
         with open ("Diagnostics" +filename+".txt", 'w+') as handle:

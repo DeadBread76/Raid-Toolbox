@@ -2,7 +2,7 @@
 # The options here should be used for quick destruction presets.
 # If You somehow messed up this file, get a replacement here: https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/spammer/smconfig.py
 
-usemultiple = True #Use multiple tokens, add them into the text file called "smtokens.txt" (Only for bot accounts)
+usemultiple = True #Use multiple tokens, add them into the text file called "smtokens.txt"
 token = "TOKEN HERE" #Supports user accounts, although it is untested
 clienttype = "bot" #'bot' is for bot accounts, 'user' is for user accounts (with the perms)
 threadcount = 800 #Ammount of threads to use, You shouldnt need to change this.
