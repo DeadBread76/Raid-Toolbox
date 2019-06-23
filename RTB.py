@@ -3,8 +3,8 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.7r13"
-smversion = "0.1.10"
+rtbversion = "0.3.8"
+smversion = "0.1.10r1"
 
 try:
     from config import*
@@ -54,6 +54,10 @@ except Exception:
         installation = subprocess.Popen([linuxpip,'install','-r','requirements.txt'])
     installation.wait()
 
+if termuxmode == 1:
+    verbose = 1
+    serversmasherinmainwindow = 1
+
 if verbose == 1:
     try:
         with open ("load.log", "a+") as handle:
@@ -98,6 +102,9 @@ if verbose == 1:
             import signal
             print ("Loaded signal")
             handle.write("Loaded signal\n")
+            import webbrowser
+            print ("Loaded webbrowser")
+            handle.write("Loaded webbrowser\n")
             from distutils.dir_util import copy_tree
             print ("Loaded copy_tree")
             handle.write("Loaded copy_tree\n")
@@ -105,12 +112,13 @@ if verbose == 1:
                 from subprocess import CREATE_NEW_CONSOLE
                 print ("Loaded CREATE_NEW_CONSOLE")
                 handle.write("Loaded CREATE_NEW_CONSOLE\n")
-            from tkinter import *
-            print ("Loaded tkinter")
-            handle.write("Loaded tkinter\n")
-            from tkinter.filedialog import *
-            print ("Loaded tkinter.filedialog")
-            handle.write("Loaded tkinter.filedialog\n")
+            if termuxmode == 1:
+                from tkinter import *
+                print ("Loaded tkinter")
+                handle.write("Loaded tkinter\n")
+                from tkinter.filedialog import *
+                print ("Loaded tkinter.filedialog")
+                handle.write("Loaded tkinter.filedialog\n")
     except Exception as i:
         print ("Error loading system module, Exception: "+str(i))
         with open ("load.log", "a") as handle:
@@ -204,6 +212,7 @@ else:
         import shutil
         import subprocess
         import signal
+        import webbrowser
         import discord
         import requests
         import youtube_dl
@@ -215,8 +224,9 @@ else:
         from distutils.dir_util import copy_tree
         if sys.platform.startswith('win32'):
             from subprocess import CREATE_NEW_CONSOLE
-        from tkinter import *
-        from tkinter.filedialog import *
+        if termuxmode == 1:
+            from tkinter import *
+            from tkinter.filedialog import *
     except Exception as i:
         print ("Module error: " + str(i))
         print ("Please check that the module is installed.")
@@ -269,6 +279,16 @@ if sys.platform.startswith('win32'):
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 
+if not os.path.isfile("spammer/lic"):
+    lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
+    print("Raid-Toolbox\n"+lic)
+    time.sleep(10)
+    input("Press Enter to continue.")
+    try:
+        with open("spammer/lic","w+",errors='ignore') as handle:
+            handle.write(lic)
+    except Exception:
+        pass
 if disableupdatecheck == 1:
     pass
 else:
@@ -473,43 +493,79 @@ def main(currentattacks,spawnedpids):
         menublank = "  "
     if len(str(tcounter)) == 4:
         menublank = " "
-    if alternatemenu == True:
-            print (colored("                                                                                       ",menucolour))
-            if singlefile == True:
-                print (colored("                                SINGLE FILE MODE IS ACTIVE                                   ",menucolour))
-            print (colored("                                   .s5SSSs.  .s5SSSSs. .s5SSSs.  ",menucolour))
-            print (colored("                                         SS.    SSS          SS. ",menucolour))
-            print (colored("                                   sS    S%S    S%S    sS    S%S ",menucolour))
-            print (colored("                                   SS    S%S    S%S    SS    S%S ",menucolour))
-            print (colored("                                   SS .sS;:'    S%S    SS .sSSS  ",menucolour))
-            print (colored("                                   SS    ;,     S%S    SS    S%S ",menucolour))
-            print (colored("                                   SS    `:;    `:;    SS    `:; ",menucolour))
-            print (colored("                                   SS    ;,.    ;,.    SS    ;,. ",menucolour))
-            print (colored("                                   `:    ;:'    ;:'    `:;;;;;:'",menucolour))
-            print (colored("                                   _____________________________",menucolour))
-            print (colored("                                   Raid ToolBox version "+rtbversion,menucolour))
-            if tcounter == 0:
-                print (colored("                               Tokens : No tokens available."+menublank+now+" ",menucolour))
-            elif tcounter == 1:
-                print (colored("                               Tokens : There is "+str(tcounter)+" token available. "+menublank+" ",menucolour))
-            else:
-                print (colored("                               Tokens : There are "+str(tcounter)+" tokens available. "+menublank+" ",menucolour))
-            print (colored("                                                                                       ",menucolour))
-            print (colored("           [0].  Exit                                [13]. Playing game changer              ",menucolour))
-            print (colored("           [1].  Joiner                              [14]. Ascii Nickname (Spams Audit log)  ",menucolour))
-            print (colored("           [2].  Leaver                              [15]. Embed Spammer                     ",menucolour))
-            print (colored("           [3].  Group DM leaver                     [16]. TrafficLight status effect        ",menucolour))
-            print (colored("           [4].  Token Checker                       [17]. Role Mass Mentioner               ",menucolour))
-            print (colored("           [5].  Message spammer                     [18]. Channel Message Cleaner           ",menucolour))
-            print (colored("           [6].  Ascii spammer                       [19]. Server Smasher (Single bot token) ",menucolour))
-            print (colored("           [7].  Mass mention spammer                [20]. Proxy Scraper                     ",menucolour))
-            print (colored("           [8].  Voice Chat Spammer                  [21]. Voice chat join spammer           ",menucolour))
-            print (colored("           [9].  User DM Spammer                     [22]. View Running Attacks              ",menucolour))
-            print (colored("           [10]. Friend Request Spammer              [23]. Custom attack plugins             ",menucolour))
-            print (colored("           [11]. Group DM spammer                    [24]. More Options                      ",menucolour))
-            print (colored("           [12]. Image Spammer                                                           ",menucolour))
-            print (colored(" ",menucolour))
-            choice = input(colored("    Menu => ",menucolour))
+    if termuxmode == 1:
+        if sys.platform.startswith('win32'):
+            os.system('mode con:cols=41 lines=32')
+        elif sys.platform.startswith('linux'):
+            os.system("printf '\033[8;32;41t'")
+        print(colored("=========================================",menucolour))
+        print(colored("   Welcome to DeadBread's Raid Toolbox",menucolour2))
+        print(colored("=========================================",menucolour))
+        print(colored("          {} tokens available.".format(tcounter),menucolour2))
+        print(colored("=========================================",menucolour))
+        print(colored("0.  Exit",menucolour2))
+        print(colored("1.  Joiner",menucolour2))
+        print(colored("2.  Leaver",menucolour2))
+        print(colored("3.  Group DM leaver",menucolour2))
+        print(colored("4.  Token Checker",menucolour2))
+        print(colored("5.  Message spammer",menucolour2))
+        print(colored("6.  Ascii spammer",menucolour2))
+        print(colored("7.  Mass mention spammer",menucolour2))
+        print(colored("8.  Voice Chat Spammer",menucolour2))
+        print(colored("9.  User DM Spammer",menucolour2))
+        print(colored("10. Friend Request Spammer",menucolour2))
+        print(colored("11. Group DM spammer",menucolour2))
+        print(colored("12. Image Spammer",menucolour2))
+        print(colored("13. Playing game changer",menucolour2))
+        print(colored("14. Ascii Nickname (Spams Audit log)",menucolour2))
+        print(colored("15. Embed Spammer",menucolour2))
+        print(colored("16. TrafficLight status effect",menucolour2))
+        print(colored("17. Role Mass Mentioner",menucolour2))
+        print(colored("18. Channel Message Cleaner",menucolour2))
+        print(colored("19. Server Smasher (Single bot token)",menucolour2))
+        print(colored("20. Proxy Scraper",menucolour2))
+        print(colored("21. Voice chat join spammer",menucolour2))
+        print(colored("22. View Running Attacks",menucolour2))
+        print(colored("23. Custom attack plugins",menucolour2))
+        print(colored("24. More Options",menucolour2))
+        print(colored("25. Token options",menucolour2))
+        choice = input(colored(">",menucolour2))
+    elif knockoff_mode == 1:
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
+        print (colored("██                                                                                                ██",'red'))
+        print (colored("██                                        Raid Discord Tool                                       ██",'red'))
+        print (colored("██                                                                                                ██",'red'))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
+        print (colored("██                                                                                                ██",'red'))
+        if tcounter == 0:
+            print (colored("██                                      No tokens available.              "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
+        elif tcounter == 1:
+            print (colored("██                                  There is "+str(tcounter)+" token available.           "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
+        else:
+            print (colored("██                                  There are "+str(tcounter)+" tokens available.         "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
+        print (colored("██                                                                                                ██",'red'))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
+        print (colored("██                                               ██                                               ██",'red'))
+        print (colored("██         0.  Salir                             ██         13. Playing game changer              ██",'red'))
+        print (colored("██         1.  Meter Bots                        ██         14. Ascii Nickname (Spams Audit log)  ██",'red'))
+        print (colored("██         2.  Sacar Bots                        ██         15. Embed Spammer                     ██",'red'))
+        print (colored("██         3.  Group DM leaver                   ██         16. TrafficLight status effect        ██",'red'))
+        print (colored("██         4.  Users Checker                     ██         17. Role Mass Mentioner               ██",'red'))
+        print (colored("██         5.  MSG spammer                       ██         18. Channel Message Cleaner           ██",'red'))
+        print (colored("██         6.  Ascii spammer                     ██         19. Server Smasher (Single bot token) ██",'red'))
+        print (colored("██         7.  Mass mention spammer              ██         20. Proxy Scraper                     ██",'red'))
+        print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join spammer           ██",'red'))
+        print (colored("██         9.  User DM Spammer                   ██         22. View Running Attacks              ██",'red'))
+        print (colored("██         10. Solicitud Spammer                 ██         23. Custom attack plugins             ██",'red'))
+        print (colored("██         11. Group DM spammer                  ██         24. Más opciones                      ██",'red'))
+        print (colored("██         12. Imagen Spammer                    ██                                               ██",'red'))
+        print (colored("██                                               ██                                               ██",'red'))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
+        print (colored("██                                               ██                                               ██",'red'))
+        print (colored("██     Please enter the number of your choice.   ██    Type 'info' for Information and Updates    ██",'red'))
+        print (colored("██                                               ██                                               ██",'red'))
+        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
+        choice = input()
     else:
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                                                                                ██",menucolour))
@@ -541,7 +597,7 @@ def main(currentattacks,spawnedpids):
         print (colored("██         ",menucolour)+(colored("9.  User DM Spammer",menucolour2)+colored("                   ██",menucolour)+colored("         22. View Running Attacks",menucolour2)+colored("              ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("10. Friend Request Spammer",menucolour2)+colored("            ██",menucolour)+colored("         23. Custom attack plugins",menucolour2)+colored("             ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("11. Group DM spammer",menucolour2)+colored("                  ██",menucolour)+colored("         24. More Options",menucolour2)+colored("                      ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("12. Image Spammer",menucolour2)+colored("                     ██",menucolour)+colored("                                               ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("12. Image Spammer",menucolour2)+colored("                     ██",menucolour)+colored("         25. Token options",menucolour2)+colored("                     ██",menucolour)))
         print (colored("██                                               ██                                               ██",menucolour))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                               ██                                               ██",menucolour))
@@ -613,6 +669,8 @@ def main(currentattacks,spawnedpids):
             customplugins(currentattacks,spawnedpids)
         elif int(choice) == 24:
             tools(currentattacks,spawnedpids)
+        elif int(choice) == 25:
+            tokenmanager(currentattacks,spawnedpids)
         elif int(choice) == 986:
             wew(currentattacks,spawnedpids)
         elif int(choice) == 666:
@@ -627,6 +685,8 @@ def main(currentattacks,spawnedpids):
             print(a)
             input()
             main(currentattacks,spawnedpids)
+        elif int(choice) == 420:
+            pud()
         else:
             clear()
             print (colored('Invalid Option.',"yellow"))
@@ -1132,17 +1192,22 @@ def serversmasher(currentattacks,spawnedpids):
     print ("The config file for the Server Smasher is in spammer/smconfig.py, please add token before starting.")
     if sys.platform.startswith('win32'):
         if serversmasherinmainwindow == 1:
-            p = subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour])
+            p = subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour,menucolour2,str(termuxmode)])
             p.wait()
         else:
-            subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour],creationflags=CREATE_NEW_CONSOLE)
+            subprocess.Popen([winpy,'spammer/serversmasher.py',smversion,menucolour,menucolour2,str(termuxmode)],creationflags=CREATE_NEW_CONSOLE)
     elif sys.platform.startswith('linux'):
         if serversmasherinmainwindow == 1:
-            p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour])
+            p = subprocess.Popen([linuxpy,'spammer/serversmasher.py',smversion,menucolour,menucolour2,str(termuxmode)])
             p.wait()
         else:
-            subprocess.call(['gnome-terminal', '-x', linuxpy,'spammer/serversmasher.py',smversion,menucolour])
-    time.sleep(1)
+            subprocess.call(['gnome-terminal', '-x', linuxpy,'spammer/serversmasher.py',smversion,menucolour,menucolour2,str(termuxmode)])
+    if serversmasherinmainwindow == 1:
+        pass
+    elif termuxmode == 1:
+        pass
+    else:
+        time.sleep(5)
     main(currentattacks,spawnedpids)
 
 def proxyscrape(currentattacks,spawnedpids):
@@ -1325,21 +1390,39 @@ def customplugins(currentattacks,spawnedpids):
 def info(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
+        os.system('mode con:cols=100 lines=30')
+    elif sys.platform.startswith('linux'):
+        os.system("printf '\033[8;30;100t'")
+    if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Info\x07")
-    print (colored("  _____       _     _   _______          _ ____            ",menucolour))
-    print (colored(" |  __ \     (_)   | | |__   __|        | |  _ \           ",menucolour))
-    print (colored(" | |__) |__ _ _  __| |    | | ___   ___ | | |_) | _____  __",menucolour))
-    print (colored(" |  _  // _` | |/ _` |    | |/ _ \ / _ \| |  _ < / _ \ \/ /",menucolour))
-    print (colored(" | | \ \ (_| | | (_| |    | | (_) | (_) | | |_) | (_) >  < ",menucolour))
-    print (colored(" |_|  \_\__,_|_|\__,_|    |_|\___/ \___/|_|____/ \___/_/\_\ ",menucolour))
+    if knockoff_mode == 1:
+        print (colored("  _____       _     _    _____  _                       _   _______          _ ",menucolour))
+        print (colored(" |  __ \     (_)   | |  |  __ \(_)                     | | |__   __|        | |",menucolour))
+        print (colored(" | |__) |__ _ _  __| |  | |  | |_ ___  ___ ___  _ __ __| |    | | ___   ___ | |",menucolour))
+        print (colored(" |  _  // _` | |/ _` |  | |  | | / __|/ __/ _ \| '__/ _` |    | |/ _ \ / _ \| |",menucolour))
+        print (colored(" | | \ \ (_| | | (_| |  | |__| | \__ \ (_| (_) | | | (_| |    | | (_) | (_) | |",menucolour))
+        print (colored(" |_|  \_\__,_|_|\__,_|  |_____/|_|___/\___\___/|_|  \__,_|    |_|\___/ \___/|_|",menucolour))
+    else:
+        print (colored("  _____       _     _   _______          _ ____            ",menucolour))
+        print (colored(" |  __ \     (_)   | | |__   __|        | |  _ \           ",menucolour))
+        print (colored(" | |__) |__ _ _  __| |    | | ___   ___ | | |_) | _____  __",menucolour))
+        print (colored(" |  _  // _` | |/ _` |    | |/ _ \ / _ \| |  _ < / _ \ \/ /",menucolour))
+        print (colored(" | | \ \ (_| | | (_| |    | | (_) | (_) | | |_) | (_) >  < ",menucolour))
+        print (colored(" |_|  \_\__,_|_|\__,_|    |_|\___/ \___/|_|____/ \___/_/\_\ ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
+    print (colored("Copyright (c) 2019, Deadbread",menucolour))
     print (colored("                                                            ",menucolour))
     print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour2))
+    print (colored("https://discord.gg/7RtuZEe",menucolour2))
     print (colored("                                                            ",menucolour))
+    if knockoff_mode == 1:
+        print(colored("Lmfao suck my dick KriptaX#6216",random.choice(colours)))
     if singlefile == True:
         print (colored("SINGLE FILE MODE ACTIVE",menucolour2))
+    if termuxmode == 1:
+        print (colored("Termux Mode.",menucolour2))
     if sys.platform.startswith('win32'):
         print (colored("Raid ToolBox version: "+rtbversion,menucolour2))
     elif sys.platform.startswith('linux'):
@@ -1353,10 +1436,13 @@ def info(currentattacks,spawnedpids):
     print (colored("Type 'update' to update Raid ToolBox to the latest version.",menucolour2))
     print (colored("Type 'reinstall' to reinstall requirements",menucolour2))
     print (colored("Type 'diag' for diagnostics log.",menucolour2))
+    print (colored("Type 'yt' for my YouTube channel.",menucolour2))
     print (colored("------------------------------------------------------------",menucolour))
     inf = input(colored(">",menucolour2))
-    if inf == "d":
-        print('7RtuZEe')
+    if inf.lower() == 'yt':
+        clear()
+        webbrowser.open("https://www.youtube.com/channel/UCqYFFmU9acsi2HBFItNH6bQ")
+        print("https://www.youtube.com/channel/UCqYFFmU9acsi2HBFItNH6bQ")
         input()
         info(currentattacks,spawnedpids)
     elif inf.lower() == 'reinstall':
@@ -1384,8 +1470,11 @@ def info(currentattacks,spawnedpids):
             banned = False
         except Exception:
             banned = True
-        print("Getting CPU info...")
-        cpu = cpuinfo.get_cpu_info()['brand']
+        if termuxmode == 1:
+            pass
+        else:
+            print("Getting CPU info...")
+            cpu = cpuinfo.get_cpu_info()['brand']
         clear()
         print("CloudFlare Banned: {}".format(banned))
         if banned == True:
@@ -1407,7 +1496,10 @@ def info(currentattacks,spawnedpids):
             handle.write("---------------\n")
             handle.write("OS info:\n\n")
             handle.write("Platform: " + platform.platform()+"\n")
-            handle.write("Processor: " + (str(cpu))+"\n")
+            if termuxmode == 1:
+                handle.write("Processor: Not Supported on Termux\n")
+            else:
+                handle.write("Processor: " + (str(cpu))+"\n")
             handle.write("---------------\n")
             handle.write("RTB Dump:\n\n")
             plugindir = os.listdir('plugins/')
@@ -1467,13 +1559,13 @@ def tools(currentattacks,spawnedpids):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Tools\x07")
     print (colored("Raid Toolbox Tools",menucolour))
     print (colored("-------------------",menucolour))
-    print (colored("0.  Return to menu",menucolour))
-    print (colored("1.  HypeSquad House Changer",menucolour))
-    print (colored("2.  Avatar Changer",menucolour))
-    print (colored("3.  Token Cleaner",menucolour))
-    print (colored("4.  Quick Checker",menucolour))
-    print (colored("5.  Nickname Changer",menucolour))
-    print (colored("6.  Widget Joiner",menucolour))
+    print (colored("0.  Return to menu",menucolour2))
+    print (colored("1.  HypeSquad House Changer",menucolour2))
+    print (colored("2.  Avatar Changer",menucolour2))
+    print (colored("3.  Token Cleaner",menucolour2))
+    print (colored("4.  Quick Checker",menucolour2))
+    print (colored("5.  Nickname Changer",menucolour2))
+    print (colored("6.  Widget Joiner",menucolour2))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks,spawnedpids)
@@ -1483,9 +1575,9 @@ def tools(currentattacks,spawnedpids):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | HypeSquad Changer")
         elif sys.platform.startswith('linux'):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | HypeSquad Changer\x07")
-        print (colored("1. Bravery",menucolour))
-        print (colored("2. Brilliance",menucolour))
-        print (colored("3. Ballance",menucolour))
+        print (colored("1. Bravery",menucolour2))
+        print (colored("2. Brilliance",menucolour2))
+        print (colored("3. Ballance",menucolour2))
         choice = input('Selection: ')
         tokenlist = open("tokens.txt").read().splitlines()
         for token in tokenlist:
@@ -1605,6 +1697,87 @@ def tools(currentattacks,spawnedpids):
             time.sleep(1)
             tools(currentattacks, spawnedpids)
 
+def tokenmanager(currentattacks,spawnedpids):
+    clear()
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Manager")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Manager\x07")
+    tokenlist = open("tokens.txt").read().splitlines()
+    print(colored("====================",menucolour))
+    print(colored("     Token Menu     ",menucolour))
+    print(colored("====================",menucolour))
+    print(colored("0. Return to main menu",menucolour2))
+    print(colored("1. Add Token",menucolour2))
+    print(colored("2. View Tokens",menucolour2))
+    print(colored("3. View Token names and ID",menucolour2))
+    print(colored("4. Token Checker",menucolour2))
+    print(colored("5. Refresh Token list",menucolour2))
+    print(colored("====================",menucolour))
+    e = input("Choice: ")
+    try:
+        if int(e) == 0:
+            main(currentattacks,spawnedpids)
+        elif int(e) == 1:
+            clear()
+            print(colored("Input Token to add to tokens.txt\n0. Back",menucolour2))
+            t = input()
+            with open ("tokens.txt","a",errors='ignore') as handle:
+                handle.write("{}\n".format(t))
+            print (colored("Added {} to file.".format(t.rstrip()),menucolour))
+            input()
+            tokenmanager(currentattacks,spawnedpids)
+        elif int(e) == 2:
+            clear()
+            if len(tokenlist) > 30:
+                leng = 30
+                leng += len(tokenlist)
+                if sys.platform.startswith('win32'):
+                    os.system('mode con:cols=100 lines={}'.format(leng))
+                elif sys.platform.startswith('linux'):
+                    os.system("printf '\033[8;{};100t'".format(leng))
+            for token in tokenlist:
+                print(colored(token,menucolour2))
+            input()
+            tokenmanager(currentattacks,spawnedpids)
+        elif int(e) == 3:
+            clear()
+            list = []
+            if len(tokenlist) > 30:
+                print("This May take a while, Continue? (Y/N)")
+                h = input()
+                if h.lower() == 'y':
+                    pass
+                else:
+                    tokenmanager(currentattacks,spawnedpids)
+            if len(tokenlist) > 30:
+                leng = 30
+                leng += len(tokenlist)
+                if sys.platform.startswith('win32'):
+                    os.system('mode con:cols=100 lines={}'.format(leng))
+                elif sys.platform.startswith('linux'):
+                    os.system("printf '\033[8;{};100t'".format(leng))
+            for token in tokenlist:
+                apilink = 'https://discordapp.com/api/v6/users/@me'
+                headers = {'Authorization': token.rstrip(), 'Content-Type': 'application/json'}
+                src = requests.get(apilink, headers=headers)
+                if "401: Unauthorized" in str(src.content):
+                    pass
+                else:
+                    response = json.loads(src.content.decode())
+                    list.append(response['username']+"#"+response['discriminator']+" (ID: "+str(response['id'])+") ")
+            for x in list:
+                print (colored(x,menucolour2))
+            input()
+            tokenmanager(currentattacks,spawnedpids)
+        elif int(e) == 4:
+            tokencheck(currentattacks,spawnedpids)
+        elif int(e) == 5:
+            tokenlist.close()
+            tokencheck(currentattacks,spawnedpids)
+    except Exception:
+        tokenmanager(currentattacks,spawnedpids)
+
 def wew(currentattacks,spawnedpids):
     if sys.platform.startswith('win32'):
         clear()
@@ -1615,7 +1788,14 @@ def wew(currentattacks,spawnedpids):
     currentattacks.append("Music!")
     spawnedpids.append(p.pid)
     main(currentattacks,spawnedpids)
-
+def pud():
+    clear()
+    while True:
+        if sys.platform.startswith('win32'):
+            os.system('mode con:cols={} lines={}'.format(random.randint(10,100),random.randint(10,100)))
+        elif sys.platform.startswith('linux'):
+            os.system("printf '\033[8;{};{}t'".format(random.randint(10,100),random.randint(10,100)))
+        time.sleep(0.1)
 def aaa():
     clear()
     def asciigen(length):

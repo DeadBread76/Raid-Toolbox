@@ -4,6 +4,7 @@
 # Base code (Server Destroyer): Synchronocy - https://github.com/synchronocy
 # ThreadPool: Synchronocy - https://github.com/synchronocy
 
+from smconfig import *
 try:
     import os
     import sys
@@ -15,27 +16,83 @@ try:
     import ctypes
     import asyncio
     import collections
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     import discord
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     import requests
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     import youtube_dl
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     import pyperclip
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from base64 import b64encode
-    from smconfig import *
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from tkinter import *
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from tkinter.filedialog import *
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from colorama import init
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from termcolor import colored
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from discord import Permissions
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from threading import Thread
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from queue import Queue
+except Exception as e:
+    print ("Module import error: " + str(e))
+    input()
+try:
     from concurrent.futures import ThreadPoolExecutor
 except Exception as e:
     print ("Module import error: " + str(e))
     input()
-    sys.exit()
+
 
 smversion = sys.argv[1]
 menucolour = sys.argv[2]
+menucolour2 = sys.argv[3]
+termuxmode = int(sys.argv[4])
+if termuxmode == 1:
+    print("Please Note: Termux mode and server smasher are not fully compatible, Please use at your own risk.")
+    input('Press enter to continue.')
 Tk().withdraw()
 
 if sys.platform.startswith('win32'):
