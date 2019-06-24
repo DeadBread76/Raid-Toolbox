@@ -2,7 +2,7 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Both Windows and Linux. (Tested on Windows 10 Education/Professional and Ubuntu 18.10)
+Supports Windows, Linux and Android. (Tested on Windows 10 Education/Professional, Ubuntu 18.10 and Android 9 with Termux 0.72)
 
 ### Need any help?
 
