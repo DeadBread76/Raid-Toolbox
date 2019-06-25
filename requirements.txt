@@ -8,3 +8,4 @@ pyperclip==1.7.0
 proxyscrape==0.2.0
 animation==0.0.6
 py-cpuinfo==5.0.0
+dhooks==1.1.0

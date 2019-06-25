@@ -3,8 +3,8 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Febuary 23rd, 2019
 
-rtbversion = "0.3.8"
-smversion = "0.1.10r2"
+rtbversion = "0.3.8r1"
+smversion = "0.1.11"
 
 try:
     from config import*
@@ -1387,6 +1387,80 @@ def customplugins(currentattacks,spawnedpids):
     p.wait()
     customplugins(currentattacks,spawnedpids)
 
+def diagrun(currentattacks,spawnedpids):
+    print("Checking if CloudFlare Banned...")
+    cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+    try:
+        json.loads(cloudcheck.content)
+        banned = False
+    except Exception:
+        banned = True
+    if termuxmode == 1:
+        pass
+    else:
+        print("Getting CPU info...")
+        cpu = cpuinfo.get_cpu_info()['brand']
+    clear()
+    print("CloudFlare Banned: {}".format(banned))
+    if banned == True:
+        print("You are CloudFlare banned.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
+    now = datetime.datetime.now()
+    filename = str(now.strftime("%H%M%S%d%m%Y"))
+    with open ("Diagnostics" +filename+".txt", 'w+') as handle:
+        handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
+        handle.write("=====================================================\n")
+        handle.write("RTB VERSION: " + rtbversion + "\n")
+        handle.write("SM VERSION: " + smversion + "\n")
+        try:
+            handle.write("Startup Time: {}".format(t1-t0)+"\n")
+        except Exception:
+            pass
+        handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
+        handle.write("CloudFlare Banned: {}".format(banned) + "\n")
+        handle.write("---------------\n")
+        handle.write("Python Info:\n\n")
+        handle.write("Python Version: " + sys.version+"\n")
+        handle.write("Discord.py version: " + discord.__version__ + "\n")
+        handle.write("---------------\n")
+        handle.write("OS info:\n\n")
+        handle.write("Platform: " + platform.platform()+"\n")
+        if termuxmode == 1:
+            handle.write("Processor: Not Supported on Termux\n")
+        else:
+            handle.write("Processor: " + (str(cpu))+"\n")
+        handle.write("---------------\n")
+        handle.write("RTB Dump:\n\n")
+        plugindir = os.listdir('plugins/')
+        handle.write(str(sys.modules.keys())+"\n")
+        handle.write(str(dir())+"\n")
+        handle.write(str(globals())+"\n")
+        handle.write(str(locals())+"\n")
+        handle.write("---------------\n")
+
+@animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
+def run_update():
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+    update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+    clear()
+    print(colored("Update has been downloaded, Installing...",menucolour))
+    with open("update.zip", "wb") as handle:
+        handle.write(update.content)
+    try:
+        shutil.copy("config.py", "config_old.py")
+        shutil.copy("spammer/smconfig.py", "smconfig_old.py")
+    except Exception:
+        pass
+    try:
+        shutil.unpack_archive("update.zip")
+        copy_tree("Raid-Toolbox-master/", ".")
+        os.remove("update.zip")
+        shutil.rmtree("Raid-Toolbox-master/")
+    except Exception as e:
+        print("Error Updating, {}".format(e))
+
 def info(currentattacks,spawnedpids):
     clear()
     if sys.platform.startswith('win32'):
@@ -1437,6 +1511,7 @@ def info(currentattacks,spawnedpids):
     print (colored("Type 'reinstall' to reinstall requirements",menucolour2))
     print (colored("Type 'diag' for diagnostics log.",menucolour2))
     print (colored("Type 'yt' for my YouTube channel.",menucolour2))
+    print (colored("Type 'console' to access console.",menucolour2))
     print (colored("------------------------------------------------------------",menucolour))
     inf = input(colored(">",menucolour2))
     if inf.lower() == 'yt':
@@ -1463,51 +1538,7 @@ def info(currentattacks,spawnedpids):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Diagnostics")
         elif sys.platform.startswith('linux'):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Diagnostics\x07")
-        print("Checking if CloudFlare Banned...")
-        cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
-        try:
-            json.loads(cloudcheck.content)
-            banned = False
-        except Exception:
-            banned = True
-        if termuxmode == 1:
-            pass
-        else:
-            print("Getting CPU info...")
-            cpu = cpuinfo.get_cpu_info()['brand']
-        clear()
-        print("CloudFlare Banned: {}".format(banned))
-        if banned == True:
-            print("You are CloudFlare banned.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
-        now = datetime.datetime.now()
-        filename = str(now.strftime("%H%M%S%d%m%Y"))
-        with open ("Diagnostics" +filename+".txt", 'w+') as handle:
-            handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
-            handle.write("=====================================================\n")
-            handle.write("RTB VERSION: " + rtbversion + "\n")
-            handle.write("SM VERSION: " + smversion + "\n")
-            handle.write("Startup Time: {}".format(t1-t0)+"\n")
-            handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
-            handle.write("CloudFlare Banned: {}".format(banned) + "\n")
-            handle.write("---------------\n")
-            handle.write("Python Info:\n\n")
-            handle.write("Python Version: " + sys.version+"\n")
-            handle.write("Discord.py version: " + discord.__version__ + "\n")
-            handle.write("---------------\n")
-            handle.write("OS info:\n\n")
-            handle.write("Platform: " + platform.platform()+"\n")
-            if termuxmode == 1:
-                handle.write("Processor: Not Supported on Termux\n")
-            else:
-                handle.write("Processor: " + (str(cpu))+"\n")
-            handle.write("---------------\n")
-            handle.write("RTB Dump:\n\n")
-            plugindir = os.listdir('plugins/')
-            handle.write(str(sys.modules.keys())+"\n")
-            handle.write(str(dir())+"\n")
-            handle.write(str(globals())+"\n")
-            handle.write(str(locals())+"\n")
-            handle.write("---------------\n")
+        diagrun(currentattacks,spawnedpids)
         print ("Diagnostics Written to file.")
         input()
     elif inf.lower() == 'update':
@@ -1516,39 +1547,26 @@ def info(currentattacks,spawnedpids):
             print("This is a test version of RTB, Please do not update.")
             input()
         else:
-            u = input("Are you sure you want to update?(Y/N)\nBe sure to backup your config files.\n")
+            u = input("Are you sure you want to update?(Y/N)\n")
             if u.lower() == 'y':
                 clear()
-                @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menucolour))
-                def run_update():
-                    if sys.platform.startswith('win32'):
-                        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                    elif sys.platform.startswith('linux'):
-                        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-                    update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                    clear()
-                    print(colored("Update has been downloaded, Installing...",menucolour))
-                    return update
-                update = run_update()
-                with open("update.zip", "wb") as handle:
-                    handle.write(update.content)
-                try:
-                    shutil.copy("config.py", "config_old.py")
-                    shutil.copy("spammer/smconfig.py", "smconfig_old.py")
-                except Exception:
-                    pass
-                try:
-                    shutil.unpack_archive("update.zip")
-                    copy_tree("Raid-Toolbox-master/", ".")
-                    os.remove("update.zip")
-                    shutil.rmtree("Raid-Toolbox-master/")
-                    print ("Update complete, exiting.")
-                except Exception as e:
-                    print("Error Updating, {}".format(e))
+                run_update()
+                print ("Update complete, exiting.")
                 time.sleep(3)
                 sys.exit()
             else:
                 info(currentattacks,spawnedpids)
+    elif inf.lower() == 'console':
+        clear()
+        print("0. Back")
+        while True:
+            try:
+                com = input(">")
+                if com == '0':
+                    break
+                exec(com)
+            except Exception as e:
+                print(e)
     main(currentattacks,spawnedpids)
 
 def tools(currentattacks,spawnedpids):
