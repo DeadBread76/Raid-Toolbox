@@ -1262,6 +1262,21 @@ async def main(SERVER):
                 users = []
                 roles = []
                 for channel in server.channels:
+                    try:
+                        wh = await channel.create_webhook(name=asciigen(random.randint(2,80)))
+                    except Exception as e:
+                        print(e)
+                        continue
+                    else:
+                        break
+                beginquotes = ['When I’m done, half of humanity will still exist. Perfectly balanced, as all things should be. I hope they remember you.','You’re strong. But I could snap my fingers, and you’d all cease to exist.','You should have gone for the head.','Dread it. Run from it. Destiny still arrives. Or should I say, I have.','I ignored my destiny once, I can not do that again. Even for you. I’m sorry Little one.','With all six stones, I can simply snap my fingers, they would all cease to exist. I call that mercy.','The hardest choices require the strongest wills.']
+                try:
+                    hook = Webhook(wh.url)
+                    hook.send("**{}**".format(random.choice(beginquotes)),avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
+                except Exception:
+                    pass
+                await asyncio.sleep(5)
+                for channel in server.channels:
                     channels.append(channel)
                 for role in server.roles:
                     roles.append(role)
@@ -1301,8 +1316,12 @@ async def main(SERVER):
                         continue
                     else:
                         break
-                hook = Webhook(wh.url)
-                hook.send("**Perfectly balanced, as all things should be.**",avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
+                endquotes = ['Perfectly balanced, as all things should be.','Fun isn’t something one considers when balancing the universe. But this… does put a smile on my face.']
+                try:
+                    hook = Webhook(wh.url)
+                    hook.send("**{}**".format(random.choice(endquotes)),avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
+                except Exception:
+                    pass
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Perfectly balanced, as all things should be.')
                 await main(SERVER)
             else:
