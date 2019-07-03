@@ -18,6 +18,7 @@ useproxies = "False"
 
 ###DEBUG OPTIONS###
 verbose = 0
+cliinputs = 0
 termuxmode = 0  # Set to 1 for running on termux
 disablecloudflarecheck = 0
 disabletokenlimit = 0
