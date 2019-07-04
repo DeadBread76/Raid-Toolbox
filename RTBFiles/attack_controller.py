@@ -23,19 +23,21 @@ import ast
 import zlib
 import json
 import time
+import psutil
 import random
 import requests
+import subprocess
 import PySimpleGUI as sg
 from itertools import cycle
 from concurrent.futures import ThreadPoolExecutor
-from websocket import create_connection
-
 
 executor = ThreadPoolExecutor(max_workers=800)
 mode = sys.argv[1]
 pycommand = sys.argv[2]
 useproxies = sys.argv[3]
-
+climode = int(sys.argv[4])
+tokenlist = open("tokens.txt").read().splitlines()
+sg.ChangeLookAndFeel('Dark2')
 if useproxies == 'True':
     if not os.path.exists('proxies.txt'):
         with open ("proxies.txt","a+") as handle:
@@ -60,51 +62,29 @@ if mode == 'joiner':
     def join(token,link,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.post("https://discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    link = sg.PopupGetText('Enter The Discord Invite to join.', "RTB | Server Joiner")
-    if link == None:
-        sys.exit()
+    if climode == 0:
+        link = sg.PopupGetText('Enter The Discord Invite to join.', "RTB | Server Joiner")
+        if link == None:
+            sys.exit()
     else:
-        if 'https://discordapp.com/invite/' in link:
-            link = link[30:]
-        elif len(link) > 7:
-            link = link[19:]
-        for token in tokenlist:
-            executor.submit(join,token,link,None)
-
-elif mode == 'clijoiner':
-    def join(token,link,proxy):
-        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.post("https://discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    link = sys.argv[4]
-    if link == '':
-        sys.exit()
-    else:
-        if 'https://discordapp.com/invite/' in link:
-            link = link[30:]
-        elif len(link) > 7:
-            link = link[19:]
-        for token in tokenlist:
-            executor.submit(join,token,link,None)
+        link = sys.argv[5]
+    if 'https://discordapp.com/invite/' in link:
+        link = link[30:]
+    elif len(link) > 7:
+        link = link[19:]
+    for token in tokenlist:
+        executor.submit(join,token,link,None)
 
 elif mode == 'leaver':
     def leave(token,ID,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    ID = sg.PopupGetText('Enter ID of the server to leave.', "RTB | Server Leaver")
-    if ID == None:
-        sys.exit()
-    for token in tokenlist:
-        executor.submit(leave,token,ID,None)
-
-elif mode == 'clileaver':
-    def leave(token,ID,proxy):
-        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.delete("https://discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    ID = sys.argv[4]
+    if climode == 0:
+        ID = sg.PopupGetText('Enter ID of the server to leave.', "RTB | Server Leaver")
+        if ID == None:
+            sys.exit()
+    else:
+        ID = sys.argv[5]
     for token in tokenlist:
         executor.submit(leave,token,ID,None)
 
@@ -112,26 +92,19 @@ elif mode == 'groupleaver':
     def grleave(token,ID,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    ID = sg.PopupGetText('Enter ID of the group to leave.', "RTB | Group DM Leaver")
-    if ID == None:
-        sys.exit()
-    for token in tokenlist:
-        executor.submit(grleave,token,ID,None)
-
-elif mode == 'cligroupleaver':
-    def grleave(token,ID,proxy):
-        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.delete("https://discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
-    tokenlist = open("tokens.txt").read().splitlines()
-    ID = sys.argv[4]
+    if climode == 0:
+        ID = sg.PopupGetText('Enter ID of the group to leave.', "RTB | Group DM Leaver")
+        if ID == None:
+            sys.exit()
+    else:
+        ID = sys.argv[5]
     for token in tokenlist:
         executor.submit(grleave,token,ID,None)
 
 elif mode == 'messagespam':
     def sendmessage(token,text,channel,server,proxy):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        payload = {"content" : text,"tts" : false}
+        payload = {"content": text, "tts": false}
         if channel == 'all':
             chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
             channellist = json.loads(chanjson)
@@ -150,48 +123,23 @@ elif mode == 'messagespam':
                 src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
                     time.sleep(5)
-    layout = [
-          [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
-          [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-          [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-          [sg.OK(), sg.Cancel()]
-         ]
-    window = sg.Window('RTB | Message Spammer', layout)
-    event, values = window.Read()
-    window.Close()
-    text = values[0]
-    channelid = values[1]
-    SERVER = values[2]
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        executor.submit(sendmessage,token,text,channelid,SERVER,None)
-
-elif mode == 'climessagespam':
-    def sendmessage(token,text,channel,server,proxy):
-        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        payload = {"content" : text,"tts" : false}
-        if channel == 'all':
-            chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
-            channellist = json.loads(chanjson)
-            while True:
-                for channel in channellist:
-                    if not channel['type'] == 0:
-                        continue
-                    else:
-                        src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
-        else:
-            headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-            payload = {"content" : text,"tts" : false}
-            while True:
-                src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
-    text = sys.argv[4]
-    channelid = sys.argv[5]
-    SERVER = sys.argv[6]
-    tokenlist = open("tokens.txt").read().splitlines()
+    if climode == 0:
+        layout = [
+              [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
+              [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
+              [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Message Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        text = values[0]
+        channelid = values[1]
+        SERVER = values[2]
+    else:
+        text = sys.argv[5]
+        channelid = sys.argv[6]
+        SERVER = sys.argv[7]
     for token in tokenlist:
         executor.submit(sendmessage,token,text,channelid,SERVER,None)
 
@@ -218,46 +166,20 @@ elif mode == 'asciispam':
                 src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
                     time.sleep(5)
-    layout = [[sg.Text('WARNING: This will make your Discord client lag by just looking at the channel,\nI recommend not looking at the channels while doing this attack.')],
-          [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-          [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-          [sg.OK(), sg.Cancel()]
-         ]
-    window = sg.Window('RTB | Ascii Spammer', layout)
-    event, values = window.Read()
-    window.Close()
-    channelid = values[0]
-    SERVER = values[1]
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        executor.submit(sendascii,token,channelid,SERVER,None)
-
-elif mode == 'cliasciispam':
-    def sendascii(token,channel,server,proxy):
-        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        if channel == 'all':
-            chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
-            channellist = json.loads(chanjson)
-            while True:
-                for channel in channellist:
-                    payload = {"content" : asciigen(1999),"tts" : false}
-                    if not channel['type'] == 0:
-                        continue
-                    else:
-                        src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
-        else:
-            headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-            payload = {"content" : text,"tts" : false}
-            while True:
-                payload = {"content" : asciigen(1999),"tts" : false}
-                src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
-    channelid = sys.argv[4]
-    SERVER = sys.argv[5]
-    tokenlist = open("tokens.txt").read().splitlines()
+    if climode == 0:
+        layout = [[sg.Text('WARNING: This will make your Discord client lag by just looking at the channel,\nI recommend not looking at the channels while doing this attack.')],
+              [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
+              [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Ascii Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        channelid = values[0]
+        SERVER = values[1]
+    else:
+        channelid = sys.argv[5]
+        SERVER = sys.argv[6]
     for token in tokenlist:
         executor.submit(sendascii,token,channelid,SERVER,None)
 
@@ -291,16 +213,131 @@ elif mode == 'massmention':
                     src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content" : m,"tts" : false})
                     if "You are being rate limited." in str(src.content):
                         time.sleep(5)
-    layout = [
-          [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-          [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-          [sg.OK(), sg.Cancel()]
-          ]
-    window = sg.Window('RTB | Mass Mentioner', layout)
-    event, values = window.Read()
-    window.Close()
-    SERVER = values[0]
-    channelid = values[1]
-    tokenlist = open("tokens.txt").read().splitlines()
+    if climode == 0:
+        layout = [
+              [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+              [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              ]
+        window = sg.Window('RTB | Mass Mentioner', layout)
+        event, values = window.Read()
+        window.Close()
+        SERVER = values[0]
+        channelid = values[1]
+    else:
+        SERVER = sys.argv[5]
+        channelid = sys.argv[6]
     for token in tokenlist:
         executor.submit(sendmention,token,channelid,SERVER,None)
+
+elif mode == 'vcspam':
+    import youtube_dl
+    ydl_opts = {
+        'outtmpl': 'RTBFiles/vcspammercache/file.webm',
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'wav',
+            'preferredquality': '192',
+        }],
+    }
+    if climode == 0:
+        layout = [
+              [sg.Text('YouTube Link to play', size=(15, 1)), sg.InputText()],
+              [sg.Text('Voice Channel ID', size=(15, 1)), sg.InputText()],
+              [sg.Text('Ammount of Tokens', size=(15, 1)), sg.Slider(range=(1,len(tokenlist)),
+              default_value=len(tokenlist),
+              size=(29,15),
+              orientation='horizontal',
+              font=('Helvetica', 10))],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              ]
+        window = sg.Window('RTB | Voice Chat Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        ytlink = values[0]
+        channelid = values[1]
+        ammount = values[2]
+    else:
+        ytlink = sys.argv[5]
+        channelid = sys.argv[6]
+        ammount = sys.argv[7]
+    if not os.path.isdir('RTBFiles/vcspammercache/'):
+        os.mkdir("RTBFiles/vcspammercache/")
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(ytlink, download=False)
+        video_id = info_dict.get("id", None)
+    if not os.path.isfile('RTBFiles/vcspammercache/{}.wav'.format(video_id)):
+        ydl_opts = {
+         'outtmpl': 'RTBFiles/vcspammercache/{}.webm'.format(video_id),
+         'format': 'bestaudio/best',
+         'postprocessors': [{
+             'key': 'FFmpegExtractAudio',
+             'preferredcodec': 'wav',
+             'preferredquality': '192',
+         }],
+        }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([ytlink])
+    count = 0
+    for token in tokenlist:
+        count += 1
+        subprocess.Popen([pycommand,'RTBFiles/vcspam.py',token,channelid,'RTBFiles/vcspammercache/{}.wav'.format(video_id),str(os.getpid()),'None'],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        if count == int(ammount):
+            break
+    while True:
+        pass
+
+elif mode == 'dmspammer':
+    def dmspammer(token,userid,text,ascii,proxy):
+        list = []
+        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        payload = {
+            'recipient_id': userid
+        }
+        src = requests.post('https://discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
+        userdm = src.content.decode()
+        jsonstring = json.loads(userdm).values()
+        for x in jsonstring:
+            list.append(x)
+        userdm = list[2]
+        if ascii == True:
+            payload = {"content": asciigen(1999),"tts" : false}
+        else:
+            payload = {"content": text, "tts": false}
+        while True:
+            src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(userdm), headers=headers, json=payload)
+            if "You are being rate limited." in str(src.content):
+                time.sleep(5)
+    if climode == 0:
+        layout = [
+            [sg.Text('Note: The tokens need to share a mutual server with the target for this to work.')],
+            [sg.Text('Users ID', size=(15, 1)), sg.InputText()],
+            [sg.Text('Text to spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
+            [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            ]
+        window = sg.Window('RTB | DM Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        userid = values[0]
+        text = values[1]
+        ascii = values[2]
+    else:
+        userid = sys.argv[5]
+        text = sys.argv[6]
+        ascii = False
+    for token in tokenlist:
+        executor.submit(dmspammer,token,userid,text,ascii,None)
+
+elif mode == 'friender':
+    def friend(token,userid,proxy):
+        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        requests.put('https://discordapp.com/api/v6/users/@me/relationships/{}'.format(str(userid)), headers=headers)
+    if climode == 0:
+        userid = sg.PopupGetText('Enter A Users ID', "RTB | Friend Request Spammer")
+        if userid == None:
+            sys.exit()
+    else:
+        userid = sys.argv[5]
+    for token in tokenlist:
+        executor.submit(friend,token,userid,None)

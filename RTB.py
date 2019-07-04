@@ -516,9 +516,9 @@ def main(currentattacks):
                 ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
         elif sys.platform.startswith('linux'):
             if "b" in rtbversion:
-                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{} (TEST VERSION)\x07".format(rtbversion))
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
             else:
-                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox vL{}\x07".format(rtbversion))
+                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
     if len(str(tcounter)) == 1:
         menublank = "    "
     if len(str(tcounter)) == 2:
@@ -659,19 +659,22 @@ def main(currentattacks):
             if cliinputs == 1:
                 joiner(currentattacks)
             else:
-                subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','joiner',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','joiner',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Joiner Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 2:
             if cliinputs == 1:
                 leaver(currentattacks)
             else:
-                subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','leaver',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','leaver',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 3:
             if cliinputs == 1:
                 groupleaver(currentattacks)
             else:
-                subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupleaver',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupleaver',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Group Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 4:
             tokencheck(currentattacks)
@@ -679,29 +682,44 @@ def main(currentattacks):
             if cliinputs == 1:
                 messagespam(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','messagespam',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','messagespam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
                 currentattacks["Message Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 6:
             if cliinputs == 1:
                 asciispam(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
                 currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 7:
             if cliinputs == 1:
                 massmentioner(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','massmention',pycommand,useproxies])
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','massmention',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
                 currentattacks["Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 8:
-            vcspam(currentattacks)
+            if cliinputs == 1:
+                vcspam(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','vcspam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Voice Chat Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 9:
-            dmspam(currentattacks)
+            if cliinputs == 1:
+                dmspam(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','dmspammer',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 10:
-            friender(currentattacks)
+            if cliinputs == 1:
+                friender(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','friender',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Friender Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 11:
             groupdmspam(currentattacks)
         elif int(choice) == 12:
@@ -1371,8 +1389,8 @@ def viewcurrentat(currentattacks):
     elif attacks.lower() == 'killall':
         for attack in currentattacks:
             try:
-                print(int(currentattacks[int(attack)]))
-                os.kill(int(currentattacks[int(attack)]), 9)
+                print(int(currentattacks[attack]))
+                os.kill(int(currentattacks[attack]), 9)
             except Exception:
                 pass
         currentattacks = {}
@@ -1553,10 +1571,10 @@ def info(currentattacks):
         print (colored(" | | \ \ (_| | | (_| |    | | (_) | (_) | | |_) | (_) >  < ",menucolour))
         print (colored(" |_|  \_\__,_|_|\__,_|    |_|\___/ \___/|_|____/ \___/_/\_\ ",menucolour))
     print (colored("------------------------------------------------------------",menucolour))
-    print (colored("Copyright (c) 2019, Deadbread",menucolour))
+    print (colored("Copyright (c) 2019, DeadBread",menucolour))
     print (colored("                                                            ",menucolour))
     print (colored("https://github.com/DeadBread76/Raid-Toolbox",menucolour2))
-    print (colored("https://discord.gg/7RtuZEe",menucolour2))
+    print (colored("Discord: https://discord.gg/7RtuZEe\nTelegram: https://t.me/DeadBakery",menucolour2))
     print (colored("                                                            ",menucolour))
     if knockoff_mode == 1:
         print(colored("Lmfao suck my dick KriptaX#6216",random.choice(colours)))
@@ -1564,10 +1582,7 @@ def info(currentattacks):
         print (colored("SINGLE FILE MODE ACTIVE",menucolour2))
     if termuxmode == 1:
         print (colored("Termux Mode.",menucolour2))
-    if sys.platform.startswith('win32'):
-        print (colored("Raid ToolBox version: "+rtbversion,menucolour2))
-    elif sys.platform.startswith('linux'):
-        print (colored("Raid ToolBox version: "+'L'+rtbversion,menucolour2))
+    print (colored("Raid ToolBox version: "+rtbversion,menucolour2))
     print (colored("Server Smasher version: "+smversion,menucolour2))
     print (colored("Discord.py version: "+ discord.__version__,menucolour2))
     if verbose == 1:

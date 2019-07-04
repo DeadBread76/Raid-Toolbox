@@ -1,21 +1,21 @@
 import discord
 import asyncio
 import sys
-import random
 import aiohttp
+import psutil
 
 token = sys.argv[1]
-tokenno = sys.argv[2]
-voice_id = sys.argv[3]
-useproxies = sys.argv[4]  # proxies for voice chats smh
+voice_id = sys.argv[2]
+filename = sys.argv[3]
+parentprocess = sys.argv[4]
+proxy = sys.argv[5]  # proxies for voice chats smh
 
-if useproxies == 'True':
-    proxy_list = open("proxies.txt").read().splitlines()
-    proxy = random.choice(proxy_list)
+if not proxy == 'None':
     con = aiohttp.ProxyConnector(proxy="http://"+proxy)
-    client = discord.Client(connector=con)
+    client = discord.Client(connector=con, status=discord.Status.offline)
 else:
-    client = discord.Client()
+    client = discord.Client(status=discord.Status.offline)
+
 
 @client.event
 async def on_ready():
@@ -23,14 +23,17 @@ async def on_ready():
     voice_channel = client.get_channel(int(voice_id))
     while not client.is_closed():
         vc = await voice_channel.connect()
-        vc.play(discord.FFmpegPCMAudio('spammer/file.wav'))
+        vc.play(discord.FFmpegPCMAudio(filename))
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 10.0
         while vc.is_playing():
-            await asyncio.sleep(3)
+            if not psutil.pid_exists(int(parentprocess)):  # Parent is dead, Kill self
+                await client.logout()
+                sys.exit()
+            await asyncio.sleep(0.5)
         await vc.disconnect(force=True)
 
 try:
     client.run(token, bot=False)
-except Exception as c:
-    print(c)
+except Exception:
+    pass
