@@ -460,7 +460,7 @@ if disablecloudflarecheck == 1:
 else:
     if verbose == 1:
         print("Checking CloudFlare Status")
-    cloudflarecheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+    cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
     try:
         json.loads(cloudflarecheck.content)
     except Exception:
@@ -793,10 +793,8 @@ def joiner(currentattacks):
         main(currentattacks)
     if len(link) > 7:
         link = link[19:]
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        subprocess.Popen([pycommand,'RTBFiles/joiner.py',token,link,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    time.sleep(1)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','joiner',pycommand,useproxies,str(cliinputs),link],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Joiner Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def leaver(currentattacks):
@@ -810,10 +808,8 @@ def leaver(currentattacks):
     ID = input ('ID of the server to leave: ')
     if ID == '0':
         main(currentattacks)
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        subprocess.Popen([pycommand,'RTBFiles/leaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    time.sleep(1)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','leaver',pycommand,useproxies,str(cliinputs),ID],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def groupleaver(currentattacks):
@@ -862,7 +858,7 @@ def tokencheck(currentattacks):
             headers={
                 'Authorization': token
                 }
-            src = requests.post('https://discordapp.com/api/v6/invite/{}'.format(random.randint(1,9999999)), headers=headers)
+            src = requests.post('https://canary.discordapp.com/api/v6/invite/{}'.format(random.randint(1,9999999)), headers=headers)
             try:
                 if "You need to verify your account in order to perform this action." in str(src.content):
                     print (colored(token + ' Unverified.',"yellow"))
@@ -1474,9 +1470,24 @@ def customplugins(currentattacks):
 
 def diagrun(currentattacks):
     print("Checking if CloudFlare Banned...")
+    print("Checking Stable Endpoint...")
     cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
+    print("Checking PTB Endpoint...")
+    ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD")
+    print("Checking Canary Endpoint...")
+    cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
     try:
         json.loads(cloudcheck.content)
+        stbanned = False
+    except Exception:
+        stbanned = True
+    try:
+        json.loads(ptbcloudcheck.content)
+        ptbbanned = False
+    except Exception:
+        ptbbanned = True
+    try:
+        json.loads(cancloudcheck.content)
         banned = False
     except Exception:
         banned = True
@@ -1488,7 +1499,7 @@ def diagrun(currentattacks):
     clear()
     print("CloudFlare Banned: {}".format(banned))
     if banned == True:
-        print("You are CloudFlare banned.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
+        print("You are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
     now = datetime.datetime.now()
     filename = str(now.strftime("%H%M%S%d%m%Y"))
     with open ("Diagnostics" +filename+".txt", 'w+') as handle:
@@ -1500,8 +1511,14 @@ def diagrun(currentattacks):
             handle.write("Startup Time: {}".format(t1-t0)+"\n")
         except Exception:
             pass
-        handle.write("AMMOUNT OF TOKENS LOADED: " + str(tcounter) + "\n")
-        handle.write("CloudFlare Banned: {}".format(banned) + "\n")
+        handle.write("Tokens Loaded: " + str(tcounter) + "\n")
+        handle.write("---------------\n")
+        handle.write("CloudFlare Ban Status\n\n")
+        handle.write("Stable Endpoint: {}\n".format(stbanned))
+        handle.write("PTB Endpoint: {}\n".format(ptbbanned))
+        handle.write("Canary Endpoint: {}\n".format(banned))
+        if banned:
+            handle.write("The canary endpoint is used for RTB, This means some functions will not work.\n")
         handle.write("---------------\n")
         handle.write("Python Info:\n\n")
         handle.write("Python Version: " + sys.version+"\n")
@@ -1858,7 +1875,7 @@ def tokenmanager(currentattacks):
                 elif sys.platform.startswith('linux'):
                     os.system("printf '\033[8;{};100t'".format(leng))
             for token in tokenlist:
-                apilink = 'https://discordapp.com/api/v6/users/@me'
+                apilink = 'https://canary.discordapp.com/api/v6/users/@me'
                 headers = {'Authorization': token.rstrip(), 'Content-Type': 'application/json'}
                 src = requests.get(apilink, headers=headers)
                 if "401: Unauthorized" in str(src.content):

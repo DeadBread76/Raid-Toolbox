@@ -61,7 +61,7 @@ def asciigen(length):
 if mode == 'joiner':
     def join(token,link,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.post("https://discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+        requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
     if climode == 0:
         link = sg.PopupGetText('Enter The Discord Invite to join.', "RTB | Server Joiner")
         if link == None:
@@ -78,7 +78,7 @@ if mode == 'joiner':
 elif mode == 'leaver':
     def leave(token,ID,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.delete("https://discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
+        requests.delete("https://canary.discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
     if climode == 0:
         ID = sg.PopupGetText('Enter ID of the server to leave.', "RTB | Server Leaver")
         if ID == None:
@@ -91,7 +91,7 @@ elif mode == 'leaver':
 elif mode == 'groupleaver':
     def grleave(token,ID,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.delete("https://discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
+        requests.delete("https://canary.discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
     if climode == 0:
         ID = sg.PopupGetText('Enter ID of the group to leave.', "RTB | Group DM Leaver")
         if ID == None:
@@ -106,21 +106,21 @@ elif mode == 'messagespam':
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         payload = {"content": text, "tts": false}
         if channel == 'all':
-            chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
             channellist = json.loads(chanjson)
             while True:
                 for channel in channellist:
                     if not channel['type'] == 0:
                         continue
                     else:
-                        src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
                         if "You are being rate limited." in str(src.content):
                             time.sleep(5)
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             payload = {"content" : text,"tts" : false}
             while True:
-                src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
                     time.sleep(5)
     if climode == 0:
@@ -147,7 +147,7 @@ elif mode == 'asciispam':
     def sendascii(token,channel,server,proxy):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if channel == 'all':
-            chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
             channellist = json.loads(chanjson)
             while True:
                 for channel in channellist:
@@ -155,7 +155,7 @@ elif mode == 'asciispam':
                     if not channel['type'] == 0:
                         continue
                     else:
-                        src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
                         if "You are being rate limited." in str(src.content):
                             time.sleep(5)
         else:
@@ -163,7 +163,7 @@ elif mode == 'asciispam':
             payload = {"content" : text,"tts" : false}
             while True:
                 payload = {"content" : asciigen(1999),"tts" : false}
-                src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
                     time.sleep(5)
     if climode == 0:
@@ -188,14 +188,14 @@ elif mode == 'massmention':
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         memberlist = []
         msg = ''
-        memb = requests.get("https://discordapp.com/api/v6/guilds/{}/members?limit=1000".format(server),headers=headers).text
+        memb = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/members?limit=1000".format(server),headers=headers).text
         memberjson = json.loads(memb)
         for member in memberjson:
             memberlist.append("<@{}>".format(member['user']['id']))
         for member in memberlist:
             msg += member + ' '
         if channel == 'all':
-            chanjson = requests.get("https://discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
             channellist = json.loads(chanjson)
             while True:
                 for channel in channellist:
@@ -203,14 +203,14 @@ elif mode == 'massmention':
                         continue
                     else:
                         for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                            src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
+                            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
                             if "You are being rate limited." in str(src.content):
                                 time.sleep(5)
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             while True:
                 for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                    src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content" : m,"tts" : false})
+                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content" : m,"tts" : false})
                     if "You are being rate limited." in str(src.content):
                         time.sleep(5)
     if climode == 0:
@@ -295,7 +295,7 @@ elif mode == 'dmspammer':
         payload = {
             'recipient_id': userid
         }
-        src = requests.post('https://discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
+        src = requests.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
         userdm = src.content.decode()
         jsonstring = json.loads(userdm).values()
         for x in jsonstring:
@@ -306,7 +306,7 @@ elif mode == 'dmspammer':
         else:
             payload = {"content": text, "tts": false}
         while True:
-            src = requests.post("https://discordapp.com/api/v6/channels/{}/messages".format(userdm), headers=headers, json=payload)
+            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(userdm), headers=headers, json=payload)
             if "You are being rate limited." in str(src.content):
                 time.sleep(5)
     if climode == 0:
@@ -332,7 +332,7 @@ elif mode == 'dmspammer':
 elif mode == 'friender':
     def friend(token,userid,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.put('https://discordapp.com/api/v6/users/@me/relationships/{}'.format(str(userid)), headers=headers)
+        requests.put('https://canary.discordapp.com/api/v6/users/@me/relationships/{}'.format(str(userid)), headers=headers)
     if climode == 0:
         userid = sg.PopupGetText('Enter A Users ID', "RTB | Friend Request Spammer")
         if userid == None:
