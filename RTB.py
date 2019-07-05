@@ -460,12 +460,16 @@ if disablecloudflarecheck == 1:
 else:
     if verbose == 1:
         print("Checking CloudFlare Status")
-    cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
     try:
-        json.loads(cloudflarecheck.content)
-    except Exception:
-        print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
-        input(colored("Press enter to continue.",'red'))
+        cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
+    except Exception as e:
+        print(e)
+    else:
+        try:
+            json.loads(cloudflarecheck.content)
+        except Exception:
+            print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse Proxies or a VPN to get around this.")
+            input(colored("Press enter to continue.",'red'))
 t1 = time.time()
 if verbose == 1:
     print("Startup time: {}".format(t1-t0))
@@ -721,9 +725,19 @@ def main(currentattacks):
                 currentattacks["Friender Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 11:
-            groupdmspam(currentattacks)
+            if cliinputs == 1:
+                groupdmspam(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupdmspam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Group DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 12:
-            imagespam(currentattacks)
+            if cliinputs == 12:
+                imagespam(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','imagespam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Random Image Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 13:
             gamechange(currentattacks)
         elif int(choice) == 14:
@@ -829,9 +843,8 @@ def groupleaver(currentattacks):
         if ID == None:
             main(currentattacks)
     tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        subprocess.Popen([pycommand,'RTBFiles/groupleaver.py',token,ID,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    time.sleep(1)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupleaver',pycommand,useproxies,str(cliinputs),ID],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Group Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def tokencheck(currentattacks):
@@ -911,23 +924,9 @@ def messagespam(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-        allchan = 'true'
-    else:
-        allchan = 'false'
     msgtxt = input ("Text to spam: ")
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/messagespam.py',token,SERVER,number,msgtxt,chan,allchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Message Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','messagespam',pycommand,useproxies,str(cliinputs),msgtxt,chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Message Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def asciispam(currentattacks):
@@ -944,22 +943,8 @@ def asciispam(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-        allchan = 'true'
-    else:
-        allchan = 'false'
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/asciispam.py',token,number,chan,allchan,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/asciispam.py',token,number,chan,allchan,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Ascii Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies,str(cliinputs),chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def massmentioner(currentattacks):
@@ -973,20 +958,9 @@ def massmentioner(currentattacks):
     SERVER = input('Server ID: ')
     if str(SERVER) == '0':
         main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/massmention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/massmention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Mass Mention Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
-    main(currentattacks)
+    chan = input ("Channel to spam in (type 'all' for all channels): ")
+    if chan.lower() == "all":
+        print (colored("Spamming all channels","blue"))
 
 def vcspam(currentattacks):
     clear()
@@ -1002,26 +976,8 @@ def vcspam(currentattacks):
         main(currentattacks)
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
-    if os.path.isfile('RTBFiles/file.wav'):
-        os.remove('RTBFiles/file.wav')
-        print ("Removed old .wav.")
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([ytlink])
-    tcounter = 0
-    tokenlist = open("./tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/vcspam.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/vcspam.py',token,number,chanid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        if number == str(tokencount):
-            break
-        time.sleep(0.1)
-    currentattacks.append("Voice Chat Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','vcspam',pycommand,useproxies,str(cliinputs),ytlink,chanid,tokencount],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Voice Chat Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def dmspam(currentattacks):
@@ -1035,19 +991,9 @@ def dmspam(currentattacks):
     user = input ("User's ID: ")
     if str(user) == '0':
         main(currentattacks)
-    msgtxt = input ("Text to spam: ")
-    tcounter = 0
-    tokenlist = open("./tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/dmspammer.py',token,number,msgtxt,user,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-    currentattacks.append("DM Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    msgtxt = input ("Text to spam (Ascii Spam = ascii): ")
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','dmspammer',pycommand,useproxies,str(cliinputs),user,msgtxt],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def friender(currentattacks):
@@ -1061,16 +1007,24 @@ def friender(currentattacks):
     userid = input("User's ID: ")
     if str(userid) == '0':
         main(currentattacks)
-    tokenlist = open("tokens.txt").read().splitlines()
-    tcounter = 0
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/friender.py',token,userid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/friender.py',token,userid,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    p.wait()
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','friender',pycommand,useproxies,str(cliinputs),userid],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Friender Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+    main(currentattacks)
+
+def groupdmspam(currentattacks):
+    clear()
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Spammer\x07")
+    print (colored("Discord Group DM message spammer.",menucolour))
+    print (colored("0: Back",menucolour))
+    group = input ("Group ID: ")
+    if str(group) == '0':
+        main(currentattacks)
+    msgtxt = input ("Text to spam (Ascii Spam = ascii): ")
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupdmspam',pycommand,useproxies,str(cliinputs),msgtxt,group],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Group DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def imagespam(currentattacks):
@@ -1081,22 +1035,14 @@ def imagespam(currentattacks):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Image Spammer\x07")
     print (colored("Discord server image spammer.",menucolour))
     print (colored("0: Back",menucolour))
-    chan = input ("Channel to spam in: ")
-    if str(chan) == '0':
+    SERVER = input('Server ID: ')
+    if str(SERVER) == '0':
         main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/imagespam.py',token,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/imagespamlinux.py',token,number,chan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Image Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    chan = input ("Channel to spam in (type 'all' for all channels): ")
+    if chan.lower() == "all":
+        print (colored("Spamming all channels","blue"))
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','imagespam',pycommand,useproxies,str(cliinputs),chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def gamechange(currentattacks):
@@ -1328,33 +1274,6 @@ def vcjoinspammer(currentattacks): #wew its here
         spawnedpids.append(p.pid)
         time.sleep(0.1)
     currentattacks.append("Voice chat join and spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
-    main(currentattacks)
-
-def groupdmspam(currentattacks):
-    clear()
-    if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
-    elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Spammer\x07")
-    print (colored("Discord Group DM message spammer.",menucolour))
-    print (colored("0: Back",menucolour))
-    group = input ("Group ID: ")
-    if str(group) == '0':
-        main(currentattacks)
-    msgtxt = input ("Text to spam: ")
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/groupdmspam.py',token,group,number,msgtxt,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/groupdmspam.py',token,group,number,msgtxt,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Group DM spam with "+ str(tcounter) + " tokens.")
     time.sleep(5)
     main(currentattacks)
 

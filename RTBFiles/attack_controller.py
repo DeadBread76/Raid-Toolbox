@@ -26,6 +26,7 @@ import time
 import psutil
 import random
 import requests
+from datetime import datetime
 import subprocess
 import PySimpleGUI as sg
 from itertools import cycle
@@ -63,15 +64,30 @@ if mode == 'joiner':
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
     if climode == 0:
-        link = sg.PopupGetText('Enter The Discord Invite to join.', "RTB | Server Joiner")
-        if link == None:
+        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1)), sg.Checkbox('Log Info', tooltip='Spam with Ascii instead of text.',size=(5,1))]]
+        window = sg.Window('RTB | Joiner', layout)
+        event, values = window.Read()
+        window.Close()
+        link = values[0]
+        log = values[1]
+        if link == '':
             sys.exit()
     else:
         link = sys.argv[5]
+        log = False
     if 'https://discordapp.com/invite/' in link:
         link = link[30:]
     elif len(link) > 7:
         link = link[19:]
+    if log == True:
+        try:
+            s = requests.get("https://canary.discordapp.com/api/v6/invite/{}".format(link)).text
+            serjson = json.loads(s)
+            with open("JoinerLogs.txt", "a+", errors='ignore') as handle:
+                handle.write("=======================\n{}\n=======================\n".format(str(datetime.now())))
+                handle.write("Invite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
+        except Exception:
+            pass
     for token in tokenlist:
         executor.submit(join,token,link,None)
 
@@ -80,8 +96,12 @@ elif mode == 'leaver':
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
     if climode == 0:
-        ID = sg.PopupGetText('Enter ID of the server to leave.', "RTB | Server Leaver")
-        if ID == None:
+        layout = [[sg.Text('Enter server ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=('white', 'firebrick4'),size=(10,1))]]
+        window = sg.Window('RTB | Leaver', layout)
+        event, values = window.Read()
+        window.Close()
+        ID = values[0]
+        if ID == '':
             sys.exit()
     else:
         ID = sys.argv[5]
@@ -93,8 +113,12 @@ elif mode == 'groupleaver':
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
     if climode == 0:
-        ID = sg.PopupGetText('Enter ID of the group to leave.', "RTB | Group DM Leaver")
-        if ID == None:
+        layout = [[sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=('white', 'firebrick4'),size=(10,1))]]
+        window = sg.Window('RTB | Group DM Leaver', layout)
+        event, values = window.Read()
+        window.Close()
+        ID = values[0]
+        if ID == '':
             sys.exit()
     else:
         ID = sys.argv[5]
@@ -159,8 +183,6 @@ elif mode == 'asciispam':
                         if "You are being rate limited." in str(src.content):
                             time.sleep(5)
         else:
-            headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-            payload = {"content" : text,"tts" : false}
             while True:
                 payload = {"content" : asciigen(1999),"tts" : false}
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
@@ -325,7 +347,10 @@ elif mode == 'dmspammer':
     else:
         userid = sys.argv[5]
         text = sys.argv[6]
-        ascii = False
+        if text == "ascii":
+            ascii = True
+        else:
+            ascii = False
     for token in tokenlist:
         executor.submit(dmspammer,token,userid,text,ascii,None)
 
@@ -341,3 +366,73 @@ elif mode == 'friender':
         userid = sys.argv[5]
     for token in tokenlist:
         executor.submit(friend,token,userid,None)
+
+elif mode == 'groupdmspam':
+    def sendgdm(token,text,group,ascii,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        payload = {"content": text, "tts": false}
+        while True:
+            if ascii:
+                payload = {"content": asciigen(1999), "tts": false}
+            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(group), headers=headers, json=payload)
+            if "You are being rate limited." in str(src.content):
+                time.sleep(5)
+    if climode == 0:
+        layout = [
+              [sg.Text('Text To Spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
+              [sg.Text('Group ID', size=(15, 1)), sg.InputText()],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Group DM Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        text = values[0]
+        group = values[2]
+        ascii = values[1]
+    else:
+        text = sys.argv[5]
+        group = sys.argv[6]
+        if text == "ascii":
+            ascii = True
+        else:
+            ascii = False
+    for token in tokenlist:
+        executor.submit(sendgdm,token,text,group,ascii,None)
+
+elif mode == 'imagespam':
+    def sendimages(token,channel,server,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        if channel == 'all':
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            channellist = json.loads(chanjson)
+            while True:
+                for channel in channellist:
+                    payload = {"content": 'https://picsum.photos/{}'.format(random.randint(100,2160)),"tts" : false}
+                    if not channel['type'] == 0:
+                        continue
+                    else:
+                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                        if "You are being rate limited." in str(src.content):
+                            time.sleep(5)
+        else:
+            while True:
+                payload = {"content": 'https://picsum.photos/{}'.format(random.randint(100,2160)),"tts" : false}
+                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                if "You are being rate limited." in str(src.content):
+                    time.sleep(5)
+    if climode == 0:
+        layout = [[sg.Text('This will spam random images from https://picsum.photos/')],
+              [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
+              [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Random Image Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        channelid = values[0]
+        SERVER = values[1]
+    else:
+        channelid = sys.argv[5]
+        SERVER = sys.argv[6]
+    for token in tokenlist:
+        executor.submit(sendimages,token,channelid,SERVER,None)
