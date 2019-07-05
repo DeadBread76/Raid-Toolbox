@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Raid Toolbox
-# Author: DeadBread76 - https://github.com/DeadBread76/
-# Febuary 23rd, 2019
+# Author: DeadBitch hehe - https://github.com/DeadBread76/
+# February 23rd, 2019
 
 rtbversion = "0.3.8r1"
 smversion = "0.1.11r1"
