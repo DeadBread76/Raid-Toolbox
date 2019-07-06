@@ -247,7 +247,6 @@ else:
         import webbrowser
         import discord
         import requests
-        import youtube_dl
         import animation
         import cpuinfo
         import psutil
@@ -290,16 +289,6 @@ else:
             sys.exit()
         else:
             sys.exit()
-
-ydl_opts = {
-    'outtmpl': 'RTBFiles/file.webm',
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'wav',
-        'preferredquality': '192',
-    }],
-}
 
 init()
 collector = create_collector('my-collector', 'http')
@@ -623,8 +612,8 @@ def main(currentattacks):
         print (colored("██                                                                                                ██",menucolour))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                               ██                                               ██",menucolour))
-        print (colored("██         ",menucolour)+(colored("0.  Exit",menucolour2)+colored("                              ██",menucolour)+colored("         13. Playing game changer",menucolour2)+colored("              ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("1.  Joiner",menucolour2)+colored("                            ██",menucolour)+colored("         14. Ascii Nickname (Spams Audit log)",menucolour2)+colored("  ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("0.  Exit",menucolour2)+colored("                              ██",menucolour)+colored("         13. Status Changer",menucolour2)+colored("                    ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("1.  Joiner",menucolour2)+colored("                            ██",menucolour)+colored("         14. Nickname Changer",menucolour2)+colored("                  ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("2.  Leaver",menucolour2)+colored("                            ██",menucolour)+colored("         15. Embed Spammer",menucolour2)+colored("                     ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("3.  Group DM leaver",menucolour2)+colored("                   ██",menucolour)+colored("         16. TrafficLight status effect",menucolour2)+colored("        ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("4.  Token Checker",menucolour2)+colored("                     ██",menucolour)+colored("         17. Role Mass Mentioner",menucolour2)+colored("               ██",menucolour)))
@@ -635,7 +624,7 @@ def main(currentattacks):
         print (colored("██         ",menucolour)+(colored("9.  User DM Spammer",menucolour2)+colored("                   ██",menucolour)+colored("         22. View Running Attacks",menucolour2)+colored("              ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("10. Friend Request Spammer",menucolour2)+colored("            ██",menucolour)+colored("         23. Custom attack plugins",menucolour2)+colored("             ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("11. Group DM spammer",menucolour2)+colored("                  ██",menucolour)+colored("         24. More Options",menucolour2)+colored("                      ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("12. Image Spammer",menucolour2)+colored("                     ██",menucolour)+colored("         25. Token options",menucolour2)+colored("                     ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("12. Random Image Spammer",menucolour2)+colored("              ██",menucolour)+colored("         25. Token options",menucolour2)+colored("                     ██",menucolour)))
         print (colored("██                                               ██                                               ██",menucolour))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                               ██                                               ██",menucolour))
@@ -647,17 +636,6 @@ def main(currentattacks):
         if choice.lower() == 'info':
             info(currentattacks)
         if int(choice) == 0:
-            for pid in spawnedpids:
-                if sys.platform.startswith('win32'):
-                    try:
-                        os.kill(int(pid), 9)
-                    except Exception:
-                        pass
-                elif sys.platform.startswith('linux'):
-                    try:
-                        os.kill(int(pid), signal.SIGKILL)
-                    except Exception:
-                        pass
             sys.exit()
         elif int(choice) == 1:
             if cliinputs == 1:
@@ -693,7 +671,7 @@ def main(currentattacks):
             if cliinputs == 1:
                 asciispam(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies,str(cliinputs)])
                 currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 7:
@@ -732,16 +710,26 @@ def main(currentattacks):
                 currentattacks["Group DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 12:
-            if cliinputs == 12:
+            if cliinputs == 1:
                 imagespam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','imagespam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
                 currentattacks["Random Image Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 13:
-            gamechange(currentattacks)
+            if cliinputs == 1:
+                gamechange(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','gamechange',pycommand,useproxies,str(cliinputs)])
+                currentattacks["Status Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 14:
-            asciinick(currentattacks)
+            if cliinputs == 1:
+                nickchange(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','nickname',pycommand,useproxies,str(cliinputs)])
+                currentattacks["Nickname Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 15:
             embedspam(currentattacks)
         elif int(choice) == 16:
@@ -1058,18 +1046,11 @@ def gamechange(currentattacks):
     game = input ('Playing ')
     if game == '0':
         main(currentattacks)
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/gamechange.py',token,game,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/gamechange.py',token,game,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-    currentattacks.append("Playing status change with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','gamechange',pycommand,useproxies,str(cliinputs),chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
-def asciinick(currentattacks):
+def nickchange(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Nickname Changer")

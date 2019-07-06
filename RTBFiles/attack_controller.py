@@ -79,17 +79,23 @@ if mode == 'joiner':
         link = link[30:]
     elif len(link) > 7:
         link = link[19:]
+    for token in tokenlist:
+        executor.submit(join,token,link,None)
     if log == True:
         try:
             s = requests.get("https://canary.discordapp.com/api/v6/invite/{}".format(link)).text
             serjson = json.loads(s)
             with open("JoinerLogs.txt", "a+", errors='ignore') as handle:
-                handle.write("=======================\n{}\n=======================\n".format(str(datetime.now())))
-                handle.write("Invite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
+                handle.write("=======================\n{}\n=======================\nInvite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(str(datetime.now()),serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
+            layout = [[sg.Text('Server Name: {}'.format(serjson['guild']['name']))],
+                    [sg.Text('Server ID: {}'.format(serjson['guild']['id']))],
+                    [sg.Button('kthxbye',button_color=('white', 'firebrick4'),size=(30,1))]
+                    ]
+            window = sg.Window('RTB | Joiner', layout)
+            event, values = window.Read()
+            window.Close()
         except Exception:
             pass
-    for token in tokenlist:
-        executor.submit(join,token,link,None)
 
 elif mode == 'leaver':
     def leave(token,ID,proxy):
@@ -152,11 +158,15 @@ elif mode == 'messagespam':
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
              ]
         window = sg.Window('RTB | Message Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         text = values[0]
         channelid = values[1]
         SERVER = values[2]
@@ -175,7 +185,7 @@ elif mode == 'asciispam':
             channellist = json.loads(chanjson)
             while True:
                 for channel in channellist:
-                    payload = {"content" : asciigen(1999),"tts" : false}
+                    payload = {"content": asciigen(1999), "tts": false}
                     if not channel['type'] == 0:
                         continue
                     else:
@@ -184,7 +194,7 @@ elif mode == 'asciispam':
                             time.sleep(5)
         else:
             while True:
-                payload = {"content" : asciigen(1999),"tts" : false}
+                payload = {"content": asciigen(1999), "tts": false}
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
                     time.sleep(5)
@@ -192,11 +202,15 @@ elif mode == 'asciispam':
         layout = [[sg.Text('WARNING: This will make your Discord client lag by just looking at the channel,\nI recommend not looking at the channels while doing this attack.')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
              ]
         window = sg.Window('RTB | Ascii Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         channelid = values[0]
         SERVER = values[1]
     else:
@@ -232,18 +246,22 @@ elif mode == 'massmention':
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             while True:
                 for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content" : m,"tts" : false})
+                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content": m, "tts": false})
                     if "You are being rate limited." in str(src.content):
                         time.sleep(5)
     if climode == 0:
         layout = [
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
               ]
         window = sg.Window('RTB | Mass Mentioner', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         SERVER = values[0]
         channelid = values[1]
     else:
@@ -272,11 +290,15 @@ elif mode == 'vcspam':
               size=(29,15),
               orientation='horizontal',
               font=('Helvetica', 10))],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
               ]
         window = sg.Window('RTB | Voice Chat Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         ytlink = values[0]
         channelid = values[1]
         ammount = values[2]
@@ -324,7 +346,7 @@ elif mode == 'dmspammer':
             list.append(x)
         userdm = list[2]
         if ascii == True:
-            payload = {"content": asciigen(1999),"tts" : false}
+            payload = {"content": asciigen(1999), "tts": false}
         else:
             payload = {"content": text, "tts": false}
         while True:
@@ -336,11 +358,15 @@ elif mode == 'dmspammer':
             [sg.Text('Note: The tokens need to share a mutual server with the target for this to work.')],
             [sg.Text('Users ID', size=(15, 1)), sg.InputText()],
             [sg.Text('Text to spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
-            [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
             ]
         window = sg.Window('RTB | DM Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         userid = values[0]
         text = values[1]
         ascii = values[2]
@@ -381,11 +407,15 @@ elif mode == 'groupdmspam':
         layout = [
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
               [sg.Text('Group ID', size=(15, 1)), sg.InputText()],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
              ]
         window = sg.Window('RTB | Group DM Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         text = values[0]
         group = values[2]
         ascii = values[1]
@@ -424,11 +454,15 @@ elif mode == 'imagespam':
         layout = [[sg.Text('This will spam random images from https://picsum.photos/')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.Button('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
              ]
         window = sg.Window('RTB | Random Image Spammer', layout)
         event, values = window.Read()
         window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
         channelid = values[0]
         SERVER = values[1]
     else:
@@ -436,3 +470,124 @@ elif mode == 'imagespam':
         SERVER = sys.argv[6]
     for token in tokenlist:
         executor.submit(sendimages,token,channelid,SERVER,None)
+
+elif mode == 'gamechange':
+    from websocket import create_connection
+    def changegame(token,game,type,status,proxy):
+        for token in tokenlist:
+            ws = create_connection('wss://gateway.discord.gg/?v=6&encoding=json')
+            result = ws.recv()
+            if type == "Playing":
+                gamejson = {
+                    "name": game,
+                    "type": 0
+                }
+            elif type == 'Streaming':
+                gamejson = {
+                    "name": game,
+                    "type": 1,
+                    "url": "https://www.twitch.tv/DEADBREAD'S_RAID_TOOLBOX"
+                }
+            elif type == "Listening to":
+                gamejson = {
+                    "name": game,
+                    "type": 2
+                }
+            elif type == "Watching":
+                gamejson = {
+                    "name": game,
+                    "type": 3
+                }
+            payload = {
+                'op': 2,
+                'd': {
+                    'token': token,
+                    'properties': {
+                        '$os': sys.platform,
+                        '$browser': "Discord{}".format(random.randint(1000,9999)),
+                        '$device': "Discord{}".format(random.randint(1000,9999)),
+                        '$referrer': '',
+                        '$referring_domain': ''
+                    },
+                    'compress': True,
+                    'large_threshold': 250,
+                    'v': 3,
+                    "presence": {
+                        "game": gamejson,
+                        "status": status,
+                        "since": 0,
+                        "afk": False
+                    }
+                }
+            }
+            to_send = json.dumps(payload)
+            ws.send(to_send)
+    if climode == 0:
+        layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 5), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle'], size=(10, 1), default_value='online', readonly=True)],
+                  [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                  ]
+        window = sg.Window('RTB | Status Changer', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        type = values[0]
+        game = values[1]
+        status = values[2]
+    else:
+        type = 'Playing'
+        game = sys.argv[5]
+        status = 'online'
+    while True:
+        for token in tokenlist:
+            executor.submit(changegame,token,game,type,status,None)
+        time.sleep(60)
+
+elif mode == 'nickname':
+    def nickname(token,server,name,type,proxy):
+        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        if type == "Cycle":
+            name = []
+            for x in name.rstrip():
+                name.append(x)
+            cyclename = cycle(name)
+            newnick = ''
+            while True:
+                if len(newnick) == len(name.rstrip()):
+                    newnick = ''
+                newnick += next(cyclename)
+                payload = {'nick': newnick}
+                requests.patch('https://canary.discordapp.com/api/v6/guilds/{}/members/@me/nick'.format(server), headers=headers,json=payload)
+                time.sleep(2)
+        elif type == "Ascii":
+            while True:
+                payload = {'nick': asciigen(32)}
+                requests.patch('https://canary.discordapp.com/api/v6/guilds/{}/members/@me/nick'.format(server), headers=headers,json=payload)
+                time.sleep(2)
+        elif type == "Set":
+            payload = {'nick': name}
+            requests.patch('https://canary.discordapp.com/api/v6/guilds/{}/members/@me/nick'.format(server), headers=headers,json=payload)
+    if climode == 0:
+        layout = [
+                [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+                [sg.Combo(['Cycle','Ascii','Set'], size=(14, 5), default_value='Cycle', readonly=True),sg.InputText("DeadBread's Raid Toolbox")],
+                [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                ]
+        window = sg.Window('RTB | Status Changer', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        server = values[0]
+        type = values[1]
+        name = values[2]
+    else:
+        server = sys.argv[5]
+        type = "Ascii"
+        name = "None"
+    for token in tokenlist:
+        executor.submit(nickname,token,server,name,type,None)
