@@ -26,10 +26,10 @@ import time
 import psutil
 import random
 import requests
-from datetime import datetime
 import subprocess
 import PySimpleGUI as sg
 from itertools import cycle
+from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
 executor = ThreadPoolExecutor(max_workers=800)
@@ -148,7 +148,7 @@ elif mode == 'messagespam':
                             time.sleep(5)
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-            payload = {"content" : text,"tts" : false}
+            payload = {"content": text, "tts": false}
             while True:
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                 if "You are being rate limited." in str(src.content):
@@ -382,12 +382,28 @@ elif mode == 'dmspammer':
 
 elif mode == 'friender':
     def friend(token,userid,proxy):
-        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.put('https://canary.discordapp.com/api/v6/users/@me/relationships/{}'.format(str(userid)), headers=headers)
+        if "#" in userid:
+            headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+            user = userid.split("#")
+            payload = {"username": user[0], "discriminator": user[1]}
+            requests.post('https://canary.discordapp.com/api/v6/users/@me/relationships', headers=headers,json=payload)
+        else:
+            headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+            requests.put('https://canary.discordapp.com/api/v6/users/@me/relationships/{}'.format(str(userid)), headers=headers)
     if climode == 0:
-        userid = sg.PopupGetText('Enter A Users ID', "RTB | Friend Request Spammer")
-        if userid == None:
+        layout = [
+              [sg.Text('Enter A User ID or Name + Tag')],
+              [sg.InputText()],
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Group DM Spammer', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
             sys.exit()
+        userid = values[0]
     else:
         userid = sys.argv[5]
     for token in tokenlist:
@@ -549,10 +565,10 @@ elif mode == 'nickname':
     def nickname(token,server,name,type,proxy):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if type == "Cycle":
-            name = []
+            n = []
             for x in name.rstrip():
-                name.append(x)
-            cyclename = cycle(name)
+                n.append(x)
+            cyclename = cycle(n)
             newnick = ''
             while True:
                 if len(newnick) == len(name.rstrip()):
@@ -560,7 +576,7 @@ elif mode == 'nickname':
                 newnick += next(cyclename)
                 payload = {'nick': newnick}
                 requests.patch('https://canary.discordapp.com/api/v6/guilds/{}/members/@me/nick'.format(server), headers=headers,json=payload)
-                time.sleep(2)
+                time.sleep(1)
         elif type == "Ascii":
             while True:
                 payload = {'nick': asciigen(32)}
@@ -572,10 +588,10 @@ elif mode == 'nickname':
     if climode == 0:
         layout = [
                 [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-                [sg.Combo(['Cycle','Ascii','Set'], size=(14, 5), default_value='Cycle', readonly=True),sg.InputText("DeadBread's Raid Toolbox")],
+                [sg.Combo(['Cycle','Ascii','Set'], size=(14, 5), default_value='Cycle', readonly=True),sg.InputText("DeadBread's Raid Toolbox", tooltip="New Nickname")],
                 [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                 ]
-        window = sg.Window('RTB | Status Changer', layout)
+        window = sg.Window('RTB | Nickname Changer', layout)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -591,3 +607,202 @@ elif mode == 'nickname':
         name = "None"
     for token in tokenlist:
         executor.submit(nickname,token,server,name,type,None)
+
+elif mode == 'embed':
+    def embedspam(token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        if channel == 'all':
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            channellist = json.loads(chanjson)
+            while True:
+                for channel in channellist:
+                    payload = {"content": '', "embed":{"title": title,"color": random.randint(1,16777215),"footer": {"icon_url": iconurl,"text": footer},"image": {"url": imgurl},"author": {"name": author,"url": "https://github.com/DeadBread76/Raid-Toolbox","icon_url": iconurl},"fields": [{"name": field_name,"value": field_value}]}}
+                    if not channel['type'] == 0:
+                        continue
+                    else:
+                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                        if "You are being rate limited." in str(src.content):
+                            time.sleep(5)
+        else:
+            while True:
+                payload = {"content": '', "embed":{"title": title,"color": random.randint(1,16777215),"footer": {"icon_url": iconurl,"text": footer},"image": {"url": imgurl},"author": {"name": author,"url": "https://github.com/DeadBread76/Raid-Toolbox","icon_url": iconurl},"fields": [{"name": field_name,"value": field_value}]}}
+                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                if "You are being rate limited." in str(src.content):
+                    time.sleep(5)
+    layout = [
+            [sg.Text('Server ID', size=(10, 1)), sg.InputText()],
+            [sg.Text('Channel ID', size=(10, 1)), sg.InputText('all')],
+            [sg.Text('Title', size=(10, 1)), sg.InputText()],
+            [sg.Text('Author', size=(10, 1)), sg.InputText()],
+            [sg.Text('Icon URL', size=(10, 1)), sg.InputText()],
+            [sg.Text('Field Name', size=(10, 1)), sg.InputText()],
+            [sg.Text('Field Value', size=(10, 1)), sg.InputText()],
+            [sg.Text('Image URL', size=(10, 1)), sg.InputText()],
+            [sg.Text('Footer Text', size=(10, 1)), sg.InputText()],
+            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            ]
+    window = sg.Window('RTB | Embed Spammer', layout)
+    event, values = window.Read()
+    window.Close()
+    if event == "Start":
+        pass
+    else:
+        sys.exit()
+    server = values[0]
+    channel = values[1]
+    title = values[2]
+    author = values[3]
+    iconurl = values[4]
+    field_name = values[5]
+    field_value = values[6]
+    imgurl = values[7]
+    footer = values[8]
+    for token in tokenlist:
+        executor.submit(embedspam,token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer,None)
+
+elif mode == 'avatarchange':
+    from base64 import b64encode
+    # Ripped from Discord.py
+    def get_mime(data):
+        if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
+            return 'image/png'
+        elif data[6:10] in (b'JFIF', b'Exif'):
+            return 'image/jpeg'
+        elif data.startswith((b'\x47\x49\x46\x38\x37\x61', b'\x47\x49\x46\x38\x39\x61')):
+            return 'image/gif'
+        elif data.startswith(b'RIFF') and data[8:12] == b'WEBP':
+            return 'image/webp'
+    # Ripped from Discord.py
+    def bytes_to_base64_data(data):
+        fmt = 'data:{mime};base64,{data}'
+        mime = get_mime(data)
+        b64 = b64encode(data).decode('ascii')
+        return fmt.format(mime=mime, data=b64)
+
+    def changeavatar(token,avatarfile,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+        response = json.loads(src.content.decode())
+        username = response['username']
+        email = response['email']
+        with open(avatarfile, "rb") as avatar_handle:
+            encoded = bytes_to_base64_data(avatar_handle.read())
+        payload = {'avatar': encoded, 'email': email, 'password': "", 'username': username}
+        src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
+        print(src.content)
+    layout = [
+            [sg.Text('Select and image to change avatar.')],
+            [sg.Input(), sg.FileBrowse(file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
+            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            ]
+    window = sg.Window('RTB | Avatar Changer', layout)
+    event, values = window.Read()
+    window.Close()
+    if event == "Start":
+        pass
+    else:
+        sys.exit()
+    avatarfile = values[0]
+    for token in tokenlist:
+        executor.submit(changeavatar,token,avatarfile,None)
+
+elif mode == "rolemention":
+    def sendrolemention(token,channel,server,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        rolelist = []
+        msg = ''
+        roles = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/roles".format(server),headers=headers).text
+        rolejson = json.loads(roles)
+        for role in rolejson:
+            rolelist.append("<@&{}>".format(role['id']))
+        for role in rolelist:
+            msg += role + ' '
+        if channel == 'all':
+            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+            channellist = json.loads(chanjson)
+            while True:
+                for channel in channellist:
+                    if not channel['type'] == 0:
+                        continue
+                    else:
+                        for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
+                            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
+                            if "You are being rate limited." in str(src.content):
+                                time.sleep(5)
+        else:
+            headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+            while True:
+                for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
+                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content": m, "tts": false})
+                    if "You are being rate limited." in str(src.content):
+                        time.sleep(5)
+    if climode == 0:
+        layout = [
+              [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
+              [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              ]
+        window = sg.Window('RTB | Role Mass Mentioner', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        SERVER = values[0]
+        channelid = values[1]
+    else:
+        SERVER = sys.argv[5]
+        channelid = sys.argv[6]
+    for token in tokenlist:
+        executor.submit(sendrolemention,token,channelid,SERVER,None)
+
+elif mode == "cleanup":
+    if climode == 0:
+        layout = [
+              [sg.Text('Enter Server to delete all messages sent by the token.')],
+              [sg.InputText()],
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+             ]
+        window = sg.Window('RTB | Server Cleanup', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        server = values[0]
+    else:
+        server = sys.argv[5]
+    for token in tokenlist:
+        subprocess.Popen([pycommand,'RTBFiles/cleanup.py',token,server,str(os.getpid()),'None'])
+    while True:
+        pass
+
+elif mode == "hypesquad":
+    def changehouse(token,house,proxy):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        if house == "Bravery":
+            payload = {'house_id': 1}
+        elif house == "Brilliance":
+            payload = {'house_id': 2}
+        elif house == "Ballance":
+            payload = {'house_id': 3}
+        requests.post('https://discordapp.com/api/v6/hypesquad/online',headers=headers,json=payload)
+    if climode == 0:
+        layout = [
+                 [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Ballance'],readonly=True, default_value='Bravery')],
+                 [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                ]
+        window = sg.Window('RTB | Server Cleanup', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        house = values[0]
+    else:
+        house = sys.argv[5]
+    for token in tokenlist:
+        executor.submit(changehouse,token,house,None)

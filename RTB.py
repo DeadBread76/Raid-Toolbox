@@ -557,42 +557,6 @@ def main(currentattacks):
         print(colored("24. More Options",menucolour2))
         print(colored("25. Token options",menucolour2))
         choice = input(colored(">",menucolour2))
-    elif knockoff_mode == 1:
-        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
-        print (colored("██                                                                                                ██",'red'))
-        print (colored("██                                        Raid Discord Tool                                       ██",'red'))
-        print (colored("██                                                                                                ██",'red'))
-        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
-        print (colored("██                                                                                                ██",'red'))
-        if tcounter == 0:
-            print (colored("██                                      No tokens available.              "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
-        elif tcounter == 1:
-            print (colored("██                                  There is "+str(tcounter)+" token available.           "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
-        else:
-            print (colored("██                                  There are "+str(tcounter)+" tokens available.         "+menublank+now.strftime("%d/%m/%Y %H:%M:%S")+" ██",'red'))
-        print (colored("██                                                                                                ██",'red'))
-        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
-        print (colored("██                                               ██                                               ██",'red'))
-        print (colored("██         0.  Salir                             ██         13. Playing game changer              ██",'red'))
-        print (colored("██         1.  Meter Bots                        ██         14. Ascii Nickname (Spams Audit log)  ██",'red'))
-        print (colored("██         2.  Sacar Bots                        ██         15. Embed Spammer                     ██",'red'))
-        print (colored("██         3.  Group DM leaver                   ██         16. TrafficLight status effect        ██",'red'))
-        print (colored("██         4.  Users Checker                     ██         17. Role Mass Mentioner               ██",'red'))
-        print (colored("██         5.  MSG spammer                       ██         18. Channel Message Cleaner           ██",'red'))
-        print (colored("██         6.  Ascii spammer                     ██         19. Server Smasher (Single bot token) ██",'red'))
-        print (colored("██         7.  Mass mention spammer              ██         20. Proxy Scraper                     ██",'red'))
-        print (colored("██         8.  Voice Chat Spammer                ██         21. Voice chat join spammer           ██",'red'))
-        print (colored("██         9.  User DM Spammer                   ██         22. View Running Attacks              ██",'red'))
-        print (colored("██         10. Solicitud Spammer                 ██         23. Custom attack plugins             ██",'red'))
-        print (colored("██         11. Group DM spammer                  ██         24. Más opciones                      ██",'red'))
-        print (colored("██         12. Imagen Spammer                    ██                                               ██",'red'))
-        print (colored("██                                               ██                                               ██",'red'))
-        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
-        print (colored("██                                               ██                                               ██",'red'))
-        print (colored("██     Please enter the number of your choice.   ██    Type 'info' for Information and Updates    ██",'red'))
-        print (colored("██                                               ██                                               ██",'red'))
-        print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",'red'))
-        choice = input()
     else:
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                                                                                ██",menucolour))
@@ -615,12 +579,12 @@ def main(currentattacks):
         print (colored("██         ",menucolour)+(colored("0.  Exit",menucolour2)+colored("                              ██",menucolour)+colored("         13. Status Changer",menucolour2)+colored("                    ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("1.  Joiner",menucolour2)+colored("                            ██",menucolour)+colored("         14. Nickname Changer",menucolour2)+colored("                  ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("2.  Leaver",menucolour2)+colored("                            ██",menucolour)+colored("         15. Embed Spammer",menucolour2)+colored("                     ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("3.  Group DM leaver",menucolour2)+colored("                   ██",menucolour)+colored("         16. TrafficLight status effect",menucolour2)+colored("        ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("3.  Group DM leaver",menucolour2)+colored("                   ██",menucolour)+colored("         16. Avatar Changer",menucolour2)+colored("                    ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("4.  Token Checker",menucolour2)+colored("                     ██",menucolour)+colored("         17. Role Mass Mentioner",menucolour2)+colored("               ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("5.  Message spammer",menucolour2)+colored("                   ██",menucolour)+colored("         18. Channel Message Cleaner",menucolour2)+colored("           ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("6.  Ascii spammer",menucolour2)+colored("                     ██",menucolour)+colored("         19. Server Smasher (Single bot token)",menucolour2)+colored(" ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("7.  Mass mention spammer",menucolour2)+colored("              ██",menucolour)+colored("         20. Proxy Scraper",menucolour2)+colored("                     ██",menucolour)))
-        print (colored("██         ",menucolour)+(colored("8.  Voice Chat Spammer",menucolour2)+colored("                ██",menucolour)+colored("         21. Voice chat join spammer",menucolour2)+colored("           ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("6.  Ascii spammer",menucolour2)+colored("                     ██",menucolour)+colored("         19. HypeSquad House Changer",menucolour2)+colored("           ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("7.  Mass mention spammer",menucolour2)+colored("              ██",menucolour)+colored("         20. Server Smasher",menucolour2)+colored("                    ██",menucolour)))
+        print (colored("██         ",menucolour)+(colored("8.  Voice Chat Spammer",menucolour2)+colored("                ██",menucolour)+colored("         21. Proxy Scraper",menucolour2)+colored("                     ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("9.  User DM Spammer",menucolour2)+colored("                   ██",menucolour)+colored("         22. View Running Attacks",menucolour2)+colored("              ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("10. Friend Request Spammer",menucolour2)+colored("            ██",menucolour)+colored("         23. Custom attack plugins",menucolour2)+colored("             ██",menucolour)))
         print (colored("██         ",menucolour)+(colored("11. Group DM spammer",menucolour2)+colored("                  ██",menucolour)+colored("         24. More Options",menucolour2)+colored("                      ██",menucolour)))
@@ -642,21 +606,21 @@ def main(currentattacks):
                 joiner(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','joiner',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Joiner Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Joiner | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 2:
             if cliinputs == 1:
                 leaver(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','leaver',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 3:
             if cliinputs == 1:
                 groupleaver(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupleaver',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Group Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Group Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 4:
             tokencheck(currentattacks)
@@ -665,85 +629,116 @@ def main(currentattacks):
                 messagespam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','messagespam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Message Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Message Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 6:
             if cliinputs == 1:
                 asciispam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','asciispam',pycommand,useproxies,str(cliinputs)])
-                currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Ascii Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 7:
             if cliinputs == 1:
                 massmentioner(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','massmention',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Mass Mentioner Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 8:
             if cliinputs == 1:
                 vcspam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','vcspam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Voice Chat Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Voice Chat Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 9:
             if cliinputs == 1:
                 dmspam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','dmspammer',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["DM Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 10:
             if cliinputs == 1:
                 friender(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','friender',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Friender Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Friender Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 11:
             if cliinputs == 1:
                 groupdmspam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','groupdmspam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Group DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Group DM Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 12:
             if cliinputs == 1:
                 imagespam(currentattacks)
             else:
                 p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','imagespam',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                currentattacks["Random Image Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["Random Image Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 13:
             if cliinputs == 1:
                 gamechange(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','gamechange',pycommand,useproxies,str(cliinputs)])
-                currentattacks["Status Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','gamechange',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Status Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 14:
             if cliinputs == 1:
                 nickchange(currentattacks)
             else:
-                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','nickname',pycommand,useproxies,str(cliinputs)])
-                currentattacks["Nickname Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','nickname',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Nickname Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 15:
-            embedspam(currentattacks)
+            if cliinputs == 1:
+                clear()
+                print(colored("CLI Mode does not support embed spammer anymore.\nPlease Use GUI.",menucolour2))
+                input()
+                main(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','embed',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Embed Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 16:
-            trafficlight(currentattacks)
+            if cliinputs == 1:
+                clear()
+                print(colored("CLI Mode does not support the avatar changer anymore.\nPlease Use GUI.",menucolour2))
+                input()
+                main(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','avatarchange',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Avatar Changing | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 17:
-            rolemassmention(currentattacks)
+            if cliinputs == 1:
+                rolemassmention(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','rolemention',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Role mass mention attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 18:
-            cleanup(currentattacks)
+            if cliinputs == 1:
+                cleanup(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','cleanup',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Tokens are cleaning up | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 19:
-            serversmasher(currentattacks)
+            if cliinputs == 1:
+                hypesquadchanger(currentattacks)
+            else:
+                p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','hypesquad',pycommand,useproxies,str(cliinputs)],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                currentattacks["Hypesquad Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                main(currentattacks)
         elif int(choice) == 20:
-            proxyscrape(currentattacks)
+            serversmasher(currentattacks)
         elif int(choice) == 21:
-            vcjoinspammer(currentattacks)
+            proxyscrape(currentattacks)
         elif int(choice) == 22:
             viewcurrentat(currentattacks)
         elif int(choice) == 23:
@@ -949,6 +944,9 @@ def massmentioner(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','massmention',pycommand,useproxies,str(cliinputs),SERVER,chan],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+    main(currentattacks)
 
 def vcspam(currentattacks):
     clear()
@@ -1062,74 +1060,8 @@ def nickchange(currentattacks):
     SERVER = input ("Server ID: ")
     if str(SERVER) == '0':
         main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/nickname.py',token,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-    currentattacks.append("Ascii Nickname Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
-    main(currentattacks)
-
-def embedspam(currentattacks):
-    clear()
-    if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Embed Spammer")
-    elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Embed Spammer\x07")
-    print (colored("Discord embed spammer.",menucolour))
-    print (colored("Will probably bypass some bots that have word and image restrictions.",menucolour))
-    print (colored("0: Back",menucolour))
-    title = input ("Embed Title: ")
-    if title == '0':
-        main(currentattacks)
-    author = input ("Embed Author: ")
-    iconurl = input ("Author Icon URL: ")
-    thumburl = input ("Thumbnail image URL: ")
-    footer = input ("Embed Footer Text: ")
-    textchan = input ("Text Channel to spam in: ")
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/embedspam.py',token,title,author,iconurl,thumburl,footer,textchan,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-    currentattacks.append("Embed Spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
-    main(currentattacks)
-
-def trafficlight(currentattacks):
-    clear()
-    if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | TrafficLight Status Effect")
-    elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | TrafficLight Status Effect\x07")
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/trafficlight.py',token,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/trafficlight.py',token,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-    currentattacks.append("TrafficLight effect with "+ str(tcounter) + " tokens.")
-    time.sleep(3)
-    print (colored("Started traffic Light effect.","green"))
-    time.sleep(0.5)
-    clear()
-    print (colored("Started traffic Light effect.","yellow"))
-    time.sleep(0.5)
-    clear()
-    print (colored("Started traffic Light effect.","red"))
-    time.sleep(0.5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','nickname',pycommand,useproxies,str(cliinputs),SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Nickname Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def rolemassmention(currentattacks):
@@ -1144,19 +1076,11 @@ def rolemassmention(currentattacks):
     SERVER = input('Server ID: ')
     if str(SERVER) == '0':
         main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/rolemention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/rolemention.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Role Mass Mention with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
+    chan = input ("Channel to spam in (type 'all' for all channels): ")
+    if chan.lower() == "all":
+        print (colored("Spamming all channels","blue"))
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','rolemention',pycommand,useproxies,str(cliinputs),SERVER,chan],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Role Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def cleanup(currentattacks):
@@ -1171,18 +1095,31 @@ def cleanup(currentattacks):
     SERVER = input('Server ID: ')
     if str(SERVER) == '0':
         main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/cleanup.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/cleanup.py',token,SERVER,number,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    time.sleep(5)
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','cleanup',pycommand,useproxies,str(cliinputs),SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Tokens are cleaning up Started at: {}".format(datetime.datetime.now().time())] = p.pid
+    main(currentattacks)
+
+def hypesquadchanger(currentattacks):
+    clear()
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | HypeSquad Changer")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | HypeSquad Changer\x07")
+    print (colored("0. Back",menucolour2))
+    print (colored("1. Bravery",menucolour2))
+    print (colored("2. Brilliance",menucolour2))
+    print (colored("3. Ballance",menucolour2))
+    choice = input('Selection: ')
+    if int(choice) == 0:
+        main(currentattacks)
+    elif int(choice) == 1:
+        choice = 'Bravery'
+    elif int(choice) == 2:
+        choice = 'Brilliance'
+    elif int(choice) == 3:
+        choice = 'Ballance'
+    p = subprocess.Popen([pycommand,'RTBFiles/attack_controller.py','hypesquad',pycommand,useproxies,str(cliinputs),choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    currentattacks["Hypesquad Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def serversmasher(currentattacks):
@@ -1230,32 +1167,6 @@ def proxyscrape(currentattacks):
             handle.write(proxy+'\n')
     print (colored(str(amm) + " proxies have been scraped.",menucolour))
     input ()
-    main(currentattacks)
-
-def vcjoinspammer(currentattacks): #wew its here
-    clear()
-    if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice chat join spammer")
-    elif sys.platform.startswith('linux'):
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice chat join spammer\x07")
-    print (colored("Discord Voice chat join spammer. Joins random voice channels in a server.",menucolour))
-    print (colored("0: Back",menucolour))
-    SERVER = input ('Server ID: ')
-    if str(SERVER) == '0':
-        main(currentattacks)
-    tcounter = 0
-    tokenlist = open("tokens.txt").read().splitlines()
-    for token in tokenlist:
-        tcounter += 1
-        number = str(tcounter)
-        if sys.platform.startswith('win32'):
-            p = subprocess.Popen([winpy,'RTBFiles/vcjoinspam.py',token,number,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        elif sys.platform.startswith('linux'):
-            p = subprocess.Popen([linuxpy,'RTBFiles/vcjoinspam.py',token,number,SERVER,useproxies],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        spawnedpids.append(p.pid)
-        time.sleep(0.1)
-    currentattacks.append("Voice chat join and spam with "+ str(tcounter) + " tokens.")
-    time.sleep(5)
     main(currentattacks)
 
 def viewcurrentat(currentattacks):
@@ -1577,71 +1488,12 @@ def tools(currentattacks):
     print (colored("Raid Toolbox Tools",menucolour))
     print (colored("-------------------",menucolour))
     print (colored("0.  Return to menu",menucolour2))
-    print (colored("1.  HypeSquad House Changer",menucolour2))
-    print (colored("2.  Avatar Changer",menucolour2))
-    print (colored("3.  Token Cleaner",menucolour2))
-    print (colored("4.  Quick Checker",menucolour2))
-    print (colored("5.  Nickname Changer",menucolour2))
-    print (colored("6.  Widget Joiner",menucolour2))
+    print (colored("1.  Quick Checker",menucolour2))
+    print (colored("2.  Widget Joiner",menucolour2))
     choice = input('Selection: ')
     if int(choice) == 0:
         main(currentattacks)
     elif int(choice) == 1:
-        clear()
-        if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | HypeSquad Changer")
-        elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | HypeSquad Changer\x07")
-        print (colored("1. Bravery",menucolour2))
-        print (colored("2. Brilliance",menucolour2))
-        print (colored("3. Ballance",menucolour2))
-        choice = input('Selection: ')
-        tokenlist = open("tokens.txt").read().splitlines()
-        for token in tokenlist:
-            if sys.platform.startswith('win32'):
-                p = subprocess.Popen([winpy,'tools/hypesquad.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-            elif sys.platform.startswith('linux'):
-                p = subprocess.Popen([linuxpy,'tools/hypesquad.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        p.wait()
-        tools(currentattacks)
-    elif int(choice) == 2:
-        Tk().withdraw()
-        clear()
-        if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Avatar Changer")
-        elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Avatar Changer\x07")
-        avatar = askopenfilename(initialdir = os.getcwd(),title = "Select avatar to change")
-        if avatar == "":
-            tools(currentattacks)
-        tokenlist = open("tokens.txt").read().splitlines()
-        for token in tokenlist:
-            if sys.platform.startswith('win32'):
-                p = subprocess.Popen([winpy,'tools/avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-            elif sys.platform.startswith('linux'):
-                p = subprocess.Popen([linuxpy,'tools/avatarchange.py',token,avatar],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        time.sleep(5)
-        tools(currentattacks)
-    elif int(choice) == 3:
-        clear()
-        if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Cleaner")
-        elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Cleaner\x07")
-        print (colored("Token Cleaner: Leaves every server that the token is on, making it faster to login to.",menucolour))
-        choice = input("Clean Tokens?(Y/N): ")
-        if choice.lower() == 'y':
-            tokenlist = open("tokens.txt").read().splitlines()
-            for token in tokenlist:
-                if sys.platform.startswith('win32'):
-                    p = subprocess.Popen([winpy,'tools/cleaner.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-                elif sys.platform.startswith('linux'):
-                    p = subprocess.Popen([linuxpy,'tools/cleaner.py',token,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-            time.sleep(3)
-            tools(currentattacks)
-        else:
-            tools(currentattacks)
-    elif int(choice) == 4:
         clear()
         if sys.platform.startswith('win32'):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Quick Checker")
@@ -1650,35 +1502,16 @@ def tools(currentattacks):
         tokenlist = open("tokens.txt").read().splitlines()
         for token in tokenlist:
             if sys.platform.startswith('win32'):
-                p = subprocess.Popen([winpy,'tools/quickchecker.py',token])
+                p = subprocess.Popen([winpy,'RTBFiles/quickchecker.py',token])
                 time.sleep(0.07)
             elif sys.platform.startswith('linux'):
-                p = subprocess.Popen([linuxpy,'tools/quickchecker.py',token])
+                p = subprocess.Popen([linuxpy,'RTBFiles/quickchecker.py',token])
                 time.sleep(0.07)
         p.wait()
         input("Checking complete.")
         tools(currentattacks)
-    elif int(choice) == 5:
-        clear()
-        if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Nickname Changer")
-        elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Nickname Changer\x07")
-        print (colored("Server Nickname Changer",menucolour))
-        print (colored("0: Back",menucolour))
-        SERVER = input("Server ID: ")
-        if SERVER == "0":
-            tools(currentattacks)
-        nick = input("New Nickname: ")
-        tokenlist = open("tokens.txt").read().splitlines()
-        for token in tokenlist:
-            if sys.platform.startswith('win32'):
-                p = subprocess.Popen([winpy,'tools/changenickname.py',token,SERVER,nick],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-            elif sys.platform.startswith('linux'):
-                p = subprocess.Popen([linuxpy,'tools/changenickname.py',token,SERVER,nick],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        time.sleep(5)
-        tools(currentattacks)
-    elif int(choice) == 6:
+
+    elif int(choice) == 2:
         clear()
         if sys.platform.startswith('win32'):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Widget Joiner")
