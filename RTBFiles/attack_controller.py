@@ -17,28 +17,19 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os
-import sys
-import ast
-import zlib
-import json
-import time
-import psutil
-import random
-import requests
-import subprocess
-import PySimpleGUI as sg
+import os, sys, ast, zlib, json, time, random, subprocess, requests
 from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
-
 mode = sys.argv[1]
 pycommand = sys.argv[2]
 climode = int(sys.argv[3])
 threadcount = sys.argv[4]
+if not climode == 1:
+    import PySimpleGUI as sg
+    sg.ChangeLookAndFeel('Dark2')
 executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
-sg.ChangeLookAndFeel('Dark2')
 true = 'true'
 false = 'false'
 
