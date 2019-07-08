@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.0r1"
+rtbversion = "0.4.0r2"
 smversion = "0.1.11r1"
 
 try:
@@ -484,14 +484,14 @@ def titleupdate():
         if sys.platform.startswith('win32'):
             if "b" in rtbversion:
                 if len(currentattacks) == 0:
-                    pass
+                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
                 elif len(currentattacks) == 1:
                     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
                 else:
                     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
             else:
                 if len(currentattacks) == 0:
-                    pass
+                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
                 elif len(currentattacks) == 1:
                     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
                 else:
@@ -499,14 +499,14 @@ def titleupdate():
         elif sys.platform.startswith('linux'):
             if "b" in rtbversion:
                 if len(currentattacks) == 0:
-                    pass
+                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
                 elif len(currentattacks) == 1:
                     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attack Running.)\x07".format(rtbversion,len(currentattacks)))
                 else:
                     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attacks Running.)\x07".format(rtbversion,len(currentattacks)))
             else:
                 if len(currentattacks) == 0:
-                    pass
+                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
                 elif len(currentattacks) == 1:
                     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} | ({} Attack Running.)\x07".format(rtbversion,len(currentattacks)))
                 else:
@@ -1510,8 +1510,6 @@ def quickcheck(currentattacks):
     input("Checking complete.")
     main(currentattacks)
 
-
-
 def tokenmanager(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
@@ -1648,6 +1646,7 @@ def aaa():
 
 
 if __name__ == "__main__":
-    t = threading.Thread(name='Title Update', target=titleupdate)
-    t.start()
+    if not termuxmode == 1:
+        t = threading.Thread(name='Title Update', target=titleupdate)
+        t.start()
     main(currentattacks)
