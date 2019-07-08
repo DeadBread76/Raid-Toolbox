@@ -71,6 +71,7 @@ if mode == 'joiner':
     else:
         link = sys.argv[5]
         log = False
+        widget = False
     if widget:
         pass
     else:
