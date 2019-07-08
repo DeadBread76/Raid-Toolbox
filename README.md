@@ -20,12 +20,6 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 # `Features:`
 
-**Proxy Support**
-
-**Server Smasher**
-
-**Plugins**
-
 **Joiner and Leaver**
 
 **Token Checker**
@@ -48,6 +42,9 @@ Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 **Role Mass Mentioner**
 
+**Server Smasher**
+
+**Plugins**
 
 # `Installation:`
 
@@ -60,15 +57,15 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 [Python 3.6.8](https://www.python.org/downloads/release/python-368/)
 
-[Python 3.7.2](https://www.python.org/downloads/release/python-373/) (Python 3.7 has issues with Raid ToolBox, if you encounter these use 3.6.)
+[Python 3.7.2](https://www.python.org/downloads/release/python-373/)
 
 
 ### `Configuration:`
 
-Menu Colour can be changed by changing the value in `config.py`, You can also enable proxies and change the python command there too.
+Menu Colour can be changed by changing the value in `config.py`, You can also change the python command there too. (Some Debug Options too.)
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
 # **Disclaimer**
 
-I am not responsible for any bans you might recieve using Raid ToolBox.
+I am not responsible for any bans you might/will receive using Raid ToolBox.

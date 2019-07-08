@@ -32,23 +32,13 @@ from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 
-executor = ThreadPoolExecutor(max_workers=800)
 mode = sys.argv[1]
 pycommand = sys.argv[2]
-useproxies = sys.argv[3]
-climode = int(sys.argv[4])
+climode = int(sys.argv[3])
+threadcount = sys.argv[4]
+executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
 sg.ChangeLookAndFeel('Dark2')
-if useproxies == 'True':
-    if not os.path.exists('proxies.txt'):
-        with open ("proxies.txt","a+") as handle:
-            handle.write('\n')
-        sys.exit()
-    else:
-        with open ("proxies.txt", "r") as handle:
-            proxies = handle.read().split("\n")
-        proxy_pool = cycle(proxies)
-
 true = 'true'
 false = 'false'
 
@@ -60,28 +50,51 @@ def asciigen(length):
     return asc
 
 if mode == 'joiner':
-    def join(token,link,proxy):
+    def join(token,link,widget):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+        if widget:
+            src = requests.get("https://canary.discordapp.com/api/guilds/{}/widget.json".format(str(link)))
+            widgson = json.loads(src.content)
+            try:
+                link = widgson['instant_invite'][37:]
+            except Exception:
+                sys.exit()
+            requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+        else:
+            requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
     if climode == 0:
-        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1)), sg.Checkbox('Log Info', tooltip='Spam with Ascii instead of text.',size=(5,1))]]
+        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1))],
+                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(5,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
+                ]
         window = sg.Window('RTB | Joiner', layout)
         event, values = window.Read()
         window.Close()
         link = values[0]
-        log = values[1]
-        if link == '':
+        delay = values[1]
+        log = values[2]
+        widget = values[3]
+        if event == "Join":
+            pass
+        else:
             sys.exit()
     else:
         link = sys.argv[5]
         log = False
-    if 'https://discordapp.com/invite/' in link:
-        link = link[30:]
-    elif len(link) > 7:
-        link = link[19:]
-    for token in tokenlist:
-        executor.submit(join,token,link,None)
-    if log == True:
+    if widget:
+        pass
+    else:
+        if 'https://discordapp.com/invite/' in link:
+            link = link[30:]
+        elif len(link) > 7:
+            link = link[19:]
+    if not delay == '0':
+        for token in tokenlist:
+            executor.submit(join,token,link,widget)
+            time.sleep(int(delay))
+    else:
+        for token in tokenlist:
+            executor.submit(join,token,link,widget)
+    if log:
         try:
             s = requests.get("https://canary.discordapp.com/api/v6/invite/{}".format(link)).text
             serjson = json.loads(s)
@@ -98,7 +111,7 @@ if mode == 'joiner':
             pass
 
 elif mode == 'leaver':
-    def leave(token,ID,proxy):
+    def leave(token,ID):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
     if climode == 0:
@@ -107,15 +120,17 @@ elif mode == 'leaver':
         event, values = window.Read()
         window.Close()
         ID = values[0]
-        if ID == '':
+        if event == "Leave":
+            pass
+        else:
             sys.exit()
     else:
         ID = sys.argv[5]
     for token in tokenlist:
-        executor.submit(leave,token,ID,None)
+        executor.submit(leave,token,ID)
 
 elif mode == 'groupleaver':
-    def grleave(token,ID,proxy):
+    def grleave(token,ID):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
     if climode == 0:
@@ -124,15 +139,17 @@ elif mode == 'groupleaver':
         event, values = window.Read()
         window.Close()
         ID = values[0]
-        if ID == '':
+        if event == "Leave":
+            pass
+        else:
             sys.exit()
     else:
         ID = sys.argv[5]
     for token in tokenlist:
-        executor.submit(grleave,token,ID,None)
+        executor.submit(grleave,token,ID)
 
 elif mode == 'messagespam':
-    def sendmessage(token,text,channel,server,proxy):
+    def sendmessage(token,text,channel,server):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         payload = {"content": text, "tts": false}
         if channel == 'all':
@@ -175,10 +192,10 @@ elif mode == 'messagespam':
         channelid = sys.argv[6]
         SERVER = sys.argv[7]
     for token in tokenlist:
-        executor.submit(sendmessage,token,text,channelid,SERVER,None)
+        executor.submit(sendmessage,token,text,channelid,SERVER)
 
 elif mode == 'asciispam':
-    def sendascii(token,channel,server,proxy):
+    def sendascii(token,channel,server):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if channel == 'all':
             chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
@@ -217,10 +234,10 @@ elif mode == 'asciispam':
         channelid = sys.argv[5]
         SERVER = sys.argv[6]
     for token in tokenlist:
-        executor.submit(sendascii,token,channelid,SERVER,None)
+        executor.submit(sendascii,token,channelid,SERVER)
 
 elif mode == 'massmention':
-    def sendmention(token,channel,server,proxy):
+    def sendmention(token,channel,server):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         memberlist = []
         msg = ''
@@ -268,7 +285,7 @@ elif mode == 'massmention':
         SERVER = sys.argv[5]
         channelid = sys.argv[6]
     for token in tokenlist:
-        executor.submit(sendmention,token,channelid,SERVER,None)
+        executor.submit(sendmention,token,channelid,SERVER)
 
 elif mode == 'vcspam':
     import youtube_dl
@@ -326,14 +343,14 @@ elif mode == 'vcspam':
     count = 0
     for token in tokenlist:
         count += 1
-        subprocess.Popen([pycommand,'RTBFiles/vcspam.py',token,channelid,'RTBFiles/vcspammercache/{}.wav'.format(video_id),str(os.getpid()),'None'],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        subprocess.Popen([pycommand,'RTBFiles/vcspam.py',token,channelid,'RTBFiles/vcspammercache/{}.wav'.format(video_id),str(os.getpid())],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         if count == int(ammount):
             break
     while True:
         pass
 
 elif mode == 'dmspammer':
-    def dmspammer(token,userid,text,ascii,proxy):
+    def dmspammer(token,userid,text,ascii):
         list = []
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         payload = {
@@ -378,10 +395,10 @@ elif mode == 'dmspammer':
         else:
             ascii = False
     for token in tokenlist:
-        executor.submit(dmspammer,token,userid,text,ascii,None)
+        executor.submit(dmspammer,token,userid,text,ascii)
 
 elif mode == 'friender':
-    def friend(token,userid,proxy):
+    def friend(token,userid):
         if "#" in userid:
             headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             user = userid.split("#")
@@ -407,10 +424,10 @@ elif mode == 'friender':
     else:
         userid = sys.argv[5]
     for token in tokenlist:
-        executor.submit(friend,token,userid,None)
+        executor.submit(friend,token,userid)
 
 elif mode == 'groupdmspam':
-    def sendgdm(token,text,group,ascii,proxy):
+    def sendgdm(token,text,group,ascii):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         payload = {"content": text, "tts": false}
         while True:
@@ -443,10 +460,10 @@ elif mode == 'groupdmspam':
         else:
             ascii = False
     for token in tokenlist:
-        executor.submit(sendgdm,token,text,group,ascii,None)
+        executor.submit(sendgdm,token,text,group,ascii)
 
 elif mode == 'imagespam':
-    def sendimages(token,channel,server,proxy):
+    def sendimages(token,channel,server):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if channel == 'all':
             chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
@@ -485,11 +502,11 @@ elif mode == 'imagespam':
         channelid = sys.argv[5]
         SERVER = sys.argv[6]
     for token in tokenlist:
-        executor.submit(sendimages,token,channelid,SERVER,None)
+        executor.submit(sendimages,token,channelid,SERVER)
 
 elif mode == 'gamechange':
     from websocket import create_connection
-    def changegame(token,game,type,status,proxy):
+    def changegame(token,game,type,status):
         for token in tokenlist:
             ws = create_connection('wss://gateway.discord.gg/?v=6&encoding=json')
             result = ws.recv()
@@ -558,11 +575,11 @@ elif mode == 'gamechange':
         status = 'online'
     while True:
         for token in tokenlist:
-            executor.submit(changegame,token,game,type,status,None)
+            executor.submit(changegame,token,game,type,status)
         time.sleep(60)
 
 elif mode == 'nickname':
-    def nickname(token,server,name,type,proxy):
+    def nickname(token,server,name,type):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if type == "Cycle":
             n = []
@@ -606,10 +623,10 @@ elif mode == 'nickname':
         type = "Ascii"
         name = "None"
     for token in tokenlist:
-        executor.submit(nickname,token,server,name,type,None)
+        executor.submit(nickname,token,server,name,type)
 
 elif mode == 'embed':
-    def embedspam(token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer,proxy):
+    def embedspam(token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if channel == 'all':
             chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
@@ -658,7 +675,7 @@ elif mode == 'embed':
     imgurl = values[7]
     footer = values[8]
     for token in tokenlist:
-        executor.submit(embedspam,token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer,None)
+        executor.submit(embedspam,token,channel,server,title,author,iconurl,field_name,field_value,imgurl,footer)
 
 elif mode == 'avatarchange':
     from base64 import b64encode
@@ -679,7 +696,7 @@ elif mode == 'avatarchange':
         b64 = b64encode(data).decode('ascii')
         return fmt.format(mime=mime, data=b64)
 
-    def changeavatar(token,avatarfile,proxy):
+    def changeavatar(token,avatarfile):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
         response = json.loads(src.content.decode())
@@ -704,10 +721,10 @@ elif mode == 'avatarchange':
         sys.exit()
     avatarfile = values[0]
     for token in tokenlist:
-        executor.submit(changeavatar,token,avatarfile,None)
+        executor.submit(changeavatar,token,avatarfile)
 
 elif mode == "rolemention":
-    def sendrolemention(token,channel,server,proxy):
+    def sendrolemention(token,channel,server):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         rolelist = []
         msg = ''
@@ -755,7 +772,7 @@ elif mode == "rolemention":
         SERVER = sys.argv[5]
         channelid = sys.argv[6]
     for token in tokenlist:
-        executor.submit(sendrolemention,token,channelid,SERVER,None)
+        executor.submit(sendrolemention,token,channelid,SERVER)
 
 elif mode == "cleanup":
     if climode == 0:
@@ -780,7 +797,7 @@ elif mode == "cleanup":
         pass
 
 elif mode == "hypesquad":
-    def changehouse(token,house,proxy):
+    def changehouse(token,house):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if house == "Bravery":
             payload = {'house_id': 1}
@@ -794,7 +811,7 @@ elif mode == "hypesquad":
                  [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Ballance'],readonly=True, default_value='Bravery')],
                  [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                 ]
-        window = sg.Window('RTB | Server Cleanup', layout)
+        window = sg.Window('RTB | HypeSquad House Changer', layout)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -805,4 +822,59 @@ elif mode == "hypesquad":
     else:
         house = sys.argv[5]
     for token in tokenlist:
-        executor.submit(changehouse,token,house,None)
+        executor.submit(changehouse,token,house)
+
+elif mode == "reaction":
+    import emoji
+    def addreact(token,emoji,message,channel,type):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        if type == "Add":
+            requests.put("https://discordapp.com/api/v6/channels/{}/messages/{}/reactions/{}/@me".format(channel,message,emoji), headers=headers)
+        elif type == "Remove":
+            requests.delete("https://discordapp.com/api/v6/channels/{}/messages/{}/reactions/{}/@me".format(channel,message,emoji), headers=headers)
+    if climode == 0:
+        layout = [
+                [sg.Text('Channel ID', size=(15, 1)), sg.InputText()],
+                [sg.Text('Message ID', size=(15, 1)), sg.InputText()],
+                [sg.Combo(['Add','Remove'],default_value='Add',readonly=True,size=(14,1)), sg.InputText(":thumbsup:",size=(10,1))],
+                [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                ]
+        window = sg.Window('RTB | Message Reactor', layout)
+        event, values = window.Read()
+        window.Close()
+        if event == "Start":
+            pass
+        else:
+            sys.exit()
+        channel = values[0]
+        message = values[1]
+        type = values[2]
+        emoji = emoji.emojize(values[3].rstrip(), use_aliases=True)
+    else:
+        message = sys.argv[5]
+        channel = sys.argv[6]
+        type = sys.argv[7]
+        emoji = emoji.emojize(sys.argv[8].rstrip(), use_aliases=True)
+    for token in tokenlist:
+        executor.submit(addreact,token,emoji,message,channel,type)
+
+elif mode == 'quickcheck':
+    from colorama import init
+    from termcolor import colored
+    init()
+    token = sys.argv[5]
+    apilink = 'https://discordapp.com/api/v6/users/@me'
+    headers = {'Authorization': token, 'Content-Type': 'application/json'}
+    src = requests.get(apilink, headers=headers)
+    if "401: Unauthorized" in str(src.content):
+        print(colored(token + " Invalid","red"))
+    else:
+        response = json.loads(src.content.decode())
+        if response["verified"]:
+            print(colored(token + " Valid","green"))
+            with open ("quick_checked_tokens_verified.txt", "a+") as handle:
+                handle.write(token+"\n")
+        else:
+            print(colored(token + " Unverified","yellow"))
+            with open ("quick_checked_tokens_unverified.txt", "a+") as handle:
+                handle.write(token+"\n")

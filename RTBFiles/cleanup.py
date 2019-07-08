@@ -1,18 +1,11 @@
 import discord
 import sys
-import aiohttp
 import psutil
 
 token = sys.argv[1]
 SERVER = sys.argv[2]
 parentprocess = sys.argv[3]
-proxy = sys.argv[4]
-
-if not proxy == 'None':
-    con = aiohttp.ProxyConnector(proxy="http://"+proxy)
-    client = discord.Client(connector=con, status=discord.Status.offline)
-else:
-    client = discord.Client(status=discord.Status.offline)
+client = discord.Client(status=discord.Status.offline)
 
 
 @client.event
@@ -23,7 +16,7 @@ async def on_ready():
         if not myperms.send_messages:
             continue
         async for message in channel.history(limit=9999):
-            if not psutil.pid_exists(int(parentprocess)):  # Parent is dead, Kill self
+            if not psutil.pid_exists(int(parentprocess)):
                 await client.logout()
                 sys.exit()
             if message.author == client.user:
