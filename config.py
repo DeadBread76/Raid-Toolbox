@@ -11,13 +11,12 @@ linuxpy = "python3"
 winpip = "pip"
 linuxpip = "pip3"
 
-###PROXIES###
-# (True or False)This slows it down a lot, but you won't get
-# banned as quick and/or you will be able to bypass IP bans.
-useproxies = "False"
+# Proxies: Gone, Reduced to atoms.
 
 ###DEBUG OPTIONS###
+threadcount = 800  # Change this for termux, 800 might be a bit too much.
 verbose = 0
+cliinputs = 0
 termuxmode = 0  # Set to 1 for running on termux
 disablecloudflarecheck = 0
 disabletokenlimit = 0
