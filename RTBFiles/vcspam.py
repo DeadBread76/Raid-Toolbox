@@ -20,6 +20,11 @@ async def on_ready():
         vc.source = discord.PCMVolumeTransformer(vc.source)
         vc.source.volume = 10.0
         while vc.is_playing():
+            if sys.platform.startswith('linux'):
+                proc = psutil.Process(int(parentprocess))
+                if proc.status() == psutil.STATUS_ZOMBIE:
+                    await client.logout()
+                    sys.exit()
             if not psutil.pid_exists(int(parentprocess)):  # Parent is dead, Kill self :cry:
                 await client.logout()
                 sys.exit()

@@ -1,0 +1,1 @@
+Ok so Basically this little script helps figure out errors with RTB, It needs to be put into the same directory as RTB.py.

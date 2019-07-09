@@ -1,13 +1,16 @@
 
-*.txt
+tokens.txt
+smtokens.txt
+quick_checked_tokens_verified.txt
+unverified_tokens.txt
+text.txt
+JoinerLogs.txt
+proxies.txt
 *.wav
 *.pyc
 *.exe
-load.log
+*.log
 *.zip
-ffplay.zip
-ffmpeg.zip
 *.smpreset
 *.mp3
-RTBFiles/lic
 RTBFiles/licence

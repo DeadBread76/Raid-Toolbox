@@ -25,9 +25,10 @@ mode = sys.argv[1]
 pycommand = sys.argv[2]
 climode = int(sys.argv[3])
 threadcount = sys.argv[4]
+theme = sys.argv[5]
 if not climode == 1:
     import PySimpleGUI as sg
-    sg.ChangeLookAndFeel('Dark2')
+    sg.ChangeLookAndFeel(theme)
 executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
 true = 'true'
@@ -69,9 +70,10 @@ if mode == 'joiner':
         else:
             sys.exit()
     else:
-        link = sys.argv[5]
+        link = sys.argv[6]
         log = False
         widget = False
+        delay == "0"
     if widget:
         pass
     else:
@@ -117,7 +119,7 @@ elif mode == 'leaver':
         else:
             sys.exit()
     else:
-        ID = sys.argv[5]
+        ID = sys.argv[6]
     for token in tokenlist:
         executor.submit(leave,token,ID)
 
@@ -136,7 +138,7 @@ elif mode == 'groupleaver':
         else:
             sys.exit()
     else:
-        ID = sys.argv[5]
+        ID = sys.argv[6]
     for token in tokenlist:
         executor.submit(grleave,token,ID)
 
@@ -180,9 +182,9 @@ elif mode == 'messagespam':
         channelid = values[1]
         SERVER = values[2]
     else:
-        text = sys.argv[5]
-        channelid = sys.argv[6]
-        SERVER = sys.argv[7]
+        text = sys.argv[6]
+        channelid = sys.argv[7]
+        SERVER = sys.argv[8]
     for token in tokenlist:
         executor.submit(sendmessage,token,text,channelid,SERVER)
 
@@ -223,8 +225,8 @@ elif mode == 'asciispam':
         channelid = values[0]
         SERVER = values[1]
     else:
-        channelid = sys.argv[5]
-        SERVER = sys.argv[6]
+        channelid = sys.argv[6]
+        SERVER = sys.argv[7]
     for token in tokenlist:
         executor.submit(sendascii,token,channelid,SERVER)
 
@@ -274,8 +276,8 @@ elif mode == 'massmention':
         SERVER = values[0]
         channelid = values[1]
     else:
-        SERVER = sys.argv[5]
-        channelid = sys.argv[6]
+        SERVER = sys.argv[6]
+        channelid = sys.argv[7]
     for token in tokenlist:
         executor.submit(sendmention,token,channelid,SERVER)
 
@@ -312,9 +314,9 @@ elif mode == 'vcspam':
         channelid = values[1]
         ammount = values[2]
     else:
-        ytlink = sys.argv[5]
-        channelid = sys.argv[6]
-        ammount = sys.argv[7]
+        ytlink = sys.argv[6]
+        channelid = sys.argv[7]
+        ammount = sys.argv[8]
     if not os.path.isdir('RTBFiles/vcspammercache/'):
         os.mkdir("RTBFiles/vcspammercache/")
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
@@ -380,8 +382,8 @@ elif mode == 'dmspammer':
         text = values[1]
         ascii = values[2]
     else:
-        userid = sys.argv[5]
-        text = sys.argv[6]
+        userid = sys.argv[6]
+        text = sys.argv[7]
         if text == "ascii":
             ascii = True
         else:
@@ -414,7 +416,7 @@ elif mode == 'friender':
             sys.exit()
         userid = values[0]
     else:
-        userid = sys.argv[5]
+        userid = sys.argv[6]
     for token in tokenlist:
         executor.submit(friend,token,userid)
 
@@ -445,8 +447,8 @@ elif mode == 'groupdmspam':
         group = values[2]
         ascii = values[1]
     else:
-        text = sys.argv[5]
-        group = sys.argv[6]
+        text = sys.argv[6]
+        group = sys.argv[7]
         if text == "ascii":
             ascii = True
         else:
@@ -491,8 +493,8 @@ elif mode == 'imagespam':
         channelid = values[0]
         SERVER = values[1]
     else:
-        channelid = sys.argv[5]
-        SERVER = sys.argv[6]
+        channelid = sys.argv[6]
+        SERVER = sys.argv[7]
     for token in tokenlist:
         executor.submit(sendimages,token,channelid,SERVER)
 
@@ -563,7 +565,7 @@ elif mode == 'gamechange':
         status = values[2]
     else:
         type = 'Playing'
-        game = sys.argv[5]
+        game = sys.argv[6]
         status = 'online'
     while True:
         for token in tokenlist:
@@ -611,7 +613,7 @@ elif mode == 'nickname':
         type = values[1]
         name = values[2]
     else:
-        server = sys.argv[5]
+        server = sys.argv[6]
         type = "Ascii"
         name = "None"
     for token in tokenlist:
@@ -761,8 +763,8 @@ elif mode == "rolemention":
         SERVER = values[0]
         channelid = values[1]
     else:
-        SERVER = sys.argv[5]
-        channelid = sys.argv[6]
+        SERVER = sys.argv[6]
+        channelid = sys.argv[7]
     for token in tokenlist:
         executor.submit(sendrolemention,token,channelid,SERVER)
 
@@ -782,7 +784,7 @@ elif mode == "cleanup":
             sys.exit()
         server = values[0]
     else:
-        server = sys.argv[5]
+        server = sys.argv[6]
     for token in tokenlist:
         subprocess.Popen([pycommand,'RTBFiles/cleanup.py',token,server,str(os.getpid()),'None'])
     while True:
@@ -812,7 +814,7 @@ elif mode == "hypesquad":
             sys.exit()
         house = values[0]
     else:
-        house = sys.argv[5]
+        house = sys.argv[6]
     for token in tokenlist:
         executor.submit(changehouse,token,house)
 
@@ -843,9 +845,9 @@ elif mode == "reaction":
         type = values[2]
         emoji = emoji.emojize(values[3].rstrip(), use_aliases=True)
     else:
-        message = sys.argv[5]
-        channel = sys.argv[6]
-        type = sys.argv[7]
+        message = sys.argv[6]
+        channel = sys.argv[7]
+        type = sys.argv[8]
         emoji = emoji.emojize(sys.argv[8].rstrip(), use_aliases=True)
     for token in tokenlist:
         executor.submit(addreact,token,emoji,message,channel,type)
@@ -854,7 +856,7 @@ elif mode == 'quickcheck':
     from colorama import init
     from termcolor import colored
     init()
-    token = sys.argv[5]
+    token = sys.argv[6]
     apilink = 'https://discordapp.com/api/v6/users/@me'
     headers = {'Authorization': token, 'Content-Type': 'application/json'}
     src = requests.get(apilink, headers=headers)
@@ -870,3 +872,9 @@ elif mode == 'quickcheck':
             print(colored(token + " Unverified","yellow"))
             with open ("quick_checked_tokens_unverified.txt", "a+") as handle:
                 handle.write(token+"\n")
+
+elif mode == 'ree':
+    picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")
+    pic = picdata.content
+    while True:
+        sg.PopupAnimated(pic, background_color='black', time_between_frames=40)
