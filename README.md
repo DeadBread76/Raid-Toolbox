@@ -2,7 +2,7 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Windows, Linux and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB). (Tested on Windows 10 Education/Professional, Ubuntu 18.10 and Android 9 with Termux 0.72)
+Supports Windows, Linux and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB)(Partialy). (Tested on Windows 10 Education/Professional, Ubuntu 18.10 and Android 9 with Termux 0.72)
 
 ### Need any help?
 
@@ -12,9 +12,19 @@ Our [telegram group](https://t.me/DeadBakery)
 
 And our [Discord server](https://discord.gg/e2dc9Pt)
 
-### Screenshot:
+### Screenshots:
 
-![Screenshot](http://i.imgur.com/Td18com.png)
+![Screenshot](https://i.imgur.com/hQAybRZ.png)
+
+![Joiner Menu](https://i.imgur.com/HxF60E8.png)
+
+![Message Spammer](https://i.imgur.com/18hMVMe.png)
+
+![VC Spammer](https://i.imgur.com/Fius7ef.png)
+
+![Status Changer](https://i.imgur.com/ZSM627j.png)
+
+![HypeSquad Changer](https://i.imgur.com/9HDcbNw.png)
 
 Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
