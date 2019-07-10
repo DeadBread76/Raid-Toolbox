@@ -138,10 +138,8 @@ elif verbose == 1:
     print ("Loading modules...")
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
-        handle.write("Set Title, Windows, ctypes\n")
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
-        handle.write("Set Title, Linux, sys\n")
     with open ("load.log", "a") as handle:
         try:
             print ("Loading discord.py...")
