@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.1"
+rtbversion = "0.4.1r1"
 smversion = "0.1.11r1"
 
 try:
@@ -382,10 +382,7 @@ else:
                         os.mkdir("mods/")
                     with open ("mods/"+vercheck[3],"wb") as handle:
                         handle.write(data.content)
-                    if sys.platform.startswith('win32'):
-                        subprocess.Popen([winpy,"mods/"+vercheck[3]])
-                    elif sys.platform.startswith('linux'):
-                        subprocess.Popen([linuxpy,"mods/"+vercheck[3]])
+                    subprocess.Popen([sys.executable,"mods/"+vercheck[3]])
         except Exception as e:
             print("Error Updating")
 if os.path.isfile("pluginpids"):
@@ -1177,16 +1174,16 @@ def serversmasher(currentattacks):
     print ("The config file for the Server Smasher is in RTBFiles/smconfig.py, please add token before starting.")
     if sys.platform.startswith('win32'):
         if serversmasherinmainwindow == 1:
-            p = subprocess.Popen([winpy,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
+            p = subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
             p.wait()
         else:
-            subprocess.Popen([winpy,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)],creationflags=CREATE_NEW_CONSOLE)
+            subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)],creationflags=CREATE_NEW_CONSOLE)
     elif sys.platform.startswith('linux'):
         if serversmasherinmainwindow == 1:
-            p = subprocess.Popen([linuxpy,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
+            p = subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
             p.wait()
         else:
-            subprocess.call(['gnome-terminal', '-x', linuxpy,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
+            subprocess.call(['gnome-terminal', '-x', sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
     if serversmasherinmainwindow == 1:
         pass
     elif noguimode == 1:
@@ -1297,10 +1294,7 @@ def customplugins(currentattacks):
         customplugins(currentattacks)
     plugchoice = "{}/{}".format(pluginfolder[int(plug)],pluginfile[int(plug)])
     clear()
-    if sys.platform.startswith('win32'):
-        p = subprocess.Popen([winpy,'plugins/'+plugchoice,winpy,menucolour])
-    elif sys.platform.startswith('linux'):
-        p = subprocess.Popen([linuxpy,'plugins/'+plugchoice,linuxpy,menucolour])
+    p = subprocess.Popen([sys.executable,'plugins/'+plugchoice,sys.executable,menucolour])
     p.wait()
     customplugins(currentattacks)
 
@@ -1608,7 +1602,7 @@ def wew(currentattacks):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     else:
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/player.py',winpy],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/player.py',sys.executable],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
     currentattacks["Music! | Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
