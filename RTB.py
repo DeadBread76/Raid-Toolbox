@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.1r1"
+rtbversion = "0.4.2"
 smversion = "0.1.11r1"
 
 try:
@@ -72,80 +72,76 @@ except Exception:
             print("There was an error with installing the package {}, Refer to Install.log".format(package))
         elif p == 0:
             print("Installed {} Successfully.".format(package))
+import os, sys, time, json, ctypes, random, datetime, platform, shutil, subprocess, threading, webbrowser
+from distutils.dir_util import copy_tree
+if sys.platform.startswith('win32'):
+    from subprocess import CREATE_NEW_CONSOLE
+
+if sys.platform.startswith('win32'):
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+elif sys.platform.startswith('linux'):
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+else:
+    print ("Unsupported OS.")
+    input()
+    sys.exit()
+
+t0 = time.time() # https://github.com/Mattlau04
+
+if "com.termux" in sys.executable:
+    print("Termux Detected.")
+    noguimode = 1
+    o = os.system('termux-vibrate -d 500 -f')
+    if not o == 0:
+        log = open("install.log", "w")
+        print("Installing Termux API..")
+        p = subprocess.call(['pkg', 'install', 'termux-api'],stdout=log, stderr=subprocess.STDOUT)
+        if p == 1:
+            print("There was an error with installing termux api, Refer to Install.log")
+            sys.exit()
+        elif p == 0:
+            print("Installed Termux API Successfully.")
+    os.system('termux-toast -b black -c red Welcome to Raid Toolbox, Termux User!')
+    try:
+        import discord
+        import requests
+        import animation
+        import cpuinfo
+        import psutil
+        import emoji
+        from colorama import init
+        from termcolor import colored
+    except Exception as i:
+        print ("Module error: " + str(i))
+        install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
+        if install.lower() == 'y':
+            requirements = open("requirements.txt").read().splitlines()
+            log = open("install.log", "w")
+            for package in requirements:
+                print("Attempting to install {}".format(package))
+                p = subprocess.call([sys.executable, "-m", "pip", "install", package],stdout=log, stderr=subprocess.STDOUT)
+                if p == 1:
+                    print("There was an error with installing the package {}, Refer to Install.log".format(package))
+                elif p == 0:
+                    print("Installed {} Successfully.".format(package))
+            print("Please Restart Raid Toolbox.")
+            input()
+            sys.exit()
+        else:
+            sys.exit()
 
 if noguimode == 1:
-    verbose = 1
     serversmasherinmainwindow = 1
     cliinputs = 1
 
-if verbose == 1:
-    try:
-        with open ("load.log", "a+") as handle:
-            print ("Loading system modules...")
-            import os
-            print ("Loaded os")
-            handle.write("Loaded os\n")
-            import sys
-            print ("Loaded sys")
-            handle.write("Loaded sys\n")
-            import time
-            t0 = time.time()
-            print ("Loaded time")
-            handle.write("Loaded time\n")
-            import json
-            print ("Loaded json")
-            handle.write("Loaded json\n")
-            import ctypes
-            print ("Loaded ctypes")
-            handle.write("Loaded ctypes\n")
-            if sys.platform.startswith('win32'):
-                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
-                handle.write("Set Title, Windows, ctypes\n")
-            elif sys.platform.startswith('linux'):
-                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
-                handle.write("Set Title, Linux, sys\n")
-            import random
-            print ("Loaded random")
-            handle.write("Loaded random\n")
-            import datetime
-            print ("Loaded datetime")
-            handle.write("Loaded datetime\n")
-            import platform
-            print ("Loaded platform")
-            handle.write("Loaded platform\n")
-            import shutil
-            print ("Loaded shutil")
-            handle.write("Loaded shutil\n")
-            import subprocess, threading
-            print ("Loaded subprocess and threading")
-            handle.write("Loaded subprocess and threading\n")
-            import threading
-            print ("Loaded threading")
-            handle.write("Loaded threading\n")
-            import signal
-            print ("Loaded signal")
-            handle.write("Loaded signal\n")
-            import webbrowser
-            print ("Loaded webbrowser")
-            handle.write("Loaded webbrowser\n")
-            from distutils.dir_util import copy_tree
-            print ("Loaded copy_tree")
-            handle.write("Loaded copy_tree\n")
-            if sys.platform.startswith('win32'):
-                from subprocess import CREATE_NEW_CONSOLE
-                print ("Loaded CREATE_NEW_CONSOLE")
-                handle.write("Loaded CREATE_NEW_CONSOLE\n")
-            if noguimode == 1:
-                from tkinter import *
-                print ("Loaded tkinter")
-                handle.write("Loaded tkinter\n")
-                from tkinter.filedialog import *
-                print ("Loaded tkinter.filedialog")
-                handle.write("Loaded tkinter.filedialog\n")
-    except Exception as i:
-        print ("Error loading system module, Exception: "+str(i))
-        with open ("load.log", "a") as handle:
-            handle.write(str(i)+"\n")
+elif verbose == 1:
+    print ("Loading modules...")
+    if sys.platform.startswith('win32'):
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
+        handle.write("Set Title, Windows, ctypes\n")
+    elif sys.platform.startswith('linux'):
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
+        handle.write("Set Title, Linux, sys\n")
     with open ("load.log", "a") as handle:
         try:
             print ("Loading discord.py...")
@@ -213,44 +209,19 @@ if verbose == 1:
             handle.write("Error Loading psutil\n")
     print("Finished Loading modules")
 
+
 else:
     try:
-        import os
-        import sys
-        import time
-        t0 = time.time() # https://github.com/Mattlau04
-        import json
-        import ctypes
-        if sys.platform.startswith('win32'):
-            ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
-        elif sys.platform.startswith('linux'):
-            sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
-        else:
-            print ("Unsupported OS.")
-            input()
-            sys.exit()
-        import random
-        import datetime
-        import platform
-        import shutil
-        import subprocess
-        import threading
-        import webbrowser
         import discord
         import requests
         import animation
         import cpuinfo
         import psutil
         import emoji
+        import pyperclip
         import PySimpleGUI as sg
         from colorama import init
         from termcolor import colored
-        from distutils.dir_util import copy_tree
-        if sys.platform.startswith('win32'):
-            from subprocess import CREATE_NEW_CONSOLE
-        if noguimode == 1:
-            from tkinter import *
-            from tkinter.filedialog import *
     except Exception as i:
         print ("Module error: " + str(i))
         install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
@@ -635,14 +606,14 @@ def main(currentattacks):
             if cliinputs == 1:
                 leaver(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','leaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','leaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 3:
             if cliinputs == 1:
                 groupleaver(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Group Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 4:
@@ -651,7 +622,7 @@ def main(currentattacks):
             if cliinputs == 1:
                 messagespam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Message Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 6:
@@ -665,56 +636,56 @@ def main(currentattacks):
             if cliinputs == 1:
                 massmentioner(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','massmention',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','massmention',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Mass Mentioner Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 8:
             if cliinputs == 1:
                 vcspam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','vcspam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','vcspam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Voice Chat Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 9:
             if cliinputs == 1:
                 dmspam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','dmspammer',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','dmspammer',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["DM Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 10:
             if cliinputs == 1:
                 friender(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','friender',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','friender',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Friender Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 11:
             if cliinputs == 1:
                 groupdmspam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupdmspam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupdmspam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Group DM Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 12:
             if cliinputs == 1:
                 imagespam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Random Image Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 13:
             if cliinputs == 1:
                 gamechange(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','gamechange',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','gamechange',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Status Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 14:
             if cliinputs == 1:
                 nickchange(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','nickname',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','nickname',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Nickname Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 15:
@@ -724,7 +695,7 @@ def main(currentattacks):
                 input()
                 main(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','embed',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','embed',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Embed Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 16:
@@ -734,35 +705,35 @@ def main(currentattacks):
                 input()
                 main(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','avatarchange',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','avatarchange',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Avatar Changing | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 17:
             if cliinputs == 1:
                 rolemassmention(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','rolemention',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','rolemention',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Role mass mention attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 18:
             if cliinputs == 1:
                 cleanup(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','cleanup',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','cleanup',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Tokens are cleaning up | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 19:
             if cliinputs == 1:
                 hypesquadchanger(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','hypesquad',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','hypesquad',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Hypesquad Changer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 20:
             if cliinputs == 1:
                 reaction(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Reaction | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 21:
@@ -818,7 +789,7 @@ def joiner(currentattacks):
         main(currentattacks)
     if len(link) > 7:
         link = link[19:]
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(cliinputs),str(threadcount),guitheme,link],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(cliinputs),str(threadcount),guitheme,link],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Joiner Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -833,7 +804,7 @@ def leaver(currentattacks):
     ID = input ('ID of the server to leave: ')
     if ID == '0':
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','leaver',sys.executable,str(cliinputs),str(threadcount),guitheme,ID],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','leaver',sys.executable,str(cliinputs),str(threadcount),guitheme,ID],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -854,7 +825,7 @@ def groupleaver(currentattacks):
         if ID == None:
             main(currentattacks)
     tokenlist = open("tokens.txt").read().splitlines()
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(cliinputs),str(threadcount),guitheme,ID],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(cliinputs),str(threadcount),guitheme,ID],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Group Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -936,7 +907,7 @@ def messagespam(currentattacks):
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
     msgtxt = input ("Text to spam: ")
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(cliinputs),str(threadcount),guitheme,msgtxt,chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(cliinputs),str(threadcount),guitheme,msgtxt,chan,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Message Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -954,7 +925,7 @@ def asciispam(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','asciispam',sys.executable,str(cliinputs),str(threadcount),guitheme,chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','asciispam',sys.executable,str(cliinputs),str(threadcount),guitheme,chan,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -972,7 +943,7 @@ def massmentioner(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','massmention',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER,chan],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','massmention',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER,chan],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -990,7 +961,7 @@ def vcspam(currentattacks):
         main(currentattacks)
     chanid = input ('Voice channel ID: ')
     tokencount = input ('Number of tokens to use: ')
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','vcspam',sys.executable,str(cliinputs),str(threadcount),guitheme,ytlink,chanid,tokencount],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','vcspam',sys.executable,str(cliinputs),str(threadcount),guitheme,ytlink,chanid,tokencount],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Voice Chat Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1006,7 +977,7 @@ def dmspam(currentattacks):
     if str(user) == '0':
         main(currentattacks)
     msgtxt = input ("Text to spam (Ascii Spam = ascii): ")
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','dmspammer',sys.executable,str(cliinputs),str(threadcount),guitheme,user,msgtxt],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','dmspammer',sys.executable,str(cliinputs),str(threadcount),guitheme,user,msgtxt],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1021,7 +992,7 @@ def friender(currentattacks):
     userid = input("User's ID: ")
     if str(userid) == '0':
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','friender',sys.executable,str(cliinputs),str(threadcount),guitheme,userid],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','friender',sys.executable,str(cliinputs),str(threadcount),guitheme,userid],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Friender Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1037,7 +1008,7 @@ def groupdmspam(currentattacks):
     if str(group) == '0':
         main(currentattacks)
     msgtxt = input ("Text to spam (Ascii Spam = ascii): ")
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupdmspam',sys.executable,str(cliinputs),str(threadcount),guitheme,msgtxt,group],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupdmspam',sys.executable,str(cliinputs),str(threadcount),guitheme,msgtxt,group],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Group DM Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1055,8 +1026,8 @@ def imagespam(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(cliinputs),str(threadcount),guitheme,chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(cliinputs),str(threadcount),guitheme,chan,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+    currentattacks["Random Image Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def gamechange(currentattacks):
@@ -1066,14 +1037,13 @@ def gamechange(currentattacks):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Playing Status Changer\x07")
     print (colored("Discord game playing status changer.",menucolour))
-    print (colored("This will probably slow down some attacks.","blue"))
     print (colored("0: Back",menucolour))
     print ('Name of game to play: ')
     game = input ('Playing ')
     if game == '0':
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','gamechange',sys.executable,str(cliinputs),str(threadcount),guitheme,chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-    currentattacks["Ascii Spammer Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','gamechange',sys.executable,str(cliinputs),str(threadcount),guitheme,game],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+    currentattacks["Game Status Changing Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
 def nickchange(currentattacks):
@@ -1083,12 +1053,11 @@ def nickchange(currentattacks):
     elif sys.platform.startswith('linux'):
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Nickname Changer\x07")
     print (colored("Discord random ascii nickname.",menucolour))
-    print (colored("This will probably slow down some attacks.","blue"))
     print (colored("0: Back",menucolour))
     SERVER = input ("Server ID: ")
     if str(SERVER) == '0':
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','nickname',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','nickname',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Nickname Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1107,7 +1076,7 @@ def rolemassmention(currentattacks):
     chan = input ("Channel to spam in (type 'all' for all channels): ")
     if chan.lower() == "all":
         print (colored("Spamming all channels","blue"))
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','rolemention',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER,chan],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','rolemention',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER,chan],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Role Mass Mentioner Attack Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1123,7 +1092,7 @@ def cleanup(currentattacks):
     SERVER = input('Server ID: ')
     if str(SERVER) == '0':
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','cleanup',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','cleanup',sys.executable,str(cliinputs),str(threadcount),guitheme,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Tokens are cleaning up Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1146,7 +1115,7 @@ def hypesquadchanger(currentattacks):
         choice = 'Brilliance'
     elif int(choice) == 3:
         choice = 'Ballance'
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','hypesquad',sys.executable,str(cliinputs),str(threadcount),guitheme,choice],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','hypesquad',sys.executable,str(cliinputs),str(threadcount),guitheme,choice],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Hypesquad Changer Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1165,7 +1134,7 @@ def reaction(currentattacks):
         main(currentattacks)
     msgid = input ("Message ID: ")
     emoji = input ("Emoji: ")
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(cliinputs),str(str(threadcount),guitheme,msgid,chan,"Add",emoji),chan,SERVER],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(cliinputs),str(str(threadcount),guitheme,msgid,chan,"Add",emoji),chan,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Reaction Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 
@@ -1602,7 +1571,7 @@ def wew(currentattacks):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | ¯\_(ツ)_/¯")
     else:
         main(currentattacks)
-    p = subprocess.Popen([sys.executable,'RTBFiles/player.py',sys.executable],stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/player.py',sys.executable],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Music! | Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
 

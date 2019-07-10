@@ -73,7 +73,7 @@ if mode == 'joiner':
         link = sys.argv[6]
         log = False
         widget = False
-        delay == "0"
+        delay = "0"
     if widget:
         pass
     else:

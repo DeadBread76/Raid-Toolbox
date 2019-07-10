@@ -92,10 +92,9 @@ except Exception as e:
 smversion = sys.argv[1]
 menucolour = sys.argv[2]
 menucolour2 = sys.argv[3]
-termuxmode = int(sys.argv[4])
-if termuxmode == 1:
-    print("Please Note: Termux mode and server smasher are not fully compatible, Please use at your own risk.")
-    input('Press enter to continue.')
+noguimode = int(sys.argv[4])
+if noguimode == 1:
+    pass
 else:
     Tk().withdraw()
 
@@ -957,7 +956,10 @@ async def main(SERVER):
                             toggleopts['changeicon'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 5:
-                        toggleopts['iconfile'] = askopenfilename(initialdir = os.getcwd(),title = "Select server icon")
+                        if noguimode == 1:
+                            toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Server icon: ')
+                        else:
+                            toggleopts['iconfile'] = askopenfilename(initialdir = os.getcwd(),title = "Select server icon")
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 6:
                         if toggleopts['rembans'] == True:
@@ -1093,7 +1095,10 @@ async def main(SERVER):
                             toggleopts['createemojis'] = True
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 31:
-                        toggleopts['emojipath'] = askopenfilename(initialdir = os.getcwd(),title = "Select emoji")
+                        if noguimode == 1:
+                            toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Emoji path: ')
+                        else:
+                            toggleopts['emojipath'] = askopenfilename(initialdir = os.getcwd(),title = "Select emoji")
                         await changesettings(toggleopts,SERVER)
                     elif int(toga) == 32:
                         toggleopts['emojinum']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of created emojis: ')

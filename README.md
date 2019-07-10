@@ -4,6 +4,8 @@ A big toolkit of spamming tools for discord.
 
 Supports Windows, Linux and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB)(Partialy). (Tested on Windows 10 Education/Professional, Ubuntu 18.10)
 
+(Linux has issues with the Voice Chat Spammer, It locks the menu up and you are unable to do anything. I am trying to find a fix.)
+
 ### Need any help?
 
 Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
