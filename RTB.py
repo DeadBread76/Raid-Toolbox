@@ -81,10 +81,6 @@ if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
 elif sys.platform.startswith('linux'):
     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
-else:
-    print ("Unsupported OS.")
-    input()
-    sys.exit()
 
 t0 = time.time() # https://github.com/Mattlau04
 
@@ -264,6 +260,12 @@ if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
 elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
+elif sys.platform.startswith('darwin'):
+    clear = lambda: os.system('clear')
+else:
+    print ("Unsupported OS.")
+    input()
+    sys.exit()
 
 if not os.path.isfile("RTBFiles/licence"):
     lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
