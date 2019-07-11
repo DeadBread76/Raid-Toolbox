@@ -81,6 +81,8 @@ if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
 elif sys.platform.startswith('linux'):
     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+elif sys.platform.startswith('darwin'):
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
 else:
     print ("Unsupported OS.")
     input()
@@ -263,6 +265,8 @@ if menucolour2.lower() == 'random':
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
 elif sys.platform.startswith('linux'):
+    clear = lambda: os.system('clear')
+elif sys.platform.startswith('darwin'):
     clear = lambda: os.system('clear')
 
 if not os.path.isfile("RTBFiles/licence"):
