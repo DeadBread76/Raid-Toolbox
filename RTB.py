@@ -268,10 +268,6 @@ elif sys.platform.startswith('linux'):
     clear = lambda: os.system('clear')
 elif sys.platform.startswith('darwin'):
     clear = lambda: os.system('clear')
-else:
-    print ("Unsupported OS.")
-    input()
-    sys.exit()
 
 if not os.path.isfile("RTBFiles/licence"):
     lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
