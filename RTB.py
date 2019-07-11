@@ -81,6 +81,12 @@ if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
 elif sys.platform.startswith('linux'):
     sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+elif sys.platform.startswith('darwin'):
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+else:
+    print ("Unsupported OS.")
+    input()
+    sys.exit()
 
 t0 = time.time() # https://github.com/Mattlau04
 
