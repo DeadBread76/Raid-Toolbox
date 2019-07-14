@@ -1350,15 +1350,23 @@ async def main(SERVER):
             for channel in server.text_channels:
                 invitelink = await channel.create_invite()
                 invite = invitelink.url
-                pyperclip.copy(invite)
-                print (invite + " copied to clipboard.")
+                try:
+                    pyperclip.copy(invite)
+                except Exception:
+                    print (invite)
+                else:
+                    print (invite + " copied to clipboard.")
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                 await main(SERVER)
             for channel in server.voice_channels:
                 invitelink = await channel.create_invite()
                 invite = invitelink.url
-                pyperclip.copy(invite)
-                print (invite + " copied to clipboard.")
+                try:
+                    pyperclip.copy(invite)
+                except Exception:
+                    print (invite)
+                else:
+                    print (invite + " copied to clipboard.")
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
                 await main(SERVER)
             print ("Unable to create invite.")
