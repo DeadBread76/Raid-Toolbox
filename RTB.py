@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.2"
+rtbversion = "0.4.3"
 smversion = "0.1.11r1"
 
 try:
@@ -79,14 +79,8 @@ if sys.platform.startswith('win32'):
 
 if sys.platform.startswith('win32'):
     ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
-elif sys.platform.startswith('linux'):
-    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
-elif sys.platform.startswith('darwin'):
-    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
 else:
-    print ("Unsupported OS.")
-    input()
-    sys.exit()
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
 
 t0 = time.time() # https://github.com/Mattlau04
 
@@ -99,7 +93,7 @@ if "com.termux" in sys.executable:
         print("Installing Termux API..")
         p = subprocess.call(['pkg', 'install', 'termux-api'],stdout=log, stderr=subprocess.STDOUT)
         if p == 1:
-            print("There was an error with installing termux api, Refer to Install.log")
+            print("There was an error with installing termux API, Refer to Install.log")
             sys.exit()
         elif p == 0:
             print("Installed Termux API Successfully.")
@@ -117,7 +111,7 @@ if "com.termux" in sys.executable:
         print ("Module error: " + str(i))
         install = input ("Would you like Raid ToolBox to try and install it for you?(Y/N)")
         if install.lower() == 'y':
-            requirements = open("requirements.txt").read().splitlines()
+            requirements = open("requirements_termux.txt").read().splitlines()
             log = open("install.log", "w")
             for package in requirements:
                 print("Attempting to install {}".format(package))
@@ -132,15 +126,11 @@ if "com.termux" in sys.executable:
         else:
             sys.exit()
 
-if noguimode == 1:
-    serversmasherinmainwindow = 1
-    cliinputs = 1
-
 elif verbose == 1:
     print ("Loading modules...")
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading... | Verbose Mode")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
     with open ("load.log", "a") as handle:
         try:
@@ -241,7 +231,10 @@ else:
                         er = subprocess.Popen(["Errorfixer.bat"])
                         er.wait()
                         sys.exit()
-            requirements = open("requirements.txt").read().splitlines()
+            if sys.platform.startswith('darwin'):
+                requirements = open("requirements_mac.txt").read().splitlines()
+            else:
+                requirements = open("requirements.txt").read().splitlines()
             log = open("install.log", "w")
             for package in requirements:
                 print("Attempting to install {}".format(package))
@@ -256,6 +249,10 @@ else:
         else:
             sys.exit()
 
+if noguimode == 1:
+    serversmasherinmainwindow = 1
+    cliinputs = 1
+
 init()
 colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
 if menucolour.lower() == 'random':
@@ -264,9 +261,7 @@ if menucolour2.lower() == 'random':
     menucolour2 = random.choice(colours)
 if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
-elif sys.platform.startswith('linux'):
-    clear = lambda: os.system('clear')
-elif sys.platform.startswith('darwin'):
+else:
     clear = lambda: os.system('clear')
 
 if not os.path.isfile("RTBFiles/licence"):
@@ -299,7 +294,7 @@ else:
                     def run_update():
                         if sys.platform.startswith('win32'):
                             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                        elif sys.platform.startswith('linux'):
+                        else:
                             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
                         update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
                         clear()
@@ -456,42 +451,26 @@ def titleupdate():
                 pass
             else:
                 currentattacks.pop(attack)
-        if sys.platform.startswith('win32'):
-            if "b" in rtbversion:
-                if len(currentattacks) == 0:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
-                elif len(currentattacks) == 1:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
-                else:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
+        if "b" in rtbversion:
+            if len(currentattacks) == 0:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
+            elif len(currentattacks) == 1:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
             else:
-                if len(currentattacks) == 0:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
-                elif len(currentattacks) == 1:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
-                else:
-                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
-        elif sys.platform.startswith('linux'):
-            if "b" in rtbversion:
-                if len(currentattacks) == 0:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
-                elif len(currentattacks) == 1:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attack Running.)\x07".format(rtbversion,len(currentattacks)))
-                else:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attacks Running.)\x07".format(rtbversion,len(currentattacks)))
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION) | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
+        else:
+            if len(currentattacks) == 0:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
+            elif len(currentattacks) == 1:
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attack Running.)".format(rtbversion,len(currentattacks)))
             else:
-                if len(currentattacks) == 0:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
-                elif len(currentattacks) == 1:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} | ({} Attack Running.)\x07".format(rtbversion,len(currentattacks)))
-                else:
-                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} | ({} Attacks Running.)\x07".format(rtbversion,len(currentattacks)))
+                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
         time.sleep(2)
 
 def main(currentattacks):
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=100 lines=30')
-    elif sys.platform.startswith('linux'):
+    else:
         os.system("printf '\033[8;30;100t'")
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -503,7 +482,7 @@ def main(currentattacks):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
         else:
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{}".format(rtbversion))
-    elif sys.platform.startswith('linux'):
+    else:
         if "b" in rtbversion:
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
         else:
@@ -519,7 +498,7 @@ def main(currentattacks):
     if noguimode == 1:
         if sys.platform.startswith('win32'):
             os.system('mode con:cols=41 lines=32')
-        elif sys.platform.startswith('linux'):
+        else:
             os.system("printf '\033[8;32;41t'")
         print(colored("=========================================",menucolour))
         print(colored("   Welcome to DeadBread's Raid Toolbox",menucolour2))
@@ -782,7 +761,7 @@ def joiner(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Invite Joiner")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Invite Joiner\x07")
     print (colored("Discord invite joiner.",menucolour))
     print (colored("0: Back",menucolour))
@@ -799,7 +778,7 @@ def leaver(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Server Leaver")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Server Leaver\x07")
     print (colored("Discord server leaver.",menucolour))
     print (colored("0: Back",menucolour))
@@ -814,7 +793,7 @@ def groupleaver(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Leaver")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Leaver\x07")
     if cliinputs == 1:
         print (colored("Discord group DM leaver.",menucolour))
@@ -835,7 +814,7 @@ def tokencheck(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Checker")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Checker\x07")
     vcounter = 0
     ucounter = 0
@@ -898,7 +877,7 @@ def messagespam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Spammer\x07")
     print (colored("Discord Server message spammer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -917,7 +896,7 @@ def asciispam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Spammer\x07")
     print (colored("Discord server ascii spammer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -935,7 +914,7 @@ def massmentioner(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Mass Mentioner")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Mass Mentioner\x07")
     print (colored("Discord server mass mentioner.",menucolour))
     print (colored("0: Back",menucolour))
@@ -953,7 +932,7 @@ def vcspam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Voice Chat Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Voice Chat Spammer\x07")
     tcounter = 0
     print (colored("Discord VC joiner/spammer.",menucolour))
@@ -971,7 +950,7 @@ def dmspam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | DM Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | DM Spammer\x07")
     print (colored("Discord user DM spammer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -987,7 +966,7 @@ def friender(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Friend Request Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Friend Request Spammer\x07")
     print (colored("Discord user mass friender.",menucolour))
     print (colored("0: Back",menucolour))
@@ -1002,7 +981,7 @@ def groupdmspam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Group DM Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Group DM Spammer\x07")
     print (colored("Discord Group DM message spammer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -1018,7 +997,7 @@ def imagespam(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Image Spammer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Image Spammer\x07")
     print (colored("Discord server image spammer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -1036,7 +1015,7 @@ def gamechange(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Playing Status Changer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Playing Status Changer\x07")
     print (colored("Discord game playing status changer.",menucolour))
     print (colored("0: Back",menucolour))
@@ -1052,7 +1031,7 @@ def nickchange(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Ascii Nickname Changer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Ascii Nickname Changer\x07")
     print (colored("Discord random ascii nickname.",menucolour))
     print (colored("0: Back",menucolour))
@@ -1067,7 +1046,7 @@ def rolemassmention(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Role Mass Mentioner")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Role Mass Mentioner\x07")
     print (colored("Discord role mass mentioner.",menucolour))
     print (colored("This will spam mention all roles that are mentionable.",menucolour))
@@ -1086,7 +1065,7 @@ def cleanup(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Message Cleaner")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Message Cleaner\x07")
     print (colored("Clean up messages sent by a token",menucolour))
     print (colored("This will delete all the messages sent by the token.",menucolour))
@@ -1102,7 +1081,7 @@ def hypesquadchanger(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | HypeSquad Changer")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | HypeSquad Changer\x07")
     print (colored("0. Back",menucolour2))
     print (colored("1. Bravery",menucolour2))
@@ -1125,7 +1104,7 @@ def reaction(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Emoji Reactor")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Emoji Reactor\x07")
     print (colored("Emoji Reactor.",menucolour))
     if not noguimode == 1:
@@ -1149,7 +1128,7 @@ def serversmasher(currentattacks):
             p.wait()
         else:
             subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)],creationflags=CREATE_NEW_CONSOLE)
-    elif sys.platform.startswith('linux'):
+    else:
         if serversmasherinmainwindow == 1:
             p = subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menucolour,menucolour2,str(noguimode)])
             p.wait()
@@ -1169,19 +1148,19 @@ def viewcurrentat(currentattacks):
     names = []
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Current Attacks")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Current Attacks\x07")
     print (colored("Current Attacks:",menucolour))
     print (colored("---------------------",menucolour))
     for attack in list(currentattacks):
         if psutil.pid_exists(currentattacks[attack]):
-            if sys.platform.startswith('linux'):
+            if not sys.platform.startswith('win32'):
                 proc = psutil.Process(currentattacks[attack])
                 if proc.status() == psutil.STATUS_ZOMBIE:
                     currentattacks.pop(attack)
                     continue
             acount += 1
-            print (colored("{}. {}".format(acount,attack),"green"))
+            print (colored("{}. {}".format(acount,attack),menucolour2))
         else:
             currentattacks.pop(attack)
     for attack in list(currentattacks.keys()):
@@ -1215,7 +1194,7 @@ def customplugins(currentattacks):
     pluginfolder = []
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins\x07")
     pluginno = -1
     print (colored("Installed Plugins:",menucolour))
@@ -1344,7 +1323,7 @@ def diagrun(currentattacks):
 def run_update():
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
     update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
     clear()
@@ -1368,11 +1347,11 @@ def info(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         os.system('mode con:cols=100 lines=30')
-    elif sys.platform.startswith('linux'):
+    else:
         os.system("printf '\033[8;30;100t'")
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Info")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Info\x07")
     if knockoff_mode == 1:
         print (colored("  _____       _     _    _____  _                       _   _______          _ ",menucolour))
@@ -1424,7 +1403,12 @@ def info(currentattacks):
         input()
         info(currentattacks)
     elif inf.lower() == 'reinstall':
-        requirements = open("requirements.txt").read().splitlines()
+        if sys.platform.startswith('darwin'):
+            requirements = open("requirements_mac.txt").read().splitlines()
+        elif "com.termux" in sys.executable:
+            requirements = open("requirements_termux.txt").read().splitlines()
+        else:
+            requirements = open("requirements.txt").read().splitlines()
         log = open("install.log", "w")
         for package in requirements:
             print("Installing {}...".format(package))
@@ -1443,7 +1427,7 @@ def info(currentattacks):
             info(currentattacks)
         if sys.platform.startswith('win32'):
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Diagnostics")
-        elif sys.platform.startswith('linux'):
+        else:
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Diagnostics\x07")
         diagrun(currentattacks)
         print ("Diagnostics Written to file.")
@@ -1471,6 +1455,53 @@ def info(currentattacks):
                 com = input(">")
                 if com == '0':
                     break
+                elif com == 'os.remove("characters/monika.chr")': # fuck i'm such a weeb
+                    text = []
+                    list = ['¡', '¢', '£', '¤', '¥', '¦', '§', '¨', '©', 'ª', '«', '¬', '®', '¯', '°', '±', '²', '³', '´', 'µ', '¶', '·', '¸', '¹', 'º', '»', '¼', '½', '¾', '¿', 'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'Þ', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ', 'Ā', 'ā', 'Ă', 'ă', 'Ą', 'ą', 'Ć', 'ć', 'Ĉ', 'ĉ', 'Ċ', 'ċ', 'Č', 'č', 'Ď', 'ď', 'Đ', 'đ', 'Ē', 'ē', 'Ĕ', 'ĕ', 'Ė', 'ė', 'Ę', 'ę', 'Ě', 'ě', 'Ĝ', 'ĝ', 'Ğ', 'ğ', 'Ġ', 'ġ', 'Ģ', 'ģ', 'Ĥ', 'ĥ', 'Ħ', 'ħ', 'Ĩ', 'ĩ', 'Ī', 'ī', 'Ĭ', 'ĭ', 'Į', 'į', 'İ', 'ı', 'Ĳ', 'ĳ', 'Ĵ', 'ĵ', 'Ķ', 'ķ', 'ĸ', 'Ĺ', 'ĺ', 'Ļ', 'ļ', 'Ľ', 'ľ', 'Ŀ', 'ŀ', 'Ł', 'ł', 'Ń', 'ń', 'Ņ', 'ņ', 'Ň', 'ň', 'ŉ', 'Ŋ', 'ŋ', 'Ō', 'ō', 'Ŏ', 'ŏ', 'Ő', 'ő', 'Œ', 'œ', 'Ŕ', 'ŕ', 'Ŗ', 'ŗ', 'Ř', 'ř', 'Ś', 'ś', 'Ŝ', 'ŝ', 'Ş', 'ş', 'Š', 'š', 'Ţ', 'ţ', 'Ť', 'ť', 'Ŧ', 'ŧ', 'Ũ', 'ũ', 'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž']
+                    for x in range(random.randint(500,800)):
+                        text.append(random.choice(list))
+                    print("Unable to delete file: characters/monika.chr")
+                    time.sleep(0.5)
+                    for char in text:
+                        time.sleep(0.005)
+                        sys.stdout.write(char)
+                        sys.stdout.flush()
+                    clear()
+                    print('0. Back')
+                    sys.stdout.write('>')
+                    sys.stdout.flush()
+                    for char in 'os.remove("characters/sayori.chr")':
+                        time.sleep(0.05)
+                        sys.stdout.write(char)
+                        sys.stdout.flush()
+                    print('\nsayori.chr deleted successfully')
+                    sys.stdout.write('>')
+                    sys.stdout.flush()
+                    time.sleep(1)
+                    for char in 'os.remove("characters/yuri.chr")':
+                        time.sleep(0.05)
+                        sys.stdout.write(char)
+                        sys.stdout.flush()
+                    print('\nyuri.chr deleted successfully')
+                    sys.stdout.write('>')
+                    sys.stdout.flush()
+                    time.sleep(1)
+                    for char in 'os.remove("characters/natsuki.chr")':
+                        time.sleep(0.05)
+                        sys.stdout.write(char)
+                        sys.stdout.flush()
+                    print('\nnatsuki.chr deleted successfully')
+                    sys.stdout.write('>')
+                    sys.stdout.flush()
+                    time.sleep(1)
+                    for char in 'os.remove("RTB.py")':
+                        time.sleep(0.10)
+                        sys.stdout.write(char)
+                        sys.stdout.flush()
+                    print('\nRTB.py deleted successfully')
+                    time.sleep(1)
+                    while True:
+                        print(asciigen(4000))
                 exec(com)
             except Exception as e:
                 print(e)
@@ -1490,7 +1521,7 @@ def tokenmanager(currentattacks):
     clear()
     if sys.platform.startswith('win32'):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Manager")
-    elif sys.platform.startswith('linux'):
+    else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Manager\x07")
     tokenlist = open("tokens.txt").read().splitlines()
     print(colored("====================",menucolour))
@@ -1523,7 +1554,7 @@ def tokenmanager(currentattacks):
                 leng += len(tokenlist)
                 if sys.platform.startswith('win32'):
                     os.system('mode con:cols=100 lines={}'.format(leng))
-                elif sys.platform.startswith('linux'):
+                else:
                     os.system("printf '\033[8;{};100t'".format(leng))
             for token in tokenlist:
                 print(colored(token,menucolour2))
@@ -1544,7 +1575,7 @@ def tokenmanager(currentattacks):
                 leng += len(tokenlist)
                 if sys.platform.startswith('win32'):
                     os.system('mode con:cols=100 lines={}'.format(leng))
-                elif sys.platform.startswith('linux'):
+                else:
                     os.system("printf '\033[8;{};100t'".format(leng))
             for token in tokenlist:
                 apilink = 'https://canary.discordapp.com/api/v6/users/@me'
@@ -1582,7 +1613,7 @@ def pud():
     while True:
         if sys.platform.startswith('win32'):
             os.system('mode con:cols={} lines={}'.format(random.randint(10,100),random.randint(10,100)))
-        elif sys.platform.startswith('linux'):
+        else:
             os.system("printf '\033[8;{};{}t'".format(random.randint(10,100),random.randint(10,100)))
         time.sleep(0.1)
 
@@ -1599,12 +1630,12 @@ def aaa():
         try:
             if sys.platform.startswith('win32'):
                 ctypes.windll.kernel32.SetConsoleTitleW("{}".format(asciigen(random.randint(51,101))))
-            elif sys.platform.startswith('linux'):
+            else:
                 sys.stdout.write("\x1b]2;{}\x07".format(asciigen(random.randint(1,21))))
         except Exception:
             if sys.platform.startswith('win32'):
                 os.system('mode con:cols=100 lines=30')
-            elif sys.platform.startswith('linux'):
+            else:
                 os.system("printf '\033[8;30;100t'")
             clear()
             a = ""
@@ -1619,11 +1650,15 @@ def aaa():
             text += colored(asciigen(1), random.choice(colours))
         print(text)
 
+def asciigen(length):
+    asc = ''
+    for x in range(int(length)):
+        num = random.randrange(13000)
+        asc = asc + chr(num)
+    return asc
 
 if __name__ == "__main__":
-    if sys.platform.startswith('linux'):
-        pass
-    else:
+    if sys.platform.startswith('win32'):
         t = threading.Thread(name='Title Update', target=titleupdate)
         t.start()
     main(currentattacks)

@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, ast, zlib, json, time, random, subprocess, requests
+import os, sys, json, time, random, subprocess, requests
 from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
@@ -27,7 +27,10 @@ climode = int(sys.argv[3])
 threadcount = sys.argv[4]
 theme = sys.argv[5]
 if not climode == 1:
-    import PySimpleGUI as sg
+    if not sys.platform.startswith('darwin'):
+        import PySimpleGUI as sg
+    else:
+        import PySimpleGUIQt as sg
     sg.ChangeLookAndFeel(theme)
 executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
@@ -56,7 +59,7 @@ if mode == 'joiner':
             requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
     if climode == 0:
         layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1))],
-                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(5,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
+                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
                 ]
         window = sg.Window('RTB | Joiner', layout)
         event, values = window.Read()
@@ -253,6 +256,7 @@ elif mode == 'massmention':
                             src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
                             if "You are being rate limited." in str(src.content):
                                 time.sleep(5)
+                                requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             while True:
@@ -550,7 +554,7 @@ elif mode == 'gamechange':
             to_send = json.dumps(payload)
             ws.send(to_send)
     if climode == 0:
-        layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 5), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle'], size=(10, 1), default_value='online', readonly=True)],
+        layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 1), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle'], size=(10, 1), default_value='online', readonly=True)],
                   [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                   ]
         window = sg.Window('RTB | Status Changer', layout)
@@ -702,7 +706,7 @@ elif mode == 'avatarchange':
         src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
         print(src.content)
     layout = [
-            [sg.Text('Select and image to change avatar.')],
+            [sg.Text('Select an image to change avatar.')],
             [sg.Input(), sg.FileBrowse(file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
             [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
             ]
@@ -797,12 +801,12 @@ elif mode == "hypesquad":
             payload = {'house_id': 1}
         elif house == "Brilliance":
             payload = {'house_id': 2}
-        elif house == "Ballance":
+        elif house == "Balance":
             payload = {'house_id': 3}
         requests.post('https://discordapp.com/api/v6/hypesquad/online',headers=headers,json=payload)
     if climode == 0:
         layout = [
-                 [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Ballance'],readonly=True, default_value='Bravery')],
+                 [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Balance'],readonly=True, default_value='Bravery')],
                  [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                 ]
         window = sg.Window('RTB | HypeSquad House Changer', layout)
