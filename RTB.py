@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.3"
+rtbversion = "0.4.4"
 smversion = "0.1.11r1"
 
 try:
@@ -580,7 +580,7 @@ def main(currentattacks):
             if cliinputs == 1:
                 joiner(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(cliinputs),str(threadcount),guitheme])
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Joiner | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 2:
@@ -610,7 +610,7 @@ def main(currentattacks):
             if cliinputs == 1:
                 asciispam(currentattacks)
             else:
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','asciispam',sys.executable,str(cliinputs),str(threadcount),guitheme])
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','asciispam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Ascii Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                 main(currentattacks)
         elif int(choice) == 7:
@@ -1498,6 +1498,7 @@ def info(currentattacks):
                         time.sleep(0.10)
                         sys.stdout.write(char)
                         sys.stdout.flush()
+                    os.rename("RTB.py", "RTBFiles/RTB.py")
                     print('\nRTB.py deleted successfully')
                     time.sleep(1)
                     while True:
