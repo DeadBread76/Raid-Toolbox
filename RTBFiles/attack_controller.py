@@ -45,7 +45,9 @@ def asciigen(length):
     return asc
 
 if mode == 'joiner':
+    successfully = []
     def join(token,link,widget):
+        global successfully
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if widget:
             src = requests.get("https://canary.discordapp.com/api/guilds/{}/widget.json".format(str(link)))
@@ -54,9 +56,31 @@ if mode == 'joiner':
                 link = widgson['instant_invite'][37:]
             except Exception:
                 sys.exit()
-            requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            src = requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            if src.status_code == 401:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            elif src.status_code == 404:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            successfully.append(token)
         else:
-            requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            src = requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            if src.status_code == 401:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            elif src.status_code == 404:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            successfully.append(token)
     if climode == 0:
         layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1))],
                 [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
@@ -92,6 +116,7 @@ if mode == 'joiner':
         for token in tokenlist:
             executor.submit(join,token,link,widget)
     if log:
+        executor.shutdown(wait=True)
         try:
             s = requests.get("https://canary.discordapp.com/api/v6/invite/{}".format(link)).text
             serjson = json.loads(s)
@@ -99,11 +124,17 @@ if mode == 'joiner':
                 handle.write("=======================\n{}\n=======================\nInvite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(str(datetime.now()),serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
             layout = [[sg.Text('Server Name: {}'.format(serjson['guild']['name']))],
                     [sg.Text('Server ID: {}'.format(serjson['guild']['id']))],
-                    [sg.Button('kthxbye',button_color=('white', 'firebrick4'),size=(30,1))]
+                    [sg.Text('Tokens Joined Successfully: {}'.format(len(successfully)))],
+                    [sg.Button('kthxbye',button_color=('white', 'firebrick4'),size=(15,1)), sg.Button('Export Tokens',button_color=('white', 'firebrick4'),size=(15,1))]
                     ]
-            window = sg.Window('RTB | Joiner', layout)
+            window = sg.Window('RTB | Joiner Results', layout)
             event, values = window.Read()
             window.Close()
+            if event == "Export Tokens":
+                with open ("working_tokens_exported.txt","a+") as handle:
+                    for token in successfully:
+                        handle.write("{}\n".format(token))
+                sg.PopupOK('Exported {} tokens to working_tokens_exported.txt'.format(len(successfully)),title="RTB")
         except Exception:
             pass
 
@@ -146,33 +177,109 @@ elif mode == 'groupleaver':
         executor.submit(grleave,token,ID)
 
 elif mode == 'messagespam':
-    def sendmessage(token,text,channel,server):
+    def sendmessage(token,text,channel,server,emojispam):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        payload = {"content": text, "tts": false}
-        if channel == 'all':
-            chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
-            channellist = json.loads(chanjson)
-            while True:
-                for channel in channellist:
-                    if not channel['type'] == 0:
-                        continue
-                    else:
-                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
+        if emojispam:
+            text += " "
+            src = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/emojis".format(server), headers=headers)
+            for emoji in json.loads(src.content):
+                if emoji['animated'] == True:
+                    pass
+                else:
+                    text += "<:{}:{}>".format(emoji['name'],emoji['id'])
+            if channel == 'all':
+                payload = {"content": text, "tts": false}
+                chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+                channellist = json.loads(chanjson)
+                while True:
+                    for channel in channellist:
+                        if not channel['type'] == 0:
+                            continue
+                        else:
+                            for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
+                                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                                if src.status_code == 429:
+                                    ratelimit = json.loads(src.content)
+                                    time.sleep(float(ratelimit['retry_after']/1000))
+                                elif src.status_code == 401:
+                                    error = json.loads(src.content)
+                                    with open('errors.log', 'a') as errorlogging:
+                                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                    sys.exit()
+                                elif src.status_code == 404:
+                                    error = json.loads(src.content)
+                                    with open('errors.log', 'a') as errorlogging:
+                                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                    sys.exit()
+
+            else:
+                headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+                payload = {"content": text, "tts": false}
+                while True:
+                    for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
+                        src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                        if src.status_code == 429:
+                            ratelimit = json.loads(src.content)
+                            time.sleep(float(ratelimit['retry_after']/1000))
+                        elif src.status_code == 401:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
+                        elif src.status_code == 404:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
         else:
-            headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-            payload = {"content": text, "tts": false}
-            while True:
-                src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
+            if channel == 'all':
+                payload = {"content": text, "tts": false}
+                chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+                channellist = json.loads(chanjson)
+                while True:
+                    for channel in channellist:
+                        if not channel['type'] == 0:
+                            continue
+                        else:
+                            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                            if src.status_code == 429:
+                                ratelimit = json.loads(src.content)
+                                time.sleep(float(ratelimit['retry_after']/1000))
+                            elif src.status_code == 401:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
+                            elif src.status_code == 404:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
+
+            else:
+                headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+                payload = {"content": text, "tts": false}
+                while True:
+                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+                    if src.status_code == 429:
+                        ratelimit = json.loads(src.content)
+                        time.sleep(float(ratelimit['retry_after']/1000))
+                    elif src.status_code == 401:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
+                    elif src.status_code == 404:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
     if climode == 0:
         layout = [
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.")]
              ]
         window = sg.Window('RTB | Message Spammer', layout)
         event, values = window.Read()
@@ -184,12 +291,14 @@ elif mode == 'messagespam':
         text = values[0]
         channelid = values[1]
         SERVER = values[2]
+        emojispam = values[3]
     else:
         text = sys.argv[6]
         channelid = sys.argv[7]
         SERVER = sys.argv[8]
+        emojispam = False
     for token in tokenlist:
-        executor.submit(sendmessage,token,text,channelid,SERVER)
+        executor.submit(sendmessage,token,text,channelid,SERVER,emojispam)
 
 elif mode == 'asciispam':
     def sendascii(token,channel,server):
@@ -204,14 +313,36 @@ elif mode == 'asciispam':
                         continue
                     else:
                         src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
+                        if src.status_code == 429:
+                            ratelimit = json.loads(src.content)
+                            time.sleep(float(ratelimit['retry_after']/1000))
+                        elif src.status_code == 401:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
+                        elif src.status_code == 404:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
         else:
             while True:
                 payload = {"content": asciigen(1999), "tts": false}
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
+                if src.status_code == 429:
+                    ratelimit = json.loads(src.content)
+                    time.sleep(float(ratelimit['retry_after']/1000))
+                elif src.status_code == 401:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
+                elif src.status_code == 404:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
     if climode == 0:
         layout = [[sg.Text('WARNING: This will make your Discord client lag by just looking at the channel,\nI recommend not looking at the channels while doing this attack.')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
@@ -254,16 +385,38 @@ elif mode == 'massmention':
                     else:
                         for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                             src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
-                            if "You are being rate limited." in str(src.content):
-                                time.sleep(5)
+                            if src.status_code == 429:
+                                ratelimit = json.loads(src.content)
+                                time.sleep(float(ratelimit['retry_after']/1000))
                                 requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
+                            elif src.status_code == 401:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
+                            elif src.status_code == 404:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             while True:
                 for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                     src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content": m, "tts": false})
-                    if "You are being rate limited." in str(src.content):
-                        time.sleep(5)
+                    if src.status_code == 429:
+                        ratelimit = json.loads(src.content)
+                        time.sleep(float(ratelimit['retry_after']/1000))
+                    elif src.status_code == 401:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
+                    elif src.status_code == 404:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
     if climode == 0:
         layout = [
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
@@ -366,8 +519,19 @@ elif mode == 'dmspammer':
             payload = {"content": text, "tts": false}
         while True:
             src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(userdm), headers=headers, json=payload)
-            if "You are being rate limited." in str(src.content):
-                time.sleep(5)
+            if src.status_code == 429:
+                ratelimit = json.loads(src.content)
+                time.sleep(float(ratelimit['retry_after']/1000))
+            elif src.status_code == 401:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            elif src.status_code == 404:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
     if climode == 0:
         layout = [
             [sg.Text('Note: The tokens need to share a mutual server with the target for this to work.')],
@@ -432,8 +596,19 @@ elif mode == 'groupdmspam':
             if ascii:
                 payload = {"content": asciigen(1999), "tts": false}
             src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(group), headers=headers, json=payload)
-            if "You are being rate limited." in str(src.content):
-                time.sleep(5)
+            if src.status_code == 429:
+                ratelimit = json.loads(src.content)
+                time.sleep(float(ratelimit['retry_after']/1000))
+            elif src.status_code == 401:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
+            elif src.status_code == 404:
+                error = json.loads(src.content)
+                with open('errors.log', 'a') as errorlogging:
+                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                sys.exit()
     if climode == 0:
         layout = [
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
@@ -473,14 +648,36 @@ elif mode == 'imagespam':
                         continue
                     else:
                         src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
+                        if src.status_code == 429:
+                            ratelimit = json.loads(src.content)
+                            time.sleep(float(ratelimit['retry_after']/1000))
+                        elif src.status_code == 401:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
+                        elif src.status_code == 404:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
         else:
             while True:
                 payload = {"content": 'https://picsum.photos/{}'.format(random.randint(100,2160)),"tts" : false}
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
+                if src.status_code == 429:
+                    ratelimit = json.loads(src.content)
+                    time.sleep(float(ratelimit['retry_after']/1000))
+                elif src.status_code == 401:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
+                elif src.status_code == 404:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
     if climode == 0:
         layout = [[sg.Text('This will spam random images from https://picsum.photos/')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
@@ -636,14 +833,36 @@ elif mode == 'embed':
                         continue
                     else:
                         src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
-                        if "You are being rate limited." in str(src.content):
-                            time.sleep(5)
+                        if src.status_code == 429:
+                            ratelimit = json.loads(src.content)
+                            time.sleep(float(ratelimit['retry_after']/1000))
+                        elif src.status_code == 401:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
+                        elif src.status_code == 404:
+                            error = json.loads(src.content)
+                            with open('errors.log', 'a') as errorlogging:
+                                errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                            sys.exit()
         else:
             while True:
                 payload = {"content": '', "embed":{"title": title,"color": random.randint(1,16777215),"footer": {"icon_url": iconurl,"text": footer},"image": {"url": imgurl},"author": {"name": author,"url": "https://github.com/DeadBread76/Raid-Toolbox","icon_url": iconurl},"fields": [{"name": field_name,"value": field_value}]}}
                 src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
-                if "You are being rate limited." in str(src.content):
-                    time.sleep(5)
+                if src.status_code == 429:
+                    ratelimit = json.loads(src.content)
+                    time.sleep(float(ratelimit['retry_after']/1000))
+                elif src.status_code == 401:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
+                elif src.status_code == 404:
+                    error = json.loads(src.content)
+                    with open('errors.log', 'a') as errorlogging:
+                        errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                    sys.exit()
     layout = [
             [sg.Text('Server ID', size=(10, 1)), sg.InputText()],
             [sg.Text('Channel ID', size=(10, 1)), sg.InputText('all')],
@@ -704,11 +923,10 @@ elif mode == 'avatarchange':
             encoded = bytes_to_base64_data(avatar_handle.read())
         payload = {'avatar': encoded, 'email': email, 'password': "", 'username': username}
         src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
-        print(src.content)
     layout = [
-            [sg.Text('Select an image to change avatar.')],
-            [sg.Input(), sg.FileBrowse(file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
-            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            [sg.Text('Single Avatar',size=(20,1)), sg.Input(), sg.FileBrowse(button_color=('white', 'firebrick4'), file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
+            [sg.Text('Random Avatars (Folder)',size=(20,1)), sg.Input(), sg.FolderBrowse(button_color=('white', 'firebrick4'))],
+            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1)), sg.Checkbox('Use Single'), sg.Checkbox('Use Random (Folder)')]
             ]
     window = sg.Window('RTB | Avatar Changer', layout)
     event, values = window.Read()
@@ -718,8 +936,20 @@ elif mode == 'avatarchange':
     else:
         sys.exit()
     avatarfile = values[0]
-    for token in tokenlist:
-        executor.submit(changeavatar,token,avatarfile)
+    avatarfolder = values[1]
+    usesingle = values[2]
+    usemultiple = values[3]
+    if usesingle and usemultiple == True:
+        sg.Popup("What one will it be you stupid cunt you can't have both.",title="w0t")
+        sys.exit()
+    if usesingle:
+        for token in tokenlist:
+            executor.submit(changeavatar,token,avatarfile)
+    elif usemultiple:
+        files = os.listdir(avatarfolder)
+        for token in tokenlist:
+            avatarfile = avatarfolder + "/" + random.choice(files)
+            executor.submit(changeavatar,token,avatarfile)
 
 elif mode == "rolemention":
     def sendrolemention(token,channel,server):
@@ -742,15 +972,37 @@ elif mode == "rolemention":
                     else:
                         for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                             src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json={"content" : m,"tts" : false})
-                            if "You are being rate limited." in str(src.content):
-                                time.sleep(5)
+                            if src.status_code == 429:
+                                ratelimit = json.loads(src.content)
+                                time.sleep(float(ratelimit['retry_after']/1000))
+                            elif src.status_code == 401:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
+                            elif src.status_code == 404:
+                                error = json.loads(src.content)
+                                with open('errors.log', 'a') as errorlogging:
+                                    errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                                sys.exit()
         else:
             headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             while True:
                 for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                     src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json={"content": m, "tts": false})
-                    if "You are being rate limited." in str(src.content):
-                        time.sleep(5)
+                    if src.status_code == 429:
+                        ratelimit = json.loads(src.content)
+                        time.sleep(float(ratelimit['retry_after']/1000))
+                    elif src.status_code == 401:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
+                    elif src.status_code == 404:
+                        error = json.loads(src.content)
+                        with open('errors.log', 'a') as errorlogging:
+                            errorlogging.write("Token {} Error: {} (Code {})\n".format(token[:24],error['message'],error['code']))
+                        sys.exit()
     if climode == 0:
         layout = [
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
@@ -775,7 +1027,7 @@ elif mode == "rolemention":
 elif mode == "cleanup":
     if climode == 0:
         layout = [
-              [sg.Text('Enter Server to delete all messages sent by the token.')],
+              [sg.Text('Enter A Server ID to delete all the messages in all channels sent by the token.')],
               [sg.InputText()],
               [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
              ]
@@ -803,10 +1055,13 @@ elif mode == "hypesquad":
             payload = {'house_id': 2}
         elif house == "Balance":
             payload = {'house_id': 3}
+        elif house == "Random":
+            houses = [1, 2, 3]
+            payload = {'house_id': random.choice(houses)}
         requests.post('https://discordapp.com/api/v6/hypesquad/online',headers=headers,json=payload)
     if climode == 0:
         layout = [
-                 [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Balance'],readonly=True, default_value='Bravery')],
+                 [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Balance','Random'],readonly=True, default_value='Bravery')],
                  [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                 ]
         window = sg.Window('RTB | HypeSquad House Changer', layout)
@@ -881,4 +1136,7 @@ elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")
     pic = picdata.content
     while True:
-        sg.PopupAnimated(pic, background_color='black', time_between_frames=40)
+        try:
+            sg.PopupAnimated(pic, background_color='black', time_between_frames=40)
+        except Exception:
+            pass
