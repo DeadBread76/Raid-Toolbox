@@ -702,56 +702,58 @@ elif mode == 'imagespam':
 elif mode == 'gamechange':
     from websocket import create_connection
     def changegame(token,game,type,status):
-        for token in tokenlist:
-            ws = create_connection('wss://gateway.discord.gg/?v=6&encoding=json')
-            result = ws.recv()
-            if type == "Playing":
-                gamejson = {
-                    "name": game,
-                    "type": 0
-                }
-            elif type == 'Streaming':
-                gamejson = {
-                    "name": game,
-                    "type": 1,
-                    "url": "https://www.twitch.tv/DEADBREAD'S_RAID_TOOLBOX"
-                }
-            elif type == "Listening to":
-                gamejson = {
-                    "name": game,
-                    "type": 2
-                }
-            elif type == "Watching":
-                gamejson = {
-                    "name": game,
-                    "type": 3
-                }
-            payload = {
-                'op': 2,
-                'd': {
-                    'token': token,
-                    'properties': {
-                        '$os': sys.platform,
-                        '$browser': "Discord{}".format(random.randint(1000,9999)),
-                        '$device': "Discord{}".format(random.randint(1000,9999)),
-                        '$referrer': '',
-                        '$referring_domain': ''
-                    },
-                    'compress': True,
-                    'large_threshold': 250,
-                    'v': 3,
-                    "presence": {
-                        "game": gamejson,
-                        "status": status,
-                        "since": 0,
-                        "afk": False
-                    }
+        if status == "random":
+            stat = ['online', 'dnd', 'idle']
+            status = random.choice(stat)
+        ws = create_connection('wss://gateway.discord.gg/?v=6&encoding=json')
+        result = ws.recv()
+        if type == "Playing":
+            gamejson = {
+                "name": game,
+                "type": 0
+            }
+        elif type == 'Streaming':
+            gamejson = {
+                "name": game,
+                "type": 1,
+                "url": "https://www.twitch.tv/DEADBREAD'S_RAID_TOOLBOX"
+            }
+        elif type == "Listening to":
+            gamejson = {
+                "name": game,
+                "type": 2
+            }
+        elif type == "Watching":
+            gamejson = {
+                "name": game,
+                "type": 3
+            }
+        payload = {
+            'op': 2,
+            'd': {
+                'token': token,
+                'properties': {
+                    '$os': sys.platform,
+                    '$browser': "Discord{}".format(random.randint(1000,9999)),
+                    '$device': "Discord{}".format(random.randint(1000,9999)),
+                    '$referrer': '',
+                    '$referring_domain': ''
+                },
+                'compress': True,
+                'large_threshold': 250,
+                'v': 3,
+                "presence": {
+                    "game": gamejson,
+                    "status": status,
+                    "since": random.randint(0,9999),
+                    "afk": False
                 }
             }
-            to_send = json.dumps(payload)
-            ws.send(to_send)
+        }
+        to_send = json.dumps(payload)
+        ws.send(to_send)
     if climode == 0:
-        layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 1), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle'], size=(10, 1), default_value='online', readonly=True)],
+        layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 1), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle','random'], size=(10, 1), default_value='online', readonly=True)],
                   [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
                   ]
         window = sg.Window('RTB | Status Changer', layout)
