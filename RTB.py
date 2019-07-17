@@ -17,11 +17,12 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "0.4.4r1"
+rtbversion = "1.0.0b"
 smversion = "0.1.11r1"
 
 try:
     from config import*
+    from assets import*
 except Exception:
     print("Unable to import config file.\nImporting necessary modules and checking installation...")
     import os
@@ -263,7 +264,7 @@ if sys.platform.startswith('win32'):
     clear = lambda: os.system('cls')
 else:
     clear = lambda: os.system('clear')
-
+sg.ChangeLookAndFeel('Black')
 if not os.path.isfile("RTBFiles/licence"):
     lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
     print("Raid-Toolbox\n"+lic)
@@ -532,6 +533,109 @@ def main(currentattacks):
         print(colored("24. Quick Checker",menucolour2))
         print(colored("25. Token options",menucolour2))
         choice = input(colored(">",menucolour2))
+    elif cliinputs == 0:
+        pluginlist = {}
+        pluginfolder = []
+        pluginfile = []
+        for root, dirs, files in os.walk("plugins/", topdown=False):
+            for folder in dirs:
+                try:
+                    plugdir = os.listdir('plugins/{}/'.format(folder))
+                except Exception:
+                    continue
+                for file in plugdir:
+                    if str(file).startswith("main_"):
+                        pluginlist[folder] = file
+        for plugin in pluginlist:
+            pluginfolder.append(plugin)
+        for plugin in pluginlist.items():
+            pluginfile.append(plugin[1])
+        menu_def = [['RTB', ['Running Attacks', 'Info', 'Diagnostics']],
+                    ['Tokens', ['View/Add Tokens']],
+                    ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
+                    ['Server Smasher', ['Launch']],
+                    ['Plugins', ['Download Plugins From Repo', 'Kill All Plugins', 'Load Plugin...', pluginfolder]]
+                    ]
+        layout =[
+                [sg.Menu(menu_def)],
+                [sg.Image(data=rtb_banner, size=(600, 100),pad=((45, 10), 0))],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_quick_checker, key="Quick Checker"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_status_changer, key="Status Changer")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
+                [sg.Button('', button_color=('black','black'), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=('black','black'), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=('black','black'), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
+                ]
+
+        window = sg.Window("DeadBread's Raid ToolBox v{}".format(rtbversion)).Layout(layout)
+        while True:
+            event, values = window.Read()
+            if event is None:
+                sys.exit()
+            elif event == "Running Attacks":
+                while True:
+                    window.Close()
+                    acount = -1
+                    attackbox = ''
+                    names = []
+                    for attack in list(currentattacks):
+                        if psutil.pid_exists(currentattacks[attack]):
+                            if not sys.platform.startswith('win32'):
+                                proc = psutil.Process(currentattacks[attack])
+                                if proc.status() == psutil.STATUS_ZOMBIE:
+                                    currentattacks.pop(attack)
+                                    continue
+                            acount += 1
+                            attackbox += ("{}. {}\n".format(acount,attack))
+                        else:
+                            currentattacks.pop(attack)
+                    for attack in list(currentattacks.keys()):
+                        names.append(attack)
+                    if currentattacks == {}:
+                        attackbox += "None\n"
+                    layout = [
+                             [sg.Text("Running Attacks: {}".format(len(currentattacks)))],
+                             [sg.Multiline(attackbox,size=(50,20))],
+                             [sg.Input(focus=True), sg.Button('Kill',size=(10,1)), sg.Button('Kill All',size=(10,1))]
+                             ]
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Running Attacks".format(rtbversion)).Layout(layout)
+                    event, values = window.Read()
+                    print(event, values)
+                    attacks = values[1]
+                    if event is None:
+                        window.Close()
+                        main(currentattacks)
+                    elif event == "Kill All":
+                        for attack in currentattacks:
+                            try:
+                                print(int(currentattacks[attack]))
+                                os.kill(int(currentattacks[attack]), 15)
+                            except Exception:
+                                pass
+                        currentattacks = {}
+                    elif event == "Kill":
+                        try:
+                            os.kill(int(currentattacks[names[int(attacks)]]), 15)
+                        except Exception as e:
+                            print(e)
+            elif event == "Joiner":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Joiner | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Leaver":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','leaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Group Leaver":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Group Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Message Spammer":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Message Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Ascii Spammer":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','asciispam',sys.executable,str(cliinputs),str(threadcount),guitheme],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Ascii Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+
+            print(event, values)
     else:
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menucolour))
         print (colored("██                                                                                                ██",menucolour))
@@ -1660,6 +1764,7 @@ def asciigen(length):
 
 if __name__ == "__main__":
     if sys.platform.startswith('win32'):
-        t = threading.Thread(name='Title Update', target=titleupdate)
-        t.start()
+        if cliinputs == 1:
+            t = threading.Thread(name='Title Update', target=titleupdate)
+            t.start()
     main(currentattacks)
