@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, json, time, random, subprocess, requests
+import os, sys, ast, json, time, random, subprocess, requests, shutil
 from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
@@ -25,13 +25,13 @@ mode = sys.argv[1]
 pycommand = sys.argv[2]
 climode = int(sys.argv[3])
 threadcount = sys.argv[4]
-theme = sys.argv[5]
+theme = ast.literal_eval(sys.argv[5])
 if not climode == 1:
     if not sys.platform.startswith('darwin'):
         import PySimpleGUI as sg
     else:
         import PySimpleGUIQt as sg
-    sg.ChangeLookAndFeel(theme)
+    sg.ChangeLookAndFeel(theme['background'])
 executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
 true = 'true'
@@ -82,10 +82,10 @@ if mode == 'joiner':
                 sys.exit()
             successfully.append(token)
     if climode == 0:
-        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=('white', 'firebrick4'),size=(10,1))],
+        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=theme['button_colour'],size=(10,1))],
                 [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
                 ]
-        window = sg.Window('RTB | Joiner', layout)
+        window = sg.Window('RTB | Joiner', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         link = values[0]
@@ -125,9 +125,9 @@ if mode == 'joiner':
             layout = [[sg.Text('Server Name: {}'.format(serjson['guild']['name']))],
                     [sg.Text('Server ID: {}'.format(serjson['guild']['id']))],
                     [sg.Text('Tokens Joined Successfully: {}'.format(len(successfully)))],
-                    [sg.Button('kthxbye',button_color=('white', 'firebrick4'),size=(15,1)), sg.Button('Export Tokens',button_color=('white', 'firebrick4'),size=(15,1))]
+                    [sg.Button('kthxbye',button_color=theme['button_colour'],size=(15,1)), sg.Button('Export Tokens',button_color=theme['button_colour'],size=(15,1))]
                     ]
-            window = sg.Window('RTB | Joiner Results', layout)
+            window = sg.Window('RTB | Joiner Results', layout, keep_on_top=True)
             event, values = window.Read()
             window.Close()
             if event == "Export Tokens":
@@ -143,8 +143,8 @@ elif mode == 'leaver':
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/users/@me/guilds/{}".format(str(ID)), headers=headers)
     if climode == 0:
-        layout = [[sg.Text('Enter server ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=('white', 'firebrick4'),size=(10,1))]]
-        window = sg.Window('RTB | Leaver', layout)
+        layout = [[sg.Text('Enter server ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]]
+        window = sg.Window('RTB | Leaver', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         ID = values[0]
@@ -162,8 +162,8 @@ elif mode == 'groupleaver':
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         requests.delete("https://canary.discordapp.com/api/v6/channels/{}".format(str(ID)), headers=headers)
     if climode == 0:
-        layout = [[sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=('white', 'firebrick4'),size=(10,1))]]
-        window = sg.Window('RTB | Group DM Leaver', layout)
+        layout = [[sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1)),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]]
+        window = sg.Window('RTB | Group DM Leaver', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         ID = values[0]
@@ -175,6 +175,100 @@ elif mode == 'groupleaver':
         ID = sys.argv[6]
     for token in tokenlist:
         executor.submit(grleave,token,ID)
+
+elif mode == "Checker":
+    validtokens = []
+    invalidtokens = []
+    if len(tokenlist) > 100:
+        choice = sg.PopupYesNo("You Have Over 100 tokens. I'd Recommend using Checker V2 for this many\nas you could get CloudFlare banned.\nContinue?")
+        if choice == "Yes":
+            pass
+        else:
+            sys.exit()
+    sg.PopupTimed("Checking Tokens...", title="DeadBread's Raid Toolbox | Checker", non_blocking=True)
+    def check(token):
+        headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        src = requests.post('https://canary.discordapp.com/api/v6/invite/{}'.format(random.randint(1,9999999)), headers=headers)
+        if "You need to verify your account in order to perform this action." in str(src.content):
+            validtokens.append(token)
+        elif "401: Unauthorized" in str(src.content):
+            invalidtokens.append(token)
+        else:
+            if token in validtokens:
+                pass
+            else:
+                validtokens.append(token)
+    for token in tokenlist:
+        executor.submit(check, token)
+    executor.shutdown(wait=True)
+    validlist = ''
+    invalidlist = ''
+    for token in validtokens:
+        validlist += token + "\n"
+    for token in invalidtokens:
+        invalidlist += token + "\n"
+    layout = [
+             [sg.Text('Valid Tokens:',size=(59,1)), sg.Text('Invalid Tokens:')],
+             [sg.Multiline(validlist, size=(65,20)), sg.Multiline(invalidlist, size=(65,20))],
+             [sg.RButton('Save',button_color=theme['button_colour'],size=(10,1))]
+             ]
+    window = sg.Window('RTB | Checker', layout, keep_on_top=True)
+    event, values = window.Read()
+    if event == "Save":
+        if os.path.isdir("tokendb"):
+            pass
+        else:
+            os.mkdir("tokendb")
+        shutil.copyfile("tokens.txt", "tokendb/tokens{}.txt".format(random.randint(1,999)))
+        time.sleep(0.1)
+        with open ("tokens.txt","w+") as handle:
+            handle.write(validlist)
+        sg.PopupOK('Saved', title="RTB | Saved tokens")
+    window.Close()
+
+elif mode == "Checker V2":
+    validtokens = []
+    invalidtokens = []
+    sg.PopupTimed("Checking Tokens...", title="DeadBread's Raid Toolbox | Checker V2", non_blocking=True)
+    def checkv2(token):
+        headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        src = requests.get('https://discordapp.com/api/v6/users/@me', headers=headers)
+        if "401: Unauthorized" in str(src.content):
+            invalidtokens.append(token)
+        else:
+            response = json.loads(src.content.decode())
+            if response["verified"]:
+                validtokens.append(token)
+            else:
+                validtokens.append(token)
+    for token in tokenlist:
+        executor.submit(checkv2, token)
+    executor.shutdown(wait=True)
+    validlist = ''
+    invalidlist = ''
+    for token in validtokens:
+        validlist += token + "\n"
+    for token in invalidtokens:
+        invalidlist += token + "\n"
+    layout = [
+             [sg.Text('Valid Tokens:',size=(59,1)), sg.Text('Invalid Tokens:')],
+             [sg.Multiline(validlist, size=(65,20)), sg.Multiline(invalidlist, size=(65,20))],
+             [sg.RButton('Save',button_color=theme['button_colour'],size=(10,1))]
+             ]
+    window = sg.Window('RTB | Checker V2', layout, keep_on_top=True)
+    event, values = window.Read()
+    if event == "Save":
+        if os.path.isdir("tokendb"):
+            pass
+        else:
+            os.mkdir("tokendb")
+        shutil.copyfile("tokens.txt", "tokendb/tokens{}.txt".format(random.randint(1,999)))
+        time.sleep(0.1)
+        with open ("tokens.txt","w+") as handle:
+            handle.write(validlist)
+        sg.PopupOK('Saved', title="RTB | Saved tokens")
+    window.Close()
+
 
 elif mode == 'messagespam':
     def sendmessage(token,text,channel,server,emojispam):
@@ -279,9 +373,9 @@ elif mode == 'messagespam':
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.")]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.")]
              ]
-        window = sg.Window('RTB | Message Spammer', layout)
+        window = sg.Window('RTB | Message Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -347,9 +441,9 @@ elif mode == 'asciispam':
         layout = [[sg.Text('WARNING: This will make your Discord client lag by just looking at the channel,\nI recommend not looking at the channels while doing this attack.')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Ascii Spammer', layout)
+        window = sg.Window('RTB | Ascii Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -421,9 +515,9 @@ elif mode == 'massmention':
         layout = [
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
               ]
-        window = sg.Window('RTB | Mass Mentioner', layout)
+        window = sg.Window('RTB | Mass Mentioner', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -458,9 +552,9 @@ elif mode == 'vcspam':
               size=(29,15),
               orientation='horizontal',
               font=('Helvetica', 10))],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
               ]
-        window = sg.Window('RTB | Voice Chat Spammer', layout)
+        window = sg.Window('RTB | Voice Chat Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -537,9 +631,9 @@ elif mode == 'dmspammer':
             [sg.Text('Note: The tokens need to share a mutual server with the target for this to work.')],
             [sg.Text('Users ID', size=(15, 1)), sg.InputText()],
             [sg.Text('Text to spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
-            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
             ]
-        window = sg.Window('RTB | DM Spammer', layout)
+        window = sg.Window('RTB | DM Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -573,9 +667,9 @@ elif mode == 'friender':
         layout = [
               [sg.Text('Enter A User ID or Name + Tag')],
               [sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Group DM Spammer', layout)
+        window = sg.Window('RTB | Group DM Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -613,9 +707,9 @@ elif mode == 'groupdmspam':
         layout = [
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText(), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.')],
               [sg.Text('Group ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Group DM Spammer', layout)
+        window = sg.Window('RTB | Group DM Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -682,9 +776,9 @@ elif mode == 'imagespam':
         layout = [[sg.Text('This will spam random images from https://picsum.photos/')],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Random Image Spammer', layout)
+        window = sg.Window('RTB | Random Image Spammer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -754,9 +848,9 @@ elif mode == 'gamechange':
         ws.send(to_send)
     if climode == 0:
         layout = [[sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 1), default_value='Playing', readonly=True), sg.InputText('osu!',size=(10, 1)),sg.Combo(['online', 'dnd', 'idle','random'], size=(10, 1), default_value='online', readonly=True)],
-                  [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                  [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
                   ]
-        window = sg.Window('RTB | Status Changer', layout)
+        window = sg.Window('RTB | Status Changer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -803,9 +897,9 @@ elif mode == 'nickname':
         layout = [
                 [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
                 [sg.Combo(['Cycle','Ascii','Set'], size=(14, 5), default_value='Cycle', readonly=True),sg.InputText("DeadBread's Raid Toolbox", tooltip="New Nickname")],
-                [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
                 ]
-        window = sg.Window('RTB | Nickname Changer', layout)
+        window = sg.Window('RTB | Nickname Changer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -875,9 +969,9 @@ elif mode == 'embed':
             [sg.Text('Field Value', size=(10, 1)), sg.InputText()],
             [sg.Text('Image URL', size=(10, 1)), sg.InputText()],
             [sg.Text('Footer Text', size=(10, 1)), sg.InputText()],
-            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+            [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
             ]
-    window = sg.Window('RTB | Embed Spammer', layout)
+    window = sg.Window('RTB | Embed Spammer', layout, keep_on_top=True)
     event, values = window.Read()
     window.Close()
     if event == "Start":
@@ -926,11 +1020,11 @@ elif mode == 'avatarchange':
         payload = {'avatar': encoded, 'email': email, 'password': "", 'username': username}
         src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
     layout = [
-            [sg.Text('Single Avatar',size=(20,1)), sg.Input(), sg.FileBrowse(button_color=('white', 'firebrick4'), file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
-            [sg.Text('Random Avatars (Folder)',size=(20,1)), sg.Input(), sg.FolderBrowse(button_color=('white', 'firebrick4'))],
-            [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1)), sg.Checkbox('Use Single'), sg.Checkbox('Use Random (Folder)')]
+            [sg.Text('Single Avatar',size=(20,1)), sg.Input(), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
+            [sg.Text('Random Avatars (Folder)',size=(20,1)), sg.Input(), sg.FolderBrowse(button_color=theme['button_colour'])],
+            [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1)), sg.Checkbox('Use Single'), sg.Checkbox('Use Random (Folder)')]
             ]
-    window = sg.Window('RTB | Avatar Changer', layout)
+    window = sg.Window('RTB | Avatar Changer', layout, keep_on_top=True)
     event, values = window.Read()
     window.Close()
     if event == "Start":
@@ -1009,9 +1103,9 @@ elif mode == "rolemention":
         layout = [
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
               ]
-        window = sg.Window('RTB | Role Mass Mentioner', layout)
+        window = sg.Window('RTB | Role Mass Mentioner', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1031,9 +1125,9 @@ elif mode == "cleanup":
         layout = [
               [sg.Text('Enter A Server ID to delete all the messages in all channels sent by the token.')],
               [sg.InputText()],
-              [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Server Cleanup', layout)
+        window = sg.Window('RTB | Server Cleanup', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1064,9 +1158,9 @@ elif mode == "hypesquad":
     if climode == 0:
         layout = [
                  [sg.Text('House To Change to', size=(15, 1)),sg.Combo(['Bravery','Brilliance','Balance','Random'],readonly=True, default_value='Bravery')],
-                 [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                 [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
                 ]
-        window = sg.Window('RTB | HypeSquad House Changer', layout)
+        window = sg.Window('RTB | HypeSquad House Changer', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1092,7 +1186,7 @@ elif mode == "reaction":
                 [sg.Text('Channel ID', size=(15, 1)), sg.InputText()],
                 [sg.Text('Message ID', size=(15, 1)), sg.InputText()],
                 [sg.Combo(['Add','Remove'],default_value='Add',readonly=True,size=(14,1)), sg.InputText(":thumbsup:",size=(10,1))],
-                [sg.RButton('Start',button_color=('white', 'firebrick4'),size=(10,1))]
+                [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
                 ]
         window = sg.Window('RTB | Message Reactor', layout)
         event, values = window.Read()

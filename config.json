@@ -1,0 +1,13 @@
+{
+    "skin": "DeadRed",
+    "threadcount": 800,
+    "verbose": 0,
+    "cliinputs": 0,
+    "noguimode": 0,
+    "disablecloudflarecheck": 1,
+    "disableupdatecheck": 1,
+    "combineuverifiedandverified": 0,
+    "tokenwarningthreshhold": 300,
+    "serversmasherinmainwindow": 0,
+    "ignoreffmpegmissing": 0
+}
