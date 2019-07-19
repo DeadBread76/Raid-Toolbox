@@ -2,7 +2,7 @@
 theme_name = "DeadRed"
 theme_author = "DeadBread"
 theme_version = "1.0"
-theme_bio = "red... everywhere" #a bio too long will get cut off, keep it simple
+theme_bio = "Default Theme"  # A long bio will get cut off, keep it simple.
 window_theme = "Black"
 button_colour = "black"
 attacks_theme = {"background": "Dark2", "button_colour": ('white', 'firebrick4')}
