@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "1.0.0"
+rtbversion = "1.0.1"
 smversion = "0.1.11r1"
 
 try:
@@ -56,7 +56,19 @@ except Exception:
     with open("requirements.txt","w+") as handle:
         handle.write(data)
     try:
-        from config import*
+        with open('config.json', 'r') as handle:
+            config = json.load(handle)
+            skin = config['skin']
+            threadcount = config['threadcount']
+            verbose = config['verbose']
+            cliinputs = config['cliinputs']
+            noguimode = config['noguimode']
+            disablecloudflarecheck = config['disablecloudflarecheck']
+            disableupdatecheck = config['disableupdatecheck']
+            combineuverifiedandverified = config['combineuverifiedandverified']
+            tokenwarningthreshhold = config['tokenwarningthreshhold']
+            serversmasherinmainwindow = config['serversmasherinmainwindow']
+            ignoreffmpegmissing = config['ignoreffmpegmissing']
     except Exception:
         print("Unable to start.")
         input()
@@ -330,7 +342,6 @@ else:
                         with open("update.zip", "wb") as handle:
                             handle.write(update.content)
                         try:
-                            shutil.copy("config.py", "config_old.py")
                             shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
                         except Exception:
                             pass
@@ -340,6 +351,14 @@ else:
                             os.remove("update.zip")
                             shutil.rmtree("Raid-Toolbox-master/")
                             print ("Update complete, exiting.")
+                            with open('config.json', 'r+') as handle:
+                                edit = json.load(handle)
+                                edit['skin'] = skin
+                                edit['threadcount'] = threadcount
+                                edit['cliinputs'] = cliinputs
+                                handle.seek(0)
+                                json.dump(edit, handle, indent=4)
+                                handle.truncate()
                         except Exception as e:
                             print("Error Updating, {}".format(e))
                         time.sleep(3)
@@ -367,6 +386,13 @@ else:
                         copy_tree("Raid-Toolbox-master/", ".")
                         os.remove("update.zip")
                         shutil.rmtree("Raid-Toolbox-master/")
+                        with open('config.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['skin'] = skin
+                            edit['threadcount'] = threadcount
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
                         print ("Update complete, exiting.")
 
             if not vercheck[1] == smversion:
@@ -738,9 +764,8 @@ def main(currentattacks):
                     layout = [
                              [sg.Image(data=rtb_banner)],
                              [sg.Text("Version {}".format(rtbversion))],
-                             [sg.Text("Copyright (c) 2019, DeadBread\n")],
-                             [sg.Text("Server Smasher Version: {}".format(smversion))],
-                             [sg.Text("Credits/Special Thanks:\n\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Testing\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\n")],
+                             [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
+                             [sg.Text("Credits/Special Thanks:\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Skins and Testing\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Skins and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\n")],
                              ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
@@ -753,12 +778,13 @@ def main(currentattacks):
                     skinlist = []
                     for file in os.listdir('themes'):
                         if file.endswith(".py"):
-                            skinlist.append(file.strip(".py"))
+                            skinlist.append(file.replace(".py",""))
                     layout = [
                              [sg.Text('Current Skin:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
+                             [sg.Text('Skin Bio:',size=(13,1)),sg.Text((theme_bio))],
                              [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(20,1)), sg.Button('Change',size=(18,1))]
                              ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Skins".format(rtbversion), size=(400,80)).Layout(layout)
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Skins".format(rtbversion), size=(400,100)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
