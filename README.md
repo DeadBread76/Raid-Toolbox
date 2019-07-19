@@ -16,7 +16,7 @@ And our [Discord server](https://discord.gg/e2dc9Pt)
 
 ### Screenshots:
 
-![Screenshot](https://i.imgur.com/hQAybRZ.png)
+![Screenshot](https://i.imgur.com/5oYdAkG.png)
 
 ![Joiner Menu](https://i.imgur.com/HxF60E8.png)
 
@@ -74,7 +74,7 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 ### `Configuration:`
 
-Menu Colour can be changed by changing the value in `config.py`, You can also change the python command there too. (Some Debug Options too.)
+Menu Colour can be changed by changing the value in the theme file currently being used, other options are in `config.json` such as 'noguimode' and 'disableupdatecheck'
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
