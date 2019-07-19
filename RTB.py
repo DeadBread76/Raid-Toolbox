@@ -756,9 +756,10 @@ def main(currentattacks):
                             skinlist.append(file.strip(".py"))
                     layout = [
                              [sg.Text('Current Skin:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
+                             [sg.Text('Skin Bio:',size=(13,1)),sg.Text((theme_bio))],
                              [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(20,1)), sg.Button('Change',size=(18,1))]
                              ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Skins".format(rtbversion), size=(400,80)).Layout(layout)
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Skins".format(rtbversion), size=(400,100)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
