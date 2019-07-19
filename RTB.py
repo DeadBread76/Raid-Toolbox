@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "1.0.1"
+rtbversion = "1.0.1r1"
 smversion = "0.1.11r1"
 
 try:
@@ -380,7 +380,6 @@ else:
                         update = run_update()
                         with open("update.zip", "wb") as handle:
                             handle.write(update.content)
-                        shutil.copy("config.py", "config_old.py")
                         shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
                         shutil.unpack_archive("update.zip")
                         copy_tree("Raid-Toolbox-master/", ".")
@@ -441,7 +440,7 @@ else:
             if cliinputs == 1:
                 print("Error Updating: {}".format(e))
             else:
-                sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error", button_type=0)
+                sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error")
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
     if verbose == 1:
@@ -1701,7 +1700,6 @@ def run_update():
     with open("update.zip", "wb") as handle:
         handle.write(update.content)
     try:
-        shutil.copy("config.py", "config_old.py")
         shutil.copy("RTBFiles/smconfig.py", "smconfig_old.py")
     except Exception:
         pass
@@ -1710,6 +1708,14 @@ def run_update():
         copy_tree("Raid-Toolbox-master/", ".")
         os.remove("update.zip")
         shutil.rmtree("Raid-Toolbox-master/")
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['skin'] = skin
+            edit['threadcount'] = threadcount
+            edit['cliinputs'] = cliinputs
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
     except Exception as e:
         print("Error Updating, {}".format(e))
 
