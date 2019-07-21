@@ -1,4 +1,4 @@
-# Skin info and colours
+# Theme info and colours
 theme_name = ""
 theme_author = ""
 theme_version = ""
@@ -10,8 +10,13 @@ banner_size = (600, 100)
 banner_padding = ((45, 10), 0)
 
 # Command Line colours
-menu1 = "red"
-menu2 = "yellow"
+menu1 = 'red'
+menu2 = 'yellow'
+
+# Audio (Base64)
+menu_mp3_filename = ""
+
+menu_mp3 = b''
 
 # Button/Banner Images (Base64)
 rtb_icon = b''
@@ -59,5 +64,3 @@ button_server_cleaner = b''
 button_hypesquad_changer = b''
 
 button_reaction_adder = b''
-
-button_plugins = b''

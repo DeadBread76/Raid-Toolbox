@@ -177,7 +177,8 @@ elif mode == 'groupleaver':
         executor.submit(grleave,token,ID)
 
 elif mode == "Checker":
-    validtokens = []
+    verifiedtokens = []
+    unverifiedtokens = []
     invalidtokens = []
     if len(tokenlist) > 100:
         choice = sg.PopupYesNo("You Have Over 100 tokens. I'd Recommend using Checker V2 for this many\nas you could get CloudFlare banned.\nContinue?")
@@ -190,44 +191,59 @@ elif mode == "Checker":
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         src = requests.post('https://canary.discordapp.com/api/v6/invite/{}'.format(random.randint(1,9999999)), headers=headers)
         if "You need to verify your account in order to perform this action." in str(src.content):
-            validtokens.append(token)
+            unverifiedtokens.append(token)
         elif "401: Unauthorized" in str(src.content):
             invalidtokens.append(token)
         else:
-            if token in validtokens:
+            if token in verifiedtokens:
                 pass
             else:
-                validtokens.append(token)
+                verifiedtokens.append(token)
     for token in tokenlist:
         executor.submit(check, token)
     executor.shutdown(wait=True)
-    validlist = ''
-    invalidlist = ''
-    for token in validtokens:
-        validlist += token + "\n"
+    vlist = ''
+    ulist = ''
+    ilist = ''
+    for token in verifiedtokens:
+        vlist += token + "\n"
+    for token in unverifiedtokens:
+        ulist += token + "\n"
     for token in invalidtokens:
-        invalidlist += token + "\n"
+        ilist += token + "\n"
     layout = [
-             [sg.Text('Valid Tokens:',size=(59,1)), sg.Text('Invalid Tokens:')],
-             [sg.Multiline(validlist, size=(65,20)), sg.Multiline(invalidlist, size=(65,20))],
-             [sg.RButton('Save',button_color=theme['button_colour'],size=(10,1))]
+             [sg.Text('Verified Tokens ({}):'.format(len(verifiedtokens)),size=(59,1)), sg.Text('Unverified Tokens ({}):'.format(len(unverifiedtokens)))],
+             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ilist, size=(66,20))],
+             [sg.RButton('Save Verified',button_color=theme['button_colour'],size=(10,1)), sg.RButton('Save Both',button_color=theme['button_colour'],size=(10,1))]
              ]
-    window = sg.Window('RTB | Checker', layout, keep_on_top=True)
+    window = sg.Window('RTB | Checker | [{} Verified] [{} Unverified] [{} Invalid]'.format(len(verifiedtokens),len(unverifiedtokens),len(invalidtokens)), layout, keep_on_top=True)
     event, values = window.Read()
-    if event == "Save":
-        if os.path.isdir("tokendb"):
+    if event == "Save Verified":
+        if os.path.isdir("tokenbin"):
             pass
         else:
-            os.mkdir("tokendb")
-        shutil.copyfile("tokens.txt", "tokendb/tokens{}.txt".format(random.randint(1,999)))
+            os.mkdir("tokenbin")
+        shutil.copyfile("tokens.txt", "tokenbin/oldtokens{}.txt".format(random.randint(1,999)))
         time.sleep(0.1)
         with open ("tokens.txt","w+") as handle:
-            handle.write(validlist)
-        sg.PopupOK('Saved', title="RTB | Saved tokens")
+            handle.write(vlist)
+            sg.PopupOK('Saved', title="RTB | Saved tokens")
+    elif event == "Save Both":
+        if os.path.isdir("tokenbin"):
+            pass
+        else:
+            os.mkdir("tokenbin")
+        shutil.copyfile("tokens.txt", "tokenbin/oldtokens{}.txt".format(random.randint(1,999)))
+        time.sleep(0.1)
+        with open ("tokens.txt","w+") as handle:
+            handle.write(vlist)
+            handle.write(ulist)
+            sg.PopupOK('Saved', title="RTB | Saved tokens")
     window.Close()
 
 elif mode == "Checker V2":
-    validtokens = []
+    verifiedtokens = []
+    unverifiedtokens = []
     invalidtokens = []
     sg.PopupTimed("Checking Tokens...", title="DeadBread's Raid Toolbox | Checker V2", non_blocking=True)
     def checkv2(token):
@@ -238,35 +254,49 @@ elif mode == "Checker V2":
         else:
             response = json.loads(src.content.decode())
             if response["verified"]:
-                validtokens.append(token)
+                verifiedtokens.append(token)
             else:
-                validtokens.append(token)
+                unverifiedtokens.append(token)
     for token in tokenlist:
         executor.submit(checkv2, token)
     executor.shutdown(wait=True)
-    validlist = ''
-    invalidlist = ''
-    for token in validtokens:
-        validlist += token + "\n"
+    vlist = ''
+    ulist = ''
+    ilist = ''
+    for token in verifiedtokens:
+        vlist += token + "\n"
+    for token in unverifiedtokens:
+        ulist += token + "\n"
     for token in invalidtokens:
-        invalidlist += token + "\n"
+        ilist += token + "\n"
     layout = [
-             [sg.Text('Valid Tokens:',size=(59,1)), sg.Text('Invalid Tokens:')],
-             [sg.Multiline(validlist, size=(65,20)), sg.Multiline(invalidlist, size=(65,20))],
-             [sg.RButton('Save',button_color=theme['button_colour'],size=(10,1))]
+             [sg.Text('Verified Tokens ({}):'.format(len(verifiedtokens)),size=(59,1)), sg.Text('Unverified Tokens ({}):'.format(len(unverifiedtokens)))],
+             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ilist, size=(66,20))],
+             [sg.RButton('Save Verified',button_color=theme['button_colour'],size=(10,1)), sg.RButton('Save Both',button_color=theme['button_colour'],size=(10,1))]
              ]
-    window = sg.Window('RTB | Checker V2', layout, keep_on_top=True)
+    window = sg.Window('RTB | Checker V2 | [{} Verified] [{} Unverified] [{} Invalid]'.format(len(verifiedtokens),len(unverifiedtokens),len(invalidtokens)), layout, keep_on_top=True)
     event, values = window.Read()
-    if event == "Save":
-        if os.path.isdir("tokendb"):
+    if event == "Save Verified":
+        if os.path.isdir("tokenbin"):
             pass
         else:
-            os.mkdir("tokendb")
-        shutil.copyfile("tokens.txt", "tokendb/tokens{}.txt".format(random.randint(1,999)))
+            os.mkdir("tokenbin")
+        shutil.copyfile("tokens.txt", "tokenbin/oldtokens{}.txt".format(random.randint(1,999)))
         time.sleep(0.1)
         with open ("tokens.txt","w+") as handle:
-            handle.write(validlist)
-        sg.PopupOK('Saved', title="RTB | Saved tokens")
+            handle.write(vlist)
+            sg.PopupOK('Saved', title="RTB | Saved tokens")
+    elif event == "Save Both":
+        if os.path.isdir("tokenbin"):
+            pass
+        else:
+            os.mkdir("tokenbin")
+        shutil.copyfile("tokens.txt", "tokenbin/oldtokens{}.txt".format(random.randint(1,999)))
+        time.sleep(0.1)
+        with open ("tokens.txt","w+") as handle:
+            handle.write(vlist)
+            handle.write(ulist)
+            sg.PopupOK('Saved', title="RTB | Saved tokens")
     window.Close()
 
 

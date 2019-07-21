@@ -1,4 +1,4 @@
-# Skin info and colours
+# Theme info and colours
 theme_name = "DeadRed"
 theme_author = "DeadBread"
 theme_version = "1.0"

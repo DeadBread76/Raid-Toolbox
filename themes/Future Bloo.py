@@ -1,4 +1,4 @@
-# Skin info and colours
+# Theme info and colours
 theme_name = "Future Bloo"
 theme_author = "Lucas."
 theme_version = "1.0"
