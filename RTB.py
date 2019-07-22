@@ -17,9 +17,10 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "1.0.1r1"
+rtbversion = "1.0.2b"
 smversion = "0.1.11r1"
 
+# Load Config
 try:
     import json
     with open('config.json', 'r') as handle:
@@ -95,25 +96,42 @@ except Exception:
             print("There was an error with installing the package {}, Refer to Install.log".format(package))
         elif p == 0:
             print("Installed {} Successfully.".format(package))
+
+# Load System Modules
+
 import os, sys, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib
 from distutils.dir_util import copy_tree
 if sys.platform.startswith('win32'):
     from subprocess import CREATE_NEW_CONSOLE
+if sys.platform.startswith('win32'):
+    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+else:
+    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+currentattacks = {}  # Dict for attacks
+t0 = time.time()  # Startup Time Counter thanks to https://github.com/Mattlau04
 
+# Load Skin
 mdl = importlib.import_module("themes.{}".format(skin))
 if "__all__" in mdl.__dict__:
     names = mdl.__dict__["__all__"]
 else:
     names = [x for x in mdl.__dict__ if not x.startswith("_")]
 globals().update({k: getattr(mdl, k) for k in names})
+colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
+if menu1.lower() == 'random':
+    menu1 = random.choice(colours)
+if menu2.lower() == 'random':
+    menu2 = random.choice(colours)
 
+
+# Clear() Function setting
 if sys.platform.startswith('win32'):
-    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox is loading...")
+    clear = lambda: os.system('cls')
 else:
-    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading...\x07")
+    clear = lambda: os.system('clear')
 
-t0 = time.time() # https://github.com/Mattlau04
 
+# Termux Load
 if "com.termux" in sys.executable:
     print("Termux Detected.")
     no_tk_mode = 1
@@ -156,6 +174,8 @@ if "com.termux" in sys.executable:
         else:
             sys.exit()
 
+
+# Verbose Load
 elif verbose == 1:
     print ("Loading modules...")
     if sys.platform.startswith('win32'):
@@ -230,6 +250,7 @@ elif verbose == 1:
     print("Finished Loading modules")
 
 
+# Normal Load
 else:
     try:
         import discord
@@ -280,35 +301,28 @@ else:
         else:
             sys.exit()
 
+# Ready Skin
+init()
+if not command_line_mode == 1:
+    if use_preset_theme:
+        sg.ChangeLookAndFeel(preset_window_theme)
+    elif use_preset_theme is False:
+        sg.SetOptions(background_color=background_color,
+                     text_element_background_color=text_element_background_color,
+                     element_background_color=element_background_color,
+                     scrollbar_color=scrollbar_color,
+                     input_elements_background_color=input_elements_background_color,
+                     button_color=button_color,
+                     text_color=text_color)
+
+
+# Enable Command line mode for no_tk_mode
 if no_tk_mode == 1:
     serversmasherinmainwindow = 1
     command_line_mode = 1
 
-init()
-colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
-if menu1.lower() == 'random':
-    menu1 = random.choice(colours)
-if menu2.lower() == 'random':
-    menu2 = random.choice(colours)
-if sys.platform.startswith('win32'):
-    clear = lambda: os.system('cls')
-else:
-    clear = lambda: os.system('clear')
-if not command_line_mode == 1:
-    sg.ChangeLookAndFeel(window_theme)
-if not os.path.isfile("RTBFiles/licence"):
-    lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
-    if command_line_mode == 1:
-        print("Raid-Toolbox\n"+lic)
-        time.sleep(10)
-        input("Press Enter to continue.")
-    else:
-        sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
-    try:
-        with open("RTBFiles/licence","w+",errors='ignore') as handle:
-            handle.write(lic)
-    except Exception:
-        pass
+
+# Check For Updates
 if disableupdatecheck == 1:
     pass
 else:
@@ -438,10 +452,14 @@ else:
                 print("Error Updating: {}".format(e))
             else:
                 sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error")
+
+
+# File Checks
 if os.path.isfile("pluginpids"):
     os.remove("pluginpids")
     if verbose == 1:
         print("Removed pluginpids")
+
 if os.path.exists('tokens.txt'):
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
@@ -482,6 +500,24 @@ else:
                     copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
                     time.sleep(0.5)
                     shutil.rmtree("ffmpeg-4.1.3-win64-static")
+
+# Display Licence
+if not os.path.isfile("RTBFiles/licence"):
+    lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
+    if command_line_mode == 1:
+        print("Raid-Toolbox\n"+lic)
+        time.sleep(10)
+        input("Press Enter to continue.")
+    else:
+        sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
+    try:
+        with open("RTBFiles/licence","w+",errors='ignore') as handle:
+            handle.write(lic)
+    except Exception:
+        pass
+
+
+# CloudFlare Checks
 if disablecloudflarecheck == 1:
     pass
 else:
@@ -500,30 +536,30 @@ else:
                 input(colored("Press enter to continue.",'red'))
             else:
                 sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
-t1 = time.time()
 
+
+# Check if audio is present in skin
 if command_line_mode == 0:
     try:
         menu_mp3
     except NameError:
         pass
     else:
-        if not os.path.exists("themes/{}".format(menu_mp3_filename)):
-            mp3_data = base64.b64decode(menu_mp3)
-            with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
-                handle.write(mp3_data)
-            subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid())])
+        if menu_mp3_filename == "":
+            pass
         else:
-            subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid())])
+            # Start Audio
+            if not os.path.exists("themes/{}".format(menu_mp3_filename)):
+                mp3_data = base64.b64decode(menu_mp3)
+                with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
+                    handle.write(mp3_data)
+                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                del menu_mp3  # Remove MP3 from memory to save resources
+            else:
+                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                del menu_mp3  # Remove MP3 from memory to save resources
 
-if verbose == 1:
-    print("Startup time: {}".format(t1-t0))
-    with open("load.log","a",errors='ignore') as handle:
-        handle.write("================================\nStartup Time: {}\n================================\n\n\n".format(t1-t0))
-    print("Starting...")
-
-currentattacks = {}
-
+# Title Update Function (Command line mode on Windows)
 def titleupdate():
     global currentattacks
     while True:
@@ -547,6 +583,16 @@ def titleupdate():
             else:
                 ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} | ({} Attacks Running.)".format(rtbversion,len(currentattacks)))
         time.sleep(2)
+
+
+# Finished Loading
+t1 = time.time()
+if verbose == 1:
+    print("Startup time: {}".format(t1-t0))
+    with open("load.log","a",errors='ignore') as handle:
+        handle.write("================================\nStartup Time: {}\n================================\n\n\n".format(t1-t0))
+    print("Starting...")
+
 
 def main(currentattacks):
     global skin
@@ -615,27 +661,11 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        pluginlist = {}
-        pluginfolder = []
-        pluginfile = []
-        for root, dirs, files in os.walk("plugins/", topdown=False):
-            for folder in dirs:
-                try:
-                    plugdir = os.listdir('plugins/{}/'.format(folder))
-                except Exception:
-                    continue
-                for file in plugdir:
-                    if str(file).startswith("main_"):
-                        pluginlist[folder] = file
-        for plugin in pluginlist:
-            pluginfolder.append(plugin)
-        for plugin in pluginlist.items():
-            pluginfile.append(plugin[1])
-        menu_def = [['RTB', ['Running Attacks', 'Info', 'Diagnostics', 'Themes']],
+        menu_def = [['RTB', ['Running Attacks', 'Themes', 'About', ['Info', 'Diagnostics']]],
                     ['Tokens', ['View/Add Tokens']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
-                    ['Plugins', ['Support Coming soon.']] #['Plugins', ['Download Plugins From Repo', 'Kill All Plugins', 'Load Plugin...', pluginfolder]]
+                    ['Plugins', ['Plugin Support Coming soon. (Use Command Line to access Legacy Plugins)']]
                     ]
         layout =[
                 [sg.Menu(menu_def)],
@@ -651,7 +681,7 @@ def main(currentattacks):
         tokenlist = open("tokens.txt").read().splitlines()
         window = sg.Window("DeadBread's Raid ToolBox v{} | ({} Tokens available.)".format(rtbversion,len(tokenlist)), icon=rtb_icon).Layout(layout)
         while True:
-            event, values = window.Read()
+            event, values = window.Read(timeout=0)
             if event is None:
                 sys.exit()
             elif event == "Running Attacks":
@@ -729,7 +759,7 @@ def main(currentattacks):
                     sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are not CloudFlare Banned.\nCongrats.", title="Results")
                 now = datetime.datetime.now()
                 filename = str(now.strftime("%H%M%S%d%m%Y"))
-                with open ("Diagnostics" +filename+".txt", 'w+') as handle:
+                with open ("Diagnostics" +filename+".txt", 'w+', errors='ignore') as handle:
                     handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
                     handle.write("=====================================================\n")
                     handle.write("RTB VERSION: " + rtbversion + "\n")
@@ -759,7 +789,6 @@ def main(currentattacks):
                         handle.write("Processor: " + (str(e))+"\n")
                     handle.write("---------------\n")
                     handle.write("RTB Dump:\n\n")
-                    plugindir = os.listdir('plugins/')
                     handle.write(str(sys.modules.keys())+"\n")
                     handle.write(str(dir())+"\n")
                     handle.write(str(globals())+"\n")
@@ -812,7 +841,16 @@ def main(currentattacks):
                         else:
                             names = [x for x in mdl.__dict__ if not x.startswith("_")]
                         globals().update({k: getattr(mdl, k) for k in names})
-                        sg.ChangeLookAndFeel(window_theme)
+                        if use_preset_theme:
+                            sg.ChangeLookAndFeel(preset_window_theme)
+                        elif use_preset_theme is False:
+                            sg.SetOptions(background_color=background_color,
+                                         text_element_background_color=text_element_background_color,
+                                         element_background_color=element_background_color,
+                                         scrollbar_color=scrollbar_color,
+                                         input_elements_background_color=input_elements_background_color,
+                                         button_color=button_color,
+                                         text_color=text_color)
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['skin'] = new_skin
@@ -824,13 +862,19 @@ def main(currentattacks):
                         except NameError:
                             pass
                         else:
-                            if not os.path.exists("themes/{}".format(menu_mp3_filename)):
-                                mp3_data = base64.b64decode(menu_mp3)
-                                with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
-                                    handle.write(mp3_data)
-                                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid())])
+                            if menu_mp3_filename == "":
+                                pass
                             else:
-                                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid())])
+                                # Start Audio
+                                if not os.path.exists("themes/{}".format(menu_mp3_filename)):
+                                    mp3_data = base64.b64decode(menu_mp3)
+                                    with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
+                                        handle.write(mp3_data)
+                                    subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                                    del menu_mp3  # Remove MP3 from memory to save resources
+                                else:
+                                    subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                                    del menu_mp3  # Remove MP3 from memory to save resources
             elif event == "View/Add Tokens":
                 while True:
                     window.Close()
@@ -1584,16 +1628,16 @@ def customplugins(currentattacks):
     pluginfile = []
     pluginfolder = []
     if sys.platform.startswith('win32'):
-        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins")
+        ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Custom Plugins (Legacy)")
     else:
-        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins\x07")
+        sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Custom Plugins (Legacy)\x07")
     pluginno = -1
     print (colored("Installed Plugins:",menu1))
     print (colored("----------------------",menu1))
-    for root, dirs, files in os.walk("plugins/", topdown=False):
+    for root, dirs, files in os.walk("legacyplugins/", topdown=False):
         for folder in dirs:
             try:
-                plugdir = os.listdir('plugins/{}/'.format(folder))
+                plugdir = os.listdir('legacyplugins/{}/'.format(folder))
             except Exception:
                 continue
             for file in plugdir:
@@ -1622,20 +1666,20 @@ def customplugins(currentattacks):
     if plug == 'd':
         clear()
         down = requests.get("https://github.com/DeadBread76/Raid-Toolbox-Plugins/archive/master.zip")
-        with open("plugins/package.zip", "wb") as handle:
+        with open("legacyplugins/package.zip", "wb") as handle:
             handle.write(down.content)
-        shutil.unpack_archive("plugins/package.zip","plugins/")
-        os.remove("plugins/package.zip")
-        for root, dirs, files in os.walk("plugins/Raid-Toolbox-Plugins-master/", topdown=False):
+        shutil.unpack_archive("legacyplugins/package.zip","legacyplugins/")
+        os.remove("legacyplugins/package.zip")
+        for root, dirs, files in os.walk("legacyplugins/Raid-Toolbox-Plugins-master/", topdown=False):
             for folder in dirs:
-                copy_tree("plugins/Raid-Toolbox-Plugins-master/{}/".format(folder), "plugins/{}/".format(folder+"/"))
-        shutil.rmtree("plugins/Raid-Toolbox-Plugins-master/")
+                copy_tree("legacyplugins/Raid-Toolbox-Plugins-master/{}/".format(folder), "legacyplugins/{}/".format(folder+"/"))
+        shutil.rmtree("legacyplugins/Raid-Toolbox-Plugins-master/")
         print("Downloaded plugins from Repo.")
         input("Press enter to reload plugins")
         customplugins(currentattacks)
     plugchoice = "{}/{}".format(pluginfolder[int(plug)],pluginfile[int(plug)])
     clear()
-    p = subprocess.Popen([sys.executable,'plugins/'+plugchoice,sys.executable,menu1])
+    p = subprocess.Popen([sys.executable,'legacyplugins/'+plugchoice,sys.executable,menu1])
     p.wait()
     customplugins(currentattacks)
 

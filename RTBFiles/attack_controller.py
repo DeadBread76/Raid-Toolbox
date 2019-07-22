@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Raid ToolBox Attack Controller
 # Author: DeadBread76 - https://github.com/DeadBread76/
-# July 3rd, 2019 - July , 2019
+# July 3rd, 2019
 #
 # Copyright (c) 2019, DeadBread
 #

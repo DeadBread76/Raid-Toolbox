@@ -28,15 +28,19 @@ def config_check():
 
 mode = sys.argv[1]
 if mode == "Theme":
-    mp3 = sys.argv[2]
     my_theme = sys.argv[3]
     parentpid = sys.argv[4]
+    loopsong = sys.argv[5]
     t = threading.Thread(name='config_check', target=config_check)
     p = threading.Thread(name='parent_check', target=parent_check)
     p.start()
     t.start()
-    while True:
+    if loopsong == "True":
+        while True:
+            playsound(sys.argv[2])
+    else:
         playsound(sys.argv[2])
+        os.kill(os.getpid(), 15)
 else:
     parentpid = sys.argv[3]
     t = threading.Thread(name='parent_check', target=parent_check)

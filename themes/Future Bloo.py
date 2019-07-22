@@ -1,13 +1,29 @@
-# Theme info and colours
+# Theme info
 theme_name = "Future Bloo"
 theme_author = "Lucas."
 theme_version = "1.0"
 theme_bio = "Bloo"  # A long bio will get cut off, keep it simple.
-window_theme = "Black"
+
+# Main Menu options
 button_colour = "black"
-attacks_theme = {"background": "Black", "button_colour": ('black', 'cyan')}
 banner_size = (600, 100)
 banner_padding = ((75, 15), 0)
+
+# Preset Themes can be found here: https://gist.githubusercontent.com/DeadBread76/7c70629c31fd16e13f09910b260a9070/raw/6cc8d27257a3ff2104a40b5ba6e2666a9f339733/PySimpleGUI%2520Themes
+use_preset_theme = False
+preset_window_theme = "Black"
+
+# Custom Theme colours (Non preset)
+background_color = '#000000'
+text_element_background_color = '#000000'
+element_background_color = '#000000'
+scrollbar_color = None
+input_elements_background_color = '#636363'
+text_color = "white"
+button_color = ('black', 'cyan')
+
+# For the attack windows (Joiner, Leaver, etc)
+attacks_theme = {"background": "Black", "button_colour": ('black', 'cyan')}
 
 # Command Line colours
 menu1 = "cyan"

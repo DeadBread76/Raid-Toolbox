@@ -1,13 +1,29 @@
-# Theme info and colours
+# Theme info
 theme_name = "DeadRed"
 theme_author = "DeadBread"
 theme_version = "1.0"
 theme_bio = "Default Theme"  # A long bio will get cut off, keep it simple.
-window_theme = "Black"
+
+# Main Menu options
 button_colour = "black"
-attacks_theme = {"background": "Dark2", "button_colour": ('white', 'firebrick4')}
 banner_size = (600, 100)
 banner_padding = ((45, 10), 0)
+
+# Preset Themes can be found here: https://gist.githubusercontent.com/DeadBread76/7c70629c31fd16e13f09910b260a9070/raw/6cc8d27257a3ff2104a40b5ba6e2666a9f339733/PySimpleGUI%2520Themes
+use_preset_theme = False
+preset_window_theme = "Black"
+
+# Custom Theme colours (Non preset)
+background_color = '#000000'
+text_element_background_color = '#000000'
+element_background_color = '#000000'
+scrollbar_color = None
+input_elements_background_color = '#636363'
+text_color = "white"
+button_color = ('white', '#d70000')
+
+# For the attack windows (Joiner, Leaver, etc)
+attacks_theme = {"background": "Dark2", "button_colour": ('white', 'firebrick4')}
 
 # Command Line colours
 menu1 = "red"
