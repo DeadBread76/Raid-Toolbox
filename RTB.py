@@ -321,6 +321,14 @@ if no_tk_mode == 1:
     serversmasherinmainwindow = 1
     command_line_mode = 1
 
+# File Downloader (Updates, Etc.)
+def download_file(url):
+    local_filename = url.split('/')[-1]
+    with requests.get(url, stream=True) as r:
+        with open(local_filename, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+
+    return local_filename
 
 # Check For Updates
 if disableupdatecheck == 1:
@@ -376,24 +384,11 @@ else:
                 else:
                     verchoice = sg.PopupYesNo("There is an update for RTB, Download update?")
                     if verchoice == "Yes":
-                        clear()
-                        @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menu1))
-                        def run_update():
-                            if sys.platform.startswith('win32'):
-                                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                            else:
-                                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-                            update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                            clear()
-                            print(colored("Update has been downloaded, Installing...",menu1))
-                            return update
-                        update = run_update()
-                        with open("update.zip", "wb") as handle:
-                            handle.write(update.content)
+                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
                         shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        shutil.unpack_archive("update.zip")
+                        shutil.unpack_archive(update)
                         copy_tree("Raid-Toolbox-master/", ".")
-                        os.remove("update.zip")
+                        os.remove(update)
                         shutil.rmtree("Raid-Toolbox-master/")
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
@@ -434,17 +429,10 @@ else:
                     if verchoice == "Yes":
                         clear()
                         print(colored('Downloading update for Server Smasher, Please Wait...',menu1))
-                        serversmasherupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/serversmasher.py')
-                        configupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/smconfig.py')
-                        mainpatch = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTB.py")
-                        print(colored("Update has been downloaded, Installing...",menu1))
                         shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        with open("RTBFiles/serversmasher.py", "wb") as handle:
-                            handle.write(serversmasherupdate.content)
-                        with open("RTBFiles/smconfig.py", "wb") as handle:
-                            handle.write(configupdate.content)
-                        with open("RTB.py", "wb") as handle:
-                            handle.write(mainpatch.content)
+                        download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/serversmasher.py')
+                        download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/smconfig.py')
+                        download_file("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTB.py")
                         sg.Popup("Update Complete, Press ok to close.")
                         os.kill(os.getpid(), 15)
         except Exception as e:
@@ -473,8 +461,11 @@ else:
 if not os.path.exists("RTBFiles/"):
     clear()
     singlefile = True
-    print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
-    input(colored("Press enter to continue.",menu1))
+    if command_line_mode == 1:
+        print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
+        input(colored("Press enter to continue.",menu1))
+    else:
+        sg.PopupOK("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.", title="SINGLE FILE MODE")
 else:
     singlefile = False
     if sys.platform.startswith('win32'):
@@ -482,24 +473,36 @@ else:
             if not os.path.isfile("ffmpeg.exe"):
                 if verbose == 1:
                     print("FFmpeg is missing")
-                print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menu1))
-                fmpg = input("(Y/N):")
-                if fmpg.lower() == "y":
-                    clear()
-                    @animation.wait(colored('Downloading FFMpeg, Please Wait ',menu1))
-                    def ffmpegdownload():
-                        data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
-                        return data
-                    data = ffmpegdownload()
-                    print(colored("Download Complete.","green"))
-                    with open("ffmpeg.zip", "wb") as handle:
-                        handle.write(data.content)
-                    shutil.unpack_archive("ffmpeg.zip")
-                    time.sleep(0.5)
-                    os.remove("ffmpeg.zip")
-                    copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
-                    time.sleep(0.5)
-                    shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                if command_line_mode == 1:
+                    print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menu1))
+                    fmpg = input("(Y/N):")
+                    if fmpg.lower() == "y":
+                        clear()
+                        @animation.wait(colored('Downloading FFMpeg, Please Wait ',menu1))
+                        def ffmpegdownload():
+                            data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                            return data
+                        data = ffmpegdownload()
+                        print(colored("Download Complete.","green"))
+                        with open("ffmpeg.zip", "wb") as handle:
+                            handle.write(data.content)
+                        shutil.unpack_archive("ffmpeg.zip")
+                        time.sleep(0.5)
+                        os.remove("ffmpeg.zip")
+                        copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                        time.sleep(0.5)
+                        shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                else:
+                    fmpg = sg.PopupYesNo("Download FFMpeg?\n(Needed For Voice Chat Spammer)")
+                    if fmpg == "Yes":
+                        sg.PopupNonBlocking('Downloading FFMpeg, Please Wait.', title="Downloading")
+                        ff = download_file("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                        shutil.unpack_archive(ff)
+                        time.sleep(0.5)
+                        os.remove(ff)
+                        copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                        time.sleep(0.5)
+                        shutil.rmtree("ffmpeg-4.1.3-win64-static")
 
 # Display Licence
 if not os.path.isfile("RTBFiles/licence"):
