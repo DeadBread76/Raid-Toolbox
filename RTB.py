@@ -327,7 +327,6 @@ def download_file(url):
     with requests.get(url, stream=True) as r:
         with open(local_filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
-
     return local_filename
 
 # Check For Updates
@@ -382,7 +381,7 @@ else:
                         time.sleep(3)
                         os.kill(os.getpid(), 15)
                 else:
-                    verchoice = sg.PopupYesNo("There is an update for RTB, Download update?")
+                    verchoice = sg.PopupYesNo("There is an update for RTB, Download update?", title="Raid ToolBox Update Available")
                     if verchoice == "Yes":
                         update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
                         shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
@@ -425,7 +424,7 @@ else:
                         input("Press enter to exit.")
                         os.kill(os.getpid(), 15)
                 else:
-                    verchoice = sg.PopupYesNo("There is an update for Server Smasher, Download update?")
+                    verchoice = sg.PopupYesNo("There is an update for Server Smasher, Download update?",title=" Server Smasher Update Available")
                     if verchoice == "Yes":
                         clear()
                         print(colored('Downloading update for Server Smasher, Please Wait...',menu1))
@@ -523,7 +522,7 @@ if not os.path.isfile("RTBFiles/licence"):
 # CloudFlare Checks
 if disablecloudflarecheck == 1:
     pass
-else:
+elif not "b" in rtbversion:
     if verbose == 1:
         print("Checking CloudFlare Status")
     try:
@@ -664,7 +663,7 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Running Attacks', 'Themes', 'About', ['Info', 'Diagnostics']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes', 'About', ['Info', 'Diagnostics']]],
                     ['Tokens', ['View/Add Tokens']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -687,12 +686,9 @@ def main(currentattacks):
             event, values = window.Read(timeout=0)
             if event is None:
                 sys.exit()
-            elif event == "Running Attacks":
+            elif event == "Attack Manager":
                 while True:
                     window.Close()
-                    acount = -1
-                    attackbox = ''
-                    names = []
                     for attack in list(currentattacks):
                         if psutil.pid_exists(currentattacks[attack]):
                             if not sys.platform.startswith('win32'):
@@ -700,36 +696,31 @@ def main(currentattacks):
                                 if proc.status() == psutil.STATUS_ZOMBIE:
                                     currentattacks.pop(attack)
                                     continue
-                            acount += 1
-                            attackbox += ("{}. {}\n".format(acount,attack))
                         else:
                             currentattacks.pop(attack)
+                    layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))],]
                     for attack in list(currentattacks.keys()):
-                        names.append(attack)
-                    if currentattacks == {}:
-                        attackbox += "None\n"
-                    layout = [
-                             [sg.Text("Running Attacks: {}".format(len(currentattacks)))],
-                             [sg.Multiline(attackbox,size=(50,20))],
-                             [sg.Input(focus=True), sg.Button('Kill',size=(10,1)), sg.Button('Kill All',size=(10,1))]
-                             ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Running Attacks".format(rtbversion)).Layout(layout)
+                        layout.append([sg.Text(attack,size=(50,1)),sg.Button('Stop', size=(10,1), key=attack)])
+                    if not currentattacks == {}:
+                        if not len(currentattacks) == 1:
+                            layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
+                    else:
+                        layout.append([sg.Button("No Attacks Running",size=(20,1))])
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
                     event, values = window.Read()
-                    attacks = values[1]
                     if event is None:
                         window.Close()
                         main(currentattacks)
-                    elif event == "Kill All":
+                    elif event == "Stop All":
                         for attack in currentattacks:
                             try:
-                                print(int(currentattacks[attack]))
                                 os.kill(int(currentattacks[attack]), 15)
                             except Exception:
                                 pass
                         currentattacks = {}
-                    elif event == "Kill":
+                    elif event in currentattacks:
                         try:
-                            os.kill(int(currentattacks[names[int(attacks)]]), 15)
+                            os.kill(int(currentattacks[event]), 15)
                         except Exception as e:
                             print(e)
             elif event == "Diagnostics":
