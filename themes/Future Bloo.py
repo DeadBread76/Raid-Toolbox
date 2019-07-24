@@ -1,7 +1,7 @@
 # Theme info
 theme_name = "Future Bloo"
 theme_author = "Lucas."
-theme_version = "1.0"
+theme_version = "1.1"
 theme_bio = "Bloo"  # A long bio will get cut off, keep it simple.
 
 # Main Menu options
@@ -19,11 +19,23 @@ text_element_background_color = '#000000'
 element_background_color = '#000000'
 scrollbar_color = None
 input_elements_background_color = '#636363'
+input_text_color = 'white'
 text_color = "white"
 button_color = ('black', 'cyan')
 
 # For the attack windows (Joiner, Leaver, etc)
-attacks_theme = {"background": "Black", "button_colour": ('black', 'cyan')}
+attacks_theme = {"preset_theme": "Dark2",
+                 "button_colour": ('black', 'cyan'),
+                 "use_custom_theme": True,  # Change to True For More personalization.
+                 "background_color": '#000000',
+                 "text_element_background_color": '#000000',
+                 "element_background_color": '#000000',
+                 "scrollbar_color": 'cyan',
+                 "input_elements_background_color": '#11515c',
+                 "input_text_color": 'white',
+                 "text_color": "cyan",
+                 "slider_text_color": "cyan"
+                 }
 
 # Command Line colours
 menu1 = "cyan"

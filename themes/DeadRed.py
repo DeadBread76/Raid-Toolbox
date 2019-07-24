@@ -1,7 +1,7 @@
 # Theme info
 theme_name = "DeadRed"
 theme_author = "DeadBread"
-theme_version = "1.0"
+theme_version = "1.2"
 theme_bio = "Default Theme"  # A long bio will get cut off, keep it simple.
 
 # Main Menu options
@@ -19,11 +19,23 @@ text_element_background_color = '#000000'
 element_background_color = '#000000'
 scrollbar_color = None
 input_elements_background_color = '#636363'
+input_text_color = 'white'
 text_color = "white"
 button_color = ('white', '#d70000')
 
 # For the attack windows (Joiner, Leaver, etc)
-attacks_theme = {"background": "Dark2", "button_colour": ('white', 'firebrick4')}
+attacks_theme = {"preset_theme": "Dark2",
+                 "button_colour": ('white', '#d70000'),
+                 "use_custom_theme": True,  # Change to True For More personalization.
+                 "background_color": '#000000',
+                 "text_element_background_color": '#000000',
+                 "element_background_color": '#000000',
+                 "scrollbar_color": '#000000',
+                 "input_elements_background_color": '#636363',
+                 "input_text_color": 'white',
+                 "text_color": "white",
+                 "slider_text_color": "white"
+                 }
 
 # Command Line colours
 menu1 = "red"

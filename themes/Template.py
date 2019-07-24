@@ -19,17 +19,29 @@ text_element_background_color = '#000000'
 element_background_color = '#000000'
 scrollbar_color = None
 input_elements_background_color = '#636363'
+input_text_color = 'white'
 text_color = "white"
 button_color = ('white', '#363636')
 
 # For the attack windows (Joiner, Leaver, etc)
-attacks_theme = {"background": "Dark2", "button_colour": ('white', 'firebrick4')}
+attacks_theme = {"preset_theme": "Dark2",
+                 "button_colour": ('white', '#d70000'),
+                 "use_custom_theme": False,  # Change to True For More personalization.
+                 "background_color": '#000000',
+                 "text_element_background_color": '#000000',
+                 "element_background_color": '#000000',
+                 "scrollbar_color": '#000000',
+                 "input_elements_background_color": '#636363',
+                 "input_text_color": 'white',
+                 "text_color": "white",
+                 "slider_text_color": "white"
+                 }
 
 # Command Line colours
 menu1 = 'red'
 menu2 = 'yellow'
 
-# Audio (Base64, Remove this if you do not want music.)
+# Audio (Base64)
 menu_mp3_filename = ""
 menu_mp3_loop = True
 

@@ -31,7 +31,17 @@ if not climode == 1:
         import PySimpleGUI as sg
     else:
         import PySimpleGUIQt as sg
-    sg.ChangeLookAndFeel(theme['background'])
+    if theme['use_custom_theme']:
+        sg.SetOptions(background_color=theme['background_color'],
+                     text_element_background_color=theme['text_element_background_color'],
+                     element_background_color=theme['element_background_color'],
+                     scrollbar_color=theme['scrollbar_color'],
+                     input_elements_background_color=theme['input_elements_background_color'],
+                     input_text_color=theme['input_text_color'],
+                     button_color=theme['button_colour'],
+                     text_color=theme['text_color'])
+    else:
+        sg.ChangeLookAndFeel(theme['preset_theme'])
 executor = ThreadPoolExecutor(max_workers=int(threadcount))
 tokenlist = open("tokens.txt").read().splitlines()
 true = 'true'
@@ -82,16 +92,19 @@ if mode == 'joiner':
                 sys.exit()
             successfully.append(token)
     if climode == 0:
-        layout = [[sg.Text('Enter Invite to join.'), sg.InputText(size=(30,1)),sg.RButton('Join',button_color=theme['button_colour'],size=(10,1))],
-                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)')]
+        layout = [
+                [sg.Text('Enter Invite to join.'), sg.InputText(size=(40,1)),sg.RButton('Join',button_color=theme['button_colour'],size=(10,1))],
+                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)'), sg.Text('Limit:', size=(4,1)),sg.Input(len(tokenlist),size=(3,1),tooltip="Number of tokens to join.")],
                 ]
         window = sg.Window('RTB | Joiner', layout, keep_on_top=True)
         event, values = window.Read()
+        print(values)
         window.Close()
         link = values[0]
         delay = values[1]
         log = values[2]
         widget = values[3]
+        limit = int(values[4])
         if event == "Join":
             pass
         else:
@@ -101,6 +114,7 @@ if mode == 'joiner':
         log = False
         widget = False
         delay = "0"
+        limit = len(tokenlist)
     if widget:
         pass
     else:
@@ -108,13 +122,20 @@ if mode == 'joiner':
             link = link[30:]
         elif len(link) > 7:
             link = link[19:]
+    count = 0
     if not delay == '0':
         for token in tokenlist:
             executor.submit(join,token,link,widget)
+            count += 1
+            if count == limit:
+                break
             time.sleep(int(delay))
     else:
         for token in tokenlist:
             executor.submit(join,token,link,widget)
+            count += 1
+            if count == limit:
+                break
     if log:
         executor.shutdown(wait=True)
         try:
@@ -581,7 +602,7 @@ elif mode == 'vcspam':
               default_value=len(tokenlist),
               size=(29,15),
               orientation='horizontal',
-              font=('Helvetica', 10))],
+              font=('Helvetica', 10),text_color=(theme['slider_text_color']))],
               [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
               ]
         window = sg.Window('RTB | Voice Chat Spammer', layout, keep_on_top=True)
