@@ -55,6 +55,15 @@ except Exception:
     data = data.decode('utf-8')
     with open("requirements.txt","w+") as handle:
         handle.write(data)
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/themes/DeadRed.py')
+    data = response.read()
+    data = data.decode('utf-8')
+    try:
+        os.mkdir("themes")
+    except Exception:
+        pass
+    with open("themes/DeadRed.py","w+") as handle:
+        handle.write(data)
     try:
         with open('config.json', 'r') as handle:
             config = json.load(handle)
@@ -97,8 +106,12 @@ except Exception:
         elif p == 0:
             print("Installed {} Successfully.".format(package))
 
-# Load System Modules
+# Enable Command line mode for no_tk_mode
+if no_tk_mode == 1:
+    serversmasherinmainwindow = 1
+    command_line_mode = 1
 
+# Load System Modules
 import os, sys, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib
 from distutils.dir_util import copy_tree
 if sys.platform.startswith('win32'):
@@ -111,6 +124,7 @@ currentattacks = {}  # Dict for attacks
 t0 = time.time()  # Startup Time Counter thanks to https://github.com/Mattlau04
 
 # Load Skin
+import PySimpleGUI as sg
 mdl = importlib.import_module("themes.{}".format(skin))
 if "__all__" in mdl.__dict__:
     names = mdl.__dict__["__all__"]
@@ -122,7 +136,26 @@ if menu1.lower() == 'random':
     menu1 = random.choice(colours)
 if menu2.lower() == 'random':
     menu2 = random.choice(colours)
+if not command_line_mode == 1:
+    if use_preset_theme:
+        sg.ChangeLookAndFeel(preset_window_theme)
+    elif use_preset_theme is False:
+        sg.SetOptions(background_color=background_color,
+                     text_element_background_color=text_element_background_color,
+                     element_background_color=element_background_color,
+                     scrollbar_color=scrollbar_color,
+                     input_elements_background_color=input_elements_background_color,
+                     input_text_color=input_text_color,
+                     button_color=button_color,
+                     text_color=text_color)
 
+#Splash Screen
+if not command_line_mode == 1:
+    layout = [
+            [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
+            ]
+    window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True).Layout(layout)
+    window.Read(timeout=0)
 
 # Clear() Function setting
 if sys.platform.startswith('win32'):
@@ -232,14 +265,6 @@ elif verbose == 1:
             print ("Error Loading cpuinfo")
             handle.write("Error Loading cpuinfo\n")
         try:
-            print ("Loading PySimpleGUI...")
-            import PySimpleGUI as sg
-            print ("Loaded PySimpleGUI")
-            handle.write("Loaded PySimpleGUI\n")
-        except Exception as i:
-            print ("Error Loading PySimpleGUI")
-            handle.write("Error Loading PySimpleGUI\n")
-        try:
             print ("Loading psutil...")
             import psutil
             print ("Loaded PySimpleGUI")
@@ -261,7 +286,6 @@ else:
         import emoji
         import pyperclip
         import playsound
-        import PySimpleGUI as sg
         from colorama import init
         from termcolor import colored
     except Exception as i:
@@ -300,27 +324,7 @@ else:
             sys.exit()
         else:
             sys.exit()
-
-# Ready Skin
 init()
-if not command_line_mode == 1:
-    if use_preset_theme:
-        sg.ChangeLookAndFeel(preset_window_theme)
-    elif use_preset_theme is False:
-        sg.SetOptions(background_color=background_color,
-                     text_element_background_color=text_element_background_color,
-                     element_background_color=element_background_color,
-                     scrollbar_color=scrollbar_color,
-                     input_elements_background_color=input_elements_background_color,
-                     input_text_color=input_text_color,
-                     button_color=button_color,
-                     text_color=text_color)
-
-
-# Enable Command line mode for no_tk_mode
-if no_tk_mode == 1:
-    serversmasherinmainwindow = 1
-    command_line_mode = 1
 
 # File Downloader (Updates, Etc.)
 def download_file(url):
@@ -392,6 +396,10 @@ else:
                         time.sleep(3)
                         os.kill(os.getpid(), 15)
                 else:
+                    try:
+                        window.Close()
+                    except Exception:
+                        pass
                     verchoice = sg.PopupYesNo("There is an update for RTB, Download update?", title="Raid ToolBox Update Available")
                     if verchoice == "Yes":
                         update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
@@ -435,6 +443,10 @@ else:
                         input("Press enter to exit.")
                         os.kill(os.getpid(), 15)
                 else:
+                    try:
+                        window.Close()
+                    except Exception:
+                        pass
                     verchoice = sg.PopupYesNo("There is an update for Server Smasher, Download update?",title=" Server Smasher Update Available")
                     if verchoice == "Yes":
                         clear()
@@ -477,6 +489,10 @@ if not os.path.exists("RTBFiles/"):
         print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
         input(colored("Press enter to continue.",menu1))
     else:
+        try:
+            window.Close()
+        except Exception:
+            pass
         sg.PopupOK("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.", title="SINGLE FILE MODE")
 else:
     singlefile = False
@@ -505,6 +521,10 @@ else:
                         time.sleep(0.5)
                         shutil.rmtree("ffmpeg-4.1.3-win64-static")
                 else:
+                    try:
+                        window.Close()
+                    except Exception:
+                        pass
                     fmpg = sg.PopupYesNo("Download FFMpeg?\n(Needed For Voice Chat Spammer)")
                     if fmpg == "Yes":
                         sg.PopupNonBlocking('Downloading FFMpeg, Please Wait.', title="Downloading")
@@ -550,6 +570,10 @@ elif not "b" in rtbversion:
                 print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
                 input(colored("Press enter to continue.",'red'))
             else:
+                try:
+                    window.Close()
+                except Exception:
+                    pass
                 sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
 
 
@@ -601,6 +625,11 @@ def titleupdate():
 
 
 # Finished Loading
+if not command_line_mode == 1:
+    try:
+        window.Close()
+    except Exception:
+        pass
 t1 = time.time()
 if verbose == 1:
     print("Startup time: {}".format(t1-t0))
@@ -676,7 +705,7 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes', 'About', ['Info', 'Diagnostics', 'Updater']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater']]],
                     ['Tokens', ['View/Add Tokens', 'Token Stealer Builder']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -815,7 +844,7 @@ def main(currentattacks):
                     if event is None:
                         window.Close()
                         main(currentattacks)
-            elif event == "Themes":
+            elif event == "Change Theme":
                 while True:
                     window.Close()
                     skinlist = []
@@ -883,6 +912,31 @@ def main(currentattacks):
                                 else:
                                     subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
                                     del menu_mp3  # Remove MP3 from memory to save resources
+            elif event == "Theme Repo":
+                repojson  = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
+                links = {}
+                layout = [
+                         [sg.Text("Available Themes:")]
+                         ]
+                for package in repojson['packages']:
+                    links[package['theme_name']] = package['theme_dl_link']
+                    layout.append([sg.Text("{} v{} by {}".format(package['theme_name'],package['theme_version'],package['theme_author']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
+                while True:
+                    window.Close()
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion)).Layout(layout)
+                    event, values = window.Read()
+                    if event is None:
+                        window.Close()
+                        main(currentattacks)
+                    elif event in links:
+                        try:
+                            themedl = requests.get(links[event]).content
+                        except Exception:
+                            window.Close()
+                            main(currentattacks)
+                        with open("themes/{}.py".format(event),"wb") as handle:
+                            handle.write(themedl)
+                        sg.Popup("Downloaded {}".format(event),title="Download Complete.")
             elif event == "View/Add Tokens":
                 while True:
                     window.Close()
@@ -912,19 +966,36 @@ def main(currentattacks):
                 window.Close()
                 serversmasher(currentattacks)
             elif event == "Updater":
+                window.Close()
                 if "b" in rtbversion:
+                    sg.Popup("You are using a test version, be careful.",non_blocking=True,keep_on_top=True,title="RTB Version {}".format(rtbversion))
+                devbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/version').text
+                devbuild = devbuild.split("|")
+                masterbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version').text
+                masterbuild = masterbuild.split("|")
+                layout = [
+                         [sg.Text("Current Version: {}".format(rtbversion))],
+                         [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
+                         [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
+                         ]
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion)).Layout(layout)
+                event, values = window.Read()
+                if event is None:
                     window.Close()
                     main(currentattacks)
                 else:
-                    window.Close()
-                    yn = sg.PopupYesNo("Are you sure you want to update?", title="Update")
+                    yn = sg.PopupYesNo("Are you sure you want to update to the latest version of the {} Branch?".format(event), title="Update")
                     if yn == "Yes":
-                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                        shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                        sg.PopupNonBlocking("Downloading Update...")
+                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/{}.zip'.format(event.lower()))
+                        try:
+                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                        except Exception:
+                            pass
                         shutil.unpack_archive(update)
-                        copy_tree("Raid-Toolbox-master/", ".")
+                        copy_tree("Raid-Toolbox-{}/".format(event.lower()), ".")
                         os.remove(update)
-                        shutil.rmtree("Raid-Toolbox-master/")
+                        shutil.rmtree("Raid-Toolbox-{}/".format(event.lower()))
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['skin'] = skin
@@ -932,7 +1003,7 @@ def main(currentattacks):
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
-                        print ("Update complete, exiting.")
+                        sg.Popup("Update complete, Press Ok to exit.")
                         os.kill(os.getpid(), 15)
                     else:
                         window.Close()

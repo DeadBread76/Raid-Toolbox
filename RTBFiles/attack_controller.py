@@ -93,8 +93,8 @@ if mode == 'joiner':
             successfully.append(token)
     if climode == 0:
         layout = [
-                [sg.Text('Enter Invite to join.'), sg.InputText(size=(40,1)),sg.RButton('Join',button_color=theme['button_colour'],size=(10,1))],
-                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)'), sg.Text('Limit:', size=(4,1)),sg.Input(len(tokenlist),size=(3,1),tooltip="Number of tokens to join.")],
+                [sg.Text('Enter Invite to join.'), sg.InputText(size=(42,1)),sg.RButton('Join',button_color=theme['button_colour'],size=(10,1))],
+                [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60']), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1)), sg.Checkbox('Widget joiner (Requires Server ID)'), sg.Text('Tokens:', size=(6,1)),sg.Input(len(tokenlist),size=(3,1),tooltip="Number of tokens to join.")],
                 ]
         window = sg.Window('RTB | Joiner', layout, keep_on_top=True)
         event, values = window.Read()
@@ -225,16 +225,13 @@ elif mode == "Checker":
     executor.shutdown(wait=True)
     vlist = ''
     ulist = ''
-    ilist = ''
     for token in verifiedtokens:
         vlist += token + "\n"
     for token in unverifiedtokens:
         ulist += token + "\n"
-    for token in invalidtokens:
-        ilist += token + "\n"
     layout = [
              [sg.Text('Verified Tokens ({}):'.format(len(verifiedtokens)),size=(59,1)), sg.Text('Unverified Tokens ({}):'.format(len(unverifiedtokens)))],
-             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ilist, size=(66,20))],
+             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ulist, size=(66,20))],
              [sg.RButton('Save Verified',button_color=theme['button_colour'],size=(10,1)), sg.RButton('Save Both',button_color=theme['button_colour'],size=(10,1))]
              ]
     window = sg.Window('RTB | Checker | [{} Verified] [{} Unverified] [{} Invalid]'.format(len(verifiedtokens),len(unverifiedtokens),len(invalidtokens)), layout, keep_on_top=True)
@@ -283,16 +280,13 @@ elif mode == "Checker V2":
     executor.shutdown(wait=True)
     vlist = ''
     ulist = ''
-    ilist = ''
     for token in verifiedtokens:
         vlist += token + "\n"
     for token in unverifiedtokens:
         ulist += token + "\n"
-    for token in invalidtokens:
-        ilist += token + "\n"
     layout = [
              [sg.Text('Verified Tokens ({}):'.format(len(verifiedtokens)),size=(59,1)), sg.Text('Unverified Tokens ({}):'.format(len(unverifiedtokens)))],
-             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ilist, size=(66,20))],
+             [sg.Multiline(vlist, size=(66,20)), sg.Multiline(ulist, size=(66,20))],
              [sg.RButton('Save Verified',button_color=theme['button_colour'],size=(10,1)), sg.RButton('Save Both',button_color=theme['button_colour'],size=(10,1))]
              ]
     window = sg.Window('RTB | Checker V2 | [{} Verified] [{} Unverified] [{} Invalid]'.format(len(verifiedtokens),len(unverifiedtokens),len(invalidtokens)), layout, keep_on_top=True)

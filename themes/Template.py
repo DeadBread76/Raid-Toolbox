@@ -48,6 +48,8 @@ menu_mp3_loop = True
 menu_mp3 = b''
 
 # Button/Banner Images (Base64)
+rtb_splash = b''
+
 rtb_icon = b''
 
 rtb_banner = b''
