@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-rtbversion = "1.0.2b"
+rtbversion = "1.0.3b"
 smversion = "0.1.11r1"
 
 # Load Config
@@ -687,9 +687,9 @@ def main(currentattacks):
     global server_smasher_in_main_window
     global ignore_ffmpeg_missing
     if sys.platform.startswith('win32'):
-        os.system('mode con:cols=100 lines=30')
+        os.system('mode con:cols=100 lines=31')
     else:
-        os.system("printf '\033[8;30;100t'")
+        os.system("printf '\033[8;31;100t'")
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
         tcounter = len(line)
@@ -1303,19 +1303,20 @@ def main(currentattacks):
         print (colored("██                                                                                                ██",menu1))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                               ██                                               ██",menu1))
-        print (colored("██         ",menu1)+(colored("0.  Exit",menu2)+colored("                              ██",menu1)+colored("         13. Status Changer",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("1.  Joiner",menu2)+colored("                            ██",menu1)+colored("         14. Nickname Changer",menu2)+colored("                  ██",menu1)))
-        print (colored("██         ",menu1)+(colored("2.  Leaver",menu2)+colored("                            ██",menu1)+colored("         15. Embed Spammer",menu2)+colored("                     ██",menu1)))
-        print (colored("██         ",menu1)+(colored("3.  Group DM leaver",menu2)+colored("                   ██",menu1)+colored("         16. Avatar Changer",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         17. Role Mass Mentioner",menu2)+colored("               ██",menu1)))
-        print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
-        print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
-        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
-        print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         21. Server Smasher",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
-        print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
-        print (colored("██         ",menu1)+(colored("11. Group DM spammer",menu2)+colored("                  ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
-        print (colored("██         ",menu1)+(colored("12. Random Image Spammer",menu2)+colored("              ██",menu1)+colored("         25. Token options",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("0.  Exit",menu2)+colored("                              ██",menu1)+colored("         14. Nickname Changer",menu2)+colored("                  ██",menu1)))
+        print (colored("██         ",menu1)+(colored("1.  Joiner",menu2)+colored("                            ██",menu1)+colored("         15. Embed Spammer",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("2.  Leaver",menu2)+colored("                            ██",menu1)+colored("         16. Avatar Changer",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("3.  Group DM leaver",menu2)+colored("                   ██",menu1)+colored("         17. Role Mass Mentioner",menu2)+colored("               ██",menu1)))
+        print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
+        print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
+        print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
+        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. Server Smasher",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
+        print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
+        print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("11. Group DM spammer",menu2)+colored("                  ██",menu1)+colored("         25. Token options",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("12. Random Image Spammer",menu2)+colored("              ██",menu1)+colored("         26. Theme menu",menu2)+colored("                        ██",menu1)))
+        print (colored("██         ",menu1)+(colored("13. Status Changer",menu2)+colored("                    ██",menu1)+colored("         27. Settings menu",menu2)+colored("                     ██",menu1)))
         print (colored("██                                               ██                                               ██",menu1))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                               ██                                               ██",menu1))
@@ -1479,6 +1480,16 @@ def main(currentattacks):
             quickcheck(currentattacks)
         elif int(choice) == 25:
             tokenmanager(currentattacks)
+        elif int(choice) == 26:
+            clear()
+            print (colored('Still WIP',menu2))
+            input()
+            main(currentattacks)
+        elif int(choice) == 27:
+            clear()
+            print (colored('Still WIP',menu2))
+            input()
+            main(currentattacks)
         elif int(choice) == 986:
             wew(currentattacks)
         elif int(choice) == 666:
@@ -1497,15 +1508,15 @@ def main(currentattacks):
             pud()
         else:
             clear()
-            print (colored('Invalid Option.',"yellow"))
+            print (colored('Invalid Option.',menu2))
             input()
             main(currentattacks)
     except Exception as i:
         clear()
         if 'invalid literal for int()' in str(i):
-            print (colored('Invalid Option.',"yellow"))
+            print (colored('Invalid Option.',menu2))
         else:
-            print (colored(i,"yellow"))
+            print (colored(i,menu2))
         input()
         main(currentattacks)
 
@@ -2344,6 +2355,38 @@ def tokenmanager(currentattacks):
     except Exception:
         tokenmanager(currentattacks)
 
+def settings(currentattacks):
+    toggleopts = {
+    'thread_count': thread_count
+        }
+    clear()
+    try:
+        clear()
+        server = client.get_guild(int(SERVER))
+        print (colored("Type 'Save' to save.",menu2))
+        print (colored("0.  Go back",menu2))
+        #print (colored("1.  Thread Count: {}".format(toggleopts['thread_count']),menu2))
+        #print (colored("2.  Verbose Load: {}".format(toggleopts['servname']),menu2))
+        #print (colored("3.  Disable theme music: {}".format(toggleopts['iconbegone']),menu2))
+        #print (colored("4.  Command line mode: {}".format(toggleopts['changeicon']),menu2))
+        #print (colored("5.  Disable Cloudflare Check: {}".format(toggleopts['iconfile']),menu2))
+        #print (colored("6.  Disable Update Checking: {}".format(toggleopts['rembans']),menu2))
+        #print (colored("7.  Server Smasher in main console: {}".format(toggleopts['chandel']),menu2))
+        #print (colored("8.  Ignore FFMpeg Missing: {}".format(toggleopts['roledel']),menu2))
+        #print (colored("9.  Ban all members: {}".format(toggleopts['userban']),menu2))
+        #print (colored("10. Ban Reason: {}".format(toggleopts['banreason']),menu2))
+        #settingsmenu = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
+        if settingsmenu.lower() == "save":
+            pass
+        elif int(settingsmenu) == 0:
+            clear()
+            main(currentattacks)
+        #elif int(settingsmenu) == 1:
+            #toggleopts['thread_count']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of threads to use: ')
+            #await changesettings(toggleopts,SERVER)
+    except Exception:
+        pass
+        
 def wew(currentattacks):
     if sys.platform.startswith('win32'):
         clear()
