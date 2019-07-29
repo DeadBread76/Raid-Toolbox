@@ -424,6 +424,7 @@ else:
                                 edit['server_smasher_in_main_window'] = server_smasher_in_main_window
                                 edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                                 edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+                                edit['show_licence'] = show_licence
                                 handle.seek(0)
                                 json.dump(edit, handle, indent=4)
                                 handle.truncate()
@@ -457,6 +458,7 @@ else:
                             edit['server_smasher_in_main_window'] = server_smasher_in_main_window
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                             edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+                            edit['show_licence'] = show_licence
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
@@ -1204,6 +1206,7 @@ def main(currentattacks):
                             edit['server_smasher_in_main_window'] = server_smasher_in_main_window
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                             edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+                            edit['show_licence'] = show_licence
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
@@ -2116,7 +2119,16 @@ def run_update():
             edit = json.load(handle)
             edit['skin'] = skin
             edit['thread_count'] = thread_count
+            edit['verbose'] = verbose
+            edit['disable_theme_music'] = disable_theme_music
             edit['command_line_mode'] = command_line_mode
+            edit['no_tk_mode'] = no_tk_mode
+            edit['disable_cloudflare_check'] = disable_cloudflare_check
+            edit['disable_update_check'] = disable_update_check
+            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
+            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+            edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+            edit['show_licence'] = show_licence
             handle.seek(0)
             json.dump(edit, handle, indent=4)
             handle.truncate()
