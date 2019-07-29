@@ -1207,7 +1207,7 @@ def main(currentattacks):
                             edit['server_smasher_in_main_window'] = server_smasher_in_main_window
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                             edit['combine_uverified_and_verified'] = combine_uverified_and_verified
-                            edit['show_licence'] = show_licence
+                            edit['show_licence'] = 0
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
