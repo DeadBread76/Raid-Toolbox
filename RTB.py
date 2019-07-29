@@ -700,6 +700,7 @@ def main(currentattacks):
     global disable_update_check
     global server_smasher_in_main_window
     global ignore_ffmpeg_missing
+    global show_licence
     clear()
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
