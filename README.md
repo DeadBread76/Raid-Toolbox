@@ -8,15 +8,12 @@ Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-T
 
 ### Need any help?
 
-Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
-
-Our [telegram group](https://t.me/DeadBakery)
-
-And our [Discord server](https://discord.gg/e2dc9Pt)
+Check out the [Wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki), our [Telegram group](https://t.me/DeadBakery),
+and our [Discord server](https://discord.gg/e2dc9Pt)
 
 ### Screenshots:
 
-![Screenshot](https://i.imgur.com/5oYdAkG.png)
+![Screenshot](https://i.imgur.com/1WXmSJT.png)
 
 ![Joiner Menu](https://i.imgur.com/HxF60E8.png)
 
@@ -31,6 +28,8 @@ And our [Discord server](https://discord.gg/e2dc9Pt)
 Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
 
 # `Features:`
+
+**Custom Themes/Skins**
 
 **Joiner and Leaver**
 
