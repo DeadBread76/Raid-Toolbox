@@ -1290,9 +1290,9 @@ def main(currentattacks):
         else:
             menublank = ""
         if sys.platform.startswith('win32'):
-            os.system('mode con:cols=100 lines=30')
+            os.system('mode con:cols=100 lines=31')
         else:
-            os.system("printf '\033[8;30;100t'")
+            os.system("printf '\033[8;31;100t'")
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                                                                                ██",menu1))
         if singlefile == True:
@@ -1311,19 +1311,20 @@ def main(currentattacks):
         print (colored("██                                                                                                ██",menu1))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                               ██                                               ██",menu1))
-        print (colored("██         ",menu1)+(colored("0.  Exit",menu2)+colored("                              ██",menu1)+colored("         13. Status Changer",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("1.  Joiner",menu2)+colored("                            ██",menu1)+colored("         14. Nickname Changer",menu2)+colored("                  ██",menu1)))
-        print (colored("██         ",menu1)+(colored("2.  Leaver",menu2)+colored("                            ██",menu1)+colored("         15. Embed Spammer",menu2)+colored("                     ██",menu1)))
-        print (colored("██         ",menu1)+(colored("3.  Group DM leaver",menu2)+colored("                   ██",menu1)+colored("         16. Avatar Changer",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         17. Role Mass Mentioner",menu2)+colored("               ██",menu1)))
-        print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
-        print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
-        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
-        print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         21. Server Smasher",menu2)+colored("                    ██",menu1)))
-        print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
-        print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
-        print (colored("██         ",menu1)+(colored("11. Group DM spammer",menu2)+colored("                  ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
-        print (colored("██         ",menu1)+(colored("12. Random Image Spammer",menu2)+colored("              ██",menu1)+colored("         25. Token options",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("0.  Exit",menu2)+colored("                              ██",menu1)+colored("         14. Nickname Changer",menu2)+colored("                  ██",menu1)))
+        print (colored("██         ",menu1)+(colored("1.  Joiner",menu2)+colored("                            ██",menu1)+colored("         15. Embed Spammer",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("2.  Leaver",menu2)+colored("                            ██",menu1)+colored("         16. Avatar Changer",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("3.  Group DM leaver",menu2)+colored("                   ██",menu1)+colored("         17. Role Mass Mentioner",menu2)+colored("               ██",menu1)))
+        print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
+        print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
+        print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
+        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. Server Smasher",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
+        print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
+        print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("11. Group DM spammer",menu2)+colored("                  ██",menu1)+colored("         25. Token options",menu2)+colored("                     ██",menu1)))
+        print (colored("██         ",menu1)+(colored("12. Random Image Spammer",menu2)+colored("              ██",menu1)+colored("         26. Theme menu",menu2)+colored("                        ██",menu1)))
+        print (colored("██         ",menu1)+(colored("13. Status Changer",menu2)+colored("                    ██",menu1)+colored("         27. Settings menu",menu2)+colored("                     ██",menu1)))
         print (colored("██                                               ██                                               ██",menu1))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                               ██                                               ██",menu1))
@@ -1487,6 +1488,13 @@ def main(currentattacks):
             quickcheck(currentattacks)
         elif int(choice) == 25:
             tokenmanager(currentattacks)
+        elif int(choice) == 26:
+            clear()
+            print (colored('Still WIP',menu2))
+            input()
+            main(currentattacks)
+        elif int(choice) == 27:
+            settings(currentattacks)
         elif int(choice) == 986:
             wew(currentattacks)
         elif int(choice) == 666:
@@ -1505,15 +1513,15 @@ def main(currentattacks):
             pud()
         else:
             clear()
-            print (colored('Invalid Option.',"yellow"))
+            print (colored('Invalid Option.',menu2))
             input()
             main(currentattacks)
     except Exception as i:
         clear()
         if 'invalid literal for int()' in str(i):
-            print (colored('Invalid Option.',"yellow"))
+            print (colored('Invalid Option.',menu2))
         else:
-            print (colored(i,"yellow"))
+            print (colored(i,menu2))
         input()
         main(currentattacks)
 
@@ -2351,6 +2359,201 @@ def tokenmanager(currentattacks):
             tokencheck(currentattacks)
     except Exception:
         tokenmanager(currentattacks)
+
+def settings(currentattacks):
+    global thread_count
+    global verbose
+    global disable_theme_music
+    global command_line_mode
+    global no_tk_mode
+    global disable_cloudflare_check
+    global disable_update_check
+    global server_smasher_in_main_window
+    global ignore_ffmpeg_missing
+    with open('config.json', 'r') as handle:
+        toggleopts = json.load(handle)
+    clear()
+    while True:
+        try:
+            clear()
+            print (colored("Type 'Save' to save.",menu2))
+            print (colored("0.  Go back",menu2))
+            print (colored("1.  Thread Count: {}".format(toggleopts['thread_count']),menu2))
+            if toggleopts['verbose'] == 0:
+                print (colored("2.  Verbose Load: False",menu2))
+            elif toggleopts['verbose'] == 1:
+                print (colored("2.  Verbose Load: True",menu2))
+            else:
+                toggleopts['verbose'] = 0
+                print (colored("2.  Verbose Load: False",menu2))
+            if toggleopts['disable_theme_music'] == 0:
+                print (colored("3.  Disable theme music: False",menu2))
+            elif toggleopts['disable_theme_music'] == 1:
+                print (colored("3.  Disable theme music: True",menu2))
+            else:
+                toggleopts['disable_theme_music'] = 0
+                print (colored("3.  Disable theme music: False",menu2))
+            if toggleopts['command_line_mode'] == 0:
+                print (colored("4.  Command line mode: False",menu2))
+            elif toggleopts['command_line_mode'] == 1:
+                print (colored("4.  Command line mode: True",menu2))
+            else:
+                toggleopts['command_line_mode'] = 0
+                print (colored("4.  Command line mode: False",menu2))
+            if toggleopts['disable_cloudflare_check'] == 0:
+                print (colored("5.  Disable Cloudflare Check: False",menu2))
+            elif toggleopts['disable_cloudflare_check'] == 1:
+                print (colored("5.  Disable Cloudflare Check: True",menu2))
+            else:
+                toggleopts['disable_cloudflare_check'] = 0
+                print (colored("5.  Disable Cloudflare Check: False",menu2))
+            if toggleopts['disable_update_check'] == 0:
+                print (colored("6.  Disable Update Checking: False",menu2))
+            elif toggleopts['disable_update_check'] == 1:
+                print (colored("6.  Disable Update Checking: True",menu2))
+            else:
+                toggleopts['disable_update_check'] = 0
+                print (colored("6.  Disable Update Checking: False",menu2))
+            if toggleopts['server_smasher_in_main_window'] == 0:
+                print (colored("7.  Server Smasher in main console: False",menu2))
+            elif toggleopts['server_smasher_in_main_window'] == 1:
+                print (colored("7.  Server Smasher in main console: True",menu2))
+            else:
+                toggleopts['server_smasher_in_main_window'] = 0
+                print (colored("7.  Server Smasher in main console: False",menu2))
+            if toggleopts['ignore_ffmpeg_missing'] == 0:
+                print (colored("8.  Ignore FFMpeg Missing: False",menu2))
+            elif toggleopts['ignore_ffmpeg_missing'] == 1:
+                print (colored("8.  Ignore FFMpeg Missing: True",menu2))
+            else:
+                toggleopts['ignore_ffmpeg_missing'] = 0
+                print (colored("8.  Ignore FFMpeg Missing: False",menu2))
+            if toggleopts['no_tk_mode'] == 0:
+                print (colored("9.  No tk mode: False",menu2))
+            elif toggleopts['no_tk_mode'] == 1:
+                print (colored("9.  No tk mode: True",menu2))
+            else:
+                toggleopts['no_tk_mode'] = 0
+                print (colored("9.  No tk mode: False",menu2))
+            if toggleopts['combine_uverified_and_verified'] == 0:
+                print (colored("10. Combine uverified and verified: False",menu2))
+            elif toggleopts['combine_uverified_and_verified'] == 1:
+                print (colored("10. Combine uverified and verified: True",menu2))
+            else:
+                toggleopts['combine_uverified_and_verified'] = 0
+                print (colored("10. Combine uverified and verified: False",menu2))
+            settingsmenu = input("Item to toggle or change:\n")
+            if settingsmenu.lower() == "save":
+                thread_count = toggleopts['thread_count']
+                disable_theme_music = toggleopts['disable_theme_music']
+                verbose = toggleopts['verbose']
+                command_line_mode = toggleopts['command_line_mode']
+                no_tk_mode = toggleopts['no_tk_mode']
+                disable_cloudflare_check =toggleopts['disable_cloudflare_check']
+                disable_update_check = toggleopts['disable_update_check']
+                combine_uverified_and_verified = toggleopts['combine_uverified_and_verified']
+                server_smasher_in_main_window = toggleopts['server_smasher_in_main_window']
+                ignore_ffmpeg_missing = toggleopts['ignore_ffmpeg_missing']
+                with open('config.json', 'r+') as handle:
+                    edit = json.load(handle)
+                    edit['thread_count'] = thread_count
+                    edit['verbose'] = verbose
+                    edit['disable_theme_music'] = disable_theme_music
+                    edit['command_line_mode'] = command_line_mode
+                    edit['disable_cloudflare_check'] = disable_cloudflare_check
+                    edit['disable_update_check'] = disable_update_check
+                    edit['server_smasher_in_main_window'] = server_smasher_in_main_window
+                    edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+                    handle.seek(0)
+                    json.dump(edit, handle, indent=4)
+                    handle.truncate()
+                    with open('config.json', 'r') as handle:
+                        config = json.load(handle)
+                        skin = config['skin']
+                        thread_count = config['thread_count']
+                        disable_theme_music = config['disable_theme_music']
+                        verbose = config['verbose']
+                        command_line_mode = config['command_line_mode']
+                        no_tk_mode = config['no_tk_mode']
+                        disable_cloudflare_check = config['disable_cloudflare_check']
+                        disable_update_check = config['disable_update_check']
+                        combine_uverified_and_verified = config['combine_uverified_and_verified']
+                        server_smasher_in_main_window = config['server_smasher_in_main_window']
+                        ignore_ffmpeg_missing = config['ignore_ffmpeg_missing']
+                    clear()
+                    print("Changes saved to config.")
+                    input()
+            elif int(settingsmenu) == 0:
+                clear()
+                main(currentattacks)
+            elif int(settingsmenu) == 1:
+                toggleopts['thread_count'] = input("Number of threads to use: ")
+            elif int(settingsmenu) == 2:
+                if toggleopts['verbose'] == 0:
+                    toggleopts['verbose'] = 1
+                elif toggleopts['verbose'] == 1:
+                    toggleopts['verbose'] = 0
+                else:
+                    toggleopts['verbose'] = 0
+            elif int(settingsmenu) == 3:
+                if toggleopts['disable_theme_music'] == 0:
+                    toggleopts['disable_theme_music'] = 1
+                elif toggleopts['disable_theme_music'] == 1:
+                    toggleopts['disable_theme_music'] = 0
+                else:
+                    toggleopts['disable_theme_music'] = 0
+            elif int(settingsmenu) == 4:
+                if toggleopts['command_line_mode'] == 0:
+                    toggleopts['command_line_mode'] = 1
+                elif toggleopts['command_line_mode'] == 1:
+                    toggleopts['command_line_mode'] = 0
+                else:
+                    toggleopts['command_line_mode'] = 0
+            elif int(settingsmenu) == 5:
+                if toggleopts['disable_cloudflare_check'] == 0:
+                    toggleopts['disable_cloudflare_check'] = 1
+                elif toggleopts['disable_cloudflare_check'] == 1:
+                    toggleopts['disable_cloudflare_check'] = 0
+                else:
+                    toggleopts['disable_cloudflare_check'] = 0
+            elif int(settingsmenu) == 6:
+                if toggleopts['disable_update_check'] == 0:
+                    toggleopts['disable_update_check'] = 1
+                elif toggleopts['disable_update_check'] == 1:
+                    toggleopts['disable_update_check'] = 0
+                else:
+                    toggleopts['disable_update_check'] = 0
+            elif int(settingsmenu) == 7:
+                if toggleopts['server_smasher_in_main_window'] == 0:
+                    toggleopts['server_smasher_in_main_window'] = 1
+                elif toggleopts['server_smasher_in_main_window'] == 1:
+                    toggleopts['server_smasher_in_main_window'] = 0
+                else:
+                    toggleopts['server_smasher_in_main_window'] = 0
+            elif int(settingsmenu) == 8:
+                if toggleopts['ignore_ffmpeg_missing'] == 0:
+                    toggleopts['ignore_ffmpeg_missing'] = 1
+                elif toggleopts['ignore_ffmpeg_missing'] == 1:
+                    toggleopts['ignore_ffmpeg_missing'] = 0
+                else:
+                    toggleopts['ignore_ffmpeg_missing'] = 0
+            elif int(settingsmenu) == 9:
+                if toggleopts['no_tk_mode'] == 0:
+                    toggleopts['no_tk_mode'] = 1
+                elif toggleopts['no_tk_mode'] == 1:
+                    toggleopts['no_tk_mode'] = 0
+                else:
+                    toggleopts['no_tk_mode'] = 0
+            elif int(settingsmenu) == 10:
+                if toggleopts['combine_uverified_and_verified'] == 0:
+                    toggleopts['combine_uverified_and_verified'] = 1
+                elif toggleopts['combine_uverified_and_verified'] == 1:
+                    toggleopts['combine_uverified_and_verified'] = 0
+                else:
+                    toggleopts['combine_uverified_and_verified'] = 0
+        except Exception as e:
+            print(e)
+            input()
 
 def wew(currentattacks):
     if sys.platform.startswith('win32'):
