@@ -4,7 +4,6 @@ A big toolkit of spamming tools for discord.
 
 Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
 
-(Linux has issues with the Voice Chat Spammer, It locks the menu up and you are unable to do anything. I am trying to find a fix.)
 
 ### Need any help?
 
@@ -25,7 +24,7 @@ and our [Discord server](https://discord.gg/e2dc9Pt)
 
 ![HypeSquad Changer](https://i.imgur.com/9HDcbNw.png)
 
-Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
+Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI (Outdated)
 
 # `Features:`
 
@@ -73,7 +72,7 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 ### `Configuration:`
 
-Menu Colour can be changed by changing the value in the theme file currently being used, other options are in `config.json` such as 'noguimode' and 'disableupdatecheck'
+Menu Theme can be changed by going to RTB > Themes > Change Theme, and setting can be changed in About > Settings. Alternatively, you can edit `config.json`.
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 

