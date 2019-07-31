@@ -32,6 +32,7 @@ try:
     with open('config.json', 'r') as handle:
         config = json.load(handle)
         skin = config['skin']
+        token_list = config['token_list']
         thread_count = config['thread_count']
         disable_theme_music = config['disable_theme_music']
         verbose = config['verbose']
@@ -51,8 +52,6 @@ except Exception:
     import subprocess
     if not os.path.exists("RTBFiles/"):
         print("RTBFiles Directory not found.")
-    if not os.path.exists("tools/"):
-        print("Tools Directory not found.")
     response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/config.json')
     data = response.read()
     data = data.decode('utf-8')
@@ -76,6 +75,7 @@ except Exception:
         with open('config.json', 'r') as handle:
             config = json.load(handle)
             skin = config['skin']
+            token_list = config['token_list']
             thread_count = config['thread_count']
             disable_theme_music = config['disable_theme_music']
             verbose = config['verbose']
@@ -134,7 +134,10 @@ currentattacks = {}  # Dict for attacks
 t0 = time.time()  # Startup Time Counter thanks to https://github.com/Mattlau04
 
 # Load Skin
-import PySimpleGUI as sg
+if not sys.platform.startswith('darwin'):
+    import PySimpleGUI as sg
+else:
+    import PySimpleGUIQt as sg
 if not skin == "DeadRed":
     # Import Default Incase loaded skin has Missing Features/ Compatibility for older skins.
     mdl = importlib.import_module("themes.DeadRed")
@@ -414,6 +417,7 @@ else:
                             with open('config.json', 'r+') as handle:
                                 edit = json.load(handle)
                                 edit['skin'] = skin
+                                edit['token_list'] = token_list
                                 edit['thread_count'] = thread_count
                                 edit['verbose'] = verbose
                                 edit['disable_theme_music'] = disable_theme_music
@@ -448,6 +452,7 @@ else:
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['skin'] = skin
+                            edit['token_list'] = token_list
                             edit['thread_count'] = thread_count
                             edit['verbose'] = verbose
                             edit['disable_theme_music'] = disable_theme_music
@@ -519,16 +524,57 @@ if os.path.isfile("pluginpids"):
     if verbose == 1:
         print("Removed pluginpids")
 
-if os.path.exists('tokens.txt'):
-    with open('tokens.txt','r') as handle:
+try:
+    if not os.path.isdir("tokens"):
+        os.mkdir("tokens")
+    with open("tokens/{}".format(token_list),"r") as handle:
         line = handle.readlines()
         tcounter = len(line)
         if verbose == 1:
             print("Loaded {} Tokens".format(tcounter))
-else:
-    with open('tokens.txt','w+') as handle:
-        if verbose == 1:
-            print ("Created Tokens.txt")
+except Exception:
+    if command_line_mode == 0:
+        sg.Popup("No Token list found, Lets create one.", title="No token list.")
+        newlist = sg.PopupGetText("New Token list name:")
+        if newlist is None:
+            sg.Popup("Well, I need a token list to run, so i'm going to make one called Tokens.txt.", title="Can't have none")
+            if os.path.isfile("tokens/tokens.txt"):
+                token_list = "tokens.txt"
+                pass
+            else:
+                with open("tokens/tokens.txt","r+") as handle:
+                    line = handle.readlines()
+                    tcounter = len(line)
+                    token_list = "tokens.txt"
+        else:
+            if newlist == "":
+                newlist = "NOTHING"
+            if os.path.isfile("tokens/{}.txt".format(newlist)):
+                pass
+            else:
+                with open("tokens/{}.txt".format(newlist),"w+") as handle:
+                    line = handle.readlines()
+                    tcounter = len(line)
+                    token_list = "{}.txt".format(newlist)
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['token_list'] = token_list
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+    else:
+        print("No Token list found, Creating tokens.txt")
+        with open("tokens/tokens.txt","w+") as handle:
+            line = handle.readlines()
+            tcounter = len(line)
+            token_list = "tokens.txt"
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['token_list'] = token_list
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+
 if not os.path.exists("RTBFiles/"):
     clear()
     singlefile = True
@@ -691,6 +737,7 @@ if verbose == 1:
 
 def main(currentattacks):
     global skin
+    global token_list
     global thread_count
     global verbose
     global disable_theme_music
@@ -702,9 +749,16 @@ def main(currentattacks):
     global ignore_ffmpeg_missing
     global show_licence
     clear()
-    with open('tokens.txt','r') as handle:
-        line = handle.readlines()
-        tcounter = len(line)
+    try:
+        with open("tokens/"+token_list,'r') as handle:
+            line = handle.readlines()
+            tcounter = len(line)
+    except Exception as e:
+        if command_line_mode == 0:
+            sg.PopupNonBlocking("Unable to load token list.")
+        else:
+            print("Unable to load token list.")
+            input()
     if sys.platform.startswith('win32'):
         if "b" in rtbversion:
             ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox v{} (TEST VERSION)".format(rtbversion))
@@ -754,7 +808,7 @@ def main(currentattacks):
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
         menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
-                    ['Tokens', ['View/Add Tokens', 'Token Stealer Builder', 'Token Toolkit']],
+                    ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
                     ['Plugins', ['Legacy Plugins']]
@@ -770,7 +824,7 @@ def main(currentattacks):
                 [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
                 [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
                 ]
-        tokenlist = open("tokens.txt").read().splitlines()
+        tokenlist = open("tokens/"+token_list).read().splitlines()
         window = sg.Window("DeadBread's Raid ToolBox v{} | ({} Tokens available.)".format(rtbversion,len(tokenlist)), icon=rtb_icon).Layout(layout)
         while True:
             event, values = window.Read(timeout=0)
@@ -779,6 +833,7 @@ def main(currentattacks):
             elif event == "Attack Manager":
                 while True:
                     window.Close()
+                    time.sleep(0.1)
                     for attack in list(currentattacks):
                         if psutil.pid_exists(currentattacks[attack]):
                             if not sys.platform.startswith('win32'):
@@ -815,21 +870,21 @@ def main(currentattacks):
                             print(e)
             elif event == "Diagnostics":
                 sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True)
-                cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD")
-                ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD")
-                cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
+                cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD").content
+                ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD").content
+                cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD").content
                 try:
-                    json.loads(cloudcheck.content)
+                    json.loads(cloudcheck)
                     stbanned = False
                 except Exception:
                     stbanned = True
                 try:
-                    json.loads(ptbcloudcheck.content)
+                    json.loads(ptbcloudcheck)
                     ptbbanned = False
                 except Exception:
                     ptbbanned = True
                 try:
-                    json.loads(cancloudcheck.content)
+                    json.loads(cancloudcheck)
                     banned = False
                 except Exception:
                     banned = True
@@ -1093,7 +1148,7 @@ def main(currentattacks):
                 while True:
                     window.Close()
                     textedit = ''
-                    with open("tokens.txt","r") as handle:
+                    with open("tokens/"+token_list,"r") as handle:
                         data = handle.readlines()
                         for token in data:
                             textedit += token
@@ -1102,15 +1157,41 @@ def main(currentattacks):
                                  [sg.Menu(menu_def)],
                                  [sg.Multiline(default_text=textedit, size=(80, 20))]
                                  ]
-                        window = sg.Window("DeadBread's Raid ToolBox v{} | tokens.txt".format(rtbversion)).Layout(layout)
+                        window = sg.Window("DeadBread's Raid ToolBox v{} | Editing {}".format(rtbversion,token_list)).Layout(layout)
                         event, values = window.Read()
                         if event is None:
                             window.Close()
                             main(currentattacks)
                         elif event == "Save":
                             text = values[1]
-                            with open("tokens.txt", "w") as write:
+                            with open("tokens/"+token_list, "w") as write:
                                 write.write(text)
+            elif event == "Change Token List":
+                window.Close()
+                layout = [
+                         [sg.Text('Token Lists Present:')],
+                         ]
+                lists = []
+                for file in os.listdir("tokens"):
+                    if file.endswith(".txt"):
+                        lists.append(file)
+                        size = len(open("tokens/"+file).read().splitlines())
+                        layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion)).Layout(layout)
+                while True:
+                    event, values = window.Read()
+                    if event is None:
+                        window.Close()
+                        main(currentattacks)
+                    elif event in lists:
+                        token_list = event
+                        with open('config.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['token_list'] = token_list
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
+                        sg.Popup("Changed list to {}.".format(token_list), title="Done")
             elif event == "Token Stealer Builder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Token Stealer Builder | Started at: {}".format(datetime.datetime.now().time())] = p.pid
@@ -1197,6 +1278,7 @@ def main(currentattacks):
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['skin'] = skin
+                            edit['token_list'] = token_list
                             edit['thread_count'] = thread_count
                             edit['verbose'] = verbose
                             edit['disable_theme_music'] = disable_theme_music
@@ -1349,7 +1431,7 @@ def main(currentattacks):
         if choice.lower() == 'info':
             info(currentattacks)
         if int(choice) == 0:
-            os.kill(os.getpid(), 15)
+            os.kill(os.getpid(), 9)
         elif int(choice) == 1:
             if no_tk_mode == 1:
                 joiner(currentattacks)
@@ -1581,7 +1663,7 @@ def groupleaver(currentattacks):
     ID = input ('ID of the group DM to leave: ')
     if str(ID) == '0':
         main(currentattacks)
-    tokenlist = open("tokens.txt").read().splitlines()
+    tokenlist = open("tokens/"+token_list).read().splitlines()
     p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(no_tk_mode),str(thread_count),str(attacks_theme),ID],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Group Leaver Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main(currentattacks)
@@ -1597,7 +1679,7 @@ def tokencheck(currentattacks):
     icounter = 0
     validtokens = []
     unverified = []
-    with open('tokens.txt','r') as handle:
+    with open("tokens/"+token_list,'r') as handle:
         tokens = handle.readlines()
         if len(tokens) > 50:
             print("I'd Recommend using the quick checker for {} tokens.".format(len(tokens)))
@@ -1632,7 +1714,7 @@ def tokencheck(currentattacks):
                     validtokens.append(token)
             except Exception as exc:
                 print (exc)
-        with open('tokens.txt','w') as handle:
+        with open("tokens/"+token_list,'w') as handle:
             for token in validtokens:
                 handle.write(token+'\n')
         if combine_uverified_and_verified == 1:
@@ -2238,7 +2320,7 @@ def info(currentattacks):
                 com = input(">")
                 if com == '0':
                     break
-                elif com == 'os.remove("characters/monika.chr")': # fuck i'm such a weeb
+                elif com == 'os.remove("characters/monika.chr")':  # fuck i'm such a weeb
                     text = []
                     list = ['¡', '¢', '£', '¤', '¥', '¦', '§', '¨', '©', 'ª', '«', '¬', '®', '¯', '°', '±', '²', '³', '´', 'µ', '¶', '·', '¸', '¹', 'º', '»', '¼', '½', '¾', '¿', 'À', 'Á', 'Â', 'Ã', 'Ä', 'Å', 'Æ', 'Ç', 'È', 'É', 'Ê', 'Ë', 'Ì', 'Í', 'Î', 'Ï', 'Ð', 'Ñ', 'Ò', 'Ó', 'Ô', 'Õ', 'Ö', '×', 'Ø', 'Ù', 'Ú', 'Û', 'Ü', 'Ý', 'Þ', 'ß', 'à', 'á', 'â', 'ã', 'ä', 'å', 'æ', 'ç', 'è', 'é', 'ê', 'ë', 'ì', 'í', 'î', 'ï', 'ð', 'ñ', 'ò', 'ó', 'ô', 'õ', 'ö', '÷', 'ø', 'ù', 'ú', 'û', 'ü', 'ý', 'þ', 'ÿ', 'Ā', 'ā', 'Ă', 'ă', 'Ą', 'ą', 'Ć', 'ć', 'Ĉ', 'ĉ', 'Ċ', 'ċ', 'Č', 'č', 'Ď', 'ď', 'Đ', 'đ', 'Ē', 'ē', 'Ĕ', 'ĕ', 'Ė', 'ė', 'Ę', 'ę', 'Ě', 'ě', 'Ĝ', 'ĝ', 'Ğ', 'ğ', 'Ġ', 'ġ', 'Ģ', 'ģ', 'Ĥ', 'ĥ', 'Ħ', 'ħ', 'Ĩ', 'ĩ', 'Ī', 'ī', 'Ĭ', 'ĭ', 'Į', 'į', 'İ', 'ı', 'Ĳ', 'ĳ', 'Ĵ', 'ĵ', 'Ķ', 'ķ', 'ĸ', 'Ĺ', 'ĺ', 'Ļ', 'ļ', 'Ľ', 'ľ', 'Ŀ', 'ŀ', 'Ł', 'ł', 'Ń', 'ń', 'Ņ', 'ņ', 'Ň', 'ň', 'ŉ', 'Ŋ', 'ŋ', 'Ō', 'ō', 'Ŏ', 'ŏ', 'Ő', 'ő', 'Œ', 'œ', 'Ŕ', 'ŕ', 'Ŗ', 'ŗ', 'Ř', 'ř', 'Ś', 'ś', 'Ŝ', 'ŝ', 'Ş', 'ş', 'Š', 'š', 'Ţ', 'ţ', 'Ť', 'ť', 'Ŧ', 'ŧ', 'Ũ', 'ũ', 'Ū', 'ū', 'Ŭ', 'ŭ', 'Ů', 'ů', 'Ű', 'ű', 'Ų', 'ų', 'Ŵ', 'ŵ', 'Ŷ', 'ŷ', 'Ÿ', 'Ź', 'ź', 'Ż', 'ż', 'Ž', 'ž']
                     for x in range(random.randint(500,800)):
@@ -2293,7 +2375,7 @@ def info(currentattacks):
 
 def quickcheck(currentattacks):
     clear()
-    tokenlist = open("tokens.txt").read().splitlines()
+    tokenlist = open("tokens/"+token_list).read().splitlines()
     for token in tokenlist:
         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','quickcheck',sys.executable,str(no_tk_mode),str(thread_count),str(attacks_theme),token])
         time.sleep(0.07)
@@ -2307,7 +2389,7 @@ def tokenmanager(currentattacks):
         ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Token Manager")
     else:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Token Manager\x07")
-    tokenlist = open("tokens.txt").read().splitlines()
+    tokenlist = open("tokens/"+token_list).read().splitlines()
     print(colored("====================",menu1))
     print(colored("     Token Menu     ",menu1))
     print(colored("====================",menu1))
@@ -2326,7 +2408,7 @@ def tokenmanager(currentattacks):
             clear()
             print(colored("Input Token to add to tokens.txt\n0. Back",menu2))
             t = input()
-            with open ("tokens.txt","a",errors='ignore') as handle:
+            with open ("tokens/"+token_list,"a",errors='ignore') as handle:
                 handle.write("{}\n".format(t))
             print (colored("Added {} to file.".format(t.rstrip()),menu1))
             input()
@@ -2398,7 +2480,7 @@ def settings(currentattacks):
     while True:
         try:
             clear()
-            print (colored("Type 'Save' to save.",menu2))
+            print (colored("s:  Save Changes",menu2))
             print (colored("0.  Go back",menu2))
             print (colored("1.  Thread Count: {}".format(toggleopts['thread_count']),menu2))
             if toggleopts['verbose'] == 0:
@@ -2465,7 +2547,7 @@ def settings(currentattacks):
                 toggleopts['combine_uverified_and_verified'] = 0
                 print (colored("10. Combine uverified and verified: False",menu2))
             settingsmenu = input("Item to toggle or change:\n")
-            if settingsmenu.lower() == "save":
+            if settingsmenu.lower() == "s":
                 thread_count = toggleopts['thread_count']
                 disable_theme_music = toggleopts['disable_theme_music']
                 verbose = toggleopts['verbose']
@@ -2479,6 +2561,7 @@ def settings(currentattacks):
                 with open('config.json', 'r+') as handle:
                     edit = json.load(handle)
                     edit['thread_count'] = thread_count
+                    edit['token_list'] = token_list
                     edit['verbose'] = verbose
                     edit['disable_theme_music'] = disable_theme_music
                     edit['command_line_mode'] = command_line_mode
