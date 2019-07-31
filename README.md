@@ -2,6 +2,8 @@
 
 A big toolkit of spamming tools for discord.
 
+### "it's for education purpose only"
+
 Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
 
 
