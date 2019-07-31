@@ -1,6 +1,4 @@
-:bowtie:
 :smile:
-:simple_smile:
 :laughing:
 :blush:
 :smiley:
@@ -45,7 +43,6 @@
 :joy:
 :astonished:
 :scream:
-:neckbeard:
 :tired_face:
 :angry:
 :rage:
@@ -78,7 +75,6 @@
 :star2:
 :dizzy:
 :boom:
-:collision:
 :anger:
 :exclamation:
 :question:
@@ -99,11 +95,9 @@
 :thumbsdown:
 :ok_hand:
 :punch:
-:facepunch:
 :fist:
 :v:
 :wave:
-:hand:
 :raised_hand:
 :open_hands:
 :point_up:
@@ -116,9 +110,7 @@
 :clap:
 :muscle:
 :metal:
-:fu:
 :runner:
-:running:
 :couple:
 :family:
 :two_men_holding_hands:
@@ -221,7 +213,6 @@
 :penguin:
 :turtle:
 :bug:
-:honeybee:
 :ant:
 :beetle:
 :snail:
@@ -325,7 +316,6 @@
 :computer:
 :tv:
 :iphone:
-:phone:
 :telephone:
 :telephone_receiver:
 :pager:
@@ -376,7 +366,6 @@
 :euro:
 :credit_card:
 :money_with_wings:
-:e-mail:
 :inbox_tray:
 :outbox_tray:
 :envelope:
@@ -390,7 +379,6 @@
 :smoking:
 :bomb:
 :gun:
-:hocho:
 :pill:
 :syringe:
 :page_facing_up:
@@ -460,7 +448,6 @@
 :dart:
 :mahjong:
 :clapper:
-:memo:
 :pencil:
 :book:
 :art:
@@ -469,13 +456,11 @@
 :trumpet:
 :saxophone:
 :guitar:
-:shoe:
 :sandal:
 :high_heel:
 :lipstick:
 :boot:
 :shirt:
-:tshirt:
 :necktie:
 :womans_clothes:
 :dress:
@@ -589,7 +574,6 @@
 :roller_coaster:
 :ship:
 :speedboat:
-:boat:
 :sailboat:
 :rowboat:
 :anchor:
@@ -649,18 +633,17 @@
 :performing_arts:
 :round_pushpin:
 :triangular_flag_on_post:
-:jp:
-:kr:
-:cn:
-:us:
-:fr:
-:es:
-:it:
-:ru:
-:gb:
-:uk:
-:de:
-:ng:
+:flag_jp:
+:flag_kr:
+:flag_cn:
+:flag_us:
+:flag_fr:
+:flag_es:
+:flag_it:
+:flag_ru:
+:flag_gb:
+:flag_de:
+:flag_ng:
 :cinema:
 :koko:
 :signal_strength:
@@ -771,7 +754,6 @@
 :registered:
 :tm:
 :x:
-:heavy_exclamation_mark:
 :bangbang:
 :interrobang:
 :o:
