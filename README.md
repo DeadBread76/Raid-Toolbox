@@ -27,6 +27,8 @@ and our [Discord server](https://discord.gg/e2dc9Pt)
 
 ![HypeSquad Changer](https://i.imgur.com/9HDcbNw.png)
 
+[Showcase](https://www.youtube.com/watch?v=ncprbHin_YY) (Thanks to Bukas)
+
 Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI (Outdated)
 
 # `Features:`
