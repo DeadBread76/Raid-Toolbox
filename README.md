@@ -15,17 +15,17 @@ and our [Discord server](https://discord.gg/e2dc9Pt)
 
 ### Screenshots:
 
-![Screenshot](https://i.imgur.com/1WXmSJT.png)
+![Screenshot](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/main.png)
 
-![Joiner Menu](https://i.imgur.com/HxF60E8.png)
+![Joiner Menu](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/joiner.png)
 
-![Message Spammer](https://i.imgur.com/18hMVMe.png)
+![Message Spammer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/messagespammer.png)
 
-![VC Spammer](https://i.imgur.com/Fius7ef.png)
+![VC Spammer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/vcspammer.png)
 
-![Status Changer](https://i.imgur.com/ZSM627j.png)
+![Status Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/statuschanger.png)
 
-![HypeSquad Changer](https://i.imgur.com/9HDcbNw.png)
+![HypeSquad Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/hypesquadchanger.png)
 
 [Showcase](https://www.youtube.com/watch?v=ncprbHin_YY) (Thanks to Bukas)
 
