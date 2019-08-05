@@ -13,3 +13,4 @@ websocket_client==0.56.0
 emoji==0.5.2
 playsound
 selenium
+pyinstaller

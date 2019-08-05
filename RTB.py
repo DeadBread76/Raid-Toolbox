@@ -1052,9 +1052,9 @@ def main(currentattacks):
                     layout = [
                              [sg.Text('Current Theme:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
                              [sg.Text('Theme Bio:',size=(13,1)),sg.Text((theme_bio))],
-                             [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(20,1)), sg.Button('Change',size=(18,1))]
+                             [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(30,1)), sg.Button('Change',size=(10,1))]
                              ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), size=(400,100)).Layout(layout)
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), size=(500,100)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
@@ -1120,7 +1120,7 @@ def main(currentattacks):
                                     subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
                                     del menu_mp3  # Remove MP3 from memory to save resources
             elif event == "Theme Repo":
-                repojson  = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
+                repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
                 links = {}
                 layout = [
                          [sg.Text("Available Themes:")]
