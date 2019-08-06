@@ -14,3 +14,4 @@ emoji==0.5.2
 playsound
 selenium
 pyinstaller
+pluginbase==1.0.0

