@@ -1513,6 +1513,21 @@ def main():
                         sg.Popup("Downloaded {}".format(event),title="Download Complete.")
     else:
         now = datetime.datetime.now()
+        if now.month == 2 and now.day == 23:
+            splashtext = "Happy birthday RTB!"
+        elif now.month == 8 and now.day == 18:
+            try:
+                if not disable_theme_music == 1:
+                    desuwaepic = requests.get("https://gist.github.com/Mattlau04/4465549021cab89815d33477b2c6c118/raw/cd776f43d4b3c6a30f3d1a6e59c499d5c32fe5c0/desuwa.txt")
+                    desuwa64 = base64.b64decode(desuwaepic.text)
+                    with open ("RTBFiles/desuwa.mp3", "wb") as handle:
+                        handle.write(desuwa64)
+                        subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Yeet", "RTBFiles/desuwa.mp3", str(os.getpid()), str(True)])
+            except Exception:
+                pass
+            splashtext = "Happy birthday desu wa (aka Mattlau)!"
+        else:
+            splashtext = random.choice(list(open('RTBFiles/extras/splash.txt')))
         if len(str(tcounter)) == 1:
             menublank = "    "
         elif len(str(tcounter)) == 2:
@@ -1524,15 +1539,16 @@ def main():
         else:
             menublank = ""
         if sys.platform.startswith('win32'):
-            os.system('mode con:cols=100 lines=31')
+            os.system('mode con:cols=100 lines=32')
         else:
-            os.system("printf '\033[8;31;100t'")
+            os.system("printf '\033[8;32;100t'")
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                                                                                ██",menu1))
         if singlefile == True:
             print (colored("██                                   ",menu1)+(colored("SINGLE FILE MODE IS ACTIVE",menu2)+(colored("                                   ██",menu1))))
         else:
             print (colored("██                               ",menu1)+colored("Welcome to DeadBread's Raid Toolbox",menu2)+colored("                              ██",menu1))
+        print (colored("██",menu1)+colored('{:^96}'.format(splashtext.rstrip()),menu2, attrs=['blink'])+colored("██",menu1))
         print (colored("██                                                                                                ██",menu1))
         print (colored("████████████████████████████████████████████████████████████████████████████████████████████████████",menu1))
         print (colored("██                                                                                                ██",menu1))
