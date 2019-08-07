@@ -1522,7 +1522,7 @@ def main():
                     desuwa64 = base64.b64decode(desuwaepic.text)
                     with open ("RTBFiles/desuwa.mp3", "wb") as handle:
                         handle.write(desuwa64)
-                        subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Yeet", "RTBFiles/desuwa.mp3", str(os.getpid()), str(True)])
+                        subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Yeet", "RTBFiles/desuwa.mp3", str(os.getpid())])
             except Exception:
                 pass
             splashtext = "Happy birthday desu wa (aka Mattlau)!"
