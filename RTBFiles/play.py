@@ -45,5 +45,13 @@ else:
     parentpid = sys.argv[3]
     t = threading.Thread(name='parent_check', target=parent_check)
     t.start()
-    playsound(sys.argv[2])
-    os.kill(os.getpid(), 15)
+    try:
+        if str(sys.argv[4]) == "True":
+            while True:
+                playsound(sys.argv[2])
+            else:
+                playsound(sys.argv[2])
+                os.kill(os.getpid(), 15)
+    except Exception:
+        playsound(sys.argv[2])
+        os.kill(os.getpid(), 15)
