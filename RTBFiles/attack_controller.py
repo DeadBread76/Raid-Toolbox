@@ -709,7 +709,7 @@ elif mode == 'friender':
               [sg.InputText()],
               [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
              ]
-        window = sg.Window('RTB | Group DM Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Friend Bomber', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
         if event == "Start":

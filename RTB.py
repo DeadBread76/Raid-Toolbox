@@ -45,6 +45,7 @@ try:
         ignore_ffmpeg_missing = config['ignore_ffmpeg_missing']
         show_licence = config['show_licence']
 except Exception:
+    # TRY to fix itself
     print("Unable to read config file.\nImporting necessary modules and checking installation...")
     import os
     import sys
@@ -52,17 +53,20 @@ except Exception:
     import subprocess
     if not os.path.exists("RTBFiles/"):
         print("RTBFiles Directory not found.")
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/config.json')
+    print("Downloading config.json...")
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/config.json')
     data = response.read()
     data = data.decode('utf-8')
     with open("config.json","w+") as handle:
         handle.write(data)
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/requirements.txt')
+    print("Downloading requirements.txt...")
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/requirements.txt')
     data = response.read()
     data = data.decode('utf-8')
     with open("requirements.txt","w+") as handle:
         handle.write(data)
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/themes/DeadRed.py')
+    print("Downloading DeadRed.py...")
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/themes/DeadRed.py')
     data = response.read()
     data = data.decode('utf-8')
     try:
@@ -70,6 +74,16 @@ except Exception:
     except Exception:
         pass
     with open("themes/DeadRed.py","w+") as handle:
+        handle.write(data)
+    print("Downloading attack_dict.py...")
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/attack_dict.py')
+    data = response.read()
+    data = data.decode('utf-8')
+    try:
+        os.mkdir("RTBFiles")
+    except Exception:
+        pass
+    with open("RTBFiles/attack_dict.py","w+") as handle:
         handle.write(data)
     try:
         with open('config.json', 'r') as handle:
@@ -179,6 +193,7 @@ if not skin == "DeadRed":
     else:
         names = [x for x in mdl.__dict__ if not x.startswith("_")]
     globals().update({k: getattr(mdl, k) for k in names})
+
 # Import New Skin
 mdl = importlib.import_module("themes.{}".format(skin))
 if "__all__" in mdl.__dict__:
@@ -218,11 +233,21 @@ if sys.platform.startswith('win32'):
 else:
     clear = lambda: os.system('clear')
 
-# Find Plugins
-from pluginbase import PluginBase
-plugin_base = PluginBase(package='RTB.plugins')
-plugin_source = plugin_base.make_plugin_source(
-    searchpath=['plugins'])
+# Find Plugins (GUI)
+if not command_line_mode == 1:
+    try:
+        from pluginbase import PluginBase
+    except Exception:
+        sg.PopupNonBlocking("pluginbase not installed.\nAttempting to install now.", title="Missing Module.")
+        p = subprocess.call([sys.executable, "-m", "pip", "install", "pluginbase", "--user"],stdout=log, stderr=subprocess.STDOUT)
+        if p == 1:
+            sg.Popup("Unable to install Pluginbase, Refer to install.log for the error.")
+            sys.exit()
+        elif p == 0:
+            sg.Popup("Installed pluginbase Successfully.")
+    plugin_base = PluginBase(package='RTB.plugins')
+    plugin_source = plugin_base.make_plugin_source(
+        searchpath=['plugins'])
 
 # Termux Load
 if "com.termux" in sys.executable:
@@ -266,7 +291,6 @@ if "com.termux" in sys.executable:
             sys.exit()
         else:
             sys.exit()
-
 
 # Verbose Load
 elif verbose == 1:
@@ -341,7 +365,6 @@ elif verbose == 1:
             print ("Error Loading psutil")
             handle.write("Error Loading psutil\n")
     print("Finished Loading modules")
-
 
 # Normal Load
 else:
@@ -559,64 +582,6 @@ else:
             else:
                 sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error")
 
-
-# File Checks
-if os.path.isfile("pluginpids"):
-    os.remove("pluginpids")
-    if verbose == 1:
-        print("Removed pluginpids")
-
-try:
-    if not os.path.isdir("tokens"):
-        os.mkdir("tokens")
-    with open("tokens/{}".format(token_list),"r") as handle:
-        line = handle.readlines()
-        tcounter = len(line)
-        if verbose == 1:
-            print("Loaded {} Tokens".format(tcounter))
-except Exception:
-    if command_line_mode == 0:
-        sg.Popup("No Token list found, Lets create one.", title="No token list.")
-        newlist = sg.PopupGetText("New Token list name:")
-        if newlist is None:
-            sg.Popup("Well, I need a token list to run, so i'm going to make one called Tokens.txt.", title="Can't have none")
-            if os.path.isfile("tokens/tokens.txt"):
-                token_list = "tokens.txt"
-                pass
-            else:
-                with open("tokens/tokens.txt","r+") as handle:
-                    line = handle.readlines()
-                    tcounter = len(line)
-                    token_list = "tokens.txt"
-        else:
-            if newlist == "":
-                newlist = "NOTHING"
-            if os.path.isfile("tokens/{}.txt".format(newlist)):
-                pass
-            else:
-                with open("tokens/{}.txt".format(newlist),"w+") as handle:
-                    line = handle.readlines()
-                    tcounter = len(line)
-                    token_list = "{}.txt".format(newlist)
-        with open('config.json', 'r+') as handle:
-            edit = json.load(handle)
-            edit['token_list'] = token_list
-            handle.seek(0)
-            json.dump(edit, handle, indent=4)
-            handle.truncate()
-    else:
-        print("No Token list found, Creating tokens.txt")
-        with open("tokens/tokens.txt","w+") as handle:
-            line = handle.readlines()
-            tcounter = len(line)
-            token_list = "tokens.txt"
-        with open('config.json', 'r+') as handle:
-            edit = json.load(handle)
-            edit['token_list'] = token_list
-            handle.seek(0)
-            json.dump(edit, handle, indent=4)
-            handle.truncate()
-
 if not os.path.exists("RTBFiles/"):
     clear()
     singlefile = True
@@ -798,7 +763,7 @@ def main():
             tcounter = len(line)
     except Exception as e:
         if command_line_mode == 0:
-            sg.PopupNonBlocking("Unable to load token list.")
+            sg.Popup("Unable to load token list.")
         else:
             print("Unable to load token list.")
             input()
@@ -2965,6 +2930,113 @@ def asciigen(length):
         num = random.randrange(13000)
         asc = asc + chr(num)
     return asc
+
+# Token List Checking
+if not os.path.isdir("tokens"):
+    os.mkdir("tokens")
+try:
+    with open("tokens/{}".format(token_list),"r") as handle:
+        line = handle.readlines()
+        tcounter = len(line)
+        if verbose == 1:
+            print("Loaded {} Tokens".format(tcounter))
+except Exception:
+    if command_line_mode == 0:
+        window.Close()
+        sg.Popup("No Token list set in config, Please choose one.", title="No token list.")
+        layout = [
+                 [sg.Text('Choose a token list.')],
+                 ]
+        lists = []
+        for file in os.listdir("tokens"):
+            if file.endswith(".txt"):
+                lists.append(file)
+                size = len(open("tokens/"+file).read().splitlines())
+                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
+        if len(lists) == 0:
+            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(10,1))])
+        else:
+            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+        while True:
+            event, values = window.Read()
+            if event is None:
+                main()
+            elif event in lists:
+                token_list = event
+                with open('config.json', 'r+') as handle:
+                    edit = json.load(handle)
+                    edit['token_list'] = token_list
+                    handle.seek(0)
+                    json.dump(edit, handle, indent=4)
+                    handle.truncate()
+                sg.Popup("List is now {}.".format(token_list), title="Done")
+            elif event == "Create New...":
+                window.Close()
+                lay = [
+                    [sg.Text('New List Name:', size=(16,1)), sg.Input(size=(20,1), key="LISTO")],
+                    [sg.Button("OK", size=(7,1))]
+                    ]
+                win = sg.Window("New Token list").Layout(lay)
+                while True:
+                    ev, val = win.Read()
+                    if ev is None:
+                        del layout
+                        win.Close()
+                        layout = [
+                                 [sg.Text('Choose a token list.')],
+                                 ]
+                        lists = []
+                        for file in os.listdir("tokens"):
+                            if file.endswith(".txt"):
+                                lists.append(file)
+                                size = len(open("tokens/"+file).read().splitlines())
+                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(10,1))])
+                        if len(lists) == 0:
+                            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
+                        else:
+                            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+                        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+                        break
+                    else:
+                        try:
+                            with open("tokens/{}.txt".format(val['LISTO']), "a+") as handle:
+                                handle.write("")
+                        except Exception:
+                            sg.Popup("Error Creating File (Is it a valid name?)", title="Error making file.")
+                        del layout
+                        win.Close()
+                        layout = [
+                                 [sg.Text('Choose a token list.')],
+                                 ]
+                        lists = []
+                        for file in os.listdir("tokens"):
+                            if file.endswith(".txt"):
+                                lists.append(file)
+                                size = len(open("tokens/"+file).read().splitlines())
+                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(10,1))])
+                        if len(lists) == 0:
+                            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
+                        else:
+                            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+                        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+                        break
+            elif event == "Close":
+                window.Close()
+                main()
+
+    else:
+        print("No Token list found, Creating tokens.txt")
+        with open("tokens/tokens.txt","w+") as handle:
+            line = handle.readlines()
+            tcounter = len(line)
+            token_list = "tokens.txt"
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['token_list'] = token_list
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
 
 if __name__ == "__main__":
     if sys.platform.startswith('win32'):
