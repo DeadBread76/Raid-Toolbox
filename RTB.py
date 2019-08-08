@@ -416,8 +416,14 @@ else:
                 elif p == 0:
                     print("Installed {} Successfully.".format(package))
             print("Please Restart Raid Toolbox.")
-            input()
-            sys.exit()
+            if sys.platform.startswith('win32'):
+                os.system('cls')
+                os.system('cmd /C RTB.py')
+                os.system('exit')
+            else:
+                os.system('clear')
+                os.system('python3 RTB.py')
+                sys.exit()
         else:
             sys.exit()
 init()
