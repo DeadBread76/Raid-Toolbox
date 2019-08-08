@@ -988,7 +988,7 @@ def main():
                              [sg.Image(data=rtb_banner)],
                              [sg.Text("Version {}".format(rtbversion))],
                              [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
-                             [sg.Text("Credits/Special Thanks:\n\nSynchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily nad creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")],
+                             [sg.Text("Credits/Special Thanks:\n\nSynchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")],
                              ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
