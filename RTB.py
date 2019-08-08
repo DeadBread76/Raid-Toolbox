@@ -834,7 +834,7 @@ def main(currentattacks):
             elif event == "My YouTube":
                 webbrowser.open("https://www.youtube.com/channel/UCqYFFmU9acsi2HBFItNH6bQ")
             elif event == "Discord Server":
-                webbrowser.open("https://discord.gg/7RtuZEe")
+                webbrowser.open("discord.gg/JtvphCQ")
             elif event == "Telegram":
                 webbrowser.open("https://t.me/DeadBakery")
             elif event == "Joiner":
@@ -1739,7 +1739,7 @@ def info(currentattacks):
     print (colored("Copyright (c) 2019, DeadBread",menu1))
     print (colored("                                                            ",menu1))
     print (colored("https://github.com/DeadBread76/Raid-Toolbox",menu2))
-    print (colored("Discord: https://discord.gg/7RtuZEe\nTelegram: https://t.me/DeadBakery",menu2))
+    print (colored("Discord: https://discord.gg/JtvphCQ\nTelegram: https://t.me/DeadBakery",menu2))
     print (colored("                                                            ",menu1))
     if singlefile == True:
         print (colored("SINGLE FILE MODE ACTIVE",menu2))
