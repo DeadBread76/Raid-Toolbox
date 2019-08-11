@@ -1770,7 +1770,25 @@ elif mode == "Gifts":
                 with open("GIFT_CODES.txt", "a+") as handle:
                     handle.write("https://discord.gift/{}\n".format(f['code']))
 
-
+elif mode == "CPUWIDGET":
+    # Thank you PySimpleGUI, Very Cool!
+    import psutil
+    layout = [[sg.Text('')],
+              [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='text')],
+              [sg.Exit(pad=((15, 0), 0)),
+               sg.Spin([x + 1 for x in range(10)], 1, key='spin')]]
+    window = sg.Window('Running Timer', layout, no_titlebar=True, auto_size_buttons=False, keep_on_top=True,
+                       grab_anywhere=True)
+    while (True):
+        event, values = window.Read(timeout=10)
+        if event is None or event == 'Exit':
+            break
+        try:
+            interval = int(values['spin'])
+        except:
+            interval = 1
+        cpu_percent = psutil.cpu_percent(interval=interval)
+        window.Element('text').Update(f'CPU {cpu_percent:02.0f}%')
 
 elif mode == 'ree':
     picdata = requests.get("https://gist.githubusercontent.com/DeadBread76/3d93e55fe4a9e4c7324c2f0b13cf24ac/raw/7d433bb5187c5d2c1fc74c310ff0638790491c87/Special%2520surprise.txt")

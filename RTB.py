@@ -195,12 +195,22 @@ if not skin == "DeadRed":
     globals().update({k: getattr(mdl, k) for k in names})
 
 # Import New Skin
-mdl = importlib.import_module("themes.{}".format(skin))
-if "__all__" in mdl.__dict__:
-    names = mdl.__dict__["__all__"]
-else:
-    names = [x for x in mdl.__dict__ if not x.startswith("_")]
-globals().update({k: getattr(mdl, k) for k in names})
+try:
+    mdl = importlib.import_module("themes.{}".format(skin))
+    if "__all__" in mdl.__dict__:
+        names = mdl.__dict__["__all__"]
+    else:
+        names = [x for x in mdl.__dict__ if not x.startswith("_")]
+    globals().update({k: getattr(mdl, k) for k in names})
+except Exception as e:
+    print("LAST USED THEME MISSING: {}".format(e))
+    with open('config.json', 'r+') as handle:
+        edit = json.load(handle)
+        edit['skin'] = "DeadRed"
+        handle.seek(0)
+        json.dump(edit, handle, indent=4)
+        handle.truncate()
+
 colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
 if menu1.lower() == 'random':
     menu1 = random.choice(colours)
@@ -823,7 +833,7 @@ def main():
         print(colored("27. Settings menu",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings', 'CPU Widget']]],
                     ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -841,11 +851,31 @@ def main():
                 [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
                 ]
         tokenlist = open("tokens/"+token_list).read().splitlines()
-        window = sg.Window("DeadBread's Raid ToolBox v{} | ({} Tokens available.)".format(rtbversion,len(tokenlist)), icon=rtb_icon).Layout(layout)
+        window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout)
         while True:
-            event, values = window.Read(timeout=0)
+            event, values = window.Read(timeout=100)
             if event is None:
                 sys.exit()
+            elif event == sg.TIMEOUT_KEY:
+                for attack in list(currentattacks):
+                    if psutil.pid_exists(currentattacks[attack]):
+                        pass
+                    else:
+                        currentattacks.pop(attack)
+                if "b" in rtbversion:
+                    if len(currentattacks) == 0:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.]".format(rtbversion,len(tokenlist)))
+                    elif len(currentattacks) == 1:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.] | [{} Attack Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
+                    else:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.] | [{} Attacks Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
+                else:
+                    if len(currentattacks) == 0:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)))
+                    elif len(currentattacks) == 1:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.] | [{} Attack Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
+                    else:
+                         window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.] | [{} Attacks Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
             elif event == "Attack Manager":
                 window.Close()
                 for attack in list(currentattacks):
@@ -916,12 +946,67 @@ def main():
                                 os.kill(int(currentattacks[attack]), 9)
                             except Exception:
                                 pass
-                        currentattacks = {}
+                        for attack in list(currentattacks):
+                            if psutil.pid_exists(currentattacks[attack]):
+                                if not sys.platform.startswith('win32'):
+                                    proc = psutil.Process(currentattacks[attack])
+                                    if proc.status() == psutil.STATUS_ZOMBIE:
+                                        currentattacks.pop(attack)
+                                        layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
+                                        for attack in list(currentattacks.keys()):
+                                            layout.append([sg.Text(attack,size=(50,1)),sg.Button('Stop', size=(10,1), key=attack)])
+                                        if not currentattacks == {}:
+                                            if not len(currentattacks) == 1:
+                                                layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
+                                        else:
+                                            layout.append([sg.Button("No Attacks Running",size=(60,1))])
+                                        window.Close()
+                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                            else:
+                                currentattacks.pop(attack)
+                                layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
+                                for attack in list(currentattacks.keys()):
+                                    layout.append([sg.Text(attack,size=(50,1)),sg.Button('Stop', size=(10,1), key=attack)])
+                                if not currentattacks == {}:
+                                    if not len(currentattacks) == 1:
+                                        layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
+                                else:
+                                    layout.append([sg.Button("No Attacks Running",size=(60,1))])
+                                window.Close()
+                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
                     elif event in currentattacks:
                         try:
                             os.kill(int(currentattacks[event]), 9)
                         except Exception as e:
                             print(e)
+                        for attack in list(currentattacks):
+                            if psutil.pid_exists(currentattacks[attack]):
+                                if not sys.platform.startswith('win32'):
+                                    proc = psutil.Process(currentattacks[attack])
+                                    if proc.status() == psutil.STATUS_ZOMBIE:
+                                        currentattacks.pop(attack)
+                                        layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
+                                        for attack in list(currentattacks.keys()):
+                                            layout.append([sg.Text(attack,size=(50,1)),sg.Button('Stop', size=(10,1), key=attack)])
+                                        if not currentattacks == {}:
+                                            if not len(currentattacks) == 1:
+                                                layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
+                                        else:
+                                            layout.append([sg.Button("No Attacks Running",size=(60,1))])
+                                        window.Close()
+                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                            else:
+                                currentattacks.pop(attack)
+                                layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
+                                for attack in list(currentattacks.keys()):
+                                    layout.append([sg.Text(attack,size=(50,1)),sg.Button('Stop', size=(10,1), key=attack)])
+                                if not currentattacks == {}:
+                                    if not len(currentattacks) == 1:
+                                        layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
+                                else:
+                                    layout.append([sg.Button("No Attacks Running",size=(60,1))])
+                                window.Close()
+                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
             elif event == "Diagnostics":
                 sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True)
                 cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD").content
@@ -1048,7 +1133,7 @@ def main():
                          ]
                 window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
                 while True:
-                    event, values = window.Read(timeout=0)
+                    event, values = window.Read()
                     if event is None:
                         window.Close()
                         main()
@@ -1461,6 +1546,8 @@ def main():
             elif event == "Reaction Adder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Reaction | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "CPU Widget":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CPUWIDGET',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
             elif event == "View Plugins":
                 window.Close()
                 plugs = []
@@ -1477,7 +1564,7 @@ def main():
                     layout.append([sg.Text(plug.replace("_rtbplugin",""), size=(50,1)), sg.Button("Launch", key=plug, size=(6,1))])
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Plugins".format(rtbversion)).Layout(layout)
                 while True:
-                    event, values = window.Read(timeout=0)
+                    event, values = window.Read()
                     if event is None:
                         window.Close()
                         main()

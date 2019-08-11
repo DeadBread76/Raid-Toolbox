@@ -22,6 +22,7 @@ input_elements_background_color = '#636363'
 input_text_color = 'white'
 text_color = "white"
 button_color = ('white', '#d70000')
+transparent_colour = None
 
 # For the attack windows (Joiner, Leaver, etc)
 attacks_theme = {"preset_theme": "Dark2",
