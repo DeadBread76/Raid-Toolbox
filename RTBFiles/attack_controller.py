@@ -311,7 +311,7 @@ elif mode == "Checker V2":
 
 
 elif mode == 'messagespam':
-    def sendmessage(token,text,channel,server,emojispam):
+    def sendmessage(token,text,channel,server,emojispam,antispambypass):
         headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
         if emojispam:
             text += " "
@@ -322,10 +322,14 @@ elif mode == 'messagespam':
                 else:
                     text += "<:{}:{}>".format(emoji['name'],emoji['id'])
             if channel == 'all':
-                payload = {"content": text, "tts": false}
                 chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
                 channellist = json.loads(chanjson)
+                original = text
                 while True:
+                    text = original
+                    if antispambypass:
+                        text += " " + str(random.randint(1000,9999))
+                    payload = {"content": text, "tts": false}
                     for channel in channellist:
                         if not channel['type'] == 0:
                             continue
@@ -348,8 +352,12 @@ elif mode == 'messagespam':
 
             else:
                 headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-                payload = {"content": text, "tts": false}
+                original = text
                 while True:
+                    text = original
+                    if antispambypass:
+                        text += " " + str(random.randint(1000,9999))
+                    payload = {"content": text, "tts": false}
                     for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
                         src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                         if src.status_code == 429:
@@ -367,10 +375,14 @@ elif mode == 'messagespam':
                             sys.exit()
         else:
             if channel == 'all':
-                payload = {"content": text, "tts": false}
                 chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
                 channellist = json.loads(chanjson)
+                original = text
                 while True:
+                    text = original
+                    if antispambypass:
+                        text += " " + str(random.randint(1000,9999))
+                    payload = {"content": text, "tts": false}
                     for channel in channellist:
                         if not channel['type'] == 0:
                             continue
@@ -392,8 +404,12 @@ elif mode == 'messagespam':
 
             else:
                 headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-                payload = {"content": text, "tts": false}
+                original = text
                 while True:
+                    text = original
+                    if antispambypass:
+                        text += " " + str(random.randint(1000,9999))
+                    payload = {"content": text, "tts": false}
                     src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
                     if src.status_code == 429:
                         ratelimit = json.loads(src.content)
@@ -413,7 +429,7 @@ elif mode == 'messagespam':
               [sg.Text('Text To Spam', size=(15, 1)), sg.InputText()],
               [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all')],
               [sg.Text('Server ID', size=(15, 1)), sg.InputText()],
-              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.")]
+              [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty."), sg.Checkbox("Anti-Spam Bypass",tooltip="Attempts to bypass anti-spam bots")]
              ]
         window = sg.Window('RTB | Message Spammer', layout, keep_on_top=True)
         event, values = window.Read()
@@ -426,13 +442,15 @@ elif mode == 'messagespam':
         channelid = values[1]
         SERVER = values[2]
         emojispam = values[3]
+        bypass = values[4]
     else:
         text = sys.argv[6]
         channelid = sys.argv[7]
         SERVER = sys.argv[8]
         emojispam = False
+        bypass = False
     for token in tokenlist:
-        executor.submit(sendmessage,token,text,channelid,SERVER,emojispam)
+        executor.submit(sendmessage,token,text,channelid,SERVER,emojispam,bypass)
 
 elif mode == 'asciispam':
     def sendascii(token,channel,server):
@@ -1743,7 +1761,7 @@ elif mode == "DDDC":
 
 elif mode == "Gifts":
     gifts = {}
-    headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json'}
+    headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
     src = requests.get("https://canary.discordapp.com/api/v6/users/@me/entitlements/gifts", headers=headers)
     s = json.loads(src.content)
     for app in s:
@@ -1769,6 +1787,26 @@ elif mode == "Gifts":
                 sg.PopupScrolled("https://discord.gift/{}".format(f['code']))
                 with open("GIFT_CODES.txt", "a+") as handle:
                     handle.write("https://discord.gift/{}\n".format(f['code']))
+
+elif mode == "FR Clearer":
+    import discord
+    client = discord.Client()
+    token = sys.argv[6]
+
+    def delete(userid):
+        headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
+        requests.delete("https://canary.discordapp.com/api/v6/users/@me/relationships/{}".format(userid), headers=headers)
+
+    @client.event
+    async def on_ready():
+        todecline = []
+        for relation in client.user.relationships:
+            if str(relation.type) == 'RelationshipType.incoming_request':
+                todecline.append(relation.user.id)
+        for user in todecline:
+            executor.submit(delete,user)
+        await client.logout()
+    client.run(token, bot=False)
 
 elif mode == "CPUWIDGET":
     # Thank you PySimpleGUI, Very Cool!

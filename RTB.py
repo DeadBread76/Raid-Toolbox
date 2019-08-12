@@ -124,7 +124,7 @@ except Exception:
     log = open("install.log", "w")
     for package in requirements:
         print("Attempting to install {}".format(package))
-        p = subprocess.call([sys.executable, "-m", "pip", "install", package, "--user"],stdout=log, stderr=subprocess.STDOUT)
+        p = subprocess.call([sys.executable, "-m", "pip", "install", package, "--user", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
         if p == 1:
             print("There was an error with installing the package {}, Refer to Install.log".format(package))
         elif p == 0:
@@ -162,12 +162,12 @@ if command_line_mode == 0:
         print("PySimpleGUI Is not installed.")
         if sys.platform.startswith('darwin'):
             log = open("install.log", "w")
-            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySimpleGUIQt"],stdout=log, stderr=subprocess.STDOUT)
+            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySimpleGUIQt", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
             if p == 1:
                 print("There was an error with installing the package PySimpleGUIQt, Refer to Install.log")
             elif p == 0:
                 print("Installed PySimpleGUIQt Successfully.")
-            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySide2"],stdout=log, stderr=subprocess.STDOUT)
+            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySide2", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
             if p == 1:
                 print("There was an error with installing the package PySide2, Refer to Install.log")
             elif p == 0:
@@ -176,7 +176,7 @@ if command_line_mode == 0:
             sys.exit()
         else:
             log = open("install.log", "w")
-            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySimpleGUI", "--user"],stdout=log, stderr=subprocess.STDOUT)
+            p = subprocess.call([sys.executable, "-m", "pip", "install", "PySimpleGUI", "--user", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
             if p == 1:
                 print("There was an error with installing the package PySimpleGUI, Refer to Install.log")
             elif p == 0:
@@ -248,8 +248,9 @@ if not command_line_mode == 1:
     try:
         from pluginbase import PluginBase
     except Exception:
+        log = open("install.log", "w")
         sg.PopupNonBlocking("pluginbase not installed.\nAttempting to install now.", title="Missing Module.")
-        p = subprocess.call([sys.executable, "-m", "pip", "install", "pluginbase", "--user"],stdout=log, stderr=subprocess.STDOUT)
+        p = subprocess.call([sys.executable, "-m", "pip", "install", "pluginbase", "--user", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
         if p == 1:
             sg.Popup("Unable to install Pluginbase, Refer to install.log for the error.")
             sys.exit()
@@ -291,7 +292,7 @@ if "com.termux" in sys.executable:
             log = open("install.log", "w")
             for package in requirements:
                 print("Attempting to install {}".format(package))
-                p = subprocess.call([sys.executable, "-m", "pip", "install", package],stdout=log, stderr=subprocess.STDOUT)
+                p = subprocess.call([sys.executable, "-m", "pip", "install", package, "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
                 if p == 1:
                     print("There was an error with installing the package {}, Refer to Install.log".format(package))
                 elif p == 0:
@@ -420,18 +421,18 @@ else:
             log = open("install.log", "w")
             for package in requirements:
                 print("Attempting to install {}".format(package))
-                p = subprocess.call([sys.executable, "-m", "pip", "install", package, "--user"],stdout=log, stderr=subprocess.STDOUT)
+                p = subprocess.call([sys.executable, "-m", "pip", "install", package, "--user", "--upgrade"],stdout=log, stderr=subprocess.STDOUT)
                 if p == 1:
                     print("There was an error with installing the package {}, Refer to Install.log".format(package))
                 elif p == 0:
                     print("Installed {} Successfully.".format(package))
             print("Please Restart Raid Toolbox.")
             if sys.platform.startswith('win32'):
-                os.system('cls')
+                clear()
                 os.system('cmd /C RTB.py')
-                os.system('exit')
+                sys.exit()
             else:
-                os.system('clear')
+                clear()
                 os.system('python3 RTB.py')
                 sys.exit()
         else:
@@ -859,17 +860,14 @@ def main():
             elif event == sg.TIMEOUT_KEY:
                 for attack in list(currentattacks):
                     if psutil.pid_exists(currentattacks[attack]):
-                        pass
+                        if not sys.platform.startswith('win32'):
+                            proc = psutil.Process(currentattacks[attack])
+                            if proc.status() == psutil.STATUS_ZOMBIE:
+                                currentattacks.pop(attack)
+                                continue
                     else:
                         currentattacks.pop(attack)
-                if "b" in rtbversion:
-                    if len(currentattacks) == 0:
-                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.]".format(rtbversion,len(tokenlist)))
-                    elif len(currentattacks) == 1:
-                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.] | [{} Attack Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
-                    else:
-                         window.TKroot.title("DeadBread's Raid ToolBox v{} (TEST VERSION) | [{} Tokens available.] | [{} Attacks Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
-                else:
+                if not sys.platform.startswith('darwin'):
                     if len(currentattacks) == 0:
                          window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)))
                     elif len(currentattacks) == 1:
@@ -1361,7 +1359,7 @@ def main():
                          [sg.Text('Token:')],
                          [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
                          [sg.Button("Heavy Info Gather",size=(15,1)), sg.Button("Terminator",size=(15,1)), sg.Button("Client Glitcher",size=(15,1)), sg.Button("Ownership Transfer",size=(15,1))],
-                         [sg.Button("Login to Token",size=(15,1)), sg.Button("Gift Inventory", size=(15,1)), sg.Button("DDDC", size=(15,1))]
+                         [sg.Button("Login to Token",size=(15,1)), sg.Button("Gift Inventory", size=(15,1)), sg.Button("DDDC", size=(15,1)), sg.Button("FR Clearer", size=(15,1))]
                          ]
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
                 while True:
@@ -1417,7 +1415,9 @@ def main():
                         sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True)
                         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','DDDC',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                         currentattacks["Doki Doki Discord Club | Started at: {}".format(datetime.datetime.now().time())] = p.pid # cringe
-
+                    elif event == "FR Clearer":
+                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                        currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Launch":
                 window.Close()
                 serversmasher()
@@ -2236,7 +2236,7 @@ def reaction():
         main()
     msgid = input ("Message ID: ")
     emoji = input ("Emoji: ")
-    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(no_tk_mode),str(str(thread_count),str(attacks_theme),msgid,chan,"Add",emoji),chan,SERVER],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(no_tk_mode),str(thread_count),str(attacks_theme),msgid,chan,"Add",emoji,chan],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
     currentattacks["Reaction Started at: {}".format(datetime.datetime.now().time())] = p.pid
     main()
 
