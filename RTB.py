@@ -834,7 +834,7 @@ def main():
         print(colored("27. Settings menu",menu2))
         choice = input(colored(">",menu2))
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes',['Change Theme', 'Theme Repo'], 'About', ['Info', 'Diagnostics', 'Updater', 'Settings', 'CPU Widget']]],
+        menu_def = [['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
                     ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
                     ['Server Smasher', ['Launch']],
@@ -1604,6 +1604,18 @@ def main():
                         time.sleep(0.5)
                         os.remove("plugins/{}.zip".format(event.replace(" ", "_")))
                         sg.Popup("Downloaded {}".format(event),title="Download Complete.")
+            elif event == "CF Check":
+                try:
+                    cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
+                except Exception as e:
+                    print(e)
+                else:
+                    try:
+                        json.loads(cloudflarecheck.content)
+                    except Exception:
+                        sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
+                    else:
+                        sg.Popup("CloudFlare OK!", title="CF CHECK")
     else:
         now = datetime.datetime.now()
         if now.month == 2 and now.day == 23:
