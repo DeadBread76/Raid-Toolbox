@@ -10,8 +10,7 @@ Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-T
 
 ### Need any help?
 
-Check out the [Wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki), our [Telegram group](https://t.me/DeadBakery),
-and our [Discord server](https://discord.gg/e2dc9Pt)
+Check out the [Wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki) and our [Telegram group](https://t.me/DeadBakery)
 
 ### Screenshots:
 
