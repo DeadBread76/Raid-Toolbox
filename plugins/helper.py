@@ -19,7 +19,7 @@
 
 """
 Documentation
-
+(Full Documentation Here: https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-create-a-Plugin-for-RTB)
 Load plugin helper:
 
 import plugins.helper
@@ -34,7 +34,6 @@ plugins.helper.attack_dict["Example"] = p.pid
 
 import sys
 import json
-import importlib
 sys.path.append('..')
 import RTBFiles.attack_dict
 

