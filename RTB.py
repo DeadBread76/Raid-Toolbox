@@ -24,7 +24,6 @@
 
 
 rtbversion = "1.1.0b"
-smversion = "0.1.11r1"
 
 # Load Config
 try:
@@ -551,48 +550,6 @@ else:
                             handle.truncate()
                         print ("Update complete, exiting.")
                         os.kill(os.getpid(), 15)
-
-            if not vercheck[1] == smversion:
-                if command_line_mode == 1:
-                    print(colored("There is an update for Server Smasher, Download update?", menu1))
-                    verchoice = input("(Y/N): ")
-                    if verchoice.lower() == "y":
-                        clear()
-                        print(colored('Downloading update for Server Smasher, Please Wait...',menu1))
-                        serversmasherupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/serversmasher.py')
-                        configupdate = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/smconfig.py')
-                        mainpatch = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTB.py")
-                        print(colored("Update has been downloaded, Installing...",menu1))
-                        try:
-                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        except Exception:
-                            pass
-                        with open("RTBFiles/serversmasher.py", "wb") as handle:
-                            handle.write(serversmasherupdate.content)
-                        with open("RTBFiles/smconfig.py", "wb") as handle:
-                            handle.write(configupdate.content)
-                        with open("RTB.py", "wb") as handle:
-                            handle.write(mainpatch.content)
-                        print(colored("Update Complete.",menu1))
-                        input("Press enter to exit.")
-                        os.kill(os.getpid(), 15)
-                else:
-                    try:
-                        window.Close()
-                    except Exception:
-                        pass
-                    verchoice = sg.PopupYesNo("There is an update for Server Smasher, Download update?",title=" Server Smasher Update Available")
-                    if verchoice == "Yes":
-                        clear()
-                        print(colored('Downloading update for Server Smasher, Please Wait...',menu1))
-                        shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/serversmasher.py')
-                        download_file('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/smconfig.py')
-                        download_file("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTB.py")
-                        shutil.copy("smconfig.py", "RTBFiles/smconfig.py")
-                        os.remove("smconfig.py")
-                        sg.Popup("Update Complete, Press ok to close.")
-                        os.kill(os.getpid(), 15)
         except Exception as e:
             if command_line_mode == 1:
                 print("Error Updating: {}".format(e))
@@ -753,9 +710,9 @@ if not command_line_mode == 1:
         pass
 t1 = time.time()
 if verbose == 1:
-    print("Startup time: {}".format(t1-t0))
+    print(f'Startup time: {t1 - t0:.2f}s')
     with open("load.log","a",errors='ignore') as handle:
-        handle.write("================================\nStartup Time: {}\n================================\n\n\n".format(t1-t0))
+        handle.write(f'================================\nStartup time: {t1 - t0:.2f}s\n================================\n\n\n')
     print("Starting...")
 
 
@@ -794,6 +751,10 @@ def main():
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
         else:
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
+    #   _____
+    #  |_   _|__ _ _ _ __ _  ___ __
+    #   | |/ -_) '_| '  \ || \ \ /
+    #   |_|\___|_| |_|_|_\_,_/_\_\
     if no_tk_mode == 1:
         if sys.platform.startswith('win32'):
             os.system('mode con:cols=41 lines=32')
@@ -833,11 +794,15 @@ def main():
         print(colored("26. Theme menu",menu2))
         print(colored("27. Settings menu",menu2))
         choice = input(colored(">",menu2))
+     #     ___ _   _ ___
+     #   / __| | | |_ _|
+     #  | (_ | |_| || |
+     #  \___|\___/|___|
     elif command_line_mode == 0:
         menu_def = [['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
                     ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
-                    ['Help', ['Wiki', 'My YouTube', 'Discord Server', 'Telegram']],
-                    ['Server Smasher', ['Launch']],
+                    ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
+                    ['Server Smasher', ['Launch GUI', 'Launch Legacy']],
                     ['Plugins', ['View Plugins', 'Plugin Repo']]
                     ]
         layout =[
@@ -874,6 +839,11 @@ def main():
                          window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.] | [{} Attack Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
                     else:
                          window.TKroot.title("DeadBread's Raid ToolBox v{} | [{} Tokens available.] | [{} Attacks Running.]".format(rtbversion,len(tokenlist),len(currentattacks)))
+            #    _  _   _           _     __  __
+            #   /_\| |_| |_ __ _ __| |__ |  \/  |__ _ _ _  __ _ __ _ ___ _ _
+            #  / _ \  _|  _/ _` / _| / / | |\/| / _` | ' \/ _` / _` / -_) '_|
+            # /_/ \_\__|\__\__,_\__|_\_\ |_|  |_\__,_|_||_\__,_\__, \___|_|
+            #                                                  |___/
             elif event == "Attack Manager":
                 window.Close()
                 for attack in list(currentattacks):
@@ -1005,180 +975,11 @@ def main():
                                     layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                 window.Close()
                                 window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
-            elif event == "Diagnostics":
-                sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True)
-                cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD").content
-                ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD").content
-                cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD").content
-                try:
-                    json.loads(cloudcheck)
-                    stbanned = False
-                except Exception:
-                    stbanned = True
-                try:
-                    json.loads(ptbcloudcheck)
-                    ptbbanned = False
-                except Exception:
-                    ptbbanned = True
-                try:
-                    json.loads(cancloudcheck)
-                    banned = False
-                except Exception:
-                    banned = True
-                try:
-                    cpu = cpuinfo.get_cpu_info()['brand']
-                except Exception:
-                    pass
-                if banned == True:
-                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work.\n(So please don't come to my Discord server and complain about the joiner not working.)", title="CloudFlare Banned")
-                else:
-                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are not CloudFlare Banned.\nCongrats.", title="Results")
-                now = datetime.datetime.now()
-                filename = str(now.strftime("%H%M%S%d%m%Y"))
-                with open ("Diagnostics" +filename+".txt", 'w+', errors='ignore') as handle:
-                    handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
-                    handle.write("=====================================================\n")
-                    handle.write("RTB VERSION: " + rtbversion + "\n")
-                    handle.write("SM VERSION: " + smversion + "\n")
-                    try:
-                        handle.write("Startup Time: {}".format(t1-t0)+"\n")
-                    except Exception:
-                        pass
-                    handle.write("Tokens Loaded: " + str(tcounter) + "\n")
-                    handle.write("---------------\n")
-                    handle.write("CloudFlare Ban Status\n\n")
-                    handle.write("Stable Endpoint: {}\n".format(stbanned))
-                    handle.write("PTB Endpoint: {}\n".format(ptbbanned))
-                    handle.write("Canary Endpoint: {}\n".format(banned))
-                    if banned:
-                        handle.write("The canary endpoint is used for RTB, This means some functions will not work.\n")
-                    handle.write("---------------\n")
-                    handle.write("Python Info:\n\n")
-                    handle.write("Python Version: " + sys.version+"\n")
-                    handle.write("Discord.py version: " + discord.__version__ + "\n")
-                    handle.write("---------------\n")
-                    handle.write("OS info:\n\n")
-                    handle.write("Platform: " + platform.platform()+"\n")
-                    try:
-                        handle.write("Processor: " + (str(cpu))+"\n")
-                    except Exception as e:
-                        handle.write("Processor: " + (str(e))+"\n")
-                    handle.write("---------------\n")
-                    handle.write("RTB Dump:\n\n")
-                    handle.write(str(sys.modules.keys())+"\n")
-                    handle.write(str(dir())+"\n")
-                    handle.write(str(globals())+"\n")
-                    handle.write(str(locals())+"\n")
-                    handle.write("---------------\n")
-            elif event == "Info":
-                while True:
-                    window.Close()
-                    layout = [
-                             [sg.Image(data=rtb_banner)],
-                             [sg.Text("Version {}".format(rtbversion))],
-                             [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
-                             [sg.Text("Credits/Special Thanks:\n\nSynchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Bug Hunting\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")],
-                             ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
-                    event, values = window.Read()
-                    if event is None:
-                        window.Close()
-                        main()
-            elif event == "Settings":
-                window.Close()
-                if verbose == 1:
-                    v = True
-                else:
-                    v = False
-                if disable_theme_music == 1:
-                    dtm = True
-                else:
-                    dtm = False
-                if disable_theme_music == 1:
-                    dtm = True
-                else:
-                    dtm = False
-                if command_line_mode == 1:
-                    clim = True
-                else:
-                    clim = False
-                if disable_cloudflare_check == 1:
-                    dcc = True
-                else:
-                    dcc = False
-                if disable_update_check == 1:
-                    duc = True
-                else:
-                    duc = False
-                if server_smasher_in_main_window == 1:
-                    smmw = True
-                else:
-                    smmw = False
-                if ignore_ffmpeg_missing == 1:
-                    ifm = True
-                else:
-                    ifm = False
-                layout = [
-                         [sg.Text("Thread Count:", size=(26,1)), sg.Input(thread_count, size=(5,1))],
-                         [sg.Text("Verbose Load:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=v)],
-                         [sg.Text("Disable theme music:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dtm)],
-                         [sg.Text("Command line mode:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=clim)],
-                         [sg.Text("Disable Cloudflare Check:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dcc)],
-                         [sg.Text("Disable Update Checking:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=duc)],
-                         [sg.Text("Server Smasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
-                         [sg.Text("Ignore FFMpeg Missing:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=ifm)],
-                         [sg.Button("Save", size=(10,1))],
-                         ]
-                window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
-                while True:
-                    event, values = window.Read()
-                    if event is None:
-                        window.Close()
-                        main()
-                    elif event == "Save":
-                        thread_count = int(values[0])
-                        if values[1]:
-                            verbose = 1
-                        else:
-                            verbose = 0
-                        if values[2]:
-                            disable_theme_music = 1
-                        else:
-                            disable_theme_music = 0
-                        if values[3]:
-                            command_line_mode = 1
-                        else:
-                            command_line_mode = 0
-                        if values[4]:
-                            disable_cloudflare_check = 1
-                        else:
-                            disable_cloudflare_check = 0
-                        if values[5]:
-                            disable_update_check = 1
-                        else:
-                            disable_update_check = 0
-                        if values[6]:
-                            server_smasher_in_main_window = 1
-                        else:
-                            server_smasher_in_main_window = 0
-                        if values[7]:
-                            ignore_ffmpeg_missing = 1
-                        else:
-                            ignore_ffmpeg_missing = 0
-                        with open('config.json', 'r+') as handle:
-                            edit = json.load(handle)
-                            edit['thread_count'] = thread_count
-                            edit['verbose'] = verbose
-                            edit['disable_theme_music'] = disable_theme_music
-                            edit['command_line_mode'] = command_line_mode
-                            edit['disable_cloudflare_check'] = disable_cloudflare_check
-                            edit['disable_update_check'] = disable_update_check
-                            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
-                            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
-                            handle.seek(0)
-                            json.dump(edit, handle, indent=4)
-                            handle.truncate()
-                            sg.Popup("Changes saved to config.", title="Saved Changes")
+            #  _____ _                    __  __                                       _
+            # |_   _| |_  ___ _ __  ___  |  \/  |__ _ _ _  __ _ __ _ ___ _ __  ___ _ _| |_
+            #   | | | ' \/ -_) '  \/ -_) | |\/| / _` | ' \/ _` / _` / -_) '  \/ -_) ' \  _|
+            #   |_| |_||_\___|_|_|_\___| |_|  |_\__,_|_||_\__,_\__, \___|_|_|_\___|_||_\__|
+            #                                                  |___/
             elif event == "Change Theme":
                 while True:
                     window.Close()
@@ -1281,6 +1082,264 @@ def main():
                         with open("themes/{}.py".format(event),"wb") as handle:
                             handle.write(themedl)
                         sg.Popup("Downloaded {}".format(event),title="Download Complete.")
+            #   ___       _   _
+            #  / _ \ _ __| |_(_)___ _ _  ___
+            # | (_) | '_ \  _| / _ \ ' \(_-<
+            #  \___/| .__/\__|_\___/_||_/__/
+            #       |_|
+            elif event == "Updater":
+                window.Close()
+                if "b" in rtbversion:
+                    sg.Popup("You are using a test version, be careful.",non_blocking=True,keep_on_top=True,title="RTB Version {}".format(rtbversion))
+                devbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/version').text
+                devbuild = devbuild.split("|")
+                masterbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version').text
+                masterbuild = masterbuild.split("|")
+                layout = [
+                         [sg.Text("Current Version: {}".format(rtbversion))],
+                         [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
+                         [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
+                         ]
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion)).Layout(layout)
+                event, values = window.Read()
+                if event is None:
+                    window.Close()
+                    main()
+                else:
+                    yn = sg.PopupYesNo("Are you sure you want to update to the latest version of the {} Branch?".format(event), title="Update")
+                    if yn == "Yes":
+                        sg.PopupNonBlocking("Downloading Update...")
+                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/{}.zip'.format(event.lower()))
+                        try:
+                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                        except Exception:
+                            pass
+                        shutil.unpack_archive(update)
+                        copy_tree("Raid-Toolbox-{}/".format(event.lower()), ".")
+                        os.remove(update)
+                        shutil.rmtree("Raid-Toolbox-{}/".format(event.lower()))
+                        with open('config.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['skin'] = skin
+                            edit['token_list'] = token_list
+                            edit['thread_count'] = thread_count
+                            edit['verbose'] = verbose
+                            edit['disable_theme_music'] = disable_theme_music
+                            edit['command_line_mode'] = command_line_mode
+                            edit['no_tk_mode'] = no_tk_mode
+                            edit['disable_cloudflare_check'] = disable_cloudflare_check
+                            edit['disable_update_check'] = disable_update_check
+                            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
+                            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+                            edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+                            edit['show_licence'] = 0
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
+                        sg.Popup("Update complete, Press Ok to exit.")
+                        os.kill(os.getpid(), 15)
+                    else:
+                        window.Close()
+                        main()
+            elif event == "Settings":
+                window.Close()
+                if verbose == 1:
+                    v = True
+                else:
+                    v = False
+                if disable_theme_music == 1:
+                    dtm = True
+                else:
+                    dtm = False
+                if disable_theme_music == 1:
+                    dtm = True
+                else:
+                    dtm = False
+                if command_line_mode == 1:
+                    clim = True
+                else:
+                    clim = False
+                if disable_cloudflare_check == 1:
+                    dcc = True
+                else:
+                    dcc = False
+                if disable_update_check == 1:
+                    duc = True
+                else:
+                    duc = False
+                if server_smasher_in_main_window == 1:
+                    smmw = True
+                else:
+                    smmw = False
+                if ignore_ffmpeg_missing == 1:
+                    ifm = True
+                else:
+                    ifm = False
+                layout = [
+                         [sg.Text("Thread Count:", size=(26,1)), sg.Input(thread_count, size=(5,1))],
+                         [sg.Text("Verbose Load:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=v)],
+                         [sg.Text("Disable theme music:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dtm)],
+                         [sg.Text("Command line mode:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=clim)],
+                         [sg.Text("Disable Cloudflare Check:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dcc)],
+                         [sg.Text("Disable Update Checking:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=duc)],
+                         [sg.Text("Server Smasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
+                         [sg.Text("Ignore FFMpeg Missing:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=ifm)],
+                         [sg.Button("Save", size=(10,1))],
+                         ]
+                window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
+                while True:
+                    event, values = window.Read()
+                    if event is None:
+                        window.Close()
+                        main()
+                    elif event == "Save":
+                        thread_count = int(values[0])
+                        if values[1]:
+                            verbose = 1
+                        else:
+                            verbose = 0
+                        if values[2]:
+                            disable_theme_music = 1
+                        else:
+                            disable_theme_music = 0
+                        if values[3]:
+                            command_line_mode = 1
+                        else:
+                            command_line_mode = 0
+                        if values[4]:
+                            disable_cloudflare_check = 1
+                        else:
+                            disable_cloudflare_check = 0
+                        if values[5]:
+                            disable_update_check = 1
+                        else:
+                            disable_update_check = 0
+                        if values[6]:
+                            server_smasher_in_main_window = 1
+                        else:
+                            server_smasher_in_main_window = 0
+                        if values[7]:
+                            ignore_ffmpeg_missing = 1
+                        else:
+                            ignore_ffmpeg_missing = 0
+                        with open('config.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['thread_count'] = thread_count
+                            edit['verbose'] = verbose
+                            edit['disable_theme_music'] = disable_theme_music
+                            edit['command_line_mode'] = command_line_mode
+                            edit['disable_cloudflare_check'] = disable_cloudflare_check
+                            edit['disable_update_check'] = disable_update_check
+                            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
+                            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
+                            sg.Popup("Changes saved to config.", title="Saved Changes")
+            #    _   _              _
+            #   /_\ | |__  ___ _  _| |_
+            #  / _ \| '_ \/ _ \ || |  _|
+            # /_/ \_\_.__/\___/\_,_|\__|
+            elif event == "Info":
+                while True:
+                    window.Close()
+                    frame = [
+                    [sg.Text("Synchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Squek\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")]
+                    ]
+                    layout = [
+                             [sg.Image(data=rtb_banner)],
+                             [sg.Text("Version {}".format(rtbversion))],
+                             [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
+                             [sg.Frame("Credits/Special Thanks:", frame, font="Any 15", title_color=text_color)],
+                             ]
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
+                    event, values = window.Read()
+                    if event is None:
+                        window.Close()
+                        main()
+            elif event == "Diagnostics":
+                sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True)
+                cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD").content
+                ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD").content
+                cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD").content
+                try:
+                    json.loads(cloudcheck)
+                    stbanned = False
+                except Exception:
+                    stbanned = True
+                try:
+                    json.loads(ptbcloudcheck)
+                    ptbbanned = False
+                except Exception:
+                    ptbbanned = True
+                try:
+                    json.loads(cancloudcheck)
+                    banned = False
+                except Exception:
+                    banned = True
+                try:
+                    cpu = cpuinfo.get_cpu_info()['brand']
+                except Exception:
+                    pass
+                if banned == True:
+                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work.\n(So please don't come to my Discord server and complain about the joiner not working.)", title="CloudFlare Banned")
+                else:
+                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are not CloudFlare Banned.\nCongrats.", title="Results")
+                now = datetime.datetime.now()
+                filename = str(now.strftime("%H%M%S%d%m%Y"))
+                with open ("Diagnostics" +filename+".txt", 'w+', errors='ignore') as handle:
+                    handle.write("Raid Toolbox Diagnostics "+str(now.strftime("%d/%m/%Y %H:%M:%S"))+"\n")
+                    handle.write("=====================================================\n")
+                    handle.write("RTB VERSION: " + rtbversion + "\n")
+                    try:
+                        handle.write("Startup Time: {}".format(t1-t0)+"\n")
+                    except Exception:
+                        pass
+                    handle.write("Tokens Loaded: " + str(tcounter) + "\n")
+                    handle.write("---------------\n")
+                    handle.write("CloudFlare Ban Status\n\n")
+                    handle.write("Stable Endpoint: {}\n".format(stbanned))
+                    handle.write("PTB Endpoint: {}\n".format(ptbbanned))
+                    handle.write("Canary Endpoint: {}\n".format(banned))
+                    if banned:
+                        handle.write("The canary endpoint is used for RTB, This means some functions will not work.\n")
+                    handle.write("---------------\n")
+                    handle.write("Python Info:\n\n")
+                    handle.write("Python Version: " + sys.version+"\n")
+                    handle.write("Discord.py version: " + discord.__version__ + "\n")
+                    handle.write("---------------\n")
+                    handle.write("OS info:\n\n")
+                    handle.write("Platform: " + platform.platform()+"\n")
+                    try:
+                        handle.write("Processor: " + (str(cpu))+"\n")
+                    except Exception as e:
+                        handle.write("Processor: " + (str(e))+"\n")
+                    handle.write("---------------\n")
+                    handle.write("RTB Dump:\n\n")
+                    handle.write(str(sys.modules.keys())+"\n")
+                    handle.write(str(dir())+"\n")
+                    handle.write(str(globals())+"\n")
+                    handle.write(str(locals())+"\n")
+                    handle.write("---------------\n")
+            elif event == "CF Check":
+                try:
+                    cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
+                except Exception as e:
+                    print(e)
+                else:
+                    try:
+                        json.loads(cloudflarecheck.content)
+                    except Exception:
+                        sg.Popup("Your IP is CloudFlare Banned on the Canary Endpoint.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
+                    else:
+                        sg.Popup("CloudFlare OK!", title="CF CHECK")
+            elif event == "CPU Widget":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CPUWIDGET',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+            #  _____    _              __  __                                       _
+            # |_   _|__| |_____ _ _   |  \/  |__ _ _ _  __ _ __ _ ___ _ __  ___ _ _| |_
+            #   | |/ _ \ / / -_) ' \  | |\/| / _` | ' \/ _` / _` / -_) '  \/ -_) ' \  _|
+            #   |_|\___/_\_\___|_||_| |_|  |_\__,_|_||_\__,_\__, \___|_|_|_\___|_||_\__|
+            #                                               |___/
             elif event == "View/Add Tokens":
                 while True:
                     window.Close()
@@ -1311,9 +1370,12 @@ def main():
                 lists = []
                 for file in os.listdir("tokens"):
                     if file.endswith(".txt"):
-                        lists.append(file)
-                        size = len(open("tokens/"+file).read().splitlines())
-                        layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
+                        if file == "smtokens.txt":
+                            continue
+                        else:
+                            lists.append(file)
+                            size = len(open("tokens/"+file).read().splitlines())
+                            layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
                 layout.append([sg.Button("Create New...", size=(10,1))])
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion)).Layout(layout)
                 while True:
@@ -1414,75 +1476,37 @@ def main():
                             os.remove("RTBFiles/DDDC/doki.zip")
                         sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True)
                         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','DDDC',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Doki Doki Discord Club | Started at: {}".format(datetime.datetime.now().time())] = p.pid # cringe
+                        currentattacks["Doki Doki Discord Club | Started at: {}\nWEEEB".format(datetime.datetime.now().time())] = p.pid # cringe
                     elif event == "FR Clearer":
                         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                         currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
-            elif event == "Launch":
-                window.Close()
-                serversmasher()
-            elif event == "Updater":
-                window.Close()
-                if "b" in rtbversion:
-                    sg.Popup("You are using a test version, be careful.",non_blocking=True,keep_on_top=True,title="RTB Version {}".format(rtbversion))
-                devbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/version').text
-                devbuild = devbuild.split("|")
-                masterbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version').text
-                masterbuild = masterbuild.split("|")
-                layout = [
-                         [sg.Text("Current Version: {}".format(rtbversion))],
-                         [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
-                         [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
-                         ]
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion)).Layout(layout)
-                event, values = window.Read()
-                if event is None:
-                    window.Close()
-                    main()
-                else:
-                    yn = sg.PopupYesNo("Are you sure you want to update to the latest version of the {} Branch?".format(event), title="Update")
-                    if yn == "Yes":
-                        sg.PopupNonBlocking("Downloading Update...")
-                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/{}.zip'.format(event.lower()))
-                        try:
-                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        except Exception:
-                            pass
-                        shutil.unpack_archive(update)
-                        copy_tree("Raid-Toolbox-{}/".format(event.lower()), ".")
-                        os.remove(update)
-                        shutil.rmtree("Raid-Toolbox-{}/".format(event.lower()))
-                        with open('config.json', 'r+') as handle:
-                            edit = json.load(handle)
-                            edit['skin'] = skin
-                            edit['token_list'] = token_list
-                            edit['thread_count'] = thread_count
-                            edit['verbose'] = verbose
-                            edit['disable_theme_music'] = disable_theme_music
-                            edit['command_line_mode'] = command_line_mode
-                            edit['no_tk_mode'] = no_tk_mode
-                            edit['disable_cloudflare_check'] = disable_cloudflare_check
-                            edit['disable_update_check'] = disable_update_check
-                            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
-                            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
-                            edit['combine_uverified_and_verified'] = combine_uverified_and_verified
-                            edit['show_licence'] = 0
-                            handle.seek(0)
-                            json.dump(edit, handle, indent=4)
-                            handle.truncate()
-                        sg.Popup("Update complete, Press Ok to exit.")
-                        os.kill(os.getpid(), 15)
-                    else:
-                        window.Close()
-                        main()
+            #  _  _     _        _    _      _
+            # | || |___| |_ __  | |  (_)_ _ | |__ ___
+            # | __ / -_) | '_ \ | |__| | ' \| / /(_-<
+            # |_||_\___|_| .__/ |____|_|_||_|_\_\/__/
+            #            |_|
             elif event == "Wiki":
                 webbrowser.open("https://github.com/DeadBread76/Raid-Toolbox/wiki")
             elif event == "My YouTube":
                 webbrowser.open("https://www.youtube.com/channel/UCqYFFmU9acsi2HBFItNH6bQ")
             elif event == "Discord Server":
-                webbrowser.open("https://discord.gg/7RtuZEe")
+                webbrowser.open("https://discord.gg/SuckMyDickNoYoureNotJoining")
             elif event == "Telegram":
                 webbrowser.open("https://t.me/DeadBakery")
+             #  ___                        ___               _
+             # / __| ___ _ ___ _____ _ _  / __|_ __  __ _ __| |_  ___ _ _
+             # \__ \/ -_) '_\ V / -_) '_| \__ \ '  \/ _` (_-< ' \/ -_) '_|
+             # |___/\___|_|  \_/\___|_|   |___/_|_|_\__,_/__/_||_\___|_|
+            elif event == "Launch Legacy":
+                window.Close()
+                serversmasher()
+            elif event == "Launch GUI":
+                p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasherGUI.py',str(attacks_theme)]) #,stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT
+                currentattacks["SERVER SMASHER GUI | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            #  __  __      _          _  _   _           _
+            # |  \/  |__ _(_)_ _     /_\| |_| |_ __ _ __| |__ ___
+            # | |\/| / _` | | ' \   / _ \  _|  _/ _` / _| / /(_-<
+            # |_|  |_\__,_|_|_||_| /_/ \_\__|\__\__,_\__|_\_\/__/
             elif event == "Joiner":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','joiner',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Joiner | Started at: {}".format(datetime.datetime.now().time())] = p.pid
@@ -1546,8 +1570,11 @@ def main():
             elif event == "Reaction Adder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','reaction',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Reaction | Started at: {}".format(datetime.datetime.now().time())] = p.pid
-            elif event == "CPU Widget":
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CPUWIDGET',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+            #  ___ _           _        __  __                                   _
+            # | _ \ |_  _ __ _(_)_ _   |  \/  |__ _ _ _  __ _ __ _ _ __  ___ _ _| |_
+            # |  _/ | || / _` | | ' \  | |\/| / _` | ' \/ _` / _` | '  \/ -_) ' \  _|
+            # |_| |_|\_,_\__, |_|_||_| |_|  |_\__,_|_||_\__,_\__, |_|_|_\___|_||_\__|
+            #            |___/                               |___/
             elif event == "View Plugins":
                 window.Close()
                 plugs = []
@@ -1604,19 +1631,11 @@ def main():
                         time.sleep(0.5)
                         os.remove("plugins/{}.zip".format(event.replace(" ", "_")))
                         sg.Popup("Downloaded {}".format(event),title="Download Complete.")
-            elif event == "CF Check":
-                try:
-                    cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
-                except Exception as e:
-                    print(e)
-                else:
-                    try:
-                        json.loads(cloudflarecheck.content)
-                    except Exception:
-                        sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
-                    else:
-                        sg.Popup("CloudFlare OK!", title="CF CHECK")
     else:
+        #   ___                  _
+        #  / __|___ _ _  ___ ___| |___
+        # | (__/ _ \ ' \(_-</ _ \ / -_)
+        #  \___\___/_||_/__/\___/_\___|
         now = datetime.datetime.now()
         if now.month == 2 and now.day == 23:
             splashtext = "Happy birthday RTB!"
@@ -1877,6 +1896,10 @@ def main():
         input()
         main()
 
+ #   ___                  _       __  __
+ #  / __|___ _ _  ___ ___| |___  |  \/  |___ _ _ _  _ ___
+ # | (__/ _ \ ' \(_-</ _ \ / -_) | |\/| / -_) ' \ || (_-<
+ #  \___\___/_||_/__/\___/_\___| |_|  |_\___|_||_\_,_/__/
 def joiner():
     global currentattacks
     clear()
@@ -2259,16 +2282,16 @@ def serversmasher():
         print ("The config file for the Server Smasher is in RTBFiles/smconfig.py, please add token before starting.")
     if sys.platform.startswith('win32'):
         if server_smasher_in_main_window == 1:
-            p = subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menu1,menu2,str(no_tk_mode)])
+            p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasher.py',"?",menu1,menu2,str(no_tk_mode)])
             p.wait()
         else:
-            subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menu1,menu2,str(no_tk_mode)],creationflags=CREATE_NEW_CONSOLE)
+            subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasher.py',"?",menu1,menu2,str(no_tk_mode)],creationflags=CREATE_NEW_CONSOLE)
     else:
         if server_smasher_in_main_window == 1:
-            p = subprocess.Popen([sys.executable,'RTBFiles/serversmasher.py',smversion,menu1,menu2,str(no_tk_mode)])
+            p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasher.py',"?",menu1,menu2,str(no_tk_mode)])
             p.wait()
         else:
-            subprocess.call(['gnome-terminal', '-x', sys.executable,'RTBFiles/serversmasher.py',smversion,menu1,menu2,str(no_tk_mode)])
+            subprocess.call(['gnome-terminal', '-x', sys.executable,'RTBFiles/ServerSmasher/serversmasher.py',"?",menu1,menu2,str(no_tk_mode)])
     if server_smasher_in_main_window == 1:
         pass
     elif no_tk_mode == 1:
@@ -3012,14 +3035,15 @@ def pud():
             os.system("printf '\033[8;{};{}t'".format(random.randint(10,100),random.randint(10,100)))
         time.sleep(0.1)
 
+def asciigen(length):
+    asc = ''
+    for x in range(int(length)):
+        num = random.randrange(13000)
+        asc = asc + chr(num)
+    return asc
+
 def aaa():
     clear()
-    def asciigen(length):
-        asc = ''
-        for x in range(int(length)):
-            num = random.randrange(13000)
-            asc = asc + chr(num)
-        return asc
     colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'grey', 'white']
     while True:
         try:
@@ -3045,12 +3069,6 @@ def aaa():
             text += colored(asciigen(1), random.choice(colours))
         print(text)
 
-def asciigen(length):
-    asc = ''
-    for x in range(int(length)):
-        num = random.randrange(13000)
-        asc = asc + chr(num)
-    return asc
 
 # Token List Checking
 if not os.path.isdir("tokens"):
@@ -3109,10 +3127,12 @@ except Exception:
                                  ]
                         lists = []
                         for file in os.listdir("tokens"):
-                            if file.endswith(".txt"):
+                            if file == "smtokens.txt":
+                                continue
+                            else:
                                 lists.append(file)
                                 size = len(open("tokens/"+file).read().splitlines())
-                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(10,1))])
+                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
                         if len(lists) == 0:
                             layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
                         else:

