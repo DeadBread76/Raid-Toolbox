@@ -332,15 +332,6 @@ def login_serversmasher():
 #   /_\| |_| |_ __ _ __| |__ ___
 #  / _ \  _|  _/ _` / _| / /(_-<
 # /_/ \_\__|\__\__,_\__|_\_\/__/
-def blast(channel, content):
-    payload = {"content": content}
-    while True:
-        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload)
-        if src.status_code == 429:
-            time.sleep(1)
-        else:
-            break
-
 def deletechannel(channel):
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/channels/{channel}", headers=headers)
@@ -409,7 +400,7 @@ def createchannel(server,channelname,channeltype):
             break
 
 def sendspam(channel,msgcontent,usetts):
-    payload = {"content": msgcontent, "tts": usetts, "mention_everyone": "true"}
+    payload = {"content": msgcontent, "tts": usetts}
     while True:
         src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload)
         if src.status_code == 429:
@@ -583,6 +574,13 @@ def get_guild_roles(guild):
         roles.append(namedtuple('Role', sorted(role.keys()))(**role))
     return roles
 
+def create_invite(channel):
+    payload = {"max_age": 0}
+    src = requests.post(f'https://canary.discordapp.com/api/v6/channels/{channel}/invites', headers=headers, json=payload)
+    invite_json = json.loads(src.content)
+    invite = namedtuple('Invite', sorted(invite_json.keys()))(**invite_json)
+    return invite
+
 def construct_avatar_link(id, hash, size):
     link = f"https://cdn.discordapp.com/avatars/{id}/{hash}.png?size={size}"
     return link
@@ -685,7 +683,7 @@ def main_menu():
              [sg.Text(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)")],
              [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(8.7,0.8)), sg.Button("Logout", size=(6,0.8)), sg.Button("Refresh", size=(6,0.8))]
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -719,32 +717,33 @@ def main_menu():
                      [sg.Text(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)")],
                      [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(8.7,0.8)), sg.Button("Logout", size=(6,0.8)), sg.Button("Refresh", size=(6,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
             window.Close()
             window = window1
 
-def server_menu(server_object):
-    server = get_guild(server_object)
+def server_menu(server_id):
+    server = get_guild(server_id)
     server_owner = get_user(server.owner_id)
-    tchannels = []
-    vchannels = []
+    tchannels = {}
+    vchannels = {}
     for channel in server.channels:
         if channel.type == 0:
-            tchannels.append(channel)
+            tchannels[channel.name] = channel.id
         elif channel.type == 2:
-            vchannels.append(channel)
+            vchannels[channel.name] = channel.id
     info = [
-           [sg.Text(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(tchannels)}\nVoice Channels: {len(vchannels)}\nRoles: {len(server.roles)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}")]
+           [sg.Text(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(list(tchannels))}\nVoice Channels: {len(list(vchannels))}\nRoles: {len(server.roles)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}")]
            ]
     oneclick = [
                [sg.Button("Refresh", size=(12.5,0.8)), sg.Button("Back to server menu", size=(12.5,0.8))],
                [sg.Input("@everyone", size=(15,0.8), key="BlastContent"), sg.Button("Blast", size=(10,0.8))],
-               [sg.Input("Channel Name", size=(11.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))]
+               [sg.Input("Channel Name", size=(11.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))],
+               [sg.Text("", size=(0.1,0.8)), sg.Combo(list(tchannels), key="InviteChan", size=(14.1,0.7)), sg.Button("Create Invite", size=(10,0.8))]
     ]
     layout = [
              [sg.Frame("Server Info", info, font='Any 12', title_color=theme['text_color']), sg.Frame("Actions", oneclick, font='Any 12', title_color=theme['text_color'])],
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -752,20 +751,32 @@ def server_menu(server_object):
         elif event == "Refresh":
             sg.PopupNonBlocking("Updating cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
             window.Close()
-            server_menu(server_object)
+            server_menu(server_id)
         elif event == "Back to server menu":
             window.Close()
             main_menu()
         elif event == "Blast":
-            for channel in server.channels:
-                if values["BlastContent"].lower() == "ascii":
-                    content = asciigen(1999)
+            channels = get_guild_channels(server_id)
+            for channel in channels:
+                if not channel.type == 0:
+                    pass
                 else:
-                    content = values["BlastContent"]
-                executor.submit(blast, channel.id, content)
+                    if values["BlastContent"].lower() == "ascii":
+                        content = asciigen(1999)
+                    else:
+                        content = values["BlastContent"]
+                    executor.submit(sendspam, channel.id, content, False)
         elif event == "Create Channel":
             for x in range(int(values['ChannelCount'])):
                 executor.submit(createchannel, server.id,values['ChannelName'], 0)
+        elif event == "Create Invite":
+            invite = create_invite(tchannels[values["InviteChan"]])
+            try:
+                pyperclip.copy(f"https://discord.gg/{invite.code}")
+                sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True)
+            except Exception:
+                sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
+
     # print ("Server: " + colored(server.name,menucolour))
     # print ("Server ID: " + colored(str(SERVER),menucolour))
     # membercount = len(server.members)

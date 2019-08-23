@@ -27,6 +27,7 @@ rtbversion = "1.1.0b"
 
 # Load Config
 try:
+    import sys
     import json
     with open('config.json', 'r') as handle:
         config = json.load(handle)
@@ -129,13 +130,45 @@ except Exception:
         elif p == 0:
             print("Installed {} Successfully.".format(package))
 
+# Check for no_gui flag on command line
+if len(sys.argv) > 1:
+    if sys.argv[1] == "disable_all_gui":
+        command_line_mode = 1
+        no_tk_mode = 1
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['command_line_mode'] = command_line_mode
+            edit['no_tk_mode'] = no_tk_mode
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+        print("Option acknowledged, Saved to config.")
+    elif sys.argv[1] == "no_gui":
+        no_tk_mode = 1
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['no_tk_mode'] = no_tk_mode
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+        print("Option acknowledged, Saved to config.")
+    elif sys.argv[1] == "command_line":
+        command_line_mode = 1
+        with open('config.json', 'r+') as handle:
+            edit = json.load(handle)
+            edit['command_line_mode'] = command_line_mode
+            handle.seek(0)
+            json.dump(edit, handle, indent=4)
+            handle.truncate()
+        print("Option acknowledged, Saved to config.")
+
 # Enable Command line mode for no_tk_mode
 if no_tk_mode == 1:
     server_smasher_in_main_window = 1
     command_line_mode = 1
 
 # Load System Modules
-import os, sys, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib
+import os, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib
 from distutils.dir_util import copy_tree
 if sys.platform.startswith('win32'):
     from subprocess import CREATE_NEW_CONSOLE
@@ -229,12 +262,13 @@ if not command_line_mode == 1:
                      text_color=text_color)
 
 #Splash Screen
-if not command_line_mode == 1:
-    layout = [
-            [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
-            ]
-    window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True).Layout(layout)
-    window.Read(timeout=0)
+if __name__ == "__main__":
+    if not command_line_mode == 1:
+        layout = [
+                [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
+                ]
+        window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True, margins=(0,0)).Layout(layout)
+        window.Read(timeout=0)
 
 # Clear() Function setting
 if sys.platform.startswith('win32'):
@@ -445,56 +479,91 @@ def download_file(url):
         with open(local_filename, 'wb') as f:
             shutil.copyfileobj(r.raw, f)
     return local_filename
-
-# Check For Updates
-if disable_update_check == 1:
-    pass
-else:
-    if "b" in rtbversion:
+if __name__ == "__main__":
+    # Check For Updates
+    if disable_update_check == 1:
         pass
     else:
-        try:
-            if verbose == 1:
-                print("Checking for updates...")
-            vercheck = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version").text.rstrip().split("|")
-            versionno = vercheck[0].split(".")
-            myversion = rtbversion.split(".")
-            if versionno[0] > myversion[0]:
-                update = True
-            elif versionno[1] > myversion[1]:
-                update = True
-            elif versionno[2] > myversion[2]:
-                update = True
-            else:
-                update = False
-            if update:
-                if command_line_mode == 1:
-                    print(colored("There is an update for RTB, Download update?", menu1))
-                    verchoice = input("(Y/N): ")
-                    if verchoice.lower() == "y":
-                        @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menu1))
-                        def run_update():
-                            if sys.platform.startswith('win32'):
-                                ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
-                            else:
-                                sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
-                            update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                            clear()
-                            print(colored("Update has been downloaded, Installing...",menu1))
-                            return update
-                        update = run_update()
-                        with open("update.zip", "wb") as handle:
-                            handle.write(update.content)
+        if "b" in rtbversion:
+            pass
+        else:
+            try:
+                if verbose == 1:
+                    print("Checking for updates...")
+                vercheck = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version").text.rstrip().split("|")
+                versionno = vercheck[0].split(".")
+                myversion = rtbversion.split(".")
+                if versionno[0] > myversion[0]:
+                    update = True
+                elif versionno[1] > myversion[1]:
+                    update = True
+                elif versionno[2] > myversion[2]:
+                    update = True
+                else:
+                    update = False
+                if update:
+                    if command_line_mode == 1:
+                        print(colored("There is an update for RTB, Download update?", menu1))
+                        verchoice = input("(Y/N): ")
+                        if verchoice.lower() == "y":
+                            @animation.wait(colored('Downloading update for Raid ToolBox, Please Wait ',menu1))
+                            def run_update():
+                                if sys.platform.startswith('win32'):
+                                    ctypes.windll.kernel32.SetConsoleTitleW("DeadBread's Raid ToolBox | Updating...")
+                                else:
+                                    sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox | Updating...\x07")
+                                update = requests.get('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                                clear()
+                                print(colored("Update has been downloaded, Installing...",menu1))
+                                return update
+                            update = run_update()
+                            with open("update.zip", "wb") as handle:
+                                handle.write(update.content)
+                            try:
+                                shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                            except Exception:
+                                pass
+                            try:
+                                shutil.unpack_archive("update.zip")
+                                copy_tree("Raid-Toolbox-master/", ".")
+                                os.remove("update.zip")
+                                shutil.rmtree("Raid-Toolbox-master/")
+                                print ("Update complete, exiting.")
+                                with open('config.json', 'r+') as handle:
+                                    edit = json.load(handle)
+                                    edit['skin'] = skin
+                                    edit['token_list'] = token_list
+                                    edit['thread_count'] = thread_count
+                                    edit['verbose'] = verbose
+                                    edit['disable_theme_music'] = disable_theme_music
+                                    edit['command_line_mode'] = command_line_mode
+                                    edit['no_tk_mode'] = no_tk_mode
+                                    edit['disable_cloudflare_check'] = disable_cloudflare_check
+                                    edit['disable_update_check'] = disable_update_check
+                                    edit['server_smasher_in_main_window'] = server_smasher_in_main_window
+                                    edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+                                    edit['combine_uverified_and_verified'] = combine_uverified_and_verified
+                                    edit['show_licence'] = show_licence
+                                    handle.seek(0)
+                                    json.dump(edit, handle, indent=4)
+                                    handle.truncate()
+                            except Exception as e:
+                                print("Error Updating, {}".format(e))
+                            time.sleep(3)
+                            os.kill(os.getpid(), 15)
+                    else:
                         try:
-                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                            window.Close()
                         except Exception:
                             pass
-                        try:
-                            shutil.unpack_archive("update.zip")
+                        verchoice = sg.PopupYesNo("There is an update for RTB, Download update?", title="Raid ToolBox Update Available")
+                        if verchoice == "Yes":
+                            update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
+                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
+                            shutil.unpack_archive(update)
                             copy_tree("Raid-Toolbox-master/", ".")
-                            os.remove("update.zip")
+                            os.remove(update)
                             shutil.rmtree("Raid-Toolbox-master/")
-                            print ("Update complete, exiting.")
                             with open('config.json', 'r+') as handle:
                                 edit = json.load(handle)
                                 edit['skin'] = skin
@@ -513,168 +582,111 @@ else:
                                 handle.seek(0)
                                 json.dump(edit, handle, indent=4)
                                 handle.truncate()
-                        except Exception as e:
-                            print("Error Updating, {}".format(e))
-                        time.sleep(3)
-                        os.kill(os.getpid(), 15)
-                else:
-                    try:
-                        window.Close()
-                    except Exception:
-                        pass
-                    verchoice = sg.PopupYesNo("There is an update for RTB, Download update?", title="Raid ToolBox Update Available")
-                    if verchoice == "Yes":
-                        update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                        shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        shutil.unpack_archive(update)
-                        copy_tree("Raid-Toolbox-master/", ".")
-                        os.remove(update)
-                        shutil.rmtree("Raid-Toolbox-master/")
-                        with open('config.json', 'r+') as handle:
-                            edit = json.load(handle)
-                            edit['skin'] = skin
-                            edit['token_list'] = token_list
-                            edit['thread_count'] = thread_count
-                            edit['verbose'] = verbose
-                            edit['disable_theme_music'] = disable_theme_music
-                            edit['command_line_mode'] = command_line_mode
-                            edit['no_tk_mode'] = no_tk_mode
-                            edit['disable_cloudflare_check'] = disable_cloudflare_check
-                            edit['disable_update_check'] = disable_update_check
-                            edit['server_smasher_in_main_window'] = server_smasher_in_main_window
-                            edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
-                            edit['combine_uverified_and_verified'] = combine_uverified_and_verified
-                            edit['show_licence'] = show_licence
-                            handle.seek(0)
-                            json.dump(edit, handle, indent=4)
-                            handle.truncate()
-                        print ("Update complete, exiting.")
-                        os.kill(os.getpid(), 15)
-        except Exception as e:
-            if command_line_mode == 1:
-                print("Error Updating: {}".format(e))
-            else:
-                sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error")
-
-if not os.path.exists("RTBFiles/"):
-    clear()
-    singlefile = True
-    if command_line_mode == 1:
-        print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
-        input(colored("Press enter to continue.",menu1))
-    else:
-        try:
-            window.Close()
-        except Exception:
-            pass
-        sg.PopupOK("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.", title="SINGLE FILE MODE")
-else:
-    singlefile = False
-    if sys.platform.startswith('win32'):
-        if ignore_ffmpeg_missing == 0:
-            if not os.path.isfile("ffmpeg.exe"):
-                if verbose == 1:
-                    print("FFmpeg is missing")
+                            print ("Update complete, exiting.")
+                            os.kill(os.getpid(), 15)
+            except Exception as e:
                 if command_line_mode == 1:
-                    print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menu1))
-                    fmpg = input("(Y/N):")
-                    if fmpg.lower() == "y":
-                        clear()
-                        @animation.wait(colored('Downloading FFMpeg, Please Wait ',menu1))
-                        def ffmpegdownload():
-                            data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
-                            return data
-                        data = ffmpegdownload()
-                        print(colored("Download Complete.","green"))
-                        with open("ffmpeg.zip", "wb") as handle:
-                            handle.write(data.content)
-                        shutil.unpack_archive("ffmpeg.zip")
-                        time.sleep(0.5)
-                        os.remove("ffmpeg.zip")
-                        copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
-                        time.sleep(0.5)
-                        shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                    print("Error Updating: {}".format(e))
+                else:
+                    sg.PopupError("Error Updating Raid Toolbox.\n ({})".format(e), title="Update Error")
+
+    if not os.path.exists("RTBFiles/"):
+        clear()
+        singlefile = True
+        if command_line_mode == 1:
+            print("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.")
+            input(colored("Press enter to continue.",menu1))
+        else:
+            try:
+                window.Close()
+            except Exception:
+                pass
+            sg.PopupOK("RTB is Running in Single File mode.\nPlease use the update function to download the complete program.", title="SINGLE FILE MODE")
+    else:
+        singlefile = False
+        if sys.platform.startswith('win32'):
+            if ignore_ffmpeg_missing == 0:
+                if not os.path.isfile("ffmpeg.exe"):
+                    if verbose == 1:
+                        print("FFmpeg is missing")
+                    if command_line_mode == 1:
+                        print(colored("Download FFMpeg? (Needed For Voice Chat Spammer)", menu1))
+                        fmpg = input("(Y/N):")
+                        if fmpg.lower() == "y":
+                            clear()
+                            @animation.wait(colored('Downloading FFMpeg, Please Wait ',menu1))
+                            def ffmpegdownload():
+                                data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                                return data
+                            data = ffmpegdownload()
+                            print(colored("Download Complete.","green"))
+                            with open("ffmpeg.zip", "wb") as handle:
+                                handle.write(data.content)
+                            shutil.unpack_archive("ffmpeg.zip")
+                            time.sleep(0.5)
+                            os.remove("ffmpeg.zip")
+                            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                            time.sleep(0.5)
+                            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                    else:
+                        try:
+                            window.Close()
+                        except Exception:
+                            pass
+                        fmpg = sg.PopupYesNo("Download FFMpeg?\n(Needed For Voice Chat Spammer)")
+                        if fmpg == "Yes":
+                            sg.PopupNonBlocking('Downloading FFMpeg, Please Wait.', title="Downloading")
+                            ff = download_file("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                            shutil.unpack_archive(ff)
+                            time.sleep(0.5)
+                            os.remove(ff)
+                            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                            time.sleep(0.5)
+                            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+
+    # Display Licence
+    if not show_licence == 0:
+        lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
+        if command_line_mode == 1:
+            print("Raid-Toolbox\n"+lic)
+            time.sleep(10)
+            input("Press Enter to continue.")
+        else:
+            sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
+        try:
+            with open('config.json', 'r+') as handle:
+                edit = json.load(handle)
+                edit['show_licence'] = 0
+                handle.seek(0)
+                json.dump(edit, handle, indent=4)
+                handle.truncate()
+        except Exception as e:
+            print(e)
+
+
+    # CloudFlare Checks
+    if disable_cloudflare_check == 1:
+        pass
+    elif not "b" in rtbversion:
+        if verbose == 1:
+            print("Checking CloudFlare Status")
+        try:
+            cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
+        except Exception as e:
+            print(e)
+        else:
+            try:
+                json.loads(cloudflarecheck.content)
+            except Exception:
+                if command_line_mode == 1:
+                    print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
+                    input(colored("Press enter to continue.",'red'))
                 else:
                     try:
                         window.Close()
                     except Exception:
                         pass
-                    fmpg = sg.PopupYesNo("Download FFMpeg?\n(Needed For Voice Chat Spammer)")
-                    if fmpg == "Yes":
-                        sg.PopupNonBlocking('Downloading FFMpeg, Please Wait.', title="Downloading")
-                        ff = download_file("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
-                        shutil.unpack_archive(ff)
-                        time.sleep(0.5)
-                        os.remove(ff)
-                        copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
-                        time.sleep(0.5)
-                        shutil.rmtree("ffmpeg-4.1.3-win64-static")
-
-# Display Licence
-if not show_licence == 0:
-    lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
-    if command_line_mode == 1:
-        print("Raid-Toolbox\n"+lic)
-        time.sleep(10)
-        input("Press Enter to continue.")
-    else:
-        sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
-    try:
-        with open('config.json', 'r+') as handle:
-            edit = json.load(handle)
-            edit['show_licence'] = 0
-            handle.seek(0)
-            json.dump(edit, handle, indent=4)
-            handle.truncate()
-    except Exception as e:
-        print(e)
-
-
-# CloudFlare Checks
-if disable_cloudflare_check == 1:
-    pass
-elif not "b" in rtbversion:
-    if verbose == 1:
-        print("Checking CloudFlare Status")
-    try:
-        cloudflarecheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD")
-    except Exception as e:
-        print(e)
-    else:
-        try:
-            json.loads(cloudflarecheck.content)
-        except Exception:
-            if command_line_mode == 1:
-                print("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
-                input(colored("Press enter to continue.",'red'))
-            else:
-                try:
-                    window.Close()
-                except Exception:
-                    pass
-                sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
-
-
-# Check if audio is present in skin
-if command_line_mode == 0:
-    try:
-        menu_mp3
-    except NameError:
-        pass
-    else:
-        if menu_mp3_filename == "":
-            pass
-        elif not disable_theme_music == 1:
-            # Start Audio
-            if not os.path.exists("themes/{}".format(menu_mp3_filename)):
-                mp3_data = base64.b64decode(menu_mp3)
-                with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
-                    handle.write(mp3_data)
-                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
-                del menu_mp3  # Remove MP3 from memory to save resources
-            else:
-                subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
-                del menu_mp3  # Remove MP3 from memory to save resources
+                    sg.Popup("Your IP is CloudFlare Banned.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
 
 # Title Update Function (Command line mode on Windows)
 def titleupdate():
@@ -757,9 +769,9 @@ def main():
     #   |_|\___|_| |_|_|_\_,_/_\_\
     if no_tk_mode == 1:
         if sys.platform.startswith('win32'):
-            os.system('mode con:cols=41 lines=32')
+            os.system('mode con:cols=41 lines=35')
         else:
-            os.system("printf '\033[8;32;41t'")
+            os.system("printf '\033[8;35;41t'")
         print(colored("=========================================",menu1))
         print(colored("   Welcome to DeadBread's Raid Toolbox",menu2))
         print(colored("=========================================",menu1))
@@ -817,7 +829,7 @@ def main():
                 [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
                 ]
         tokenlist = open("tokens/"+token_list).read().splitlines()
-        window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout)
+        window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout) #
         while True:
             event, values = window.Read(timeout=100)
             if event is None:
@@ -3069,117 +3081,138 @@ def aaa():
             text += colored(asciigen(1), random.choice(colours))
         print(text)
 
-
-# Token List Checking
-if not os.path.isdir("tokens"):
-    os.mkdir("tokens")
-try:
-    with open("tokens/{}".format(token_list),"r") as handle:
-        line = handle.readlines()
-        tcounter = len(line)
-        if verbose == 1:
-            print("Loaded {} Tokens".format(tcounter))
-except Exception:
-    if command_line_mode == 0:
-        window.Close()
-        sg.Popup("No Token list set in config, Please choose one.", title="No token list.")
-        layout = [
-                 [sg.Text('Choose a token list.')],
-                 ]
-        lists = []
-        for file in os.listdir("tokens"):
-            if file.endswith(".txt"):
-                lists.append(file)
-                size = len(open("tokens/"+file).read().splitlines())
-                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
-        if len(lists) == 0:
-            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(10,1))])
-        else:
-            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
-        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
-        while True:
-            event, values = window.Read()
-            if event is None:
-                main()
-            elif event in lists:
-                token_list = event
-                with open('config.json', 'r+') as handle:
-                    edit = json.load(handle)
-                    edit['token_list'] = token_list
-                    handle.seek(0)
-                    json.dump(edit, handle, indent=4)
-                    handle.truncate()
-                sg.Popup("List is now {}.".format(token_list), title="Done")
-            elif event == "Create New...":
-                window.Close()
-                lay = [
-                    [sg.Text('New List Name:', size=(16,1)), sg.Input(size=(20,1), key="LISTO")],
-                    [sg.Button("OK", size=(7,1))]
-                    ]
-                win = sg.Window("New Token list").Layout(lay)
-                while True:
-                    ev, val = win.Read()
-                    if ev is None:
-                        del layout
-                        win.Close()
-                        layout = [
-                                 [sg.Text('Choose a token list.')],
-                                 ]
-                        lists = []
-                        for file in os.listdir("tokens"):
-                            if file == "smtokens.txt":
-                                continue
-                            else:
-                                lists.append(file)
-                                size = len(open("tokens/"+file).read().splitlines())
-                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
-                        if len(lists) == 0:
-                            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
-                        else:
-                            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
-                        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
-                        break
-                    else:
-                        try:
-                            with open("tokens/{}.txt".format(val['LISTO']), "a+") as handle:
-                                handle.write("")
-                        except Exception:
-                            sg.Popup("Error Creating File (Is it a valid name?)", title="Error making file.")
-                        del layout
-                        win.Close()
-                        layout = [
-                                 [sg.Text('Choose a token list.')],
-                                 ]
-                        lists = []
-                        for file in os.listdir("tokens"):
-                            if file.endswith(".txt"):
-                                lists.append(file)
-                                size = len(open("tokens/"+file).read().splitlines())
-                                layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(10,1))])
-                        if len(lists) == 0:
-                            layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
-                        else:
-                            layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
-                        window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
-                        break
-            elif event == "Close":
-                window.Close()
-                main()
-
-    else:
-        print("No Token list found, Creating tokens.txt")
-        with open("tokens/tokens.txt","w+") as handle:
+if __name__ == "__main__":
+    # Token List Checking
+    if not os.path.isdir("tokens"):
+        os.mkdir("tokens")
+    try:
+        with open("tokens/{}".format(token_list),"r") as handle:
             line = handle.readlines()
             tcounter = len(line)
-            token_list = "tokens.txt"
-        with open('config.json', 'r+') as handle:
-            edit = json.load(handle)
-            edit['token_list'] = token_list
-            handle.seek(0)
-            json.dump(edit, handle, indent=4)
-            handle.truncate()
+            if verbose == 1:
+                print("Loaded {} Tokens".format(tcounter))
+    except Exception:
+        if command_line_mode == 0:
+            window.Close()
+            sg.Popup("No Token list set in config, Please choose one.", title="No token list.")
+            layout = [
+                     [sg.Text('Choose a token list.')],
+                     ]
+            lists = []
+            for file in os.listdir("tokens"):
+                if file.endswith(".txt"):
+                    lists.append(file)
+                    size = len(open("tokens/"+file).read().splitlines())
+                    layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
+            if len(lists) == 0:
+                layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(10,1))])
+            else:
+                layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+            window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+            while True:
+                event, values = window.Read()
+                if event is None:
+                    main()
+                elif event in lists:
+                    token_list = event
+                    with open('config.json', 'r+') as handle:
+                        edit = json.load(handle)
+                        edit['token_list'] = token_list
+                        handle.seek(0)
+                        json.dump(edit, handle, indent=4)
+                        handle.truncate()
+                    sg.Popup("List is now {}.".format(token_list), title="Done")
+                elif event == "Create New...":
+                    window.Close()
+                    lay = [
+                        [sg.Text('New List Name:', size=(16,1)), sg.Input(size=(20,1), key="LISTO")],
+                        [sg.Button("OK", size=(7,1))]
+                        ]
+                    win = sg.Window("New Token list").Layout(lay)
+                    while True:
+                        ev, val = win.Read()
+                        if ev is None:
+                            del layout
+                            win.Close()
+                            layout = [
+                                     [sg.Text('Choose a token list.')],
+                                     ]
+                            lists = []
+                            for file in os.listdir("tokens"):
+                                if file == "smtokens.txt":
+                                    continue
+                                else:
+                                    lists.append(file)
+                                    size = len(open("tokens/"+file).read().splitlines())
+                                    layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
+                            if len(lists) == 0:
+                                layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
+                            else:
+                                layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+                            window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+                            break
+                        else:
+                            try:
+                                with open("tokens/{}.txt".format(val['LISTO']), "a+") as handle:
+                                    handle.write("")
+                            except Exception:
+                                sg.Popup("Error Creating File (Is it a valid name?)", title="Error making file.")
+                            del layout
+                            win.Close()
+                            layout = [
+                                     [sg.Text('Choose a token list.')],
+                                     ]
+                            lists = []
+                            for file in os.listdir("tokens"):
+                                if file.endswith(".txt"):
+                                    lists.append(file)
+                                    size = len(open("tokens/"+file).read().splitlines())
+                                    layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(10,1))])
+                            if len(lists) == 0:
+                                layout.append([sg.Text("No Files in the tokens folder.", size=(45,1)), sg.Button("Create New...", size=(8,1))])
+                            else:
+                                layout.append([sg.Button("Create New...", size=(10,1)), sg.Button("Close", size=(10,1))])
+                            window = sg.Window("DeadBread's Raid ToolBox v{} | Choose Token list".format(rtbversion)).Layout(layout)
+                            break
+                elif event == "Close":
+                    window.Close()
+                    main()
+
+        else:
+            print("No Token list found, Creating tokens.txt")
+            with open("tokens/tokens.txt","w+") as handle:
+                line = handle.readlines()
+                tcounter = len(line)
+                token_list = "tokens.txt"
+            with open('config.json', 'r+') as handle:
+                edit = json.load(handle)
+                edit['token_list'] = token_list
+                handle.seek(0)
+                json.dump(edit, handle, indent=4)
+                handle.truncate()
+
 
 if __name__ == "__main__":
+    # Check if audio is present in skin
+    if command_line_mode == 0:
+        try:
+            menu_mp3
+        except NameError:
+            pass
+        else:
+            if menu_mp3_filename == "":
+                pass
+            elif not disable_theme_music == 1:
+                # Start Audio
+                if not os.path.exists("themes/{}".format(menu_mp3_filename)):
+                    mp3_data = base64.b64decode(menu_mp3)
+                    with open("themes/{}".format(menu_mp3_filename),"wb") as handle:
+                        handle.write(mp3_data)
+                    subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                    del menu_mp3  # Remove MP3 from memory to save resources
+                else:
+                    subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
+                    del menu_mp3  # Remove MP3 from memory to save resources
     if sys.platform.startswith('win32'):
         if command_line_mode == 1:
             t = threading.Thread(name='Title Update', target=titleupdate)
