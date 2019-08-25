@@ -46,6 +46,7 @@ executor = ThreadPoolExecutor(max_workers=thread_count)
 loop = asyncio.get_event_loop()
 client = discord.Client()
 theme = ast.literal_eval(sys.argv[1])
+guild_cache = None
 
 if theme['use_custom_theme']:
     sg.SetOptions(background_color=theme['background_color'],
@@ -66,6 +67,7 @@ usertokenlist = open("./tokens/"+token_list).read().splitlines()
 bottokenlist = open("./tokens/smtokens.txt").read().splitlines()
 token_overide = None
 type_overide = None
+cache_guilds = []
 
 #  _              _        ___
 # | |   ___  __ _(_)_ _   / __| __ _ _ ___ ___ _ _
@@ -206,7 +208,7 @@ def login_serversmasher():
                 botlist = list(bot_token_cache)
             layout = [
                      [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
-                     [sg.Combo(botlist, size=(15,0.7), key="BotList"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Cache", key="Refresh Bots", size=(11,0.8))]
+                     [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Cache", key="Refresh Bots", size=(11,0.8))]
                      ]
             window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
             window = window1
@@ -515,6 +517,49 @@ def get_user_info():
     user = namedtuple('User', sorted(user_json.keys()))(**user_json)
     return user
 
+def get_guild_threaded(guild):
+    global cache_guilds
+    del cache_guilds
+    cache_guilds = []
+    roles = []
+    emojis = []
+    members = []
+    channels = []
+    overwrites = []
+    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
+    guild_response = json.loads(src.content)
+    for role in guild_response['roles']:
+        roles.append(namedtuple('Role', sorted(role.keys()))(**role))
+    for emoji in guild_response['emojis']:
+        emojis.append(namedtuple('Emoji', sorted(emoji.keys()))(**emoji))
+    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members?limit=1000', headers=headers)
+    response = json.loads(src.content)
+    for member in response:
+        member['user'] = namedtuple('User', sorted(member['user'].keys()))(**member['user'])
+        members.append(namedtuple('Member', sorted(member.keys()))(**member))
+    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
+    channels_json = json.loads(src.content)
+    for channel in channels_json:
+        for overwrite in channel['permission_overwrites']:
+            overwrites.append(namedtuple('Permission_Overwrite', sorted(overwrite.keys()))(**overwrite))
+        channel['permission_overwrites'] = overwrites
+        channels.append(namedtuple('Channel', sorted(channel.keys()))(**channel))
+    guild_response['roles'] = roles
+    guild_response['emojis'] = emojis
+    guild_response['members'] = members
+    guild_response['channels'] = channels
+    guild = namedtuple('Guild', sorted(guild_response.keys()))(**guild_response)
+    cache_guilds.append(guild)
+
+def create_cache():
+    global cache_guilds
+    src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
+    response_json = json.loads(src.content)
+    with ThreadPoolExecutor(max_workers=thread_count) as exe:
+        for guild in response_json:
+            exe.submit(get_guild_threaded, guild['id'])
+    return cache_guilds
+
 def get_client_guilds():
     guilds = []
     src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
@@ -580,6 +625,25 @@ def create_invite(channel):
     invite_json = json.loads(src.content)
     invite = namedtuple('Invite', sorted(invite_json.keys()))(**invite_json)
     return invite
+
+def create_guild(name):
+    payload = {"name": name}
+    src = requests.post(f'https://canary.discordapp.com/api/v6/guilds', headers=headers, json=payload)
+    return src
+
+def leave_guild(guild):
+    requests.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{guild}', headers=headers)
+    return None
+
+def edit_profile(name, avatar):
+    if avatar == "New Avatar...":
+        payload = {'username': name}
+    else:
+        with open(avatar, "rb") as handle:
+            encoded = bytes_to_base64_data(handle.read())
+        payload = {'avatar': encoded, 'username': name}
+    src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
+    return src
 
 def construct_avatar_link(id, hash, size):
     link = f"https://cdn.discordapp.com/avatars/{id}/{hash}.png?size={size}"
@@ -665,6 +729,8 @@ def main_menu():
     global guild_cache
     global user_cache
     global avatar_b64
+    del guild_cache
+    guild_cache = create_cache()
     user = user_cache
     guilds = guild_cache
     server_dict = {}
@@ -676,12 +742,21 @@ def main_menu():
         server_dict = {"None": "None"}
     user_frame = [
                  [sg.Image(data_base64=avatar_b64)],
-                 [sg.Text(f"{user.username}#{user.discriminator}, ({user.id})", font='Any 11')]
+                 [sg.Text(f"{user.username}#{user.discriminator}, ({user.id})", font='Any 11')],
+                 [sg.Button("Logout"), sg.Button("Refresh")]
                  ]
+    server_frame = [
+                   [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(9,0.8)), sg.Button("Leave Server", size=(9,0.8)),]
+                   ]
+    options_frame = [
+                    [sg.Button(f"Change {client_type} Options")],
+                    [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
+                    [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
+                    ]
     layout = [
              [sg.Frame('Logged in to Server Smasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
-             [sg.Text(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)")],
-             [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(8.7,0.8)), sg.Button("Logout", size=(6,0.8)), sg.Button("Refresh", size=(6,0.8))]
+             [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
+             [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
              ]
     window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
     while True:
@@ -699,6 +774,8 @@ def main_menu():
             window.Close()
             login_serversmasher()
         elif event == "Refresh":
+            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            guild_cache = create_cache()
             user = user_cache
             guilds = guild_cache
             server_dict = {}
@@ -711,39 +788,89 @@ def main_menu():
             user_frame = [
                          [sg.Image(data_base64=avatar_b64)],
                          [sg.Text(f"{user.username}#{user.discriminator}, ({user.id})", font='Any 11')],
+                         [sg.Button("Logout"), sg.Button("Refresh")]
                          ]
+            server_frame = [
+                           [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(9,0.8)), sg.Button("Leave Server", size=(9,0.8)),]
+                           ]
+            options_frame = [
+                            [sg.Button(f"Change {client_type} Options")],
+                            [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
+                            [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
+                            ]
             layout = [
                      [sg.Frame('Logged in to Server Smasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
-                     [sg.Text(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)")],
-                     [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(8.7,0.8)), sg.Button("Logout", size=(6,0.8)), sg.Button("Refresh", size=(6,0.8))]
+                     [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
+                     [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
                      ]
             window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
             window.Close()
             window = window1
+        elif event == "Leave Server":
+            e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}", keep_on_top=True)
+            if e == "Yes":
+                window.Close()
+                leave_guild(values["ServerID"])
+                main_menu()
+            else:
+                pass
+        elif event == "Create Server":
+            window.Close()
+            create_guild(values["NewServerName"])
+            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            main_menu()
+        elif event == "Change Bot Options":
+            option_frame = [
+                           [sg.Input("New Avatar...", key="NewAvatarBot", size=(15,0.7)), sg.FileBrowse(file_types=(("PNG Files", "*.png"),("JPG Files", "*.jpg"),("JPEG Files", "*.jpeg"),("GIF Files", "*.gif"),("WEBM Files", "*.webm")))],
+                           [sg.Input(user.username, key="NewBotName", size=(15,0.7)), sg.Text(f"#{user.discriminator}")]
+                           ]
+            layout = [
+                     [sg.Frame("Bot Options", option_frame, font='Any 10', title_color=theme['text_color'])],
+                     [sg.Button("Save Changes"), sg.Button("Back")]
+                     ]
+            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+            window.Close()
+            window = window1
+        elif event == "Save Changes":
+            sg.PopupNonBlocking("Saving Changes...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            edit_profile(values["NewBotName"], values["NewAvatarBot"])
+        elif event == "Back":
+            window.Close()
+            sg.PopupNonBlocking("Downloading Data From Discord, Please Wait...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            main_menu()
 
 def server_menu(server_id):
     server = get_guild(server_id)
     server_owner = get_user(server.owner_id)
     tchannels = {}
     vchannels = {}
+    tlist = []
+    vlist = []
     for channel in server.channels:
         if channel.type == 0:
             tchannels[channel.name] = channel.id
+            tlist.append(channel)
         elif channel.type == 2:
             vchannels[channel.name] = channel.id
+            vlist.append(channel)
     info = [
-           [sg.Text(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(list(tchannels))}\nVoice Channels: {len(list(vchannels))}\nRoles: {len(server.roles)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}")]
+           [sg.Text(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(tlist)}\nVoice Channels: {len(vlist)}\nRoles: {len(server.roles)}\nMembers: {len(server.members)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}")]
            ]
     oneclick = [
-               [sg.Button("Refresh", size=(12.5,0.8)), sg.Button("Back to server menu", size=(12.5,0.8))],
-               [sg.Input("@everyone", size=(15,0.8), key="BlastContent"), sg.Button("Blast", size=(10,0.8))],
-               [sg.Input("Channel Name", size=(11.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))],
-               [sg.Text("", size=(0.1,0.8)), sg.Combo(list(tchannels), key="InviteChan", size=(14.1,0.7)), sg.Button("Create Invite", size=(10,0.8))]
-    ]
+               [sg.Button("Refresh", size=(13.5,0.8)), sg.Button("Back to server menu", size=(13.5,0.8))],
+               [sg.Input("@everyone", size=(17,0.8), key="BlastContent"), sg.Button("Blast", size=(10,0.8))],
+               [sg.Input("Channel Name", size=(13.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))],
+               [sg.Text("", size=(0.05,0.8)), sg.Combo(list(tchannels), key="InviteChan", size=(16.6,0.7)), sg.Button("Create Invite", size=(10,0.8))],
+               [sg.Input("DeadBread", size=(17,0.8), key="NewNickname"), sg.Button("Mass Nickname", size=(10,0.8))],
+               ]
+    destructive = [
+                  [sg.Button("Scripted Smash", size=(15.3,0.8)), sg.Button("Server Corruptor", size=(15.3,0.8)), sg.Button("Thanos Snap", size=(15.3,0.8))]
+                  ]
     layout = [
              [sg.Frame("Server Info", info, font='Any 12', title_color=theme['text_color']), sg.Frame("Actions", oneclick, font='Any 12', title_color=theme['text_color'])],
+             [sg.Frame("Destructive Actions", destructive, font='Any 12', title_color=theme['text_color'])]
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=True, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -754,21 +881,25 @@ def server_menu(server_id):
             server_menu(server_id)
         elif event == "Back to server menu":
             window.Close()
+            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
             main_menu()
         elif event == "Blast":
             channels = get_guild_channels(server_id)
-            for channel in channels:
-                if not channel.type == 0:
-                    pass
-                else:
-                    if values["BlastContent"].lower() == "ascii":
-                        content = asciigen(1999)
+            try:
+                for channel in channels:
+                    if not channel.type == 0:
+                        pass
                     else:
-                        content = values["BlastContent"]
-                    executor.submit(sendspam, channel.id, content, False)
+                        if values["BlastContent"].lower() == "ascii":
+                            content = asciigen(1999)
+                        else:
+                            content = values["BlastContent"]
+                        executor.submit(sendspam, channel.id, content, False)
+            except Exception as e:
+                sg.PopupNonBlocking(f"Error: {e}")
         elif event == "Create Channel":
             for x in range(int(values['ChannelCount'])):
-                executor.submit(createchannel, server.id,values['ChannelName'], 0)
+                executor.submit(createchannel, server.id, values['ChannelName'], 0)
         elif event == "Create Invite":
             invite = create_invite(tchannels[values["InviteChan"]])
             try:
@@ -776,7 +907,9 @@ def server_menu(server_id):
                 sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True)
             except Exception:
                 sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
-
+        elif event == "Mass Nickname":
+            for member in server.members:
+                executor.submit(massnick, server.id, member.user.id, values['NewNickname'])
     # print ("Server: " + colored(server.name,menucolour))
     # print ("Server ID: " + colored(str(SERVER),menucolour))
     # membercount = len(server.members)
@@ -1662,16 +1795,18 @@ def start_client():
     global client_type
     global token
     global user
-    global guild_cache
     global user_cache
     global avatar_b64
-    user_cache = get_user_info()
-    if user_cache.avatar is None:
-        avatar_b64 = b'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'
-    else:
-        src = requests.get(construct_avatar_link(user_cache.id, user_cache.avatar, 64)).content
-        avatar_b64 = base64.b64encode(src)
-    guild_cache = get_client_guilds()
+    try:
+        user_cache = get_user_info()
+        if user_cache.avatar is None:
+            avatar_b64 = b'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'
+        else:
+            src = requests.get(construct_avatar_link(user_cache.id, user_cache.avatar, 64)).content
+            avatar_b64 = base64.b64encode(src)
+    except Exception:
+        sg.Popup("Error Logging into token.", title="Error")
+        login_serversmasher()
     main_menu()
 
 login_serversmasher()
