@@ -168,7 +168,7 @@ if no_tk_mode == 1:
     command_line_mode = 1
 
 # Load System Modules
-import os, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib
+import os, time, ctypes, random, base64, datetime, platform, shutil, subprocess, threading, webbrowser, importlib, traceback
 from distutils.dir_util import copy_tree
 if sys.platform.startswith('win32'):
     from subprocess import CREATE_NEW_CONSOLE
@@ -1070,6 +1070,8 @@ def main():
                                     subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
                                     del menu_mp3  # Remove MP3 from memory to save resources
             elif event == "Theme Repo":
+                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1)
+                window.Close()
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
                 links = {}
                 layout = [
@@ -1078,9 +1080,8 @@ def main():
                 for package in repojson['packages']:
                     links[package['theme_name']] = package['theme_dl_link']
                     layout.append([sg.Text("{} v{} by {} ({})".format(package['theme_name'],package['theme_version'],package['theme_author'],package['rtb_compatible']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion)).Layout(layout)
                 while True:
-                    window.Close()
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
@@ -1616,6 +1617,8 @@ def main():
                         else:
                             continue
             elif event == "Plugin Repo":
+                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1)
+                window.Close()
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Plugins-V2/master/packages.json').content)
                 links = {}
                 layout = [
@@ -1624,9 +1627,8 @@ def main():
                 for package in repojson['packages']:
                     links[package['plugin_name']] = package['plugin_dl_link']
                     layout.append([sg.Text("{} by {}".format(package['plugin_name'],package['plugin_author']),size=(50,1)), sg.Button("Download",key=package['plugin_name'])])
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Plugin Repo".format(rtbversion)).Layout(layout)
                 while True:
-                    window.Close()
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Plugin Repo".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
@@ -3217,4 +3219,25 @@ if __name__ == "__main__":
         if command_line_mode == 1:
             t = threading.Thread(name='Title Update', target=titleupdate)
             t.start()
-    main()
+    while True:
+        try:
+            main()
+        except Exception as e:
+            try:
+                window.Close()
+            except Exception:
+                pass
+            exception = ''
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            for line in trace:
+                exception += line
+            yesno = sg.PopupYesNo(f"Raid ToolBox Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="Raid ToolBox Crashed :'(")
+            if yesno == "Yes":
+                payload = {"content": f"```{exception}```"}
+                try:
+                    requests.post("https://ptb.discordapp.com/api/webhooks/615479947670061056/9HJqOq-uX33FNNTpS114q7HwH_DoKK7rx8SIQ1un6Y31KEdsUxvROoeR3Q1_rp12aE4o", json=payload)
+                except Exception:
+                    pass
+                else:
+                    sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True)

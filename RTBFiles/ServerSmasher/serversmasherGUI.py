@@ -18,7 +18,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, json, ast, time, random, string, asyncio, base64
+import os, sys, json, ast, time, random, string, asyncio, base64, traceback
 import discord, requests, pyperclip
 import PySimpleGUIQt as sg
 from pprint import pprint
@@ -687,38 +687,39 @@ def bytes_to_base64_data(data):  # From Discord.py
 #  \___/| .__/\__|_\___/_||_/__/ |___/|_\__|\__|_\___/_||_\__,_|_|  \_, |
 #       |_|                                                         |__/
 smasheroptions = {
-    'namechange': '',
-    'servname': '',
-    'iconbegone': False,
+    'namechange': False,
+    'servname': 'Server Name Here',
     'changeicon': False,
-    'iconfile': '',
+    'internet_icon': True,
+    'iconfile': 'https://i.imgur.com/08LZ3Uz.png',
     'rembans': False,
     'chandel': False,
     'roledel': False,
+    'emojidel': False,
+    'createchan': False,
+    'chanmethod': "ASCII",
+    'channame': "",
+    'channo': 100,
+    'createrole': False,
+    'roleno': 100,
+    'rolemethod': "ASCII",
+    'rolename': "",
+    'createemoji': False,
+    'internet_emoji': True,
+    'emojifile': "",
+    'emojino': 10,
     'userban': False,
     'banreason': "",
     'userid': "",
     'senddm': False,
     'dmcontent': "",
-    'createchan': False,
-    'chanmethod': "asc",
-    'channame': "",
-    'channelno': 100,
     'usespam': False,
-    'spammethod': "massment",
+    'spammethod': "Mass Mention",
     'usetts': False,
     'customtxt': "",
     'gimmieadmin': False,
     'me': "",
     'giveeveryoneadmin': False,
-    'createroles': False,
-    'crolecount': 100,
-    'rolesname': "",
-    'custrolename': "",
-    'deleteemojis': False,
-    'createemojis': False,
-    'emojipath': "",
-    'emojinum': 10
     }
 
 #  ___               _              __  __
@@ -810,7 +811,8 @@ def main_menu():
             e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}", keep_on_top=True)
             if e == "Yes":
                 window.Close()
-                leave_guild(values["ServerID"])
+                e = leave_guild(values["ServerID"])
+                print(e.content)
                 main_menu()
             else:
                 pass
@@ -910,6 +912,75 @@ def server_menu(server_id):
         elif event == "Mass Nickname":
             for member in server.members:
                 executor.submit(massnick, server.id, member.user.id, values['NewNickname'])
+        elif event == "Scripted Smash":
+            window.Close()
+            scripted_smash(server.id)
+
+def scripted_smash(server_id):
+    global smasheroptions
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    server = get_guild(server_id)
+    general_frame = [
+                    [sg.Button("Save Preset"), sg.Button("Load Preset")],
+                    [sg.Text("Change Server Name", size=(13,0.7)), sg.Checkbox("", key="ChangeServerToggle", default=smasheroptions['namechange'], size=(2,0.7)), sg.Input(smasheroptions['servname'], size=(18,0.7), key="ChangeServerName")],
+                    [sg.Text("Change Server Icon", size=(13,0.7)), sg.Checkbox("", key="ChangeIconToggle", default=smasheroptions['changeicon'], size=(2,0.7)), sg.Input(smasheroptions['iconfile'], size=(10,0.7), key="ChangeIconFile"), sg.FileBrowse()],
+                    [sg.Text("Internet location", size=(13,0.7)), sg.Checkbox("", key="IconIsInternet", default=smasheroptions['internet_icon'], size=(2,0.7))]
+    ]
+    delete_frame = [
+                [sg.Text("Delete Channels", size=(10,0.7)), sg.Checkbox("", key="DeleteChannelsToggle", default=smasheroptions['chandel'], size=(2,0.7))],
+                [sg.Text("Delete Roles", size=(10,0.7)), sg.Checkbox("", key="DeleteRolesToggle", default=smasheroptions['roledel'], size=(2,0.7))],
+                [sg.Text("Delete Emojis", size=(10,0.7)), sg.Checkbox("", key="DeleteEmojisToggle", default=smasheroptions['emojidel'], size=(2,0.7))],
+    ]
+    create_frame = [
+                [sg.Text("Create Channels", size=(10,0.7)), sg.Checkbox("", key="CreateChannelsToggle", default=smasheroptions['createchan'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random'], default_value=smasheroptions['chanmethod'], key="ChanCreateMethod"), sg.Input(smasheroptions['channo'], size=(4,0.7), key="ChanCreateCount"), sg.Input(smasheroptions['channame'], key="ChanCreateName")],
+                [sg.Text("Create Roles", size=(10,0.7)), sg.Checkbox("", key="CreateRolesToggle", default=smasheroptions['createrole'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random'], default_value=smasheroptions['rolemethod'], key="RoleCreateMethod"), sg.Input(smasheroptions['roleno'], size=(4,0.7), key="RoleCreateCount"), sg.Input(smasheroptions['rolename'], key="RoleCreateName")],
+                [sg.Text("Create Emojis", size=(10,0.7)), sg.Checkbox("", key="CreateEmojisToggle", default=smasheroptions['emojidel'], size=(1.7,0.7)), sg.Input(smasheroptions['emojino'], size=(4,0.7), key="EmojiCreateCount")],
+                [sg.Text("Emoji Path", size=(10,0.7)), sg.Input(key="EmojiCreatePath"), sg.Text("Internet Location"),sg.Checkbox("", key="EmojiIsInternet", default=smasheroptions['internet_emoji'], size=(2,0.7)), sg.FileBrowse()]
+    ]
+    layout = [
+            [sg.Frame("General Options", general_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Deletion options", delete_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Creation options", create_frame, font='Any 12', title_color=theme['text_color'])]
+    ]
+    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+    while True:
+        event, values = window.Read(timeout=100)
+        if event is None:
+            sys.exit()
+    smasheroptions = {
+        'namechange': False,
+        'servname': 'Server Name Here',
+        'changeicon': False,
+        'internet_icon': True,
+        'iconfile': 'https://i.imgur.com/08LZ3Uz.png',
+        'rembans': False,
+        'chandel': False,
+        'roledel': False,
+        'emojidel': False,
+        'createchan': False,
+        'chanmethod': "ASCII",
+        'channame': "",
+        'channo': 100,
+        'createrole': False,
+        'roleno': 100,
+        'rolemethod': "ASCII",
+        'rolename': "",
+        'createemoji': False,
+        'internet_emoji': True,
+        'emojifile': "",
+        'emojino': 10,
+        'userban': False,
+        'banreason': "",
+        'userid': "",
+        'senddm': False,
+        'dmcontent': "",
+        'usespam': False,
+        'spammethod': "Mass Mention",
+        'usetts': False,
+        'customtxt': "",
+        'gimmieadmin': False,
+        'me': "",
+        'giveeveryoneadmin': False,
+        }
+
     # print ("Server: " + colored(server.name,menucolour))
     # print ("Server ID: " + colored(str(SERVER),menucolour))
     # membercount = len(server.members)
@@ -1809,4 +1880,21 @@ def start_client():
         login_serversmasher()
     main_menu()
 
-login_serversmasher()
+while __name__ == "__main__":
+    try:
+        login_serversmasher()
+    except Exception as e:
+        exception = ''
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        for line in trace:
+            exception += line
+        yesno = sg.PopupYesNo(f"ServerSmasher Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="ServerSmasher Crashed >:(")
+        if yesno == "Yes":
+            payload = {"content": f"```{exception}```"}
+            try:
+                requests.post("https://ptb.discordapp.com/api/webhooks/615466522738950144/2PZBj9lE4Zx-8brbZKlIKgpCeNXeDUOj378J5zH0v3IlI5i_i7JIRqn1TCdGzcu_Updy", json=payload)
+            except Exception:
+                pass
+            else:
+                sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True)
