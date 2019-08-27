@@ -5,8 +5,7 @@ A big toolkit of spamming tools for discord.
 ### "it's for education purpose only"
 
 
-Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
-
+Supports Windows, Linux, Mac, [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB) and iOS with [iSH](https://ish.app/). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
 
 ### Need any help?
 
@@ -25,8 +24,6 @@ Check out the [Wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki) and our [
 ![Status Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/statuschanger.png)
 
 ![HypeSquad Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/hypesquadchanger.png)
-
-[Showcase](https://www.youtube.com/watch?v=ncprbHin_YY) (Thanks to Bukas)
 
 Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI (Outdated)
 

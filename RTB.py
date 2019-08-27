@@ -798,7 +798,7 @@ def main():
         print(colored("18. Channel Message Cleaner",menu2))
         print(colored("19. HypeSquad House Changer",menu2))
         print(colored("20. Message Reaction Adder",menu2))
-        print(colored("21. Server Smasher",menu2))
+        print(colored("21. ServerSmasher",menu2))
         print(colored("22. View Running Attacks",menu2))
         print(colored("23. Custom attack plugins",menu2))
         print(colored("24. Quick Checker",menu2))
@@ -814,7 +814,7 @@ def main():
         menu_def = [['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
                     ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
                     ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
-                    ['Server Smasher', ['Launch GUI', 'Launch Legacy']],
+                    ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
                     ['Plugins', ['View Plugins', 'Plugin Repo']]
                     ]
         layout =[
@@ -1195,7 +1195,7 @@ def main():
                          [sg.Text("Command line mode:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=clim)],
                          [sg.Text("Disable Cloudflare Check:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dcc)],
                          [sg.Text("Disable Update Checking:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=duc)],
-                         [sg.Text("Server Smasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
+                         [sg.Text("ServerSmasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
                          [sg.Text("Ignore FFMpeg Missing:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=ifm)],
                          [sg.Button("Save", size=(10,1))],
                          ]
@@ -1257,7 +1257,7 @@ def main():
                 while True:
                     window.Close()
                     frame = [
-                    [sg.Text("Synchronocy - Inspiring RTB and creating the base for server smasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Squek\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")]
+                    [sg.Text("Synchronocy - Inspiring RTB and creating the base for ServerSmasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Squek\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")]
                     ]
                     layout = [
                              [sg.Image(data=rtb_banner)],
@@ -1515,7 +1515,7 @@ def main():
                 serversmasher()
             elif event == "Launch GUI":
                 p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasherGUI.py',str(attacks_theme)]) #,stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT
-                currentattacks["SERVER SMASHER GUI | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                currentattacks["ServerSmasher GUI | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  __  __      _          _  _   _           _
             # |  \/  |__ _(_)_ _     /_\| |_| |_ __ _ __| |__ ___
             # | |\/| / _` | | ' \   / _ \  _|  _/ _` / _| / /(_-<
@@ -1706,7 +1706,7 @@ def main():
         print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
         print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
         print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
-        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. Server Smasher",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. ServerSmasher",menu2)+colored("                    ██",menu1)))
         print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
         print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
         print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
@@ -2293,7 +2293,7 @@ def serversmasher():
     global currentattacks
     clear()
     if command_line_mode == 1:
-        print ("The config file for the Server Smasher is in RTBFiles/smconfig.py, please add token before starting.")
+        print ("The config file for the ServerSmasher is in RTBFiles/smconfig.py, please add token before starting.")
     if sys.platform.startswith('win32'):
         if server_smasher_in_main_window == 1:
             p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasher.py',"?",menu1,menu2,str(no_tk_mode)])
@@ -2562,7 +2562,6 @@ def info():
     if no_tk_mode == 1:
         print (colored("Termux Mode.",menu2))
     print (colored("Raid ToolBox version: "+rtbversion,menu2))
-    print (colored("Server Smasher version: "+smversion,menu2))
     print (colored("Discord.py version: "+ discord.__version__,menu2))
     if verbose == 1:
         print(colored("\nStartup Time: {}".format(t1-t0),menu2))
@@ -2888,12 +2887,12 @@ def settings():
                 toggleopts['disable_update_check'] = 0
                 print (colored("6.  Disable Update Checking: False",menu2))
             if toggleopts['server_smasher_in_main_window'] == 0:
-                print (colored("7.  Server Smasher in main console: False",menu2))
+                print (colored("7.  ServerSmasher in main console: False",menu2))
             elif toggleopts['server_smasher_in_main_window'] == 1:
-                print (colored("7.  Server Smasher in main console: True",menu2))
+                print (colored("7.  ServerSmasher in main console: True",menu2))
             else:
                 toggleopts['server_smasher_in_main_window'] = 0
-                print (colored("7.  Server Smasher in main console: False",menu2))
+                print (colored("7.  ServerSmasher in main console: False",menu2))
             if toggleopts['ignore_ffmpeg_missing'] == 0:
                 print (colored("8.  Ignore FFMpeg Missing: False",menu2))
             elif toggleopts['ignore_ffmpeg_missing'] == 1:

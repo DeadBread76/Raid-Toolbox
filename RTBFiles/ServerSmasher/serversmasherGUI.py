@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Raid ToolBox Server Smasher GUI
+# Raid ToolBox ServerSmasher GUI
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # Original Server Smasher: Synchronocy - https://github.com/synchronocy
 # Date: 13th August 2019
@@ -18,8 +18,8 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, json, ast, time, random, string, asyncio, base64, traceback
-import discord, requests, pyperclip
+import os, sys, json, ast, time, random, string, asyncio, base64, traceback, threading
+import discord, requests, pyperclip, websocket
 import PySimpleGUIQt as sg
 from pprint import pprint
 from base64 import b64encode
@@ -35,6 +35,9 @@ with open('./config.json', 'r') as handle:
 
 with open('RTBFiles/ServerSmasher/smconfig.json', 'r') as handle:
     config = json.load(handle)
+    startup_status = config['startup_status']
+    startup_activity_name = config['startup_activity_name']
+    startup_activity_type = config['startup_activity_type']
     last_used = config['last_used']
     last_used_type = config['last_used_type']
     bots_cached = config['bots_cached']
@@ -46,6 +49,7 @@ executor = ThreadPoolExecutor(max_workers=thread_count)
 loop = asyncio.get_event_loop()
 client = discord.Client()
 theme = ast.literal_eval(sys.argv[1])
+ws = websocket.WebSocket()
 guild_cache = None
 
 if theme['use_custom_theme']:
@@ -118,11 +122,11 @@ def login_serversmasher():
     else:
         default_type = "Bot"
     layout = [
-             [sg.Text("Welcome To Server Smasher!", size=(45,1), font='Any 12', key="TITLE")],
+             [sg.Text("Welcome To ServerSmasher!", size=(45,1), font='Any 12', key="TITLE")],
              [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
              [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list (smtokens.txt)", key="TogglebotList", size=(28.5, 0.6))],
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -132,7 +136,7 @@ def login_serversmasher():
                 if values["Type"] == "User":
                     window.Element('TITLE').Update("USING A USER TOKEN IS NOT RECOMMENDED!")
                 else:
-                    window.Element('TITLE').Update("Welcome To Server Smasher!")
+                    window.Element('TITLE').Update("Welcome To ServerSmasher!")
             except:
                 pass
 
@@ -159,7 +163,7 @@ def login_serversmasher():
                      [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Cache", key="Refresh Bots", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
             window = window1
 
         elif event == "ToggleuserList":
@@ -185,7 +189,7 @@ def login_serversmasher():
                      [sg.Text("Select a User to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(userlist, size=(15,0.7), key="UserToken"), sg.Button("Select User", size=(11,0.8), key="SelectUser"), sg.Button("Refresh Cache", key="Refresh Users", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{} | User Tokens".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(smversion), resizable=False).Layout(layout)
             window = window1
 
         elif event == 'Refresh Bots':
@@ -210,7 +214,7 @@ def login_serversmasher():
                      [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Cache", key="Refresh Bots", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
             window = window1
 
         elif event == 'Refresh Users':
@@ -235,7 +239,7 @@ def login_serversmasher():
                      [sg.Text("Select a User to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(userlist, size=(15,0.7), key="UserToken"), sg.Button("Select User", size=(11,0.8), key="SelectUser"), sg.Button("Refresh Cache", key="Refresh Users", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{} | User Tokens".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(smversion), resizable=False).Layout(layout)
             window = window1
 
         elif event == "Back":
@@ -252,11 +256,11 @@ def login_serversmasher():
             else:
                 default_type = "Bot"
             layout = [
-                     [sg.Text("Welcome To Server Smasher!", size=(45,1), font='Any 12', key="TITLE")],
+                     [sg.Text("Welcome To ServerSmasher!", size=(45,1), font='Any 12', key="TITLE")],
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list (smtokens.txt)", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
             window.Close()
             window = window1
 
@@ -277,11 +281,11 @@ def login_serversmasher():
             else:
                 default_type = "Bot"
             layout = [
-                     [sg.Text("Welcome To Server Smasher!", size=(45,1), font='Any 12', key="TITLE")],
+                     [sg.Text("Welcome To ServerSmasher!", size=(45,1), font='Any 12', key="TITLE")],
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list (smtokens.txt)", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
             window.Close()
             window = window1
 
@@ -302,11 +306,11 @@ def login_serversmasher():
             else:
                 default_type = "Bot"
             layout = [
-                     [sg.Text("Welcome To Server Smasher!", size=(45,1), font='Any 12', key="TITLE")],
+                     [sg.Text("Welcome To ServerSmasher!", size=(45,1), font='Any 12', key="TITLE")],
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list (smtokens.txt)", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False).Layout(layout)
             window.Close()
             window = window1
 
@@ -330,10 +334,10 @@ def login_serversmasher():
                 headers={'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
             start_client()
 
-#    _  _   _           _
-#   /_\| |_| |_ __ _ __| |__ ___
-#  / _ \  _|  _/ _` / _| / /(_-<
-# /_/ \_\__|\__\__,_\__|_\_\/__/
+#  ___             _   _
+# | __|  _ _ _  __| |_(_)___ _ _  ___
+# | _| || | ' \/ _|  _| / _ \ ' \(_-<
+# |_| \_,_|_||_\__|\__|_\___/_||_/__/
 def deletechannel(channel):
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/channels/{channel}", headers=headers)
@@ -342,7 +346,7 @@ def deletechannel(channel):
         else:
             break
 
-def removeban(server,user):
+def removeban(server, user):
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/bans/{str(user)}", headers=headers)
         if src.status_code == 429:
@@ -350,7 +354,7 @@ def removeban(server,user):
         else:
             break
 
-def deleterole(role,server):
+def deleterole(role, server):
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/roles/{str(role)}", headers=headers)
         if src.status_code == 429:
@@ -358,7 +362,7 @@ def deleterole(role,server):
         else:
             break
 
-def createrole(name,server):
+def createrole(name, server):
     payload = {'hoist': 'true', 'name': name, 'mentionable': 'true', 'color': random.randint(1000000,9999999), 'permissions': random.randint(1,10)}
     while True:
         src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/roles', headers=headers, json=payload)
@@ -367,18 +371,14 @@ def createrole(name,server):
         else:
             break
 
-def senddmtouser(user,content,usetts):
+def senddmtouser(user, content, usetts):
     dmlist = []
     payload = {'recipient_id': user}
     src = requests.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
-    userdm = src.content.decode()
-    jsonstring = json.loads(userdm).values()
-    for x in jsonstring:
-        dmlist.append(x)
-    userdm = dmlist[2]
-    payload = {"content" : content, "tts" : usetts, "mention_everyone" : "true"}
+    dm_json = json.loads(src.content)
+    payload = {"content" : content, "tts" : usetts}
     while True:
-        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{userdm}/messages", headers=headers, json=payload)
+        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(1)
         else:
@@ -500,11 +500,55 @@ def webhook_spam(webhook,content):
     while True:
         requests.post(webhook, json=payload)
 
+def heartbeat(interval):
+    ack = {
+            "op": 1,
+            "d": None
+        }
+    while True:
+        time.sleep(interval/1000)
+        if not threading.main_thread().is_alive():
+            ws.close()
+            break
+        try:
+            ws.send(json.dumps(ack))
+        except Exception:
+            break
 
-#  ___             _   _
-# | __|  _ _ _  __| |_(_)___ _ _  ___
-# | _| || | ' \/ _|  _| / _ \ ' \(_-<
-# |_| \_,_|_||_\__|\__|_\___/_||_/__/
+def change_presence(text, type, status):
+    if type == "Playing":
+        gamejson = {
+            "name": text,
+            "type": 0
+        }
+    elif type == 'Streaming':
+        gamejson = {
+            "name": text,
+            "type": 1,
+            "url": "https://www.twitch.tv/SERVERSMASHER"
+        }
+    elif type == "Listening to":
+        gamejson = {
+            "name": text,
+            "type": 2
+        }
+    elif type == "Watching":
+        gamejson = {
+            "name": text,
+            "type": 3
+        }
+    presence = {
+            'op': 3,
+            'd': {
+                "game": gamejson,
+                "status": status,
+                "since": 0,
+                "afk": False
+                }
+            }
+    ws.send(json.dumps(presence))
+
+
 def get_user(user):
     src = requests.get(f'https://canary.discordapp.com/api/v6/users/{user}', headers=headers)
     user_json = json.loads(src.content)
@@ -632,8 +676,8 @@ def create_guild(name):
     return src
 
 def leave_guild(guild):
-    requests.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{guild}', headers=headers)
-    return None
+    src = requests.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{guild}', headers=headers)
+    return src
 
 def edit_profile(name, avatar):
     if avatar == "New Avatar...":
@@ -649,11 +693,16 @@ def construct_avatar_link(id, hash, size):
     link = f"https://cdn.discordapp.com/avatars/{id}/{hash}.png?size={size}"
     return link
 
+def give_admin_role(guild, user):
+    payload = {"name": "Admin", "permissions": 2146958847, "color": random.randrange(16777215)}
+    src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers, json=payload)
+    role_id = json.loads(src.content)['id']
+    payload = {"roles": [role_id]}
+    requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members/{user}', headers=headers, json=payload)
+
 def update_cache():
-    global user_cache
     global guild_cache
     guild_cache = get_client_guilds()
-    user_cache = get_user_info()
 
 def asciigen(length):
     asc = ''
@@ -728,11 +777,10 @@ smasheroptions = {
 # |___/_|_|_\__,_/__/_||_\___|_|   |_|  |_\___|_||_\_,_|
 def main_menu():
     global guild_cache
-    global user_cache
+    global user
     global avatar_b64
     del guild_cache
     guild_cache = create_cache()
-    user = user_cache
     guilds = guild_cache
     server_dict = {}
     usercount = 0
@@ -749,17 +797,22 @@ def main_menu():
     server_frame = [
                    [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(9,0.8)), sg.Button("Leave Server", size=(9,0.8)),]
                    ]
+    status_frame = [
+                   [sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], default_value=startup_activity_type, readonly=True, key="StatusType"), sg.InputText(startup_activity_name, key="StatusName"),sg.Combo(['online', 'dnd', 'idle', 'invisible'], default_value=startup_status, readonly=True, key="StatusStatus")],
+                   [sg.Button("Change Status")]
+                   ]
     options_frame = [
                     [sg.Button(f"Change {client_type} Options")],
                     [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
                     [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
                     ]
     layout = [
-             [sg.Frame('Logged in to Server Smasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
+             [sg.Frame('Logged in to ServerSmasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
+             [sg.Frame("Edit Status", status_frame, font='Any 12', title_color=theme['text_color'])],
              [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
              [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -773,11 +826,11 @@ def main_menu():
                 server_menu(server_dict[values["ServerID"]])
         elif event == "Logout":
             window.Close()
+            ws.close()
             login_serversmasher()
         elif event == "Refresh":
             sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
             guild_cache = create_cache()
-            user = user_cache
             guilds = guild_cache
             server_dict = {}
             usercount = 0
@@ -794,17 +847,22 @@ def main_menu():
             server_frame = [
                            [sg.Combo(list(server_dict), size=(20,0.7), key="ServerID"), sg.Button("Select Server", size=(9,0.8)), sg.Button("Leave Server", size=(9,0.8)),]
                            ]
+            status_frame = [
+                           [sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], default_value=startup_activity_type, readonly=True, key="StatusType"), sg.InputText(startup_activity_name, key="StatusName"),sg.Combo(['online', 'dnd', 'idle', 'invisible'], default_value=startup_status, readonly=True, key="StatusStatus")],
+                           [sg.Button("Change Status")]
+                           ]
             options_frame = [
                             [sg.Button(f"Change {client_type} Options")],
                             [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
                             [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
                             ]
             layout = [
-                     [sg.Frame('Logged in to Server Smasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
+                     [sg.Frame('Logged in to ServerSmasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
+                     [sg.Frame("Edit Status", status_frame, font='Any 12', title_color=theme['text_color'])],
                      [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
                      [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
             window.Close()
             window = window1
         elif event == "Leave Server":
@@ -816,6 +874,16 @@ def main_menu():
                 main_menu()
             else:
                 pass
+        elif event == "Change Status":
+            change_presence(values["StatusName"], values["StatusType"], values["StatusStatus"])
+            with open('RTBFiles/ServerSmasher/smconfig.json', 'r+') as handle:
+                edit = json.load(handle)
+                edit['startup_status'] = values["StatusStatus"]
+                edit['startup_activity_name'] = values["StatusName"]
+                edit['startup_activity_type'] = values["StatusType"]
+                handle.seek(0)
+                json.dump(edit, handle, indent=4)
+                handle.truncate()
         elif event == "Create Server":
             window.Close()
             create_guild(values["NewServerName"])
@@ -830,7 +898,7 @@ def main_menu():
                      [sg.Frame("Bot Options", option_frame, font='Any 10', title_color=theme['text_color'])],
                      [sg.Button("Save Changes"), sg.Button("Back")]
                      ]
-            window1 = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
             window.Close()
             window = window1
         elif event == "Save Changes":
@@ -864,15 +932,22 @@ def server_menu(server_id):
                [sg.Input("Channel Name", size=(13.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))],
                [sg.Text("", size=(0.05,0.8)), sg.Combo(list(tchannels), key="InviteChan", size=(16.6,0.7)), sg.Button("Create Invite", size=(10,0.8))],
                [sg.Input("DeadBread", size=(17,0.8), key="NewNickname"), sg.Button("Mass Nickname", size=(10,0.8))],
+               [sg.Input("ID For Admin", size=(17,0.8), key="AdminID"), sg.Button("Give Admin", size=(10,0.8))]
                ]
     destructive = [
-                  [sg.Button("Scripted Smash", size=(15.3,0.8)), sg.Button("Server Corruptor", size=(15.3,0.8)), sg.Button("Thanos Snap", size=(15.3,0.8))]
+                  [sg.Button("Scripted Smash")],
+                  [sg.Button("Server Corruptor")],
+                  [sg.Button("Thanos Snap")]
                   ]
+    mass_dm = [
+              [sg.Multiline("DM Content", key="MassDmContent")],
+              [sg.Button("Send DM to Everyone")]
+              ]
     layout = [
              [sg.Frame("Server Info", info, font='Any 12', title_color=theme['text_color']), sg.Frame("Actions", oneclick, font='Any 12', title_color=theme['text_color'])],
-             [sg.Frame("Destructive Actions", destructive, font='Any 12', title_color=theme['text_color'])]
+             [sg.Frame("Destructive Actions", destructive, font='Any 12', title_color=theme['text_color']),sg.Frame("Mass DM (ONLY USE ON BOTS!)", mass_dm, font='Any 12', title_color=theme['text_color'])]
              ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=True, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -912,6 +987,11 @@ def server_menu(server_id):
         elif event == "Mass Nickname":
             for member in server.members:
                 executor.submit(massnick, server.id, member.user.id, values['NewNickname'])
+        elif event == "Give Admin Role":
+            give_admin_role(server.id, values["AdminID"])
+        elif event == "Send DM to Everyone":
+            for member in server.members:
+                executor.submit(senddmtouser, member.user.id, values["MassDmContent"], False)
         elif event == "Scripted Smash":
             window.Close()
             scripted_smash(server.id)
@@ -934,13 +1014,13 @@ def scripted_smash(server_id):
     create_frame = [
                 [sg.Text("Create Channels", size=(10,0.7)), sg.Checkbox("", key="CreateChannelsToggle", default=smasheroptions['createchan'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random'], default_value=smasheroptions['chanmethod'], key="ChanCreateMethod"), sg.Input(smasheroptions['channo'], size=(4,0.7), key="ChanCreateCount"), sg.Input(smasheroptions['channame'], key="ChanCreateName")],
                 [sg.Text("Create Roles", size=(10,0.7)), sg.Checkbox("", key="CreateRolesToggle", default=smasheroptions['createrole'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random'], default_value=smasheroptions['rolemethod'], key="RoleCreateMethod"), sg.Input(smasheroptions['roleno'], size=(4,0.7), key="RoleCreateCount"), sg.Input(smasheroptions['rolename'], key="RoleCreateName")],
-                [sg.Text("Create Emojis", size=(10,0.7)), sg.Checkbox("", key="CreateEmojisToggle", default=smasheroptions['emojidel'], size=(1.7,0.7)), sg.Input(smasheroptions['emojino'], size=(4,0.7), key="EmojiCreateCount")],
-                [sg.Text("Emoji Path", size=(10,0.7)), sg.Input(key="EmojiCreatePath"), sg.Text("Internet Location"),sg.Checkbox("", key="EmojiIsInternet", default=smasheroptions['internet_emoji'], size=(2,0.7)), sg.FileBrowse()]
+                [sg.Text("Create Emojis", size=(10,0.7)), sg.Checkbox("", key="CreateEmojisToggle", default=smasheroptions['emojidel'], size=(1.7,0.7)), sg.Input(smasheroptions['emojino'], size=(4,0.7), key="EmojiCreateCount"), sg.Text("Internet Location", size=(10,0.7)),sg.Checkbox("", key="EmojiIsInternet", default=smasheroptions['internet_emoji'], size=(2,0.7))],
+                [sg.Text("Emoji Path", size=(10,0.7)), sg.Input(key="EmojiCreatePath"), sg.FileBrowse()]
     ]
     layout = [
             [sg.Frame("General Options", general_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Deletion options", delete_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Creation options", create_frame, font='Any 12', title_color=theme['text_color'])]
     ]
-    window = sg.Window("DeadBread's Server Smasher v{}".format(smversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window(f"DeadBread's ServerSmasher v{smversion} | Scripted Smash on: {server.name}", resizable=False, keep_on_top=True).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -981,180 +1061,6 @@ def scripted_smash(server_id):
         'giveeveryoneadmin': False,
         }
 
-    # print ("Server: " + colored(server.name,menucolour))
-    # print ("Server ID: " + colored(str(SERVER),menucolour))
-    # membercount = len(server.members)
-    # tchancount = len(server.text_channels)
-    # vchancount = len(server.voice_channels)
-    # rolecount = len(server.roles)
-    # print (colored("{} Members".format(membercount),menucolour))
-    # print (colored("{} Roles".format(rolecount),menucolour))
-    # print (colored("{} Text Channels, {} Voice Channels".format(tchancount,vchancount),menucolour))
-    # print (colored("Nitro Boost Level: {}".format(str(server.premium_tier)),menucolour))
-    # print ("----------------------------------------")
-    # print ("Options:")
-    # print (colored(" 0. More Info\n 1. Configure destruction options. \n 2. Other options \n 3. Create Server Invite. \n 4. Change What the bot is playing. \n 5. Leave server. \n 6. Return to Server Select",menucolour))
-    # opts = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Select the number for your option: ")
-    #
-    # try:
-    #     if int(opts) == 0:
-    #
-    #         print(colored("0: Export Detailed Server Info\n",menucolour))
-    #         print(colored("Name: {}".format(str(server.name)),menucolour))
-    #         print(colored("Member Count: {}".format(len(server.members)),menucolour))
-    #         print(colored("Channel Count: {}".format(len(server.channels)),menucolour))
-    #         print(colored("Role Count: {}".format(len(server.roles)),menucolour))
-    #         print(colored("Nitro Boost Level: {}".format(str(server.premium_tier)),menucolour))
-    #         serverfeat = server.features
-    #         if "VIP_REGIONS" in serverfeat:
-    #             print(colored("VIP_REGION: True",menucolour))
-    #         else:
-    #             print(colored("VIP_REGION: False",menucolour))
-    #         if "VANITY_URL" in serverfeat:
-    #             print(colored("VANITY_URL: True",menucolour))
-    #         else:
-    #             print(colored("VANITY_URL: False",menucolour))
-    #         if "INVITE_SPLASH" in serverfeat:
-    #             print(colored("INVITE_SPLASH: True",menucolour))
-    #         else:
-    #             print(colored("INVITE_SPLASH: False",menucolour))
-    #         if "VERIFIED" in serverfeat:
-    #             print(colored("VERIFIED: True",menucolour))
-    #         else:
-    #             print(colored("VERIFIED: False",menucolour))
-    #         if "PARTNERED" in serverfeat:
-    #             print(colored("PARTNERED: True",menucolour))
-    #         else:
-    #             print(colored("PARTNERED: False",menucolour))
-    #         if "MORE_EMOJI" in serverfeat:
-    #             print(colored("MORE_EMOJI: True",menucolour))
-    #         else:
-    #             print(colored("MORE_EMOJI: False",menucolour))
-    #         if "DISCOVERABLE" in serverfeat:
-    #             print(colored("DISCOVERABLE: True",menucolour))
-    #         else:
-    #             print(colored("DISCOVERABLE: False",menucolour))
-    #         if "COMMERCE" in serverfeat:
-    #             print(colored("COMMERCE: True",menucolour))
-    #         else:
-    #             print(colored("COMMERCE: False",menucolour))
-    #         if "LURKABLE" in serverfeat:
-    #             print(colored("LURKABLE: True",menucolour))
-    #         else:
-    #             print(colored("LURKABLE: False",menucolour))
-    #         if "NEWS" in serverfeat:
-    #             print(colored("NEWS: True",menucolour))
-    #         else:
-    #             print(colored("NEWS: False",menucolour))
-    #         if "BANNER" in serverfeat:
-    #             print(colored("BANNER: True",menucolour))
-    #         else:
-    #             print(colored("BANNER: False",menucolour))
-    #         if "ANIMATED_ICON" in serverfeat:
-    #             print(colored("ANIMATED_ICON: True",menucolour))
-    #         else:
-    #             print(colored("ANIMATED_ICON: False",menucolour))
-    #         se = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"\n")
-    #         if se == "0":
-    #             with open("{} info.txt".format(server.name), "w+", errors='ignore') as handle:
-    #                 handle.write("Server Name: {}\n".format(str(server.name)))
-    #                 handle.write("Server ID: {}\n".format(str(server.id)))
-    #                 handle.write("Server Reigon: {}\n".format(str(server.region)))
-    #                 handle.write("Server Icon: {}\n".format(str(server.icon_url)))
-    #                 feature = ''
-    #                 p = 0
-    #                 for f in server.features:
-    #                     p += 1
-    #                     if p == len(server.features):
-    #                         feature += "{}".format(f)
-    #                     else:
-    #                         feature += "{}, ".format(f)
-    #                 handle.write("Server Features: {}\n".format(feature))
-    #                 handle.write("Member Count: {}, see member list below.\n".format(len(server.members)))
-    #                 handle.write("Channel Count: {}, see channel list below.\n".format(len(server.channels)))
-    #                 handle.write("Role Count: {}, see role list below.\n".format(len(server.roles)))
-    #                 handle.write("Ammount of users boosting server: {}\n".format(str(server.premium_subscription_count)))
-    #                 handle.write("Nitro Boost Level: {}\n".format(str(server.premium_tier)))
-    #                 handle.write("\n===============================\nText Channels:\n===============================\n\n")
-    #                 for channel in server.text_channels:
-    #                     try:
-    #                         handle.write("Name: {}\nID: {}\nTopic: {}\nSlowmode Delay: {}\nPosition: {}\nCategory: {}\n\n-----------------------\n\n".format(channel.name,str(channel.id),channel.topic,str(channel.slowmode_delay),str(channel.position),client.get_channel(channel.category_id).name))
-    #                     except Exception:
-    #                         pass
-    #                 handle.write("\n===============================\nVoice Channels:\n===============================\n\n")
-    #                 for channel in server.voice_channels:
-    #                     try:
-    #                         handle.write("Name: {}\nID: {}\nBitrate: {}\nUser limit: {}\nPosition: {}\nCategory: {}\nConnected users:\n\n".format(channel.name,str(channel.id),str(channel.bitrate),str(channel.user_limit),str(channel.position),client.get_channel(channel.category_id).name))
-    #                         for u in channel.members:
-    #                             handle.write("User: {}#{}\nID: {}\nBot: {}\n".format(u.name,u.discriminator,str(u.id),str(u.bot)))
-    #                             handle.write("\n-----------------------\n\n")
-    #                     except Exception:
-    #                         pass
-    #                 handle.write("\n===============================\nRoles:\n===============================\n\n")
-    #                 for role in server.roles:
-    #                     try:
-    #                         handle.write("Name: {}\nID: {}\nColour: {}\nHoisted: {}\nPositon: {}\nMentionable: {}\nPermissions: {}\n\n-----------------------\n\n".format(role.name,str(role.id),str(role.colour.value),str(role.hoist),str(role.position),str(role.mentionable),str(role.permissions)))
-    #                     except Exception:
-    #                         pass
-    #                 handle.write("\n===============================\nUsers:\n===============================\n\n")
-    #                 for user in server.members:
-    #                     try:
-    #                         handle.write("Name: {}#{}\nID: {}\nAvatar: {}\nBot: {}\nDate Joined: {}\nNickname: {}\n\n-----------------------\n\n".format(user.name,str(user.discriminator),str(user.id),str(user.avatar_url),str(user.bot),str(user.joined_at),user.nick))
-    #                     except Exception:
-    #                         pass
-    #             print("Exported to {} info.txt".format(server.name))
-    #             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Press enter to return to menu.")
-    #         await main(SERVER)
-    #
-    #     elif int(opts) == 1:
-    #         async def changesettings(toggleopts,SERVER):
-    #             if sys.platform.startswith('win32'):
-    #                 os.system('mode con:cols=70 lines=40')
-    #             elif sys.platform.startswith('linux'):
-    #                 os.system("printf '\033[8;40;70t'")
-    #             try:
-    #
-    #                 server = client.get_guild(int(SERVER))
-    #                 print (colored("Type 'start' to start.",menucolour))
-    #                 print (colored("S.  Save Config",menucolour))
-    #                 print (colored("L.  Load Config",menucolour))
-    #                 print (colored("0.  Go back",menucolour))
-    #                 print (colored("1.  Change server name: {}".format(toggleopts['namechange']),menucolour))
-    #                 print (colored("2.  New Server Name: {}".format(toggleopts['servname']),menucolour))
-    #                 print (colored("3.  Remove server icon: {}".format(toggleopts['iconbegone']),menucolour))
-    #                 print (colored("4.  Change server icon: {}".format(toggleopts['changeicon']),menucolour))
-    #                 print (colored("5.  Icon Filename: {}".format(toggleopts['iconfile']),menucolour))
-    #                 print (colored("6.  Remove Bans: {}".format(toggleopts['rembans']),menucolour))
-    #                 print (colored("7.  Delete all channels: {}".format(toggleopts['chandel']),menucolour))
-    #                 print (colored("8.  Delete all roles: {}".format(toggleopts['roledel']),menucolour))
-    #                 print (colored("9.  Ban all members: {}".format(toggleopts['userban']),menucolour))
-    #                 print (colored("10. Ban Reason: {}".format(toggleopts['banreason']),menucolour))
-    #                 print (colored("11. Users to not Ban: {}".format(toggleopts['userid']),menucolour))
-    #                 print (colored("12. Send DM to everyone: {}".format(toggleopts['senddm']),menucolour))
-    #                 print (colored("13. DM Content: {}".format(toggleopts['dmcontent']),menucolour))
-    #                 print (colored("14. Create Channels: {}".format(toggleopts['createchan']),menucolour))
-    #                 print (colored("15. Channel Creation type: {}".format(toggleopts['chanmethod']),menucolour))
-    #                 print (colored("16. Name for the created channels: {}".format(toggleopts['channame']),menucolour))
-    #                 print (colored("17. Number of channels to create: {}".format(toggleopts['channelno']),menucolour))
-    #                 print (colored("18. Spam after destruction: {}".format(toggleopts['usespam']),menucolour))
-    #                 print (colored("19. Spamming method: {}".format(toggleopts['spammethod']),menucolour))
-    #                 print (colored("20. Text to spam: {}".format(toggleopts['customtxt']),menucolour))
-    #                 print (colored("21. Use text to speech in message: {}".format(toggleopts['usetts']),menucolour))
-    #                 print (colored("22. Give yourself admin: {}".format(toggleopts['gimmieadmin']),menucolour))
-    #                 print (colored("23. Your ID: {}".format(toggleopts['me']),menucolour))
-    #                 print (colored("24. Give @everyone admin: {}".format(toggleopts['giveeveryoneadmin']),menucolour))
-    #                 print (colored("25. Create Roles: {}".format(toggleopts['createroles']),menucolour))
-    #                 print (colored("26. Number of roles to create: {}".format(toggleopts['crolecount']),menucolour))
-    #                 print (colored("27. Role Creation type: {}".format(toggleopts['rolesname']),menucolour))
-    #                 print (colored("28. Name of roles: {}".format(toggleopts['custrolename']),menucolour))
-    #                 print (colored("29. Delete Emojis: {}".format(toggleopts['deleteemojis']),menucolour))
-    #                 print (colored("30. Create Emojis: {}".format(toggleopts['createemojis']),menucolour))
-    #                 print (colored("31. Created emoji image path: {}".format(toggleopts['emojipath']),menucolour))
-    #                 print (colored("32. Number of created emojis: {}".format(toggleopts['emojinum']),menucolour))
-    #                 toga = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,"Item to toggle or change:\n")
-    #                 if toga == 'E':
-    #                     while True:
-    #                         print(asciigen(10000))
     #                 if toga.lower() == "start":
     #                     for channel in server.channels:
     #                         myperms = channel.permissions_for(server.get_member(client.user.id))
@@ -1328,187 +1234,7 @@ def scripted_smash(server_id):
     #                         toggleopts = ast.literal_eval(content[0])
     #                         print("Loaded Config File")
     #                     await changesettings(toggleopts,SERVER)
-    #                 if int(toga) == 0:
-    #                     await main(SERVER)
-    #                 elif int(toga) == 1:
-    #                     if toggleopts['namechange'] == True:
-    #                         toggleopts['namechange'] = False
-    #                     else:
-    #                         toggleopts['namechange'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 2:
-    #                     toggleopts['servname'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Server name: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 3:
-    #                     if toggleopts['iconbegone'] == True:
-    #                         toggleopts['iconbegone'] = False
-    #                     else:
-    #                         toggleopts['iconbegone'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 4:
-    #                     if toggleopts['changeicon'] == True:
-    #                         toggleopts['changeicon'] = False
-    #                     else:
-    #                         toggleopts['changeicon'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 5:
-    #                     if noguimode == 1:
-    #                         toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'New Server icon: ')
-    #                     else:
-    #                         toggleopts['iconfile'] = askopenfilename(initialdir = os.getcwd(),title = "Select server icon")
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 6:
-    #                     if toggleopts['rembans'] == True:
-    #                         toggleopts['rembans'] = False
-    #                     else:
-    #                         toggleopts['rembans'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 7:
-    #                     if toggleopts['chandel'] == True:
-    #                         toggleopts['chandel'] = False
-    #                     else:
-    #                         toggleopts['chandel'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 8:
-    #                     if toggleopts['roledel'] == True:
-    #                         toggleopts['roledel'] = False
-    #                     else:
-    #                         toggleopts['roledel'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 9:
-    #                     if toggleopts['userban'] == True:
-    #                         toggleopts['userban'] = False
-    #                     else:
-    #                         toggleopts['userban'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 10:
-    #                     toggleopts['banreason'] = input ("Ban Reason: ")
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 11:
-    #                     appen = input ("Username and Descriminator: ")
-    #                     if appen == '':
-    #                         await changesettings(toggleopts,SERVER)
-    #                     else:
-    #                         toggleopts['userid'].append(appen)
-    #                         await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 12:
-    #                     if toggleopts['senddm'] == True:
-    #                         toggleopts['senddm'] = False
-    #                     else:
-    #                         toggleopts['senddm'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 13:
-    #                     toggleopts['dmcontent']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'DM Content: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 14:
-    #                     if toggleopts['createchan'] == True:
-    #                         toggleopts['createchan'] = False
-    #                     else:
-    #                         toggleopts['createchan'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 15:
-    #                     if toggleopts['chanmethod'] == "set":
-    #                         toggleopts['chanmethod'] = "ascii"
-    #                     elif toggleopts['chanmethod'] == "ascii":
-    #                         toggleopts['chanmethod'] = "voice"
-    #                     elif toggleopts['chanmethod'] == "voice":
-    #                         toggleopts['chanmethod'] = "set"
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 16:
-    #                     toggleopts['channame']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created channels: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 17:
-    #                     toggleopts['channelno'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of Channels to create: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 18:
-    #                     if toggleopts['usespam'] == True:
-    #                         toggleopts['usespam'] = False
-    #                     else:
-    #                         toggleopts['usespam'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 19:
-    #                     if toggleopts['spammethod'] == "text":
-    #                         toggleopts['spammethod'] = "asc"
-    #                     elif toggleopts['spammethod'] == "asc":
-    #                         toggleopts['spammethod'] = "everyone"
-    #                     elif toggleopts['spammethod'] == "everyone":
-    #                         toggleopts['spammethod'] = "massment"
-    #                     elif toggleopts['spammethod'] == "massment":
-    #                         toggleopts['spammethod'] = "text"
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 20:
-    #                     toggleopts['customtxt'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Text to spam: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 21:
-    #                     if toggleopts['usetts'] == 'true':
-    #                         toggleopts['usetts'] = 'false'
-    #                     else:
-    #                         toggleopts['usetts'] = 'true'
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 22:
-    #                     if toggleopts['gimmieadmin'] == True:
-    #                         toggleopts['gimmieadmin'] = False
-    #                     else:
-    #                         toggleopts['gimmieadmin'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 23:
-    #                     toggleopts['me']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Your ID for giving admin: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 24:
-    #                     if toggleopts['giveeveryoneadmin'] == True:
-    #                         toggleopts['giveeveryoneadmin'] = False
-    #                     else:
-    #                         toggleopts['giveeveryoneadmin'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 25:
-    #                     if toggleopts['createroles'] == True:
-    #                         toggleopts['createroles'] = False
-    #                     else:
-    #                         toggleopts['createroles'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 26:
-    #                     toggleopts['crolecount'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of Roles to create: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 27:
-    #                     if toggleopts['rolesname'] == 'set':
-    #                         toggleopts['rolesname'] = 'ascii'
-    #                     else:
-    #                         toggleopts['rolesname'] = 'set'
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 28:
-    #                     toggleopts['custrolename'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name of created roles: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 29:
-    #                     if toggleopts['deleteemojis'] == True:
-    #                         toggleopts['deleteemojis'] = False
-    #                     else:
-    #                         toggleopts['deleteemojis'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 30:
-    #                     if toggleopts['createemojis'] == True:
-    #                         toggleopts['createemojis'] = False
-    #                     else:
-    #                         toggleopts['createemojis'] = True
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 31:
-    #                     if noguimode == 1:
-    #                         toggleopts['iconfile'] = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Emoji path: ')
-    #                     else:
-    #                         toggleopts['emojipath'] = askopenfilename(initialdir = os.getcwd(),title = "Select emoji")
-    #                     await changesettings(toggleopts,SERVER)
-    #                 elif int(toga) == 32:
-    #                     toggleopts['emojinum']  = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Number of created emojis: ')
-    #                     await changesettings(toggleopts,SERVER)
-    #                 else:
-    #                     print ("Invalid option")
-    #                     await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-    #                     await changesettings(toggleopts,SERVER)
-    #             except Exception as e:
-    #                 print (e)
-    #                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-    #                 await changesettings(toggleopts,SERVER)
-    #         await changesettings(toggleopts,SERVER)
-    #
+
     #     elif int(opts) == 2:
     #         print(colored("Other options",menucolour))
     #         print(colored("0.   Back",menucolour))
@@ -1866,15 +1592,70 @@ def start_client():
     global client_type
     global token
     global user
-    global user_cache
+    global cache_guilds
     global avatar_b64
+    global session_id
+    global ws
+
+    ws.connect("wss://gateway.discord.gg/?v=6&encoding=json")
+    hello = json.loads(ws.recv())
+    heartbeat_interval = hello['d']['heartbeat_interval']
+    if startup_activity_type == "Playing":
+        gamejson = {
+            "name": startup_activity_name,
+            "type": 0
+        }
+    elif startup_activity_type == 'Streaming':
+        gamejson = {
+            "name": startup_activity_name,
+            "type": 1,
+            "url": "https://www.twitch.tv/SERVERSMASHER"
+        }
+    elif startup_activity_type == "Listening to":
+        gamejson = {
+            "name": startup_activity_name,
+            "type": 2
+        }
+    elif startup_activity_type == "Watching":
+        gamejson = {
+            "name": startup_activity_name,
+            "type": 3
+        }
+    auth = {
+    "op": 2,
+    "d": {
+        "token": token,
+        "properties": {
+            "$os": sys.platform,
+            "$browser": "ServerSmasher",
+            "$device": "ServerSmasher"
+        },
+        "presence": {
+            "game": gamejson,
+            "status": startup_status,
+            "since": 0,
+            "afk": False
+        }
+    },
+    "s": None,
+    "t": None
+    }
     try:
-        user_cache = get_user_info()
-        if user_cache.avatar is None:
-            avatar_b64 = b'iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAMAUExURXR/jXWAjnaBj3eCj3eCkHiCkHmEkXmEknuFk3uGk3yGk3yGlH2IlX6JloCKl4GLmIKMmYSNmoSOmoWOm4eQnIeRnYiRnYqTn4uUoIyVoY2WoY2Woo+Yo5CZpJGapZKbppOcp5Scp5WdqJWeqJaeqZefqpigq5qirJujrZykrp2lr5+msJ+nsaGosqOqs6OqtKWstaettqeut6ivt6ivuKmwuKmwuayzu62zvK61vbG3v7G4v7K4wLO5wbS5wbS6wbW6wrW7w7a8w7e9xLi9xLm+xrrAx7zByLzCyL3Cyb7EysDFy8HGzMLHzcPIzsXKz8bK0MfL0cfM0cjM0snN08nO08rP1MvP1czQ1c3R1s7S18/T2NDU2dTX29TX3NTY3NXY3dfa3tnc4Nrd4dve4dze4tzf493g493g5N/i5eDi5eDj5uHk5+Pl6OXn6ubo6ubo6+fp7Ojp7Ojq7Onq7ers7uvt7+zt7+7v8e/w8vDx8/Dy8/Hy9PLz9fP09fP09vT19vX29/f3+Pf4+fj4+fn5+vr6+/v7/Pz8/Pz8/f39/v3+/v7+/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAOk1dbAAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKNSURBVFhH7ZTvUxJBHMbvcqCRwDGmIUVNSNMYzX4wWpYjZanQUDE2OgxhJUNZdIoTMIQVQcMQzu4f3d7tc7YL510vfcHnzd3z/T7PsuztrtKnT5/zzchi4tVFvDPUjeRyaADCmbGXx1RbHobSUadTTdp6c1OFtmUyR092xpXL809e54q1X43v5Y87axGve+krpeU7jkP40pSkA5Gtb1SGHCYmFqqUfhmF8QzGf9BS9EWDEuQkSrFkh/6JwmrNB1rMWYY5zb0m/X0JXismYbTlMcxWZOCxpXYB7l6GOvDYMwd7LytwOPAO9l4O4XCA+ODv5ioMTpAHCHTzFAZHcgh0o6HvCPEgIeOz2UEy5BYiMrfR1iHZWJztfJNKPLYrDp9CRCaFLqN1XVVUVxqKpphSZ9pQjBIiMsJHvGcU1COuNFU/xOp9rgy8hkHGfYImOzN8s5qRKL8EXC0udWaNioxwkPIohbgMQgpfyepALaHHKKA0xeUEZJFLnTRKIs/RY7QHeekZl4+48v77j1TjJYksejqbRsX7k6sa3zdJrgzqRkWmgJ4OWWV3+JUDKPrZz1YU0wEupASEfcOuxOO3+8LO6eR36/I+ZUN200SLQyiRE137fAwpAdxG5BN/WlMv4yWElAA69Gh+H289tOIPzYncQEogjxatBsMZYd+fUlnxrpv5usWlNGSuImmvuz13s/KaVJJh5Zpmrks7jJCI6sfZYaZGYkRVg9FEJq8dFPa21+aGlcGF3OlCNqeR6WJwGwY2SERhJ0g/hfpJ1p/+hhmnhQA/XRZMmeu30WuZwQDVxTPj+s8F4xr7nu+tPKtsYpWtWZu4DpvuQCBsfWmGRz3sD0HY8F+mPn36nDMU5S+D515fufMnIgAAAABJRU5ErkJggg=='
+        ws.send(json.dumps(auth))
+        result = json.loads(ws.recv())
+        user = result['d']['user']
+        with ThreadPoolExecutor(max_workers=thread_count) as exe:
+            for guild in result['d']['guilds']:
+                exe.submit(get_guild_threaded, guild['id'])
+        user['guilds'] = cache_guilds
+        user = namedtuple('User', sorted(user.keys()))(**user)
+        if user.avatar is None:
+            src = requests.get(f"https://cdn.discordapp.com/embed/avatars/{user.discriminator % 5}.png").content
         else:
-            src = requests.get(construct_avatar_link(user_cache.id, user_cache.avatar, 64)).content
-            avatar_b64 = base64.b64encode(src)
+            src = requests.get(construct_avatar_link(user.id, user.avatar, 64)).content
+        avatar_b64 = base64.b64encode(src)
+        heart = threading.Thread(target=heartbeat, args=[heartbeat_interval])
+        heart.start()
     except Exception:
         sg.Popup("Error Logging into token.", title="Error")
         login_serversmasher()
