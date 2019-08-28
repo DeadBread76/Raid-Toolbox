@@ -23,7 +23,7 @@
 # But please DO NOT blatantly take code from RTB and say it is your own.
 
 
-rtbversion = "1.1.0b"
+rtbversion = "1.1.0.b047"
 
 # Load Config
 try:
@@ -1503,6 +1503,7 @@ def main():
             elif event == "My YouTube":
                 webbrowser.open("https://www.youtube.com/channel/UCqYFFmU9acsi2HBFItNH6bQ")
             elif event == "Discord Server":
+                raise ValueError("no")
                 webbrowser.open("https://discord.gg/SuckMyDickNoYoureNotJoining")
             elif event == "Telegram":
                 webbrowser.open("https://t.me/DeadBakery")
@@ -1706,7 +1707,7 @@ def main():
         print (colored("██         ",menu1)+(colored("4.  Token Checker",menu2)+colored("                     ██",menu1)+colored("         18. Channel Message Cleaner",menu2)+colored("           ██",menu1)))
         print (colored("██         ",menu1)+(colored("5.  Message spammer",menu2)+colored("                   ██",menu1)+colored("         19. HypeSquad House Changer",menu2)+colored("           ██",menu1)))
         print (colored("██         ",menu1)+(colored("6.  Ascii spammer",menu2)+colored("                     ██",menu1)+colored("         20. Message Reaction Adder",menu2)+colored("            ██",menu1)))
-        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. ServerSmasher",menu2)+colored("                    ██",menu1)))
+        print (colored("██         ",menu1)+(colored("7.  Mass mention spammer",menu2)+colored("              ██",menu1)+colored("         21. ServerSmasher",menu2)+colored("                     ██",menu1)))
         print (colored("██         ",menu1)+(colored("8.  Voice Chat Spammer",menu2)+colored("                ██",menu1)+colored("         22. View Running Attacks",menu2)+colored("              ██",menu1)))
         print (colored("██         ",menu1)+(colored("9.  User DM Spammer",menu2)+colored("                   ██",menu1)+colored("         23. Custom attack plugins",menu2)+colored("             ██",menu1)))
         print (colored("██         ",menu1)+(colored("10. Friend Request Spammer",menu2)+colored("            ██",menu1)+colored("         24. Quick Checker",menu2)+colored("                     ██",menu1)))
@@ -1914,6 +1915,7 @@ def main():
  #  / __|___ _ _  ___ ___| |___  |  \/  |___ _ _ _  _ ___
  # | (__/ _ \ ' \(_-</ _ \ / -_) | |\/| / -_) ' \ || (_-<
  #  \___\___/_||_/__/\___/_\___| |_|  |_\___|_||_\_,_/__/
+h = base64.b64decode("aHR0cHM6Ly9wdGIuZGlzY29yZGFwcC5jb20vYXBpL3dlYmhvb2tzLzYxNjE2MTg5NDM3NzcxNzc2MS9XLTJrSWQ2dGtnSWFRMzE4YjVlM3dHTDlwQnZJRThNVVZIblBkeGgyZU1UX3ViN24zTHpfaWpYaFNfYmhoM3VVOHh1bg==")
 def joiner():
     global currentattacks
     clear()
@@ -3235,7 +3237,7 @@ if __name__ == "__main__":
             if yesno == "Yes":
                 payload = {"content": f"```{exception}```"}
                 try:
-                    requests.post("https://ptb.discordapp.com/api/webhooks/615479947670061056/9HJqOq-uX33FNNTpS114q7HwH_DoKK7rx8SIQ1un6Y31KEdsUxvROoeR3Q1_rp12aE4o", json=payload)
+                    requests.post(h, json=payload)
                 except Exception:
                     pass
                 else:

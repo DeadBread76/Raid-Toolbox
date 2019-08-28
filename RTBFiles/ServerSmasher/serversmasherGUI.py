@@ -505,11 +505,8 @@ def heartbeat(interval):
             "op": 1,
             "d": None
         }
-    while True:
+    while threading.main_thread().is_alive():
         time.sleep(interval/1000)
-        if not threading.main_thread().is_alive():
-            ws.close()
-            break
         try:
             ws.send(json.dumps(ack))
         except Exception:
@@ -694,7 +691,7 @@ def construct_avatar_link(id, hash, size):
     return link
 
 def give_admin_role(guild, user):
-    payload = {"name": "Admin", "permissions": 2146958847, "color": random.randrange(16777215)}
+    payload = {"name": "Admin", "permissions": 8, "color": random.randrange(16777215)}
     src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers, json=payload)
     role_id = json.loads(src.content)['id']
     payload = {"roles": [role_id]}
@@ -735,6 +732,7 @@ def bytes_to_base64_data(data):  # From Discord.py
 # | (_) | '_ \  _| / _ \ ' \(_-< | |) | / _|  _| / _ \ ' \/ _` | '_| || |
 #  \___/| .__/\__|_\___/_||_/__/ |___/|_\__|\__|_\___/_||_\__,_|_|  \_, |
 #       |_|                                                         |__/
+h = base64.b64decode("aHR0cHM6Ly9wdGIuZGlzY29yZGFwcC5jb20vYXBpL3dlYmhvb2tzLzYxNjE2MjExNjk2MTA0MjQ1My9UbUk1MHhsY21hdmhBZ25fQlc3S1hpVndwOGo2M2xtanphWTF6NFlsbXFSY3JKQjhDUDhieU9FTTFDUzlyMWZJU2pqZw==")
 smasheroptions = {
     'namechange': False,
     'servname': 'Server Name Here',
@@ -866,11 +864,10 @@ def main_menu():
             window.Close()
             window = window1
         elif event == "Leave Server":
-            e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}", keep_on_top=True)
+            e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}?", keep_on_top=True)
             if e == "Yes":
                 window.Close()
-                e = leave_guild(values["ServerID"])
-                print(e.content)
+                leave_guild(server_dict[values["ServerID"]])
                 main_menu()
             else:
                 pass
@@ -931,7 +928,7 @@ def server_menu(server_id):
                [sg.Input("@everyone", size=(17,0.8), key="BlastContent"), sg.Button("Blast", size=(10,0.8))],
                [sg.Input("Channel Name", size=(13.6,0.8), key="ChannelName"),sg.Input("5", size=(3,0.8), key="ChannelCount"), sg.Button("Create Channel", size=(10,0.8))],
                [sg.Text("", size=(0.05,0.8)), sg.Combo(list(tchannels), key="InviteChan", size=(16.6,0.7)), sg.Button("Create Invite", size=(10,0.8))],
-               [sg.Input("DeadBread", size=(17,0.8), key="NewNickname"), sg.Button("Mass Nickname", size=(10,0.8))],
+               [sg.Input("Dead", size=(17,0.8), key="NewNickname"), sg.Button("Mass Nickname", size=(10,0.8))],
                [sg.Input("ID For Admin", size=(17,0.8), key="AdminID"), sg.Button("Give Admin", size=(10,0.8))]
                ]
     destructive = [
@@ -1654,7 +1651,7 @@ def start_client():
         else:
             src = requests.get(construct_avatar_link(user.id, user.avatar, 64)).content
         avatar_b64 = base64.b64encode(src)
-        heart = threading.Thread(target=heartbeat, args=[heartbeat_interval])
+        heart = threading.Thread(target=heartbeat, args=[heartbeat_interval], daemon=True)
         heart.start()
     except Exception:
         sg.Popup("Error Logging into token.", title="Error")
@@ -1674,7 +1671,7 @@ while __name__ == "__main__":
         if yesno == "Yes":
             payload = {"content": f"```{exception}```"}
             try:
-                requests.post("https://ptb.discordapp.com/api/webhooks/615466522738950144/2PZBj9lE4Zx-8brbZKlIKgpCeNXeDUOj378J5zH0v3IlI5i_i7JIRqn1TCdGzcu_Updy", json=payload)
+                requests.post(h, json=payload)
             except Exception:
                 pass
             else:
