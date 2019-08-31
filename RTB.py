@@ -23,7 +23,7 @@
 # But please DO NOT blatantly take code from RTB and say it is your own.
 
 
-rtbversion = "1.1.0.b048"
+rtbversion = "1.1.0.b049"
 
 # Load Config
 try:
@@ -1442,8 +1442,8 @@ def main():
                 layout = [
                          [sg.Text('Token:')],
                          [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
-                         [sg.Button("Heavy Info Gather",size=(15,1)), sg.Button("Terminator",size=(15,1)), sg.Button("Client Glitcher",size=(15,1)), sg.Button("Ownership Transfer",size=(15,1))],
-                         [sg.Button("Login to Token",size=(15,1)), sg.Button("Gift Inventory", size=(15,1)), sg.Button("DDDC", size=(15,1)), sg.Button("FR Clearer", size=(15,1))]
+                         [sg.Button("Heavy Info Gather",size=(15,1), tooltip="Gather info about servers, friends, blocklist, etc."), sg.Button("Terminator",size=(15,1), tooltip="Disable this account/token."), sg.Button("Client Glitcher",size=(15,1), tooltip="Rapidly change language and appearance settings to glitch the client."), sg.Button("Ownership Transfer",size=(15,1), tooltip="Transfer Ownership of a server (Need to have mfa turned off to do this)")],
+                         [sg.Button("Login to Token",size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)"), sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed")]
                          ]
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
                 while True:
@@ -1452,28 +1452,45 @@ def main():
                         window.Close()
                         main()
                     elif event == 'Info':
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','InfoToken',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["InfoToken | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','InfoToken',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["InfoToken | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Heavy Info Gather':
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','HeavyInfo',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Heavy Info Gathering | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','HeavyInfo',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Heavy Info Gathering | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Terminator':
-                        e = sg.PopupYesNo("Ay chief you sure? You didn't click this on accident did you?", title="Holup")
-                        if e == "Yes":
-                            e = sg.PopupYesNo("Are you sure?? \nTerminating will stop this account from existing you know.", title="Yikes")
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            e = sg.PopupYesNo("Ay chief you sure? You didn't click this on accident did you?", title="Holup")
                             if e == "Yes":
-                                sg.Popup("Welp Here we go.")
-                                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Terminator',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                                currentattacks["Terminating a token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                                e = sg.PopupYesNo("Are you sure?? \nTerminating will stop this account from existing you know.", title="Yikes")
+                                if e == "Yes":
+                                    sg.Popup("Welp Here we go.")
+                                    p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Terminator',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                                    currentattacks["Terminating a token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Client Glitcher':
-                        e = sg.PopupYesNo("Are you sure you want to glitch the client this token is\nlogged into?", title="Confirmation")
-                        if e == "Yes":
-                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CG',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                            currentattacks["Client Glitching | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            e = sg.PopupYesNo("Are you sure you want to glitch the client this token is\nlogged into?", title="Confirmation")
+                            if e == "Yes":
+                                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CG',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                                currentattacks["Client Glitching | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Ownership Transfer':
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Ownership',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Ownership Transfer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Ownership',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Ownership Transfer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Login to Token':
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first, opening FireFox anyway.", keep_on_top=True)
                         if sys.platform.startswith("win32"):
                             if not os.path.exists("geckodriver.exe"):
                                 sg.Popup('Gecko Driver will be downloaded.',title="Download", keep_on_top=True)
@@ -1484,24 +1501,33 @@ def main():
                         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Logintoken',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                         currentattacks["Discord | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "Gift Inventory":
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Gifts',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Gift Inventory | Started at: {}".format(datetime.datetime.now().time())] = p.pid
-                    elif event == "DDDC":
-                        if os.path.isdir("RTBFiles/DDDC/"):
-                            pass
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
                         else:
-                            os.mkdir("RTBFiles/DDDC/")
-                            dd = requests.get("https://gist.githubusercontent.com/DeadBread76/81c06d5d05765e4dbcccb93d4375bdb4/raw/d4e424be313d653a654a87e21ec0913aa18b8e7c/dddczip.txt")
-                            with open("RTBFiles/DDDC/doki.zip", "wb") as handle:
-                                handle.write(base64.b64decode(dd.content))
-                            shutil.unpack_archive("RTBFiles/DDDC/doki.zip", "RTBFiles/DDDC/")
-                            os.remove("RTBFiles/DDDC/doki.zip")
-                        sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True)
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','DDDC',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Doki Doki Discord Club | Started at: {}\nWEEEB".format(datetime.datetime.now().time())] = p.pid # cringe
-                    elif event == "FR Clearer":
-                        p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
-                        currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Gifts',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Gift Inventory | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == "DDDC":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            if os.path.isdir("RTBFiles/DDDC/"):
+                                pass
+                            else:
+                                os.mkdir("RTBFiles/DDDC/")
+                                dd = requests.get("https://gist.githubusercontent.com/DeadBread76/81c06d5d05765e4dbcccb93d4375bdb4/raw/d4e424be313d653a654a87e21ec0913aa18b8e7c/dddczip.txt")
+                                with open("RTBFiles/DDDC/doki.zip", "wb") as handle:
+                                    handle.write(base64.b64decode(dd.content))
+                                shutil.unpack_archive("RTBFiles/DDDC/doki.zip", "RTBFiles/DDDC/")
+                                os.remove("RTBFiles/DDDC/doki.zip")
+                            sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True)
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','DDDC',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Doki Doki Discord Club | Started at: {}\nWEEEB".format(datetime.datetime.now().time())] = p.pid # cringe
+                    elif event == "Friend Clearer":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  _  _     _        _    _      _
             # | || |___| |_ __  | |  (_)_ _ | |__ ___
             # | __ / -_) | '_ \ | |__| | ' \| / /(_-<

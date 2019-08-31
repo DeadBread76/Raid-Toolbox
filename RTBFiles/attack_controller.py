@@ -1642,7 +1642,9 @@ elif mode == "Ownership":
 
 elif mode == "Logintoken":
     from selenium import webdriver
-    driver = webdriver.Firefox()
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference("general.useragent.override", 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36')
+    driver = webdriver.Firefox(profile)
     script = """function login(token) {
                 setInterval(() => {
                 document.body.appendChild(document.createElement `iframe`).contentWindow.localStorage.token = `"${token}"`
