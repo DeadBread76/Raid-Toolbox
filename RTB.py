@@ -23,7 +23,7 @@
 # But please DO NOT blatantly take code from RTB and say it is your own.
 
 
-rtbversion = "1.1.0.b049"
+rtbversion = "1.1.0.b050"
 
 # Load Config
 try:
@@ -558,8 +558,9 @@ if __name__ == "__main__":
                             pass
                         verchoice = sg.PopupYesNo("There is an update for RTB, Download update?", title="Raid ToolBox Update Available")
                         if verchoice == "Yes":
+                            with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
+                                ssconfig = json.load(handle)
                             update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/master.zip')
-                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
                             shutil.unpack_archive(update)
                             copy_tree("Raid-Toolbox-master/", ".")
                             os.remove(update)
@@ -579,6 +580,21 @@ if __name__ == "__main__":
                                 edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                                 edit['combine_uverified_and_verified'] = combine_uverified_and_verified
                                 edit['show_licence'] = show_licence
+                                handle.seek(0)
+                                json.dump(edit, handle, indent=4)
+                                handle.truncate()
+                            with open('RTBFiles/ServerSmasher/ssconfig.json', 'r+') as handle:
+                                edit = json.load(handle)
+                                edit['ss_token_list'] = ssconfig['ss_token_list']
+                                edit['startup_status'] = ssconfig['startup_status']
+                                edit['startup_activity_name'] = ssconfig['startup_activity_name']
+                                edit['startup_activity_type'] = ssconfig['startup_activity_type']
+                                edit['last_used'] = ssconfig['last_used']
+                                edit['last_used_type'] = ssconfig['last_used_type']
+                                edit['bots_cached'] = ssconfig['bots_cached']
+                                edit['users_cached'] = ssconfig['users_cached']
+                                edit['bot_token_cache'] = ssconfig['bot_token_cache']
+                                edit['user_token_cache'] = ssconfig['user_token_cache']
                                 handle.seek(0)
                                 json.dump(edit, handle, indent=4)
                                 handle.truncate()
@@ -1123,10 +1139,8 @@ def main():
                     if yn == "Yes":
                         sg.PopupNonBlocking("Downloading Update...")
                         update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/{}.zip'.format(event.lower()))
-                        try:
-                            shutil.copy("RTBFiles/smconfig.py", "RTBFiles/smconfig_old.py")
-                        except Exception:
-                            pass
+                        with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
+                            ssconfig = json.load(handle)
                         shutil.unpack_archive(update)
                         copy_tree("Raid-Toolbox-{}/".format(event.lower()), ".")
                         os.remove(update)
@@ -1146,6 +1160,21 @@ def main():
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                             edit['combine_uverified_and_verified'] = combine_uverified_and_verified
                             edit['show_licence'] = 0
+                            handle.seek(0)
+                            json.dump(edit, handle, indent=4)
+                            handle.truncate()
+                        with open('RTBFiles/ServerSmasher/ssconfig.json', 'r+') as handle:
+                            edit = json.load(handle)
+                            edit['ss_token_list'] = ssconfig['ss_token_list']
+                            edit['startup_status'] = ssconfig['startup_status']
+                            edit['startup_activity_name'] = ssconfig['startup_activity_name']
+                            edit['startup_activity_type'] = ssconfig['startup_activity_type']
+                            edit['last_used'] = ssconfig['last_used']
+                            edit['last_used_type'] = ssconfig['last_used_type']
+                            edit['bots_cached'] = ssconfig['bots_cached']
+                            edit['users_cached'] = ssconfig['users_cached']
+                            edit['bot_token_cache'] = ssconfig['bot_token_cache']
+                            edit['user_token_cache'] = ssconfig['user_token_cache']
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
