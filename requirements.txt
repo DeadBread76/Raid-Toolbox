@@ -18,3 +18,4 @@ selenium>=3.141.0
 pyinstaller>=3.5
 pluginbase>=1.0.0
 Pillow>=6.1.0
+pysocks>=1.7.0

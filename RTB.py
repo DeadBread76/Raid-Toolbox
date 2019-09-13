@@ -3,27 +3,350 @@
 # Author: DeadBread76 - https://github.com/DeadBread76/
 # February 23rd, 2019 - Yikes
 #
-# Copyright (c) 2019, DeadBread
+# Copyright 2019, DeadBread
 #
-# Permission to use, copy, modify, and/or distribute this software for any
-# purpose with or without fee is hereby granted, provided that the above
-# copyright notice and this permission notice appear in all copies.
+#                     GNU GENERAL PUBLIC LICENSE
+#                        Version 2, June 1991
 #
-# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-# WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-# MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
-# SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-# WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION
-# OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
-# CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+#  Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
+#  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+#  Everyone is permitted to copy and distribute verbatim copies
+#  of this license document, but changing it is not allowed.
 #
+#                             Preamble
 #
-# Note for people taking/using code:
-# I don't mind if you use RTB as a "Reference" to help you code your own programs,
-# But please DO NOT blatantly take code from RTB and say it is your own.
+#   The licenses for most software are designed to take away your
+# freedom to share and change it.  By contrast, the GNU General Public
+# License is intended to guarantee your freedom to share and change free
+# software--to make sure the software is free for all its users.  This
+# General Public License applies to most of the Free Software
+# Foundation's software and to any other program whose authors commit to
+# using it.  (Some other Free Software Foundation software is covered by
+# the GNU Lesser General Public License instead.)  You can apply it to
+# your programs, too.
+#
+#   When we speak of free software, we are referring to freedom, not
+# price.  Our General Public Licenses are designed to make sure that you
+# have the freedom to distribute copies of free software (and charge for
+# this service if you wish), that you receive source code or can get it
+# if you want it, that you can change the software or use pieces of it
+# in new free programs; and that you know you can do these things.
+#
+#   To protect your rights, we need to make restrictions that forbid
+# anyone to deny you these rights or to ask you to surrender the rights.
+# These restrictions translate to certain responsibilities for you if you
+# distribute copies of the software, or if you modify it.
+#
+#   For example, if you distribute copies of such a program, whether
+# gratis or for a fee, you must give the recipients all the rights that
+# you have.  You must make sure that they, too, receive or can get the
+# source code.  And you must show them these terms so they know their
+# rights.
+#
+#   We protect your rights with two steps: (1) copyright the software, and
+# (2) offer you this license which gives you legal permission to copy,
+# distribute and/or modify the software.
+#
+#   Also, for each author's protection and ours, we want to make certain
+# that everyone understands that there is no warranty for this free
+# software.  If the software is modified by someone else and passed on, we
+# want its recipients to know that what they have is not the original, so
+# that any problems introduced by others will not reflect on the original
+# authors' reputations.
+#
+#   Finally, any free program is threatened constantly by software
+# patents.  We wish to avoid the danger that redistributors of a free
+# program will individually obtain patent licenses, in effect making the
+# program proprietary.  To prevent this, we have made it clear that any
+# patent must be licensed for everyone's free use or not licensed at all.
+#
+#   The precise terms and conditions for copying, distribution and
+# modification follow.
+#
+#                     GNU GENERAL PUBLIC LICENSE
+#    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+#
+#   0. This License applies to any program or other work which contains
+# a notice placed by the copyright holder saying it may be distributed
+# under the terms of this General Public License.  The "Program", below,
+# refers to any such program or work, and a "work based on the Program"
+# means either the Program or any derivative work under copyright law:
+# that is to say, a work containing the Program or a portion of it,
+# either verbatim or with modifications and/or translated into another
+# language.  (Hereinafter, translation is included without limitation in
+# the term "modification".)  Each licensee is addressed as "you".
+#
+# Activities other than copying, distribution and modification are not
+# covered by this License; they are outside its scope.  The act of
+# running the Program is not restricted, and the output from the Program
+# is covered only if its contents constitute a work based on the
+# Program (independent of having been made by running the Program).
+# Whether that is true depends on what the Program does.
+#
+#   1. You may copy and distribute verbatim copies of the Program's
+# source code as you receive it, in any medium, provided that you
+# conspicuously and appropriately publish on each copy an appropriate
+# copyright notice and disclaimer of warranty; keep intact all the
+# notices that refer to this License and to the absence of any warranty;
+# and give any other recipients of the Program a copy of this License
+# along with the Program.
+#
+# You may charge a fee for the physical act of transferring a copy, and
+# you may at your option offer warranty protection in exchange for a fee.
+#
+#   2. You may modify your copy or copies of the Program or any portion
+# of it, thus forming a work based on the Program, and copy and
+# distribute such modifications or work under the terms of Section 1
+# above, provided that you also meet all of these conditions:
+#
+#     a) You must cause the modified files to carry prominent notices
+#     stating that you changed the files and the date of any change.
+#
+#     b) You must cause any work that you distribute or publish, that in
+#     whole or in part contains or is derived from the Program or any
+#     part thereof, to be licensed as a whole at no charge to all third
+#     parties under the terms of this License.
+#
+#     c) If the modified program normally reads commands interactively
+#     when run, you must cause it, when started running for such
+#     interactive use in the most ordinary way, to print or display an
+#     announcement including an appropriate copyright notice and a
+#     notice that there is no warranty (or else, saying that you provide
+#     a warranty) and that users may redistribute the program under
+#     these conditions, and telling the user how to view a copy of this
+#     License.  (Exception: if the Program itself is interactive but
+#     does not normally print such an announcement, your work based on
+#     the Program is not required to print an announcement.)
+#
+# These requirements apply to the modified work as a whole.  If
+# identifiable sections of that work are not derived from the Program,
+# and can be reasonably considered independent and separate works in
+# themselves, then this License, and its terms, do not apply to those
+# sections when you distribute them as separate works.  But when you
+# distribute the same sections as part of a whole which is a work based
+# on the Program, the distribution of the whole must be on the terms of
+# this License, whose permissions for other licensees extend to the
+# entire whole, and thus to each and every part regardless of who wrote it.
+#
+# Thus, it is not the intent of this section to claim rights or contest
+# your rights to work written entirely by you; rather, the intent is to
+# exercise the right to control the distribution of derivative or
+# collective works based on the Program.
+#
+# In addition, mere aggregation of another work not based on the Program
+# with the Program (or with a work based on the Program) on a volume of
+# a storage or distribution medium does not bring the other work under
+# the scope of this License.
+#
+#   3. You may copy and distribute the Program (or a work based on it,
+# under Section 2) in object code or executable form under the terms of
+# Sections 1 and 2 above provided that you also do one of the following:
+#
+#     a) Accompany it with the complete corresponding machine-readable
+#     source code, which must be distributed under the terms of Sections
+#     1 and 2 above on a medium customarily used for software interchange; or,
+#
+#     b) Accompany it with a written offer, valid for at least three
+#     years, to give any third party, for a charge no more than your
+#     cost of physically performing source distribution, a complete
+#     machine-readable copy of the corresponding source code, to be
+#     distributed under the terms of Sections 1 and 2 above on a medium
+#     customarily used for software interchange; or,
+#
+#     c) Accompany it with the information you received as to the offer
+#     to distribute corresponding source code.  (This alternative is
+#     allowed only for noncommercial distribution and only if you
+#     received the program in object code or executable form with such
+#     an offer, in accord with Subsection b above.)
+#
+# The source code for a work means the preferred form of the work for
+# making modifications to it.  For an executable work, complete source
+# code means all the source code for all modules it contains, plus any
+# associated interface definition files, plus the scripts used to
+# control compilation and installation of the executable.  However, as a
+# special exception, the source code distributed need not include
+# anything that is normally distributed (in either source or binary
+# form) with the major components (compiler, kernel, and so on) of the
+# operating system on which the executable runs, unless that component
+# itself accompanies the executable.
+#
+# If distribution of executable or object code is made by offering
+# access to copy from a designated place, then offering equivalent
+# access to copy the source code from the same place counts as
+# distribution of the source code, even though third parties are not
+# compelled to copy the source along with the object code.
+#
+#   4. You may not copy, modify, sublicense, or distribute the Program
+# except as expressly provided under this License.  Any attempt
+# otherwise to copy, modify, sublicense or distribute the Program is
+# void, and will automatically terminate your rights under this License.
+# However, parties who have received copies, or rights, from you under
+# this License will not have their licenses terminated so long as such
+# parties remain in full compliance.
+#
+#   5. You are not required to accept this License, since you have not
+# signed it.  However, nothing else grants you permission to modify or
+# distribute the Program or its derivative works.  These actions are
+# prohibited by law if you do not accept this License.  Therefore, by
+# modifying or distributing the Program (or any work based on the
+# Program), you indicate your acceptance of this License to do so, and
+# all its terms and conditions for copying, distributing or modifying
+# the Program or works based on it.
+#
+#   6. Each time you redistribute the Program (or any work based on the
+# Program), the recipient automatically receives a license from the
+# original licensor to copy, distribute or modify the Program subject to
+# these terms and conditions.  You may not impose any further
+# restrictions on the recipients' exercise of the rights granted herein.
+# You are not responsible for enforcing compliance by third parties to
+# this License.
+#
+#   7. If, as a consequence of a court judgment or allegation of patent
+# infringement or for any other reason (not limited to patent issues),
+# conditions are imposed on you (whether by court order, agreement or
+# otherwise) that contradict the conditions of this License, they do not
+# excuse you from the conditions of this License.  If you cannot
+# distribute so as to satisfy simultaneously your obligations under this
+# License and any other pertinent obligations, then as a consequence you
+# may not distribute the Program at all.  For example, if a patent
+# license would not permit royalty-free redistribution of the Program by
+# all those who receive copies directly or indirectly through you, then
+# the only way you could satisfy both it and this License would be to
+# refrain entirely from distribution of the Program.
+#
+# If any portion of this section is held invalid or unenforceable under
+# any particular circumstance, the balance of the section is intended to
+# apply and the section as a whole is intended to apply in other
+# circumstances.
+#
+# It is not the purpose of this section to induce you to infringe any
+# patents or other property right claims or to contest validity of any
+# such claims; this section has the sole purpose of protecting the
+# integrity of the free software distribution system, which is
+# implemented by public license practices.  Many people have made
+# generous contributions to the wide range of software distributed
+# through that system in reliance on consistent application of that
+# system; it is up to the author/donor to decide if he or she is willing
+# to distribute software through any other system and a licensee cannot
+# impose that choice.
+#
+# This section is intended to make thoroughly clear what is believed to
+# be a consequence of the rest of this License.
+#
+#   8. If the distribution and/or use of the Program is restricted in
+# certain countries either by patents or by copyrighted interfaces, the
+# original copyright holder who places the Program under this License
+# may add an explicit geographical distribution limitation excluding
+# those countries, so that distribution is permitted only in or among
+# countries not thus excluded.  In such case, this License incorporates
+# the limitation as if written in the body of this License.
+#
+#   9. The Free Software Foundation may publish revised and/or new versions
+# of the General Public License from time to time.  Such new versions will
+# be similar in spirit to the present version, but may differ in detail to
+# address new problems or concerns.
+#
+# Each version is given a distinguishing version number.  If the Program
+# specifies a version number of this License which applies to it and "any
+# later version", you have the option of following the terms and conditions
+# either of that version or of any later version published by the Free
+# Software Foundation.  If the Program does not specify a version number of
+# this License, you may choose any version ever published by the Free Software
+# Foundation.
+#
+#   10. If you wish to incorporate parts of the Program into other free
+# programs whose distribution conditions are different, write to the author
+# to ask for permission.  For software which is copyrighted by the Free
+# Software Foundation, write to the Free Software Foundation; we sometimes
+# make exceptions for this.  Our decision will be guided by the two goals
+# of preserving the free status of all derivatives of our free software and
+# of promoting the sharing and reuse of software generally.
+#
+#                             NO WARRANTY
+#
+#   11. BECAUSE THE PROGRAM IS LICENSED FREE OF CHARGE, THERE IS NO WARRANTY
+# FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW.  EXCEPT WHEN
+# OTHERWISE STATED IN WRITING THE COPYRIGHT HOLDERS AND/OR OTHER PARTIES
+# PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+# OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  THE ENTIRE RISK AS
+# TO THE QUALITY AND PERFORMANCE OF THE PROGRAM IS WITH YOU.  SHOULD THE
+# PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING,
+# REPAIR OR CORRECTION.
+#
+#   12. IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+# WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MAY MODIFY AND/OR
+# REDISTRIBUTE THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES,
+# INCLUDING ANY GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING
+# OUT OF THE USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED
+# TO LOSS OF DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY
+# YOU OR THIRD PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER
+# PROGRAMS), EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGES.
+#
+#                      END OF TERMS AND CONDITIONS
+#
+#             How to Apply These Terms to Your New Programs
+#
+#   If you develop a new program, and you want it to be of the greatest
+# possible use to the public, the best way to achieve this is to make it
+# free software which everyone can redistribute and change under these terms.
+#
+#   To do so, attach the following notices to the program.  It is safest
+# to attach them to the start of each source file to most effectively
+# convey the exclusion of warranty; and each file should have at least
+# the "copyright" line and a pointer to where the full notice is found.
+#
+#     <one line to give the program's name and a brief idea of what it does.>
+#     Copyright (C) <year>  <name of author>
+#
+#     This program is free software; you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation; either version 2 of the License, or
+#     (at your option) any later version.
+#
+#     This program is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+#
+#     You should have received a copy of the GNU General Public License along
+#     with this program; if not, write to the Free Software Foundation, Inc.,
+#     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+#
+# Also add information on how to contact you by electronic and paper mail.
+#
+# If the program is interactive, make it output a short notice like this
+# when it starts in an interactive mode:
+#
+#     Gnomovision version 69, Copyright (C) year name of author
+#     Gnomovision comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+#     This is free software, and you are welcome to redistribute it
+#     under certain conditions; type `show c' for details.
+#
+# The hypothetical commands `show w' and `show c' should show the appropriate
+# parts of the General Public License.  Of course, the commands you use may
+# be called something other than `show w' and `show c'; they could even be
+# mouse-clicks or menu items--whatever suits your program.
+#
+# You should also get your employer (if you work as a programmer) or your
+# school, if any, to sign a "copyright disclaimer" for the program, if
+# necessary.  Here is a sample; alter the names:
+#
+#   Yoyodyne, Inc., hereby disclaims all copyright interest in the program
+#   `Gnomovision' (which makes passes at compilers) written by James Hacker.
+#
+#   <signature of Ty Coon>, 1 April 1989
+#   Ty Coon, President of Vice
+#
+# This General Public License does not permit incorporating your program into
+# proprietary programs.  If your program is a subroutine library, you may
+# consider it more useful to permit linking proprietary applications with the
+# library.  If this is what you want to do, use the GNU Lesser General
+# Public License instead of this License.
 
 
-rtbversion = "1.1.0.b050"
+rtbversion = "1.1.0.b051"
 
 # Load Config
 try:
@@ -34,6 +357,12 @@ try:
         skin = config['skin']
         token_list = config['token_list']
         thread_count = config['thread_count']
+        use_proxies = config['use_proxies']
+        proxy_type = config['proxy_type']
+        proxy_list = config['proxy_list']
+        proxy_auth = config['proxy_auth']
+        proxy_user = config['proxy_user']
+        proxy_pass = config['proxy_pass']
         disable_theme_music = config['disable_theme_music']
         verbose = config['verbose']
         command_line_mode = config['command_line_mode']
@@ -44,6 +373,7 @@ try:
         server_smasher_in_main_window = config['server_smasher_in_main_window']
         ignore_ffmpeg_missing = config['ignore_ffmpeg_missing']
         show_licence = config['show_licence']
+
 except Exception:
     # TRY to fix itself
     print("Unable to read config file.\nImporting necessary modules and checking installation...")
@@ -289,7 +619,7 @@ if not command_line_mode == 1:
             sys.exit()
         elif p == 0:
             sg.Popup("Installed pluginbase Successfully.")
-    plugin_base = PluginBase(package='RTB.plugins')
+    plugin_base = PluginBase(package='RTBFiles.plugins')
     plugin_source = plugin_base.make_plugin_source(
         searchpath=['plugins'])
 
@@ -309,7 +639,6 @@ if "com.termux" in sys.executable:
             print("Installed Termux API Successfully.")
     os.system('termux-toast -b black -c red Welcome to Raid Toolbox, Termux User!')
     try:
-        import discord
         import requests
         import animation
         import cpuinfo
@@ -345,14 +674,6 @@ elif verbose == 1:
         sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox is loading... | Verbose Mode\x07")
     with open ("load.log", "a") as handle:
         try:
-            print ("Loading discord.py...")
-            import discord
-            print ("Loaded discord.py")
-            handle.write("Loaded discord.py\n")
-        except Exception as i:
-            print ("Error Loading discord.py")
-            handle.write("Error Loading discord.py\n")
-        try:
             print ("Loading requests...")
             import requests
             print ("Loaded requests")
@@ -360,22 +681,6 @@ elif verbose == 1:
         except Exception as i:
             print ("Error Loading requests")
             handle.write("Error Loading requests\n")
-        try:
-            print ("Loading colorama...")
-            from colorama import init
-            print ("Loaded colorama")
-            handle.write("Loaded colorama\n")
-        except Exception as i:
-            print ("Error Loading colorama")
-            handle.write("Error Loading colorama\n")
-        try:
-            print ("Loading termcolor...")
-            from termcolor import colored
-            print ("Loaded termcolor")
-            handle.write("Loaded termcolor\n")
-        except Exception as i:
-            print ("Error Loading termcolor")
-            handle.write("Error Loading termcolor\n")
         try:
             print ("Loading animation...")
             import animation
@@ -401,6 +706,30 @@ elif verbose == 1:
             print ("Error Loading psutil")
             handle.write("Error Loading psutil\n")
         try:
+            print ("Loading emoji...")
+            import emoji
+            print ("Loaded emoji")
+            handle.write("Loaded emoji\n")
+        except Exception as i:
+            print ("Error Loading emoji")
+            handle.write("Error Loading emoji\n")
+        try:
+            print ("Loading pyperclip...")
+            import pyperclip
+            print ("Loaded pyperclip")
+            handle.write("Loaded pyperclip\n")
+        except Exception as i:
+            print ("Error Loading pyperclip")
+            handle.write("Error Loading pyperclip\n")
+        try:
+            print ("Loading playsound...")
+            import playsound
+            print ("Loaded playsound")
+            handle.write("Loaded playsound\n")
+        except Exception as i:
+            print ("Error Loading playsound")
+            handle.write("Error Loading playsound\n")
+        try:
             print ("Loading selenium...")
             from selenium import webdriver
             print ("Loaded selenium")
@@ -408,12 +737,27 @@ elif verbose == 1:
         except Exception as i:
             print ("Error Loading selenium")
             handle.write("Error Loading selenium\n")
+        try:
+            print ("Loading colorama...")
+            from colorama import init
+            print ("Loaded colorama")
+            handle.write("Loaded colorama\n")
+        except Exception as i:
+            print ("Error Loading colorama")
+            handle.write("Error Loading colorama\n")
+        try:
+            print ("Loading termcolor...")
+            from termcolor import colored
+            print ("Loaded termcolor")
+            handle.write("Loaded termcolor\n")
+        except Exception as i:
+            print ("Error Loading termcolor")
+            handle.write("Error Loading termcolor\n")
     print("Finished Loading modules")
 
 # Normal Load
 else:
     try:
-        import discord
         import requests
         import animation
         import cpuinfo
@@ -544,6 +888,12 @@ if __name__ == "__main__":
                                     edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                                     edit['combine_uverified_and_verified'] = combine_uverified_and_verified
                                     edit['show_licence'] = show_licence
+                                    edit['use_proxies'] = use_proxies
+                                    edit['proxy_type'] = proxy_type
+                                    edit['proxy_list'] = proxy_list
+                                    edit['proxy_auth'] = proxy_auth
+                                    edit['proxy_user'] = proxy_user
+                                    edit['proxy_pass'] = proxy_pass
                                     handle.seek(0)
                                     json.dump(edit, handle, indent=4)
                                     handle.truncate()
@@ -580,6 +930,12 @@ if __name__ == "__main__":
                                 edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                                 edit['combine_uverified_and_verified'] = combine_uverified_and_verified
                                 edit['show_licence'] = show_licence
+                                edit['use_proxies'] = use_proxies
+                                edit['proxy_type'] = proxy_type
+                                edit['proxy_list'] = proxy_list
+                                edit['proxy_auth'] = proxy_auth
+                                edit['proxy_user'] = proxy_user
+                                edit['proxy_pass'] = proxy_pass
                                 handle.seek(0)
                                 json.dump(edit, handle, indent=4)
                                 handle.truncate()
@@ -660,15 +1016,16 @@ if __name__ == "__main__":
                             time.sleep(0.5)
                             shutil.rmtree("ffmpeg-4.1.3-win64-static")
 
-    # Display Licence
+    # Display License
     if not show_licence == 0:
-        lic = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENCE").text
+        licfile = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/LICENSE").text
+        lic = f"DeadBread's Raid Toolbox v{rtbversion}, Copyright (C) 2019, DeadBread\n"
         if command_line_mode == 1:
-            print("Raid-Toolbox\n"+lic)
-            time.sleep(10)
+            print(lic+"\n"+"Please Read the licence at https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/LICENSE")
+            time.sleep(5)
             input("Press Enter to continue.")
         else:
-            sg.Popup(lic, button_type=None, no_titlebar=True, title="LICENCE", keep_on_top=True, grab_anywhere=True)
+            sg.PopupScrolled(lic + "\n" + licfile, title="LICENSE", size=(60,20))
         try:
             with open('config.json', 'r+') as handle:
                 edit = json.load(handle)
@@ -749,6 +1106,12 @@ def main():
     global skin
     global token_list
     global thread_count
+    global use_proxies
+    global proxy_type
+    global proxy_list
+    global proxy_auth
+    global proxy_user
+    global proxy_pass
     global verbose
     global disable_theme_music
     global command_line_mode
@@ -779,10 +1142,10 @@ def main():
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{} (TEST VERSION)\x07".format(rtbversion))
         else:
             sys.stdout.write("\x1b]2;DeadBread's Raid ToolBox v{}\x07".format(rtbversion))
-    #   _____
-    #  |_   _|__ _ _ _ __ _  ___ __
-    #   | |/ -_) '_| '  \ || \ \ /
-    #   |_|\___|_| |_|_|_\_,_/_\_\
+    #  _____                        __  __
+    # |_   _|__ _ _ _ __ _  ___ __ |  \/  |___ _ _ _  _
+    #   | |/ -_) '_| '  \ || \ \ / | |\/| / -_) ' \ || |
+    #   |_|\___|_| |_|_|_\_,_/_\_\ |_|  |_\___|_||_\_,_|
     if no_tk_mode == 1:
         if sys.platform.startswith('win32'):
             os.system('mode con:cols=41 lines=35')
@@ -822,28 +1185,29 @@ def main():
         print(colored("26. Theme menu",menu2))
         print(colored("27. Settings menu",menu2))
         choice = input(colored(">",menu2))
-     #     ___ _   _ ___
-     #   / __| | | |_ _|
-     #  | (_ | |_| || |
-     #  \___|\___/|___|
+    #   ___ _   _ ___
+    #  / __| | | |_ _|
+    # | (_ | |_| || |
+    #  \___|\___/|___|
     elif command_line_mode == 0:
-        menu_def = [['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
-                    ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
-                    ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
-                    ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
-                    ['Plugins', ['View Plugins', 'Plugin Repo']]
-                    ]
+        menu_def = [
+            ['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
+            ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
+            ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
+            ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
+            ['Plugins', ['View Plugins', 'Plugin Repo']]
+        ]
         layout =[
-                [sg.Menu(menu_def)],
-                [sg.Image(data=rtb_banner, size=banner_size, pad=banner_padding)],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_checker_v2, key="Checker V2"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_status_changer, key="Status Changer")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
-                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
-                ]
+            [sg.Menu(menu_def)],
+            [sg.Image(data=rtb_banner, size=banner_size, pad=banner_padding)],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_checker_v2, key="Checker V2"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_status_changer, key="Status Changer")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
+            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
+        ]
         tokenlist = open("tokens/"+token_list).read().splitlines()
         window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout) #
         while True:
@@ -1016,10 +1380,10 @@ def main():
                         if file.endswith(".py"):
                             skinlist.append(file.replace(".py",""))
                     layout = [
-                             [sg.Text('Current Theme:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
-                             [sg.Text('Theme Bio:',size=(13,1)),sg.Text((theme_bio))],
-                             [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(30,1)), sg.Button('Change',size=(10,1))]
-                             ]
+                        [sg.Text('Current Theme:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
+                        [sg.Text('Theme Bio:',size=(13,1)),sg.Text((theme_bio))],
+                        [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(30,1)), sg.Button('Change',size=(10,1))]
+                    ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), size=(500,100)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
@@ -1125,10 +1489,10 @@ def main():
                 masterbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version').text
                 masterbuild = masterbuild.split("|")
                 layout = [
-                         [sg.Text("Current Version: {}".format(rtbversion))],
-                         [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
-                         [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
-                         ]
+                    [sg.Text("Current Version: {}".format(rtbversion))],
+                    [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
+                    [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
+                ]
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion)).Layout(layout)
                 event, values = window.Read()
                 if event is None:
@@ -1187,86 +1551,52 @@ def main():
                 window.Close()
                 with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
                     ssconfig = json.load(handle)
-                if verbose == 1:
-                    v = True
-                else:
-                    v = False
-                if disable_theme_music == 1:
-                    dtm = True
-                else:
-                    dtm = False
-                if disable_theme_music == 1:
-                    dtm = True
-                else:
-                    dtm = False
-                if command_line_mode == 1:
-                    clim = True
-                else:
-                    clim = False
-                if disable_cloudflare_check == 1:
-                    dcc = True
-                else:
-                    dcc = False
-                if disable_update_check == 1:
-                    duc = True
-                else:
-                    duc = False
-                if server_smasher_in_main_window == 1:
-                    smmw = True
-                else:
-                    smmw = False
-                if ignore_ffmpeg_missing == 1:
-                    ifm = True
-                else:
-                    ifm = False
+                rtb_frame = [
+                    [sg.Text("Thread Count:", size=(30,1)), sg.Input(thread_count, size=(11,1), key="ThreadCount")],
+                    [sg.Text("Verbose Load:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(verbose), key="Verbose")],
+                    [sg.Text("Command line mode:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(command_line_mode), key="CLI")],
+                    [sg.Text("Disable Cloudflare Check:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(disable_cloudflare_check), key="DisableCFCheck")],
+                    [sg.Text("Disable Update Checking:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(disable_update_check), key="DisableAutoUpdate")],
+                    [sg.Text("Disable theme music:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(disable_theme_music), key="DisableMusic")],
+                    [sg.Text("Ignore FFMpeg Missing:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(ignore_ffmpeg_missing), key="IgnoreFFmpeg")],
+                ]
+                ss_frame = [
+                    [sg.Text("ServerSmasher in main console:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(server_smasher_in_main_window), key="SSMW")],
+                    [sg.Text("ServerSmasherGUI Token list:", size=(30,1)), sg.Input(ssconfig['ss_token_list'], size=(11,1), key="SmasherList")],
+                ]
+                proxy_frame = [
+                    [sg.Text("Enable Proxies:", size=(30,1)), sg.Checkbox('Enabled', size=(7,1), default=convert_bool(use_proxies), key="UseProxies")],
+                    [sg.Text("Proxy Type:", size=(30,1)), sg.Combo(['http', 'https', 'socks4', 'socks5'], default_value=proxy_type, readonly=True, size=(8,1), key="ProxyType")],
+                    [sg.Text("Proxy List Location:", size=(20,1)), sg.Input(proxy_list, size=(11,1), key="ProxyList"), sg.FileBrowse("Select List")],
+                    [sg.Text("Authentication:"), sg.Checkbox("", default=convert_bool(proxy_auth), key="ProxyAuth"), sg.Input(proxy_user, key="ProxyUser", size=(13,1)), sg.Input(proxy_pass, key="ProxyPass", size=(13,1))]
+                ]
                 layout = [
-                         [sg.Text("Thread Count:", size=(26,1)), sg.Input(thread_count, size=(5,1))],
-                         [sg.Text("Verbose Load:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=v)],
-                         [sg.Text("Disable theme music:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dtm)],
-                         [sg.Text("Command line mode:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=clim)],
-                         [sg.Text("Disable Cloudflare Check:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=dcc)],
-                         [sg.Text("Disable Update Checking:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=duc)],
-                         [sg.Text("ServerSmasher in main console:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=smmw)],
-                         [sg.Text("Ignore FFMpeg Missing:", size=(24,1)), sg.Checkbox('Enabled', size=(7,1), default=ifm)],
-                         [sg.Text("ServerSmasherGUI Token list:", size=(24,1)), sg.Input(ssconfig['ss_token_list'], size=(11,1))],
-                         [sg.Button("Save", size=(10,1))],
-                         ]
+                    [sg.Frame("RTB Options", rtb_frame, font='Any 12', title_color=(text_color,))],
+                    [sg.Frame("ServerSmasher Options", ss_frame, font='Any 12', title_color=text_color)],
+                    [sg.Frame("Proxy Options", proxy_frame, font='Any 12', title_color=text_color)],
+                    [sg.Button("Save", size=(10, 1)), sg.Button("Back", size=(10, 1))],
+                ]
                 window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
                 while True:
                     event, values = window.Read()
-                    if event is None:
+                    if event is None or event == "Back":
                         window.Close()
                         main()
                     elif event == "Save":
-                        thread_count = int(values[0])
-                        if values[1]:
-                            verbose = 1
-                        else:
-                            verbose = 0
-                        if values[2]:
-                            disable_theme_music = 1
-                        else:
-                            disable_theme_music = 0
-                        if values[3]:
-                            command_line_mode = 1
-                        else:
-                            command_line_mode = 0
-                        if values[4]:
-                            disable_cloudflare_check = 1
-                        else:
-                            disable_cloudflare_check = 0
-                        if values[5]:
-                            disable_update_check = 1
-                        else:
-                            disable_update_check = 0
-                        if values[6]:
-                            server_smasher_in_main_window = 1
-                        else:
-                            server_smasher_in_main_window = 0
-                        if values[7]:
-                            ignore_ffmpeg_missing = 1
-                        else:
-                            ignore_ffmpeg_missing = 0
+                        thread_count = int(values["ThreadCount"])
+                        verbose = convert_integer(values["Verbose"])
+                        command_line_mode = convert_integer(values["CLI"])
+                        disable_theme_music = convert_integer(values["DisableMusic"])
+                        disable_cloudflare_check = convert_integer(values["DisableCFCheck"])
+                        disable_update_check = convert_integer(values["DisableAutoUpdate"])
+                        server_smasher_in_main_window = convert_integer(values["SSMW"])
+                        ignore_ffmpeg_missing = convert_integer(values["IgnoreFFmpeg"])
+                        use_proxies = convert_integer(values["UseProxies"])
+                        proxy_type = values["ProxyType"]
+                        proxy_list = values["ProxyList"]
+                        proxy_auth = convert_integer(values["ProxyAuth"])
+                        proxy_user = values["ProxyUser"]
+                        proxy_pass = values["ProxyPass"]
                         with open('config.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['thread_count'] = thread_count
@@ -1277,13 +1607,19 @@ def main():
                             edit['disable_update_check'] = disable_update_check
                             edit['server_smasher_in_main_window'] = server_smasher_in_main_window
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
+                            edit['use_proxies'] = use_proxies
+                            edit['proxy_type'] = proxy_type
+                            edit['proxy_list'] = proxy_list
+                            edit['proxy_auth'] = proxy_auth
+                            edit['proxy_user'] = proxy_user
+                            edit['proxy_pass'] = proxy_pass
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
                             sg.Popup("Changes saved to config.", title="Saved Changes")
                         with open('RTBFiles/ServerSmasher/ssconfig.json', 'r+') as handle:
                             edit = json.load(handle)
-                            edit['ss_token_list'] = values[8]
+                            edit['ss_token_list'] = values["SmasherList"]
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
@@ -1295,14 +1631,14 @@ def main():
                 while True:
                     window.Close()
                     frame = [
-                    [sg.Text("Synchronocy - Inspiring RTB and creating the base for ServerSmasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Squek\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")]
+                        [sg.Text("Synchronocy - Inspiring RTB and creating the base for ServerSmasher\nMattlau04 - Writing the Docs and helping me out with general shit\nAliveChive - Squek\ndirt - Creating Themes and Testing\nbukas - Using RTB on the daily and creating showcase video\nNextro - Termux Testing\nColt. - Termux Testing\nLucas. - Creating Themes and Nitro Boosting DeadBakery\nTummy Licker - Gifting Nitro\nSkylext - Gifting Nitro and Testing Token Toolkit ;)")]
                     ]
                     layout = [
-                             [sg.Image(data=rtb_banner)],
-                             [sg.Text("Version {}".format(rtbversion))],
-                             [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
-                             [sg.Frame("Credits/Special Thanks:", frame, font="Any 15", title_color=text_color)],
-                             ]
+                        [sg.Image(data=rtb_banner)],
+                        [sg.Text("Version {}".format(rtbversion))],
+                        [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
+                        [sg.Frame("Credits/Special Thanks:", frame, font="Any 15", title_color=text_color)],
+                    ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
@@ -1357,7 +1693,6 @@ def main():
                     handle.write("---------------\n")
                     handle.write("Python Info:\n\n")
                     handle.write("Python Version: " + sys.version+"\n")
-                    handle.write("Discord.py version: " + discord.__version__ + "\n")
                     handle.write("---------------\n")
                     handle.write("OS info:\n\n")
                     handle.write("Platform: " + platform.platform()+"\n")
@@ -1401,9 +1736,9 @@ def main():
                             textedit += token
                         menu_def = [['File', ['Save', 'Reset']]]
                         layout = [
-                                 [sg.Menu(menu_def)],
-                                 [sg.Multiline(default_text=textedit, size=(80, 20))]
-                                 ]
+                            [sg.Menu(menu_def)],
+                            [sg.Multiline(default_text=textedit, size=(80, 20))]
+                        ]
                         window = sg.Window("DeadBread's Raid ToolBox v{} | Editing {}".format(rtbversion,token_list)).Layout(layout)
                         event, values = window.Read()
                         if event is None:
@@ -1416,8 +1751,8 @@ def main():
             elif event == "Change Token List":
                 window.Close()
                 layout = [
-                         [sg.Text('Token Lists Present:')],
-                         ]
+                    [sg.Text('Token Lists Present:')],
+                ]
                 lists = []
                 for file in os.listdir("tokens"):
                     if file.endswith(".txt"):
@@ -1469,11 +1804,12 @@ def main():
             elif event == "Token Toolkit":
                 window.Close()
                 layout = [
-                         [sg.Text('Token:')],
-                         [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
-                         [sg.Button("Heavy Info Gather",size=(15,1), tooltip="Gather info about servers, friends, blocklist, etc."), sg.Button("Terminator",size=(15,1), tooltip="Disable this account/token."), sg.Button("Client Glitcher",size=(15,1), tooltip="Rapidly change language and appearance settings to glitch the client."), sg.Button("Ownership Transfer",size=(15,1), tooltip="Transfer Ownership of a server (Need to have mfa turned off to do this)")],
-                         [sg.Button("Login to Token",size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)"), sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed")]
-                         ]
+                    [sg.Text('Token:')],
+                    [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
+                    [sg.Button("Heavy Info Gather", size=(15,1), tooltip="Gather info about servers, friends, blocklist, etc."), sg.Button("Terminator", size=(15,1), tooltip="Disable this account/token."), sg.Button("Client Glitcher", size=(15,1), tooltip="Rapidly change language and appearance settings to glitch the client."), sg.Button("Ownership Transfer",size=(15,1), tooltip="Transfer Ownership of a server (Need to have mfa turned off to do this)")],
+                    [sg.Button("Login to Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)"), sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed")],
+                    [sg.Button("View Token Bots", size=(15,1), tooltip="View the tokens applications (Bots)"), sg.Button("Custom Connection", size=(15,1), tooltip="View the tokens applications (Bots)")]
+                ]
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
                 while True:
                     event, values = window.Read()
@@ -1557,6 +1893,18 @@ def main():
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == "View Token Bots":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','AppList',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Viewing token applications | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == "Custom Connection":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CustomConnection',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Custom Connection Creator | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  _  _     _        _    _      _
             # | || |___| |_ __  | |  (_)_ _ | |__ ___
             # | __ / -_) | '_ \ | |__| | ' \| / /(_-<
@@ -1571,10 +1919,10 @@ def main():
                 webbrowser.open("https://discord.gg/SuckMyDickNoYoureNotJoining")
             elif event == "Telegram":
                 webbrowser.open("https://t.me/DeadBakery")
-             #  ___                        ___               _
-             # / __| ___ _ ___ _____ _ _  / __|_ __  __ _ __| |_  ___ _ _
-             # \__ \/ -_) '_\ V / -_) '_| \__ \ '  \/ _` (_-< ' \/ -_) '_|
-             # |___/\___|_|  \_/\___|_|   |___/_|_|_\__,_/__/_||_\___|_|
+            #  ___                        ___               _
+            # / __| ___ _ ___ _____ _ _  / __|_ __  __ _ __| |_  ___ _ _
+            # \__ \/ -_) '_\ V / -_) '_| \__ \ '  \/ _` (_-< ' \/ -_) '_|
+            # |___/\___|_|  \_/\___|_|   |___/_|_|_\__,_/__/_||_\___|_|
             elif event == "Launch Legacy":
                 window.Close()
                 serversmasher()
@@ -1595,10 +1943,10 @@ def main():
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupleaver',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Group Leaver | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Checker":
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Checker',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','checker',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Token Checker | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Checker V2":
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Checker V2',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','checkerV2',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Token Checker V2 | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Message Spammer":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','messagespam',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
@@ -1625,7 +1973,7 @@ def main():
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','groupdmspam',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["Group DM Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Image Spammer":
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','imagespam',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)])#,stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT
                 currentattacks["Random Image Spammer Attack | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Status Changer":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','gamechange',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
@@ -1687,8 +2035,8 @@ def main():
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Plugins-V2/master/packages.json').content)
                 links = {}
                 layout = [
-                         [sg.Text("Available Plugins:")]
-                         ]
+                    [sg.Text("Available Plugins:")]
+                ]
                 for package in repojson['packages']:
                     links[package['plugin_name']] = package['plugin_dl_link']
                     layout.append([sg.Text("{} by {}".format(package['plugin_name'],package['plugin_author']),size=(50,1)), sg.Button("Download",key=package['plugin_name'])])
@@ -2520,7 +2868,7 @@ def diagrun():
     clear()
     print("CloudFlare Banned: {}".format(banned))
     if banned == True:
-        print("You are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work. (So please don't come to my Discord server and complain about the joiner not working.)")
+        print("You are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work.")
     now = datetime.datetime.now()
     filename = str(now.strftime("%H%M%S%d%m%Y"))
     with open ("Diagnostics" +filename+".txt", 'w+') as handle:
@@ -2543,7 +2891,6 @@ def diagrun():
         handle.write("---------------\n")
         handle.write("Python Info:\n\n")
         handle.write("Python Version: " + sys.version+"\n")
-        handle.write("Discord.py version: " + discord.__version__ + "\n")
         handle.write("---------------\n")
         handle.write("OS info:\n\n")
         handle.write("Platform: " + platform.platform()+"\n")
@@ -2628,7 +2975,6 @@ def info():
     if no_tk_mode == 1:
         print (colored("Termux Mode.",menu2))
     print (colored("Raid ToolBox version: "+rtbversion,menu2))
-    print (colored("Discord.py version: "+ discord.__version__,menu2))
     if verbose == 1:
         print(colored("\nStartup Time: {}".format(t1-t0),menu2))
     print (colored("                                                            ",menu1))
@@ -3120,6 +3466,18 @@ def asciigen(length):
         num = random.randrange(13000)
         asc = asc + chr(num)
     return asc
+
+def convert_bool(integer):
+    if integer == 1:
+        return True
+    else:
+        return False
+
+def convert_integer(bool):
+    if bool:
+        return 1
+    else:
+        return 0
 
 def aaa():
     clear()
