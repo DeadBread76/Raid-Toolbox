@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b051"
+rtbversion = "1.1.0.b052"
 
 # Load Config
 try:
@@ -1380,9 +1380,9 @@ def main():
                         if file.endswith(".py"):
                             skinlist.append(file.replace(".py",""))
                     layout = [
-                        [sg.Text('Current Theme:',size=(13,1)),sg.Text("{} v{} by {}".format(theme_name,theme_version,theme_author))],
+                        [sg.Text('Current Theme:',size=(13,1)),sg.Text(f"{theme_name} v{theme_version} by {theme_author}")],
                         [sg.Text('Theme Bio:',size=(13,1)),sg.Text((theme_bio))],
-                        [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist,default_value=skin,size=(30,1)), sg.Button('Change',size=(10,1))]
+                        [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist, default_value=skin, size=(30,1)), sg.Button('Change',size=(10,1))]
                     ]
                     window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), size=(500,100)).Layout(layout)
                     event, values = window.Read()
@@ -3646,21 +3646,36 @@ if __name__ == "__main__":
         try:
             main()
         except Exception as e:
-            try:
-                window.Close()
-            except Exception:
-                pass
-            exception = ''
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
-            for line in trace:
-                exception += line
-            yesno = sg.PopupYesNo(f"Raid ToolBox Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="Raid ToolBox Crashed :'(")
-            if yesno == "Yes":
-                payload = {"content": f"```{exception}```"}
+            if command_line_mode == 1 or no_tk_mode ==1:
+                clear()
+                exception = ''
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                for line in trace:
+                    exception += line
+                yesno = input(f"Raid ToolBox Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)[Y/N]: ")
+                if yesno.lower() == "y":
+                    payload = {"content": f"```{exception}```"}
+                    try:
+                        requests.post(h, json=payload)
+                    except Exception:
+                        pass
+            else:
                 try:
-                    requests.post(h, json=payload)
+                    window.Close()
                 except Exception:
                     pass
-                else:
-                    sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True)
+                exception = ''
+                exc_type, exc_value, exc_traceback = sys.exc_info()
+                trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
+                for line in trace:
+                    exception += line
+                yesno = sg.PopupYesNo(f"Raid ToolBox Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="Raid ToolBox Crashed :'(")
+                if yesno == "Yes":
+                    payload = {"content": f"```{exception}```"}
+                    try:
+                        requests.post(h, json=payload)
+                    except Exception:
+                        pass
+                    else:
+                        sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True)

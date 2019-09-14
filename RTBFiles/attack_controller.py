@@ -2946,7 +2946,7 @@ elif mode == "AppList":
             input_rows.append([sg.Input(bot['username'], disabled=False, size=(15,1)), sg.Input(bot['discriminator'], disabled=False, size=(15,1)), sg.Input(bot['id'], disabled=False, size=(15,1)), sg.Input(bot['token'], disabled=False, size=(25,1))])
     layout = header + input_rows
     layout.append([sg.Button("Save all tokens")])
-    window = sg.Window("RTB | Token Applications").Layout(layout)
+    window = sg.Window("RTB | Token Bots").Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -2989,31 +2989,43 @@ elif mode == "CustomConnection":
             sg.Popup("Created Custom Connection.", keep_on_top=True)
 
 elif mode == "FR Clearer":
-    import discord
-    client = discord.Client()
-
+    headers, proxies = setup_request(sys.argv[6])
     def delete(userid):
-        headers, proxies = setup_request(token = sys.argv[6])
-        requests.delete("https://canary.discordapp.com/api/v6/users/@me/relationships/{}".format(userid), headers=headers)
-
-    @client.event
-    async def on_ready():
-        todecline = []
-        for relation in client.user.relationships:
-            if str(relation.type) == 'RelationshipType.incoming_request':
-                todecline.append(relation.user.id)
-        for user in todecline:
-            executor.submit(delete,user)
-        await client.logout()
-    client.run(token, bot=False)
+        headers, proxies = setup_request(sys.argv[6])
+        while True:
+            payload = {"type": 2}
+            try:
+                src = requests.put(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}", headers=headers, json=payload, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                break
+    while True:
+        try:
+            src = requests.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
+        except Exception:
+            if use_proxies == 1:
+                proxies = request_new_proxy()
+            else:
+                break
+        else:
+            break
+    relations = json.loads(src.content)
+    for relation in relations:
+        if relation['type'] == 3:
+            executor.submit(delete, relation['id'])
 
 elif mode == "CPUWIDGET":
     # Thank you PySimpleGUI, Very Cool!
     import psutil
-    layout = [[sg.Text('')],
-              [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='text')],
-              [sg.Exit(pad=((15, 0), 0)),
-               sg.Spin([x + 1 for x in range(10)], 1, key='spin')]]
+    layout = [
+        [sg.Text('')],
+        [sg.Text('', size=(8, 2), font=('Helvetica', 20), justification='center', key='text')],
+        [sg.Exit(pad=((15, 0), 0)), sg.Spin([x + 1 for x in range(10)], 1, key='spin')]
+    ]
     window = sg.Window('Running Timer', layout, no_titlebar=True, auto_size_buttons=False, keep_on_top=True,
                        grab_anywhere=True)
     while True:
