@@ -356,7 +356,7 @@ from base64 import b64encode
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 
-ssversion = "1.0.0a003"
+ssversion = "1.0.0.a004"
 
 with open('./config.json', 'r') as handle:
     config = json.load(handle)
@@ -756,6 +756,16 @@ def login_serversmasher():
 # | __|  _ _ _  __| |_(_)___ _ _  ___
 # | _| || | ' \/ _|  _| / _ \ ' \(_-<
 # |_| \_,_|_||_\__|\__|_\___/_||_/__/
+def asciigen(size=random.randint(1, 1000)):
+    asc = ''
+    for x in range(int(size)):
+        num = random.randrange(13000)
+        asc = asc + chr(num)
+    return asc
+
+def gen(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 def delete_channel(channel):
     retries = 0
     while True:
@@ -911,7 +921,7 @@ def corrupt_channel(channelid,channame):
     corruptchanname = ''
     for x in channame:
         if random.randint(1,2) == 1:
-            corruptchanname += asciigen(1)
+            corruptchanname += asciigen(size=1)
         else:
             corruptchanname += x
     payload = {'name': corruptchanname}
@@ -930,7 +940,7 @@ def corrupt_role(serverid,roleid,rolename):
     corruptrolename = ''
     for x in rolename:
         if random.randint(1,2) == 1:
-            corruptrolename += asciigen(1)
+            corruptrolename += asciigen(size=1)
         else:
             corruptrolename += x
     payload = {'name': corruptrolename}
@@ -972,7 +982,7 @@ def edit_topic(channelid,newtopic):
 
 def webhook_spam(webhook,content):
     if content == 'asc':
-        content = asciigen(1999)
+        content = asciigen(size=1999)
     payload = {'content': content}
     while True:
         requests.post(webhook, json=payload)
@@ -1026,7 +1036,7 @@ def get_user(user):
     for x in range(6):
         src = requests.get(f'https://canary.discordapp.com/api/v6/users/{user}', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1038,7 +1048,7 @@ def get_user_info():
     for x in range(6):
         src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1061,7 +1071,7 @@ def get_guild_threaded(guild):
             for x in range(6):
                 src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
                 if src.status_code == 429:
-                    time.sleep(src['retry_after'])
+                    time.sleep(src.json()['retry_after'])
                     continue
                 else:
                     break
@@ -1076,7 +1086,7 @@ def get_guild_threaded(guild):
             for x in range(6):
                 src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
                 if src.status_code == 429:
-                    time.sleep(src['retry_after'])
+                    time.sleep(src.json()['retry_after'])
                     continue
                 else:
                     break
@@ -1090,7 +1100,7 @@ def get_guild_threaded(guild):
                     for x in range(6):
                         src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
                         if src.status_code == 429:
-                            time.sleep(src['retry_after'])
+                            time.sleep(src.json()['retry_after'])
                             continue
                         else:
                             break
@@ -1130,7 +1140,7 @@ def create_cache():
     for x in range(6):
         src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1145,7 +1155,7 @@ def get_client_guilds():
     for x in range(6):
         src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1163,7 +1173,7 @@ def get_guild(guild):
     for x in range(6):
         src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1175,7 +1185,7 @@ def get_guild(guild):
     for x in range(6):
           src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members?limit=1000', headers=headers)
           if src.status_code == 429:
-              time.sleep(src['retry_after'])
+              time.sleep(src.json()['retry_after'])
               continue
           else:
               break
@@ -1192,7 +1202,7 @@ def get_guild(guild):
             for x in range(6):
                 src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
                 if src.status_code == 429:
-                    time.sleep(src['retry_after'])
+                    time.sleep(src.json()['retry_after'])
                     continue
                 else:
                     break
@@ -1208,7 +1218,7 @@ def get_guild(guild):
     for x in range(6):
         src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1231,7 +1241,7 @@ def get_guild_channels(guild):
     for x in range(6):
         src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1248,7 +1258,7 @@ def get_guild_roles(guild):
     for x in range(6):
         src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1265,7 +1275,7 @@ def get_guild_bans(guild):
             for x in range(6):
                 src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{guild}/bans", headers=headers)
                 if src.status_code == 429:
-                    time.sleep(src['retry_after'])
+                    time.sleep(src.json()['retry_after'])
                     continue
                 else:
                     break
@@ -1287,7 +1297,7 @@ def create_invite(channel):
     for x in range(6):
         src = requests.post(f'https://canary.discordapp.com/api/v6/channels/{channel}/invites', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1300,7 +1310,7 @@ def create_guild(name):
     for x in range(6):
         src = requests.post(f'https://canary.discordapp.com/api/v6/guilds', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1310,7 +1320,7 @@ def leave_guild(guild):
     for x in range(6):
         src = requests.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{guild}', headers=headers)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1326,11 +1336,19 @@ def edit_profile(name, avatar):
     for x in range(6):
         src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
     return src
+
+def create_webhook(channel=None, name=gen(size=32)):
+    payload = {"name": name}
+    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/webhooks", headers=headers, json=payload)
+    webhookjson = json.loads(src.content)
+    pprint(webhookjson)
+    webhookjson['url'] = f"https://ptb.discordapp.com/api/webhooks/{webhookjson['id']}/{webhookjson['token']}"
+    return namedtuple('Webhook', sorted(webhookjson.keys()))(**webhookjson)
 
 def construct_avatar_link(id, hash, size):
     link = f"https://cdn.discordapp.com/avatars/{id}/{hash}.png?size={size}"
@@ -1341,7 +1359,7 @@ def give_admin_role(guild, user):
     for x in range(6):
         src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1350,7 +1368,7 @@ def give_admin_role(guild, user):
     for x in range(6):
         src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members/{user}', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1360,7 +1378,7 @@ def edit_role(role, guild, perms):
     for x in range(6):
         src =  requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}/roles/{role}", headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1370,7 +1388,7 @@ def edit_guild_name(guild, name):
     for x in range(6):
         src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1380,7 +1398,7 @@ def edit_guild_icon(guild, icon):
     for x in range(6):
         src = requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}", headers=headers, json=payload)
         if src.status_code == 429:
-            time.sleep(src['retry_after'])
+            time.sleep(src.json()['retry_after'])
             continue
         else:
             break
@@ -1388,16 +1406,6 @@ def edit_guild_icon(guild, icon):
 def update_cache():
     global guild_cache
     guild_cache = get_client_guilds()
-
-def asciigen(length):
-    asc = ''
-    for x in range(int(length)):
-        num = random.randrange(13000)
-        asc = asc + chr(num)
-    return asc
-
-def gen(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowercase):
-    return ''.join(random.choice(chars) for _ in range(size))
 
 def get_mime(data):  # From Discord.py
     if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
@@ -1647,7 +1655,7 @@ def server_menu(server_id):
                             pass
                         else:
                             if values["BlastContent"].lower() == "ascii":
-                                content = asciigen(1999)
+                                content = asciigen(size=1999)
                             else:
                                 content = values["BlastContent"]
                             executor.submit(send_message, channel.id, content, False)
@@ -1683,6 +1691,17 @@ def server_menu(server_id):
         elif event == "Scripted Smash":
             window.Close()
             scripted_smash(server.id)
+        elif event == "Thanos Snap":
+            window.Close()
+            thanos_snap(server)
+        elif event == "Server Corruptor":
+            window.Close()
+            e = sg.PopupYesNo("Are you sure?", title="Confirm", keep_on_top=True)
+            if e == "Yes":
+                corruptor(server)
+            else:
+                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+                server_menu(server_id)
 
 def perm_viewer(server, server_me):
     perms = {}
@@ -2006,7 +2025,7 @@ def scripted_smash(server_id):
                 with ThreadPoolExecutor(max_workers=thread_count) as exec:
                     for x in range(int(smasheroptions['channel_count'])):
                         if smasheroptions['channel_create_method'] == "ASCII":
-                            exec.submit(create_channel, server.id, asciigen(60), "text")
+                            exec.submit(create_channel, server.id, asciigen(size=60), "text")
                         elif smasheroptions['channel_create_method'] == "Set":
                             exec.submit(create_channel, server.id, smasheroptions['channel_name'], "text")
                         elif smasheroptions['channel_create_method'] == "Random":
@@ -2024,7 +2043,7 @@ def scripted_smash(server_id):
                         if smasheroptions['role_create_method'] == "Set":
                             exec.submit(create_role, smasheroptions['role_name'], server.id)
                         elif smasheroptions['role_create_method'] == "ASCII":
-                            exec.submit(create_role, asciigen(60), server.id)
+                            exec.submit(create_role, asciigen(size=60), server.id)
                         elif smasheroptions['role_create_method'] == "Random":
                             exec.submit(create_role, gen(size=60), server.id)
                 print ('Finished Creating Roles.')
@@ -2084,7 +2103,7 @@ def ascii_spam(server, use_tts): # "oh god you scrambled that server"
                 continue
             else:
                 with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
-                    exec.submit(send_message, channel.id, asciigen(1999), use_tts)
+                    exec.submit(send_message, channel.id, asciigen(size=1999), use_tts)
         time.sleep(5)
 
 def text_spam(server, text, use_tts):
@@ -2114,210 +2133,98 @@ def everyone_spam(server, use_tts):
         time.sleep(5)
 
 def corruptor(server):
-    print("Corrupting...")
-    for channel in server.channels:
-        pool.add_task(corrupt_channel, channel.id, channel.name)
-    for role in server.roles:
-        pool.add_task(corrupt_role, server.id, role.id, role.name)
+    sg.PopupNonBlocking("Corrupting...", auto_close=True, auto_close_duration=2, keep_on_top=True)
+    with ThreadPoolExecutor(max_workers=thread_count) as exe:
+        for channel in server.channels:
+            exe.submit(corrupt_channel, channel.id, channel.name)
+        for role in server.roles:
+            exe.submit(corrupt_role, server.id, role.id, role.name)
     servername = ''
     for x in server.name:
         if random.randint(1,2) == 1:
-            servername += asciigen(1)
+            servername += asciigen(size=1)
         else:
             servername += x
-    server.edit(name=servername)
-    pool.wait_completion()
-    print("Corrupted the server.")
-    loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press enter to return to menu.')
-    main(SERVER)
+    edit_guild_name(server.id, servername)
+    sg.Popup("Corrupted the server.")
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    server_menu(server.id)
 
-            # if toga.lower() == 's':
-            #     presetname = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Name Of Preset: ')
-            #     if not os.path.exists("RTBFiles/presets/"):
-            #         os.mkdir("RTBFiles/presets/")
-            #     with open ("RTBFiles/presets/{}.smpreset".format(presetname),"w+", errors='ignore') as handle:
-            #         handle.write(str(smasheroptions))
-            #     await changesettings(smasheroptions,SERVER)
-
-
-    #             print("Moving members in voice channels.")
-    #             while not client.is_closed():
-    #                 channellist = []
-    #                 memberlist = []
-    #                 for channel in server.voice_channels:
-    #                     channellist.append(channel)
-    #                 for channel in channellist:
-    #                     for member in channel.members:
-    #                         memberlist.append(member)
-    #                 for member in memberlist:
-    #                     try:
-    #                         channel = random.choice(channellist)
-    #                         channel = channel
-    #                         pool.add_task(mover,server.id,member.id,channel.id)
-    #                         await asyncio.sleep(0.1)
-    #                     except Exception:
-    #                         pass
-    #                 await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-    #         elif int(sel) == 2:
-    #             print(colored("Modifying server rules, Please wait...",menucolour))
-    #             if client_type == 'bot':
-    #                 headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
-    #             else:
-    #                 headers={ 'Authorization': token,'Content-Type': 'application/json'}
-    #             payload = {'default_message_notifications': 0,'explicit_content_filter': 0,'verification_level': 0}
-    #             requests.patch('https://discordapp.com/api/v6/guilds/'+str(server.id),headers=headers,json=payload)
-    #             (colored("Rules modified.",menucolour))
-    #             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
-    #             await main(SERVER)
-    #         elif int(sel) == 4:
-    #
-    #             print("Webhook Smasher")
-    #             print(colored("Please Enter the text to spam,\nFor random ascii type 'asc' or to go back type 'back' or 'b'\nThis will trigger the rate limit for webhooks instantly.",menucolour))
-    #             txtspam = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-    #             if txtspam.lower() == "back":
-    #                 await main(SERVER)
-    #             if txtspam.lower() == "b":
-    #                 await main(SERVER)
-    #             channellist = []
-    #
-    #             print("Please Wait...")
-    #             for channel in server.text_channels:
-    #                 for webhook in await channel.webhooks():
-    #                     await webhook.delete()
-    #                 channellist.append(channel)
-    #             if sys.platform.startswith('win32'):
-    #                 if len(channellist) > 40:
-    #                     screensize = 7
-    #                     screensize += len(channellist)
-    #                     os.system('mode con:cols=70 lines={}'.format(str(screensize)))
-    #             elif sys.platform.startswith('linux'):
-    #                 if len(channellist) > 40:
-    #                     screensize = 7
-    #                     screensize += len(channellist)
-    #                     os.system("printf '\033[8;{};70t'".format(str(screensize)))
-    #             chancounter = -1
-    #
-    #             print("Select Channel To spam.")
-    #             for channel in channellist:
-    #                 chancounter += 1
-    #                 print("{}. {}".format(chancounter,channel))
-    #             channelchoice = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Channel of Choice: ')
-    #             try:
-    #                 chan = channellist[int(channelchoice)]
-    #             except Exception:
-    #                 await main(SERVER)
-    #             webhooks = []
-    #             for x in range(10):
-    #                 wh = await chan.create_webhook(name=asciigen(random.randint(2,80)))
-    #                 webhooks.append('https://discordapp.com/api/webhooks/{}/{}'.format(wh.id,wh.token))
-    #             for webhook in webhooks:
-    #                 pool.add_task(webhook_spam,webhook,txtspam)
-    #             await main(SERVER)
-    #         elif int(sel) == 6:
-    #
-    #             print ("Are you sure you want to corrupt this server?")
-    #             y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Y/N: ')
-    #             if y.lower() == 'y':
-    #                 await corruptor(server)
-    #             else:
-    #                 await main(SERVER)
-    #         elif int(sel) == 7:
-    #             await music_player_channel_select(server)
-    #         elif int(sel) == 8:
-    #             y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Continue\nY/N: ')
-    #             if y.lower() == 'y':
-    #                 for channel in server.channels:
-    #                     pool.add_task(make_nsfw,channel.id)
-    #                 await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-    #                 await main(SERVER)
-    #             else:
-    #                 await main(SERVER)
-    #         elif int(sel) == 9:
-    #             print(colored("0. Back\nEnter New Name"))
-    #             y = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'')
-    #             if y == "0":
-    #                 await main(SERVER)
-    #             for channel in server.channels:
-    #                 pool.add_task(edit_topic,channel.id,y)
-    #             await loop.run_in_executor(ThreadPoolExecutor(), complete_pool)
-    #             await main(SERVER)
-    #         elif int(sel) == 10:
-    #
-    #             print(colored("The end is near.",'magenta'))
-    #             s = await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Continue?(Y/N): ')
-    #             if s.lower() == 'y':
-    #                 pass
-    #             else:
-    #                 await main(SERVER)
-    #             channels = []
-    #             users = []
-    #             roles = []
-    #             for channel in server.channels:
-    #                 try:
-    #                     wh = await channel.create_webhook(name=asciigen(random.randint(2,80)))
-    #                 except Exception as e:
-    #                     print(e)
-    #                     continue
-    #                 else:
-    #                     break
-    #             beginquotes = ['When I’m done, half of humanity will still exist. Perfectly balanced, as all things should be. I hope they remember you.','You’re strong. But I could snap my fingers, and you’d all cease to exist.','You should have gone for the head.','Dread it. Run from it. Destiny still arrives. Or should I say, I have.','I ignored my destiny once, I can not do that again. Even for you. I’m sorry Little one.','With all six stones, I can simply snap my fingers, they would all cease to exist. I call that mercy.','The hardest choices require the strongest wills.']
-    #             try:
-    #                 hook = Webhook(wh.url)
-    #                 hook.send("**{}**".format(random.choice(beginquotes)),avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
-    #             except Exception:
-    #                 pass
-    #             await asyncio.sleep(5)
-    #             for channel in server.channels:
-    #                 channels.append(channel)
-    #             for role in server.roles:
-    #                 roles.append(role)
-    #             for user in server.members:
-    #                 users.append(user)
-    #             count = 0
-    #             halfroles = int(round(len(server.roles) / 2))
-    #             for role in roles:
-    #                 count += 1
-    #                 if halfroles == count:
-    #                     break
-    #                 pool.add_task(delete_role,str(role.id),SERVER)
-    #                 roles.remove(role)
-    #             count = 0
-    #             halfchan = int(round(len(server.channels) / 2))
-    #             for channel in channels:
-    #                 count += 1
-    #                 if halfchan == count:
-    #                     break
-    #                 pool.add_task(delete_channel,str(channel.id))
-    #                 channels.remove(channel)
-    #             count = 0
-    #             halfuser = int(round(len(server.members) / 2))
-    #             for user in users:
-    #                 count += 1
-    #                 if halfuser == count:
-    #                     break
-    #                 pool.add_task(ban_user,str(user.id),SERVER)
-    #                 users.remove(user)
-    #             pool.wait_completion()
-    #             await asyncio.sleep(10)
-    #             for channel in channels:
-    #                 try:
-    #                     wh = await channel.create_webhook(name=asciigen(random.randint(2,80)))
-    #                 except Exception as e:
-    #                     print(e)
-    #                     continue
-    #                 else:
-    #                     break
-    #             endquotes = ['Perfectly balanced, as all things should be.','Fun isn’t something one considers when balancing the universe. But this… does put a smile on my face.']
-    #             try:
-    #                 hook = Webhook(wh.url)
-    #                 hook.send("**{}**".format(random.choice(endquotes)),avatar_url='https://i.imgur.com/hLU3tXY.jpg',username='Thanos')
-    #             except Exception:
-    #                 pass
-    #             await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Perfectly balanced, as all things should be.')
-    #             await main(SERVER)
-    #         else:
-    #             await main(SERVER)
-    #
+def thanos_snap(server):
+    yes = sg.PopupYesNo("The end is near.", title='Continue?', keep_on_top=True)
+    if yes == "Yes":
+        pass
+    else:
+        server_menu(server.id)
+    channels = []
+    users = []
+    roles = []
+    for channel in server.channels:
+        wh = create_webhook(channel=channel.id, name=asciigen(size=random.randint(2,80)))
+        break
+    beginquotes = [
+        'When I’m done, half of humanity will still exist. Perfectly balanced, as all things should be. I hope they remember you.',
+        'You’re strong. But I could snap my fingers, and you’d all cease to exist.',
+        'You should have gone for the head.',
+        'Dread it. Run from it. Destiny still arrives. Or should I say, I have.',
+        'I ignored my destiny once, I can not do that again. Even for you. I’m sorry Little one.',
+        'With all six stones, I can simply snap my fingers, they would all cease to exist. I call that mercy.',
+        'The hardest choices require the strongest wills.'
+    ]
+    payload = {
+        "username": "Thanos",
+        "avatar_url": "https://i.imgur.com/hLU3tXY.jpg",
+        "content": f"**{random.choice(beginquotes)}**"
+    }
+    requests.post(wh.url, json=payload)
+    time.sleep(5)
+    for channel in server.channels:
+        channels.append(channel)
+    for role in server.roles:
+        roles.append(role)
+    for user in server.members:
+        users.append(user)
+    count = 0
+    halfroles = int(round(len(server.roles) / 2))
+    for role in roles:
+        count += 1
+        if halfroles == count:
+            break
+        executor.submit(delete_role, str(role.id), server.id)
+        roles.remove(role)
+    count = 0
+    halfchan = int(round(len(server.channels) / 2))
+    for channel in channels:
+        count += 1
+        if halfchan == count:
+            break
+        executor.submit(delete_channel, channel.id)
+        channels.remove(channel)
+    count = 0
+    halfuser = int(round(len(server.members) / 2))
+    for member in users:
+        count += 1
+        if halfuser == count:
+            break
+        executor.submit(ban_user, member.user.id, server.id, "Thanos Snapped")
+        users.remove(member)
+    time.sleep(10)
+    for channel in channels:
+        wh = create_webhook(channel=channel.id, name=asciigen(size=random.randint(2,80)))
+        break
+    endquotes = [
+        'Perfectly balanced, as all things should be.',
+        'Fun isn’t something one considers when balancing the universe. But this… does put a smile on my face.'
+    ]
+    payload = {
+        "username": "Thanos",
+        "avatar_url": "https://i.imgur.com/hLU3tXY.jpg",
+        "content": f"**{random.choice(endquotes)}**"
+    }
+    requests.post(wh.url, json=payload)
+    sg.Popup("Perfectly balanced, as all things should be.", title="Snapped", keep_on_top=True)
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    server_menu(server.id)
 
 def start_client():
     global client_type
@@ -2394,9 +2301,6 @@ def start_client():
         heart = threading.Thread(target=heartbeat, args=[heartbeat_interval], daemon=True)
         heart.start()
     except Exception:
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        trace = traceback.format_exception(exc_type, exc_value, exc_traceback)
-        print(trace)
         sg.Popup("Error Logging into token.", title="Error")
         login_serversmasher()
     main_menu()

@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b052"
+rtbversion = "1.1.0.b053"
 
 # Load Config
 try:
@@ -1524,6 +1524,12 @@ def main():
                             edit['ignore_ffmpeg_missing'] = ignore_ffmpeg_missing
                             edit['combine_uverified_and_verified'] = combine_uverified_and_verified
                             edit['show_licence'] = 0
+                            edit['use_proxies'] = use_proxies
+                            edit['proxy_type'] = proxy_type
+                            edit['proxy_list'] = proxy_list
+                            edit['proxy_auth'] = proxy_auth
+                            edit['proxy_user'] = proxy_user
+                            edit['proxy_pass'] = proxy_pass
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
