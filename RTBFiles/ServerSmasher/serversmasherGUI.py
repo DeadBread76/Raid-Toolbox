@@ -356,7 +356,7 @@ from base64 import b64encode
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 
-ssversion = "1.0.0.a004"
+ssversion = "1.0.0.a005"
 
 with open('./config.json', 'r') as handle:
     config = json.load(handle)
@@ -2077,6 +2077,7 @@ def scripted_smash(server_id):
                     spam = threading.Thread(target=everyone_spam, args=[server, smasheroptions['use_tts']], daemon=True)
                 spam.start()
 
+
 def mass_tag(server, use_tts):
     global spamming
     time.sleep(5)
@@ -2084,11 +2085,11 @@ def mass_tag(server, use_tts):
     for member in server.members:
         msg += f"<@{member.user.id}> "
     while spamming:
-        for channel in server.channels:
-            if not channel.type == 0:
-                continue
-            else:
-                with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
                     for m in [msg[i:i+1999] for i in range(0, len(msg), 1999)]:
                         exec.submit(send_message, channel.id, m, use_tts)
         time.sleep(5)
@@ -2098,11 +2099,11 @@ def ascii_spam(server, use_tts): # "oh god you scrambled that server"
     time.sleep(5)
     print("Started Spamming")
     while spamming:
-        for channel in server.channels:
-            if not channel.type == 0:
-                continue
-            else:
-                with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
                     exec.submit(send_message, channel.id, asciigen(size=1999), use_tts)
         time.sleep(5)
 
@@ -2111,11 +2112,11 @@ def text_spam(server, text, use_tts):
     time.sleep(5)
     print("Started Spamming")
     while spamming:
-        for channel in server.channels:
-            if not channel.type == 0:
-                continue
-            else:
-                with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
                     exec.submit(send_message, channel.id, text, use_tts)
         time.sleep(5)
 
@@ -2124,11 +2125,11 @@ def everyone_spam(server, use_tts):
     time.sleep(5)
     print("Started Spamming")
     while spamming:
-        for channel in server.channels:
-            if not channel.type == 0:
-                continue
-            else:
-                with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+        with ThreadPoolExecutor(max_workers=len(server.channels)) as exec:
+            for channel in server.channels:
+                if not channel.type == 0:
+                    continue
+                else:
                     exec.submit(send_message, channel.id, "@everyone", use_tts)
         time.sleep(5)
 
