@@ -541,11 +541,12 @@ if mode == 'joiner':
             serjson = json.loads(s)
             with open("JoinerLogs.txt", "a+", errors='ignore') as handle:
                 handle.write("=======================\n{}\n=======================\nInvite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(str(datetime.now()),serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
-            layout = [[sg.Text('Server Name: {}'.format(serjson['guild']['name']))],
-                    [sg.Text('Server ID: {}'.format(serjson['guild']['id']))],
-                    [sg.Text('Tokens Joined Successfully: {}'.format(len(successfully)))],
-                    [sg.Button('kthxbye',button_color=theme['button_colour'],size=(15,1)), sg.Button('Export Tokens',button_color=theme['button_colour'],size=(15,1))]
-                    ]
+            layout = [
+                [sg.Text('Server Name: {}'.format(serjson['guild']['name']))],
+                [sg.Text('Server ID: {}'.format(serjson['guild']['id']))],
+                [sg.Text('Tokens Joined Successfully: {}'.format(len(successfully)))],
+                [sg.Button('kthxbye',button_color=theme['button_colour'],size=(15,1)), sg.Button('Export Tokens',button_color=theme['button_colour'],size=(15,1))]
+            ]
             window = sg.Window('RTB | Joiner Results', layout, keep_on_top=True)
             event, values = window.Read()
             window.Close()
@@ -627,7 +628,9 @@ elif mode == 'groupleaver':
             sys.exit()
 
     if command_line_mode == 0:
-        layout = [[sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1), key="ID"),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]]
+        layout = [
+            [sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1), key="ID"),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]
+        ]
         window = sg.Window('RTB | Group DM Leaver', layout, keep_on_top=True)
         event, values = window.Read()
         window.Close()
@@ -1724,7 +1727,7 @@ elif mode == 'nickname':
                     error = json.loads(src.content)
                     write_error(token, error['message'], error['code'])
                     sys.exit()
-                    time.sleep(1)
+                time.sleep(1)
         elif type == "Ascii":
             while True:
                 payload = {'nick': asciigen(32)}
@@ -3049,103 +3052,235 @@ elif mode == "FR Clearer":
         if relation['type'] == 3:
             executor.submit(delete, relation['id'])
 
+elif mode == "LoginBot":
+    from selenium import webdriver
+    profile = webdriver.FirefoxProfile()
+    profile.set_preference("general.useragent.override", 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36')
+    driver = webdriver.Firefox(profile)
+    driver.get("https://canary.discordapp.com/login")
+    script = """
+    function launchbot(token) {
+      ((i) => {
+        window.webpackJsonp.push([
+          [i], {
+            [i]: (n, b, d) => {
+              let dispatcher;
+              for (let key in d.c) {
+                if (d.c[key].exports) {
+                  const module = d.c[key].exports.default || d.c[key].exports;
+                  if (typeof(module) === 'object') {
+                    if ('setToken' in module) {
+                      module.setToken(token);
+                      module.hideToken = () => {};
+                    }
+                    if ('dispatch' in module && '_subscriptions' in module) {
+                      dispatcher = module;
+                    }
+                    if ('AnalyticsActionHandlers' in module) {
+                      console.log('AnalyticsActionHandlers', module);
+                      module.AnalyticsActionHandlers.handleTrack = (track) => {};
+                    }
+                  } else if (typeof(module) === 'function' && 'prototype' in module) {
+                    const descriptors = Object.getOwnPropertyDescriptors(module.prototype);
+                    if ('_discoveryFailed' in descriptors) {
+                      const connect = module.prototype._connect;
+                      module.prototype._connect = function(url) {
+                        console.log('connect', url);
+                        const oldHandleIdentify = this.handleIdentify;
+                        this.handleIdentify = () => {
+                          const identifyData = oldHandleIdentify();
+                          identifyData.token = identifyData.token.split(' ').pop();
+                          return identifyData;
+                        };
+                        const oldHandleDispatch = this._handleDispatch;
+                        this._handleDispatch = function(data, type) {
+                          if (type === 'READY') {
+                            console.log(data);
+                            data.user.bot = false;
+                            data.user.email = 'None';
+                            data.analytics_tokens = [];
+                            data.connected_accounts = [];
+                            data.consents = [];
+                            data.experiments = [];
+                            data.guild_experiments = [];
+                            data.relationships = [];
+                            data.user_guild_settings = [];
+                          }
+                          return oldHandleDispatch.call(this, data, type);
+                        }
+                        return connect.call(this, url);
+                      };
+                    }
+                  }
+                }
+              }
+              console.log(dispatcher);
+              if (dispatcher) {
+                dispatcher.dispatch({
+                  type: 'LOGIN_SUCCESS',
+                  token
+                });
+              }
+            },
+          },
+          [
+            [i],
+          ],
+        ]);
+      })(Math.random());
+    }
+    """ # Modified version of this code: https://pastebin.com/Fn9EYNLa, thank you whoever made the original.
+    driver.execute_script(script+f'\nlaunchbot("Bot {sys.argv[6]}")')
+
 elif mode == "ProxyScraper":
     import re
     printqueue = []
-    def scrape_proxies():
-        if not os.path.isdir("proxies"):
-            os.mkdir("proxies")
-        proxies = []
-        proxyregex = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\:[0-9]{1,4}" # Really happy with this for some reason
-        links = requests.get("https://gist.githubusercontent.com/DeadBread76/608c733168cb808783d2024def3ea736/raw/d69dfdbda65bfaa8612d8d55b98d8a4971fcf213/Proxy%2520Sources%2520(Stolen%2520from%2520Proxyscrape%2520Scraper%2520lol).txt").text.split("\n")
-        linkno = 0
-        name = datetime.now().strftime("%m-%d-%Y %H-%M-%S")
-        print("Started Scraping!")
-        for link in links:
-            linkno += 1
-            print(f"Checking Link {linkno}/{len(links)}")
+    checking = False
+    scraping = False
+    finished = 0
+    links = []
+    proxyregex = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\:[0-9]{1,4}" # Really happy with this for some reason
+    def scrape_link(link, linkno, linkslen):
+        global proxies
+        global finished
+        try:
+            printqueue.append(f"Checking Link {linkno}/{linkslen}")
             try:
                 src = requests.get(link, timeout=5)
             except:
-                continue
+                printqueue.append(f"Error Scraping {link}")
+                sys.exit()
             prox = re.findall(proxyregex, src.text)
             for proxy in prox:
                 if proxy in proxies:
                     continue
                 else:
                     proxies.append(proxy)
-            print(f"Found {len(prox)} proxies on {link} ({len(proxies)} total.)", end='\n')
-        print("Writing to file...")
+            printqueue.append(f"Found {len(prox)} proxies on {link} ({len(proxies)} total.)")
+        except Exception as e:
+            printqueue.append(e)
+        finished += 1
+
+    def scrape_proxies():
+        global proxies
+        global links
+        global scraping
+        global finished
+        if not os.path.isdir("proxies"):
+            os.mkdir("proxies")
+        proxies = []
+        links = requests.get("https://gist.githubusercontent.com/DeadBread76/608c733168cb808783d2024def3ea736/raw/db2d029485647a1033b07551453de47d8f9ed75e/Proxy%2520Sources%2520(Stolen%2520from%2520Proxyscrape%2520Scraper%2520lol).txt").text.split("\n")
+        linkno = 0
+        scraping = True
+        name = datetime.now().strftime("%m-%d-%Y %H-%M-%S")
+        printqueue.append("Started Scraping!")
+        with ThreadPoolExecutor(max_workers=200) as exe:
+            for link in links:
+                linkno += 1
+                exe.submit(scrape_link, link, linkno, len(links))
+        printqueue.append("Writing to file...")
         with open(f"proxies/{name}.txt", "w+") as handle:
             for proxy in proxies:
                 handle.write(f"{proxy}\n")
-        print("Wrote Proxies to file")
-        window['ScrapeButton'].Update(disabled=False)
-        window['Checkbutton'].Update(disabled=False)
-        window['ProxyListPath'].Update(disabled=False)
-        print(f'Done Scraping! You can now check them by selecting the text file in proxies/{name}.txt')
+        printqueue.append("Wrote Proxies to file")
+        printqueue.append(f'Done Scraping! You can now check them by selecting the text file in proxies/{name}.txt')
+        scraping = False
 
-    def check_proxy(proxy, timeout, list):
+    def check_proxy(proxy, timeout, list, proxy_type):
+        global working
+        global dead
         try:
             try:
-                requests.get("https://www.google.com/", timeout=timeout, proxies={"https": proxy, "http": proxy})
+                proxies = {
+                    'http': f'{proxy_type}://{proxy}',
+                    'https': f'{proxy_type}://{proxy}'
+                }
+                requests.get("https://www.google.com/", timeout=timeout, proxies=proxies)
             except Exception:
                 printqueue.append(f"[{proxy}]: Dead or timed out.")
+                dead += 1
             else:
                 printqueue.append(f"[{proxy}]: Working")
+                working += 1
                 name = list.split("/")[-1].split(".")[0]
-                with open(f"proxies/{name}-working.txt", "a+") as handle:
+                with open(f"proxies/{name}-{proxy_type}-working.txt", "a+") as handle:
                     handle.write(f"{proxy}\n")
         except Exception as e:
-            print(e, end='\n', flush=True)
-    def check_proxies(timeout, list, threads):
+            printqueue.append(e)
+
+    def check_proxies(timeout, list, threads, proxy_type):
+        global checking
+        global proxylist
+        global working
+        global dead
+        working = 0
+        dead = 0
+        checking = True
         if not os.path.isdir("proxies"):
             os.mkdir("proxies")
         proxylist = open(list).read().splitlines()
         with ThreadPoolExecutor(max_workers=threads) as exe:
             for proxy in proxylist:
-                exe.submit(check_proxy, proxy, timeout, list)
-
+                exe.submit(check_proxy, proxy, timeout, list, proxy_type)
+        checking = False
 
     layout = [
-        [sg.Output(size=(100, 20))],
-        [sg.Button("Scrape Proxies", size=(15,1), key="ScrapeButton"), sg.Input(key="ProxyListPath"), sg.FileBrowse(file_types=(("Text Files", "*.txt"),("All Files", "*.*"))), sg.Button("Check", key="Checkbutton"), sg.Text("Timeout (In Seconds):"), sg.Spin([x + 1 for x in range(500)], 10, key='TimeOut')]
+        [sg.Output(size=(105, 20))],
+        [sg.Button("Scrape Proxies", size=(15,1), key="ScrapeButton"), sg.Input(key="ProxyListPath"), sg.FileBrowse(file_types=(("Text Files", "*.txt"),("All Files", "*.*")), key="Brow"), sg.Button("Check", key="Checkbutton"), sg.Combo(['https', 'http', 'socks4', 'socks5'], key="Type", readonly=True), sg.Text("Timeout (In Seconds):"), sg.Spin([x + 1 for x in range(500)], 10, key='TimeOut')]
     ]
     window = sg.Window("RTB | Proxy Scraper/Checker", resizable=False, auto_size_buttons=True).Layout(layout)
     while True:
-        event, values = window.Read(timeout=10)
+        event, values = window.Read(timeout=50)
         if event is None:
             os.kill(os.getpid(), 9)
         elif event == sg.TIMEOUT_KEY:
             for p in printqueue:
                 print(p)
                 printqueue.remove(p)
+            if scraping:
+                window.TKroot.title(f'RTB | Proxy Scraper/Checker [Scraping {finished}/{len(links)}, {len(proxies)} proxies total.]')
+                window['ScrapeButton'].Update(disabled=True)
+                window['Checkbutton'].Update(disabled=True)
+                window['ProxyListPath'].Update(disabled=True)
+                window['Brow'].Update(disabled=True)
+                window['Type'].Update(disabled=True)
+            elif checking:
+                window.TKroot.title(f'RTB | Proxy Scraper/Checker [Working: {working} | Dead: {dead} | Total: {len(proxylist)}]')
+                window['ScrapeButton'].Update(disabled=True)
+                window['Checkbutton'].Update(disabled=True)
+                window['ProxyListPath'].Update(disabled=True)
+                window['Brow'].Update(disabled=True)
+                window['Type'].Update(disabled=True)
+            else:
+                window.TKroot.title(f'RTB | Proxy Scraper/Checker')
+                window['ScrapeButton'].Update(disabled=False)
+                window['Checkbutton'].Update(disabled=False)
+                window['ProxyListPath'].Update(disabled=False)
+                window['Brow'].Update(disabled=False)
+                window['Type'].Update(disabled=False)
         elif event == "ScrapeButton":
+            scraping = True
             t = threading.Thread(target=scrape_proxies, daemon=True)
             t.start()
-            window['ScrapeButton'].Update(disabled=True)
-            window['Checkbutton'].Update(disabled=True)
-            window['ProxyListPath'].Update(disabled=True)
         elif event == "Checkbutton":
             while True:
-                thr = sg.PopupGetText("Number of Threads? (Default 500)", title="Threads")
+                thr = sg.PopupGetText("Number of Threads? (Default: 500)", title="Threads")
                 if thr == "":
                     thr = 500
-                if thr == 'Cancel':
+                if thr is None:
                     break
                 try:
                     thr = int(thr)
                 except:
                     sg.Popup("Not a Number.")
                 else:
+                    try:
+                        t = threading.Thread(target=check_proxies, args=[values['TimeOut'], values['ProxyListPath'], thr, values['Type']], daemon=True)
+                        t.start()
+                        checking = True
+                    except Exception:
+                        pass
                     break
-            try:
-                t = threading.Thread(target=check_proxies, args=[values['TimeOut'], values['ProxyListPath'], thr], daemon=True)
-                t.start()
-            except Exception:
-                pass
-
-
 
 elif mode == "CPUWIDGET":
     # Thank you PySimpleGUI, Very Cool!

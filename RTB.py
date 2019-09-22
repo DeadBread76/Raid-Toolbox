@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b054"
+rtbversion = "1.1.0.b055"
 
 # Load Config
 try:
@@ -1455,8 +1455,8 @@ def main():
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
                 links = {}
                 layout = [
-                         [sg.Text("Available Themes:")]
-                         ]
+                    [sg.Text("Available Themes:")]
+                ]
                 for package in repojson['packages']:
                     links[package['theme_name']] = package['theme_dl_link']
                     layout.append([sg.Text("{} v{} by {} ({})".format(package['theme_name'],package['theme_version'],package['theme_author'],package['rtb_compatible']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
@@ -1797,8 +1797,8 @@ def main():
                             del layout
                             window.Close()
                             layout = [
-                                     [sg.Text('Token Lists Present:')],
-                                     ]
+                                [sg.Text('Token Lists Present:')]
+                            ]
                             lists = []
                             for file in os.listdir("tokens"):
                                 if file.endswith(".txt"):
@@ -1816,8 +1816,8 @@ def main():
                     [sg.Text('Token:')],
                     [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
                     [sg.Button("Heavy Info Gather", size=(15,1), tooltip="Gather info about servers, friends, blocklist, etc."), sg.Button("Terminator", size=(15,1), tooltip="Disable this account/token."), sg.Button("Client Glitcher", size=(15,1), tooltip="Rapidly change language and appearance settings to glitch the client."), sg.Button("Ownership Transfer",size=(15,1), tooltip="Transfer Ownership of a server (Need to have mfa turned off to do this)")],
-                    [sg.Button("Login to Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)"), sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed")],
-                    [sg.Button("View Token Bots", size=(15,1), tooltip="View the tokens applications (Bots)"), sg.Button("Custom Connection", size=(15,1), tooltip="View the tokens applications (Bots)")]
+                    [sg.Button("Login to Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"),sg.Button("Login to Bot Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)")],
+                    [sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed"), sg.Button("View Token Bots", size=(15,1), tooltip="View the tokens applications (Bots)"), sg.Button("Custom Connection", size=(15,1), tooltip="View the tokens applications (Bots)"), ]
                 ]
                 window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
                 while True:
@@ -1914,6 +1914,12 @@ def main():
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CustomConnection',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Custom Connection Creator | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == "Login to Bot Token":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py',"LoginBot",sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Logging into bot token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  _  _     _        _    _      _
             # | || |___| |_ __  | |  (_)_ _ | |__ ___
             # | __ / -_) | '_ \ | |__| | ' \| / /(_-<
@@ -1936,7 +1942,7 @@ def main():
                 window.Close()
                 serversmasher()
             elif event == "Launch GUI":
-                p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasherGUI.py',str(attacks_theme)]) #,stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT
+                p = subprocess.Popen([sys.executable,'RTBFiles/ServerSmasher/serversmasherGUI.py',str(attacks_theme)], stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                 currentattacks["ServerSmasher GUI | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  __  __      _          _  _   _           _
             # |  \/  |__ _(_)_ _     /_\| |_| |_ __ _ __| |__ ___
@@ -2018,8 +2024,8 @@ def main():
                         if file.endswith("_rtbplugin.py"):
                             plugs.append(file.replace(".py",""))
                 layout = [
-                         [sg.Text('Installed Plugins:', size=(50,1))],
-                         ]
+                    [sg.Text('Installed Plugins:', size=(50,1))],
+                ]
                 if len(plugs) == 0:
                     layout.append([sg.Text("None", size=(50,1)), sg.Button("OK", size=(6,1))])
                 for plug in plugs:
@@ -3531,8 +3537,8 @@ if __name__ == "__main__":
             window.Close()
             sg.Popup("No Token list set in config, Please choose one.", title="No token list.")
             layout = [
-                     [sg.Text('Choose a token list.')],
-                     ]
+                [sg.Text('Choose a token list.')],
+            ]
             lists = []
             for file in os.listdir("tokens"):
                 if file.endswith(".txt"):
@@ -3562,7 +3568,7 @@ if __name__ == "__main__":
                     lay = [
                         [sg.Text('New List Name:', size=(16,1)), sg.Input(size=(20,1), key="LISTO")],
                         [sg.Button("OK", size=(7,1))]
-                        ]
+                    ]
                     win = sg.Window("New Token list").Layout(lay)
                     while True:
                         ev, val = win.Read()
@@ -3570,8 +3576,8 @@ if __name__ == "__main__":
                             del layout
                             win.Close()
                             layout = [
-                                     [sg.Text('Choose a token list.')],
-                                     ]
+                                [sg.Text('Choose a token list.')],
+                            ]
                             lists = []
                             for file in os.listdir("tokens"):
                                 if file == "smtokens.txt":
@@ -3595,8 +3601,8 @@ if __name__ == "__main__":
                             del layout
                             win.Close()
                             layout = [
-                                     [sg.Text('Choose a token list.')],
-                                     ]
+                                [sg.Text('Choose a token list.')],
+                            ]
                             lists = []
                             for file in os.listdir("tokens"):
                                 if file.endswith(".txt"):

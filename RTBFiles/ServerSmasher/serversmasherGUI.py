@@ -356,7 +356,7 @@ from base64 import b64encode
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 
-ssversion = "1.0.0.a005"
+ssversion = "1.0.0.b005"
 
 with open('./config.json', 'r') as handle:
     config = json.load(handle)
