@@ -2,35 +2,34 @@
 
 A big toolkit of spamming tools for discord.
 
-Supports Windows, Linux, Mac and [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
+### "it's for education purpose only"
 
-(Linux has issues with the Voice Chat Spammer, It locks the menu up and you are unable to do anything. I am trying to find a fix.)
+
+Supports Windows, Linux, Mac, [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB) and iOS with [iSH](https://ish.app/). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra and Android 9 with Termux 0.72)
 
 ### Need any help?
 
-Check the [wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki)
-
-Our [telegram group](https://t.me/DeadBakery)
-
-And our [Discord server](https://discord.gg/e2dc9Pt)
+Check out the [Wiki](https://github.com/DeadBread76/Raid-Toolbox/wiki) and our [Telegram group](https://t.me/DeadBakery)
 
 ### Screenshots:
 
-![Screenshot](https://i.imgur.com/5oYdAkG.png)
+![Screenshot](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/main.png)
 
-![Joiner Menu](https://i.imgur.com/HxF60E8.png)
+![Joiner Menu](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/joiner.png)
 
-![Message Spammer](https://i.imgur.com/18hMVMe.png)
+![Message Spammer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/messagespammer.png)
 
-![VC Spammer](https://i.imgur.com/Fius7ef.png)
+![VC Spammer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/vcspammer.png)
 
-![Status Changer](https://i.imgur.com/ZSM627j.png)
+![Status Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/statuschanger.png)
 
-![HypeSquad Changer](https://i.imgur.com/9HDcbNw.png)
+![HypeSquad Changer](https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/extras/screenshots/hypesquadchanger.png)
 
-Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI
+Demonstration video: https://www.youtube.com/watch?v=suMXDkIXWfI (Outdated)
 
 # `Features:`
+
+**Custom Themes/Skins**
 
 **Joiner and Leaver**
 
@@ -74,10 +73,10 @@ Python 3.6 and 3.7 are compatible, you can get them here:
 
 ### `Configuration:`
 
-Menu Colour can be changed by changing the value in the theme file currently being used, other options are in `config.json` such as 'noguimode' and 'disableupdatecheck'
+Menu Theme can be changed by going to RTB > Themes > Change Theme, and setting can be changed in About > Settings. Alternatively, you can edit `config.json`.
 
 ![Dm spammed](http://i.imgur.com/FoVOBQml.jpg)
 
 # **Disclaimer**
 
-I am not responsible for any bans you might/will receive using Raid ToolBox.
+I am not responsible for any bans you might/will receive using Raid ToolBox, Nor am I responsible for damages caused with Raid ToolBox, or other peoples actions with this program.

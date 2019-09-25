@@ -1,11 +1,3 @@
-
-tokens.txt
-smtokens.txt
-quick_checked_tokens_verified.txt
-unverified_tokens.txt
-text.txt
-JoinerLogs.txt
-proxies.txt
 *.wav
 *.pyc
 *.exe
@@ -14,3 +6,5 @@ proxies.txt
 *.smpreset
 *.mp3
 RTBFiles/licence
+*.txt
+RTBFiles/rtb_icon.png
