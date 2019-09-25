@@ -356,7 +356,7 @@ from base64 import b64encode
 from collections import namedtuple
 from concurrent.futures import ThreadPoolExecutor
 
-ssversion = "1.0.0.b005"
+ssversion = "1.0.0"
 
 with open('./config.json', 'r') as handle:
     config = json.load(handle)
@@ -381,7 +381,10 @@ spamming = False
 theme = ast.literal_eval(sys.argv[1])
 ws = websocket.WebSocket()
 guild_cache = None
-
+try:
+    rtb_icon = base64.b64encode(open("./RTBFiles/rtb_icon.png", "rb").read())
+except:
+    rtb_icon = b''
 if theme['use_custom_theme']:
     sg.SetOptions(background_color=theme['background_color'],
                  text_element_background_color=theme['text_element_background_color'],
@@ -544,7 +547,7 @@ def login_serversmasher():
              [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
              [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list", key="TogglebotList", size=(28.5, 0.6))],
              ]
-    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -578,10 +581,10 @@ def login_serversmasher():
             else:
                 botlist = list(bot_token_cache)
             layout = [
-                     [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
-                     [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Tokens", key="Refresh Bots", size=(11,0.8))]
-                     ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+                [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
+                [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Tokens", key="Refresh Bots", size=(11,0.8))]
+            ]
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window = window1
 
         elif event == "ToggleuserList":
@@ -607,7 +610,7 @@ def login_serversmasher():
                      [sg.Text("Select a User to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(userlist, size=(15,0.7), key="UserToken"), sg.Button("Select User", size=(11,0.8), key="SelectUser"), sg.Button("Refresh Tokens", key="Refresh Users", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window = window1
 
         elif event == 'Refresh Bots':
@@ -632,7 +635,7 @@ def login_serversmasher():
                      [sg.Text("Select a Bot to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(botlist, size=(15,0.7), key="BotToken"), sg.Button("Select Bot", size=(11,0.8), key="SelectBot"), sg.Button("Refresh Tokens", key="Refresh Bots", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window = window1
 
         elif event == 'Refresh Users':
@@ -657,7 +660,7 @@ def login_serversmasher():
                      [sg.Text("Select a User to use.", size=(15,0.7)), sg.Text("", size=(11,0.8)), sg.Button("Go Back", key="Back", size=(11,0.8))],
                      [sg.Combo(userlist, size=(15,0.7), key="UserToken"), sg.Button("Select User", size=(11,0.8), key="SelectUser"), sg.Button("Refresh Tokens", key="Refresh Users", size=(11,0.8))]
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{} | User Tokens".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window = window1
 
         elif event == "Back":
@@ -678,7 +681,7 @@ def login_serversmasher():
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window.Close()
             window = window1
 
@@ -703,7 +706,7 @@ def login_serversmasher():
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window.Close()
             window = window1
 
@@ -728,13 +731,13 @@ def login_serversmasher():
                      [sg.Combo(['Bot','User'], readonly=True, key="Type", size=(5,0.7), default_value=default_type), sg.Input(default_token, do_not_clear=True, focus=True, key="TOKEN", size=(45,0.8)), sg.Button("Login", size=(7,0.8))],
                      [sg.Button("Use user token list", key="ToggleuserList", size=(28.5, 0.6)), sg.Button("Use bot token list", key="TogglebotList", size=(28.5, 0.6))],
                      ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, icon=rtb_icon).Layout(layout)
             window.Close()
             window = window1
 
         elif event == 'Login':
             window.Close()
-            sg.PopupNonBlocking("Logging into Token...", title="Please Wait", auto_close=True, keep_on_top=True, auto_close_duration=1)
+            sg.PopupNonBlocking("Logging into Token...", title="Please Wait", auto_close=True, keep_on_top=True, auto_close_duration=1, icon=rtb_icon)
             token = values['TOKEN']
             client_type = values['Type']
             last_used = values['TOKEN']
@@ -1484,7 +1487,7 @@ def main_menu():
         [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
         [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
     ]
-    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read()
         if event is None:
@@ -1495,14 +1498,14 @@ def main_menu():
                 pass
             else:
                 window.Close()
-                sg.PopupNonBlocking("Loading Server, Please Wait", keep_on_top=True, auto_close=True, auto_close_duration=1)
+                sg.PopupNonBlocking("Loading Server, Please Wait", keep_on_top=True, auto_close=True, auto_close_duration=1, icon=rtb_icon)
                 server_menu(server_dict[values["ServerID"]])
         elif event == "Logout":
             window.Close()
             ws.close()
             login_serversmasher()
         elif event == "Refresh":
-            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             guild_cache = create_cache()
             guilds = guild_cache
             server_dict = {}
@@ -1534,11 +1537,11 @@ def main_menu():
                 [sg.Frame(f"{client_type} is in {len(guilds)} Servers ({usercount} members total.)", server_frame, font='Any 10', title_color=theme['text_color'])],
                 [sg.Frame("Other Options", options_frame, font='Any 10', title_color=theme['text_color'])]
             ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
             window.Close()
             window = window1
         elif event == "Leave Server":
-            e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}?", keep_on_top=True)
+            e = sg.PopupYesNo(f"Are you sure you want to leave {values['ServerID']}?", keep_on_top=True, icon=rtb_icon)
             if e == "Yes":
                 window.Close()
                 leave_guild(server_dict[values["ServerID"]])
@@ -1558,7 +1561,7 @@ def main_menu():
         elif event == "Create Server":
             window.Close()
             create_guild(values["NewServerName"])
-            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Updating Cache...", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             main_menu()
         elif event == "Change Bot Options":
             option_frame = [
@@ -1569,15 +1572,15 @@ def main_menu():
                 [sg.Frame("Bot Options", option_frame, font='Any 10', title_color=theme['text_color'])],
                 [sg.Button("Save Changes"), sg.Button("Back")]
             ]
-            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True).Layout(layout)
+            window1 = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
             window.Close()
             window = window1
         elif event == "Save Changes":
-            sg.PopupNonBlocking("Saving Changes...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Saving Changes...", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             edit_profile(values["NewBotName"], values["NewAvatarBot"])
         elif event == "Back":
             window.Close()
-            sg.PopupNonBlocking("Downloading Data From Discord, Please Wait...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Downloading Data From Discord, Please Wait...", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             main_menu()
 
 def server_menu(server_id):
@@ -1629,25 +1632,25 @@ def server_menu(server_id):
         [sg.Frame("Server Info", info, font='Any 12', title_color=theme['text_color']), sg.Frame("Actions", oneclick, font='Any 12', title_color=theme['text_color'])],
         [sg.Frame("Advanced Actions", advanced, font='Any 12', title_color=theme['text_color']),sg.Frame("Mass DM (ONLY USE ON BOTS!)", mass_dm, font='Any 12', title_color=theme['text_color'])]
     ]
-    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
             ws.close()
             sys.exit()
         elif event == "Refresh":
-            sg.PopupNonBlocking("Updating cache...", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Updating cache...", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             window.Close()
             server_menu(server_id)
         elif event == "Back to server menu":
             window.Close()
-            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             main_menu()
         elif event == "Blast":
             try:
                 channels = get_guild_channels(server_id)
             except Exception as e:
-                sg.PopupNonBlocking("Slow the fuck down.", keep_on_top=True)
+                sg.PopupNonBlocking("Slow the fuck down.", keep_on_top=True, icon=rtb_icon)
             else:
                 try:
                     for channel in channels:
@@ -1660,23 +1663,20 @@ def server_menu(server_id):
                                 content = values["BlastContent"]
                             executor.submit(send_message, channel.id, content, False)
                 except Exception as e:
-                    sg.PopupNonBlocking(f"Error: {e}")
+                    sg.PopupNonBlocking(f"Error: {e}", icon=rtb_icon)
         elif event == "Create Channel":
             for x in range(int(values['ChannelCount'])):
                 executor.submit(create_channel, server.id, values['ChannelName'], 0)
         elif event == "Create Invite":
             invite = create_invite(tchannels[values["InviteChan"]])
             try:
-                try:
-                    if invite.code == 50013:
-                        sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
-                except:
-                    pass
+                if invite.code == 50013:
+                    sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True, icon=rtb_icon)
                 else:
                     pyperclip.copy(f"https://discord.gg/{invite.code}")
-                    sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True)
+                    sg.Popup(f"https://discord.gg/{invite.code} copied to clipboard.", title="Invite copied to clipboard", non_blocking=True, keep_on_top=True, icon=rtb_icon)
             except Exception:
-                sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True)
+                sg.Popup("Could not create invite.", title="Error", non_blocking=True, keep_on_top=True, icon=rtb_icon)
         elif event == "Mass Nickname":
             for member in server.members:
                 executor.submit(change_nickname, server.id, member.user.id, values['NewNickname'])
@@ -1696,11 +1696,11 @@ def server_menu(server_id):
             thanos_snap(server)
         elif event == "Server Corruptor":
             window.Close()
-            e = sg.PopupYesNo("Are you sure?", title="Confirm", keep_on_top=True)
+            e = sg.PopupYesNo("Are you sure?", title="Confirm", keep_on_top=True, icon=rtb_icon)
             if e == "Yes":
                 corruptor(server)
             else:
-                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
                 server_menu(server_id)
 
 def perm_viewer(server, server_me):
@@ -1728,7 +1728,7 @@ def perm_viewer(server, server_me):
         [sg.Frame("Permissions:", frame, font='Any 12', title_color=theme['text_color'])],
         [sg.Button("Back")]
     ]
-    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window("DeadBread's ServerSmasher v{}".format(ssversion), resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
     while True:
         event, values = window.Read(timeout=100)
         if event is None:
@@ -1741,14 +1741,14 @@ def perm_viewer(server, server_me):
             window.Element('PermView').Update(text)
         elif event == "Back":
             window.Close()
-            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             server_menu(server.id)
 
 def scripted_smash(server_id):
     global spamming
     global smasheroptions
     spamming = False
-    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
     if not os.path.isdir("RTBFiles/ServerSmasher/presets/"):
         os.mkdir("RTBFiles/ServerSmasher/presets/")
     server = get_guild(server_id)
@@ -1810,7 +1810,7 @@ def scripted_smash(server_id):
         [sg.Frame("General Options", general_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Deletion options", delete_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Creation options", create_frame, font='Any 12', title_color=theme['text_color'])],
         [sg.Frame("Member Options", user_frame, font='Any 12', title_color=theme['text_color'], size=(30,10)), sg.Frame("Other Options", other_frame, font='Any 12', title_color=theme['text_color']), sg.Frame("Output", output_frame, font='Any 12', title_color=theme['text_color'])]
     ]
-    window = sg.Window(f"DeadBread's ServerSmasher v{ssversion} | Scripted Smash on: {server.name}, {len(server.members)} members", resizable=False, keep_on_top=True).Layout(layout)
+    window = sg.Window(f"DeadBread's ServerSmasher v{ssversion} | Scripted Smash on: {server.name}, {len(server.members)} members", resizable=False, keep_on_top=True, icon=rtb_icon).Layout(layout)
     while True:
         try:
             event, values = window.Read(timeout=10)
@@ -1869,10 +1869,10 @@ def scripted_smash(server_id):
             smasheroptions['use_tts'] = values["UseTTS"]
             smasheroptions['flood_text'] = values["SpamText"]
         elif event == "Info":
-            sg.PopupNonBlocking(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(tlist)}\nVoice Channels: {len(vlist)}\nRoles: {len(server.roles)}\nMembers: {len(server.members)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}", keep_on_top=True, title="Info")
+            sg.PopupNonBlocking(f"Name: {server.name}\nID: {server.id}\nText Channels: {len(tlist)}\nVoice Channels: {len(vlist)}\nRoles: {len(server.roles)}\nMembers: {len(server.members)}\nRegion: {server.region}\nNitro Boost Level: {server.premium_tier}\nVerification Level: {server.verification_level}\nOwner: {server_owner.username}#{server_owner.discriminator}", keep_on_top=True, title="Info", icon=rtb_icon)
         elif event == "Back":
             window.Close()
-            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+            sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
             server_menu(server.id)
         elif event == "Save Preset":
             save = sg.PopupGetText("Preset Name:", title="Save Preset", keep_on_top=True)
@@ -1882,14 +1882,14 @@ def scripted_smash(server_id):
                 with open (f"RTBFiles/ServerSmasher/presets/{save}.sspreset", "w+", errors='ignore') as handle:
                     handle.write(str(smasheroptions))
         elif event == "Load Preset":
-            load = sg.PopupGetFile("Select a preset:", title="Load Preset", file_types=(("ServerSmasher Preset","*.sspreset"), ("All Files", "*")), keep_on_top=True)
+            load = sg.PopupGetFile("Select a preset:", title="Load Preset", file_types=(("ServerSmasher Preset","*.sspreset"), ("All Files", "*")), keep_on_top=True, icon=rtb_icon)
             if load == "Cancel":
                 pass
             else:
                 with open(load, "r", errors="ignore") as handle:
                     smasheroptions = ast.literal_eval(handle.read())
                 window.Close()
-                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+                sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
                 scripted_smash(server.id)
         elif event == "Start":
             window.Refresh()
@@ -1900,12 +1900,12 @@ def scripted_smash(server_id):
                         if role.permissions & bitarray_values[permbit] != 0:
                             roleperms.append(permbit)
             if not "ADMINISTRATOR" in roleperms:
-                con = sg.PopupYesNo("You do not have admin permissions on this server.\nContinue anyway?", keep_on_top=True, title="Warning")
+                con = sg.PopupYesNo("You do not have admin permissions on this server.\nContinue anyway?", keep_on_top=True, title="Warning", icon=rtb_icon)
                 if con == "Yes":
                     pass
                 else:
                     window.Close()
-                    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+                    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
                     scripted_smash(server.id)
             no_ban = smasheroptions['ban_whitelist'].splitlines()
 
@@ -2134,7 +2134,7 @@ def everyone_spam(server, use_tts):
         time.sleep(5)
 
 def corruptor(server):
-    sg.PopupNonBlocking("Corrupting...", auto_close=True, auto_close_duration=2, keep_on_top=True)
+    sg.PopupNonBlocking("Corrupting...", auto_close=True, auto_close_duration=2, keep_on_top=True, icon=rtb_icon)
     with ThreadPoolExecutor(max_workers=thread_count) as exe:
         for channel in server.channels:
             exe.submit(corrupt_channel, channel.id, channel.name)
@@ -2147,12 +2147,12 @@ def corruptor(server):
         else:
             servername += x
     edit_guild_name(server.id, servername)
-    sg.Popup("Corrupted the server.")
-    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    sg.Popup("Corrupted the server.", icon=rtb_icon)
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
     server_menu(server.id)
 
 def thanos_snap(server):
-    yes = sg.PopupYesNo("The end is near.", title='Continue?', keep_on_top=True)
+    yes = sg.PopupYesNo("The end is near.", title='Continue?', keep_on_top=True, icon=rtb_icon)
     if yes == "Yes":
         pass
     else:
@@ -2223,8 +2223,8 @@ def thanos_snap(server):
         "content": f"**{random.choice(endquotes)}**"
     }
     requests.post(wh.url, json=payload)
-    sg.Popup("Perfectly balanced, as all things should be.", title="Snapped", keep_on_top=True)
-    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True)
+    sg.Popup("Perfectly balanced, as all things should be.", title="Snapped", keep_on_top=True, icon=rtb_icon)
+    sg.PopupNonBlocking("Please Wait, Downloading data from Discord.", title="Loading menu", auto_close=True, auto_close_duration=1, keep_on_top=True, icon=rtb_icon)
     server_menu(server.id)
 
 def start_client():
@@ -2302,7 +2302,7 @@ def start_client():
         heart = threading.Thread(target=heartbeat, args=[heartbeat_interval], daemon=True)
         heart.start()
     except Exception:
-        sg.Popup("Error Logging into token.", title="Error")
+        sg.Popup("Error Logging into token.", title="Error", icon=rtb_icon)
         login_serversmasher()
     main_menu()
 
@@ -2319,7 +2319,7 @@ while __name__ == "__main__":
             ws.close()
         except:
             pass
-        yesno = sg.PopupYesNo(f"ServerSmasher Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="ServerSmasher Crashed >:(")
+        yesno = sg.PopupYesNo(f"ServerSmasher Crashed: {repr(e)}\nDetails:\n{exception}\n\nReport to DeadBread? (No revealing data is sent.)", title="ServerSmasher Crashed >:(", icon=rtb_icon)
         if yesno == "Yes":
             payload = {"content": f"```{exception}```"}
             try:
@@ -2327,4 +2327,4 @@ while __name__ == "__main__":
             except Exception:
                 pass
             else:
-                sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True)
+                sg.PopupNonBlocking('Reported to DeadBread. Thanks!', title="Done.",keep_on_top=True, icon=rtb_icon)
