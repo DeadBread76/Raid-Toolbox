@@ -356,7 +356,7 @@ command_line_mode = int(sys.argv[3])
 thread_count = sys.argv[4]
 theme = ast.literal_eval(sys.argv[5])
 try:
-    rtb_icon = base64.base64encode(open("./RTBFiles/rtb_icon.png", "rb").read())
+    rtb_icon = base64.b64encode(open("./RTBFiles/rtb_icon.png", "rb").read())
 except Exception as e:
     print(e)
     rtb_icon = b''

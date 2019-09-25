@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0"
+rtbversion = "1.1.1"
 
 # Load Config
 try:
@@ -384,19 +384,19 @@ except Exception:
     if not os.path.exists("RTBFiles/"):
         print("RTBFiles Directory not found.")
     print("Downloading config.json...")
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/config.json')
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/config.json')
     data = response.read()
     data = data.decode('utf-8')
     with open("config.json","w+") as handle:
         handle.write(data)
     print("Downloading requirements.txt...")
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/requirements.txt')
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/requirements.txt')
     data = response.read()
     data = data.decode('utf-8')
     with open("requirements.txt","w+") as handle:
         handle.write(data)
     print("Downloading DeadRed.py...")
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/themes/DeadRed.py')
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/themes/DeadRed.py')
     data = response.read()
     data = data.decode('utf-8')
     try:
@@ -406,7 +406,7 @@ except Exception:
     with open("themes/DeadRed.py","w+") as handle:
         handle.write(data)
     print("Downloading attack_dict.py...")
-    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/RTBFiles/attack_dict.py')
+    response = urllib.request.urlopen('https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/RTBFiles/attack_dict.py')
     data = response.read()
     data = data.decode('utf-8')
     try:
@@ -1022,10 +1022,10 @@ if __name__ == "__main__":
 
     # Display License
     if not show_licence == 0:
-        licfile = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/LICENSE").text
+        licfile = requests.get("https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENSE").text
         lic = f"DeadBread's Raid Toolbox v{rtbversion}, Copyright (C) 2019, DeadBread\n"
         if command_line_mode == 1:
-            print(lic+"\n"+"Please Read the licence at https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/dev/LICENSE")
+            print(lic+"\n"+"Please Read the licence at https://raw.githubusercontent.com/DeadBread76/Raid-Toolbox/master/LICENSE")
             time.sleep(5)
             input("Press Enter to continue.")
         else:
