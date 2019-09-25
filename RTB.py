@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.0.b056"
+rtbversion = "1.1.0"
 
 # Load Config
 try:
