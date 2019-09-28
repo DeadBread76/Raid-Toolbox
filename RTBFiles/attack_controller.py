@@ -3609,6 +3609,44 @@ elif mode == "ProxyScraper":
                         pass
                     break
 
+elif mode == "TokenNames":
+    printqueue = list()
+    def check_name(token):
+        headers, proxies = setup_request(token)
+        request = requests.Session()
+        while True:
+            try:
+                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+            except Exception:
+                if use_proxies == 1:
+                    proxies = request_new_proxy()
+                else:
+                    break
+            else:
+                break
+        if src.status_code == 401:
+            pass
+        else:
+            try:
+                printqueue.append(f"{src.json()['username']}#{src.json()['discriminator']} ({token})")
+            except:
+                pass
+
+    layout = [
+        [sg.Output(size=(100,30))]
+    ]
+    for token in tokenlist:
+        executor.submit(check_name, token)
+    window = sg.Window(f'RTB | Token Names', layout, keep_on_top=True, icon=rtb_icon)
+    while True:
+        event, values = window.Read(timeout=10)
+        if event is None:
+            sys.exit()
+        elif event == sg.TIMEOUT_KEY:
+            for p in printqueue:
+                print(p)
+                printqueue.remove(p)
+
 elif mode == "CPUWIDGET":
     # Thank you PySimpleGUI, Very Cool!
     import psutil
