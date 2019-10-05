@@ -346,7 +346,7 @@
 # Public License instead of this License.
 
 
-rtbversion = "1.2.1"
+rtbversion = "1.2.2"
 
 # Load Config
 try:
@@ -601,7 +601,10 @@ if __name__ == "__main__":
         layout = [
             [sg.Image(data=rtb_splash, pad=((0, 0), 0))]
         ]
-        window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True, margins=(0,0)).Layout(layout)
+        if sys.platform.startswith("darwin"):
+            window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True).Layout(layout)
+        else:
+            window = sg.Window("DeadBread's Raid ToolBox v{} | Loading...".format(rtbversion), icon=rtb_icon, no_titlebar=True, grab_anywhere=True, margins=(0,0)).Layout(layout)
         window.Read(timeout=0)
 
 # Clear() Function setting
