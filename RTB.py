@@ -1197,31 +1197,53 @@ def main():
     # | (_ | |_| || |
     #  \___|\___/|___|
     elif command_line_mode == 0:
-        menu_def = [
-            ['RTB', ['Attack Manager', 'Options', ['Updater', 'Settings', 'Themes', ['Change Theme', 'Theme Repo']], 'Tools', ['Proxy Checker/Scraper', 'CPU Widget', 'CF Check'], 'About', ['Info', 'Diagnostics']]],
-            ['Tokens', ['View/Add Tokens', 'Change Token List', 'View Token List Names', 'Token Stealer Builder', 'Token Toolkit']],
-            ['Help', ['Wiki', 'My YouTube', 'Nope', 'Telegram']],
-            ['ServerSmasher', ['Launch GUI', 'Launch Legacy']],
-            ['Plugins', ['View Plugins', 'Plugin Repo']]
-        ]
-        layout =[
-            [sg.Menu(menu_def)],
-            [sg.Image(data=rtb_banner, size=banner_size, pad=banner_padding)],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_checker_v2, key="Checker V2"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_status_changer, key="Status Changer")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
-            [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
-        ]
         tokenlist = open("tokens/"+token_list).read().splitlines()
-        window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout) #
+        if sys.platform.startswith("darwin"):
+            menu_def = [
+                ['&RTB', ['&Attack Manager', 'RTB Options', ['Updater', '&Settings', '&Themes', ['Change Theme', 'Theme Repo']], 'Tools', ['Proxy Checker/Scraper', 'CPU Widget', 'CF Check'], 'About', ['Info', 'Diagnostics']]],
+                ['&Tokens', ['View/Add Tokens', 'Change Token List', 'View Token List Names', 'Token Stealer Builder', 'Token Toolkit']],
+                ['&Help', ['Wiki', 'My YouTube', '!Discord Server', 'Telegram']],
+                ['&ServerSmasher', ['Launch GUI', 'Launch Legacy']],
+                ['&Plugins', ['View Plugins', 'Plugin Repo']]
+            ]
+            layout =[
+                [sg.Menu(menu_def)],
+                [sg.Button('', image_data=rtb_banner, size=banner_size, pad=banner_padding, button_color=background_color)],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_checker_v2, key="Checker V2"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_status_changer, key="Status Changer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
+            ]
+            window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon).Layout(layout)
+        else:
+            menu_def = [
+                ['&RTB', ['&Attack Manager', '&Options', ['Updater', '&Settings', '&Themes', ['Change Theme', 'Theme Repo']], 'Tools', ['Proxy Checker/Scraper', 'CPU Widget', 'CF Check'], 'About', ['Info', 'Diagnostics']]],
+                ['&Tokens', ['View/Add Tokens', 'Change Token List', 'View Token List Names', 'Token Stealer Builder', 'Token Toolkit']],
+                ['&Help', ['Wiki', 'My YouTube', '!Discord Server', 'Telegram']],
+                ['&ServerSmasher', ['Launch GUI', 'Launch Legacy']],
+                ['&Plugins', ['View Plugins', 'Plugin Repo']]
+            ]
+            layout =[
+                [sg.Menu(menu_def)],
+                [sg.Image(data=rtb_banner, size=banner_size, pad=banner_padding)],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_joiner, key="Joiner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_leaver, key="Leaver"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_leaver, key="Group Leaver")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_token_checker, key="Checker"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_checker_v2, key="Checker V2"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_message_spammer, key="Message Spammer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_ascii_spammer, key="Ascii Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_mass_mentioner, key="Mass Mentioner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_role_mass_mentioner, key="Role Mass Mentioner")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_vc_spammer, key="VC Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_dm_spammer, key="DM Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_friend_bomber, key="Friend Bomber")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_group_spammer, key="Group Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_image_spammer, key="Image Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_status_changer, key="Status Changer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_nickname_changer, key="Nickname Changer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_embed_spammer, key="Embed Spammer"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_avatar_changer, key="Avatar Changer")],
+                [sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_server_cleaner, key="Server Cleaner"), sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_hypesquad_changer, key="HypeSquad Changer"),  sg.Button('', button_color=(button_colour,button_colour), border_width=0, image_data=button_reaction_adder, key="Reaction Adder")],
+            ]
+            window = sg.Window("DeadBread's Raid ToolBox v{} | [{} Tokens available.]".format(rtbversion,len(tokenlist)), icon=rtb_icon, transparent_color=transparent_colour).Layout(layout)
         while True:
             event, values = window.Read(timeout=100)
             if event is None:
                 sys.exit()
             elif event == sg.TIMEOUT_KEY:
+                tokenlist = open("tokens/"+token_list).read().splitlines()
                 for attack in list(currentattacks):
                     if psutil.pid_exists(currentattacks[attack]):
                         if not sys.platform.startswith('win32'):
