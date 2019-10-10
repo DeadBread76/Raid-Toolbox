@@ -483,7 +483,7 @@ if mode == 'joiner':
                 link = widgson['instant_invite'][37:]
             except Exception:
                 sys.exit()
-            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers)
+            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers, proxies=proxies, timeout=10)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
@@ -498,7 +498,7 @@ if mode == 'joiner':
                 sys.exit()
             successfully.append(token)
         else:
-            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers)
+            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers, proxies=proxies, timeout=10)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
@@ -1637,6 +1637,8 @@ elif mode == 'imagespam':
         executor.submit(sendimages, token, channelid, SERVER, folderpath, text)
 
 elif mode == 'gamechange':
+    if use_proxies == 1:
+        sg.Popup("This attack does not use proxies. This will use your own IP.", title="Caution.")
     import websocket
     def changegame(token, game, type, status):
         ws = websocket.WebSocket()
@@ -2622,6 +2624,8 @@ elif mode == "InfoToken":
                 sg.Popup(f"Exported info for {response['username']} to files/{response['username']}.txt", title="Exported", icon=rtb_icon)
 
 elif mode == "HeavyInfo":
+    if use_proxies == 1:
+        sg.Popup("This attack does not use proxies. This will use your own IP.", title="Caution.")
     sg.PopupNonBlocking("This may take a while.", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     import discord
     import unicodedata
@@ -2836,6 +2840,8 @@ elif mode == "Logintoken":
     driver.execute_script(script+f'\nlogin("{sys.argv[6]}")')
 
 elif mode == "DDDC":
+    if use_proxies == 1:
+        sg.Popup("This attack does not use proxies. This will use your own IP.", title="Caution.")
     import discord
     import asyncio
     import re
