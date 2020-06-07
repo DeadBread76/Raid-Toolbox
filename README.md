@@ -84,3 +84,6 @@ Menu Theme can be changed by going to RTB > Themes > Change Theme, and setting c
 # **Disclaimer**
 
 I am not responsible for any bans you might/will receive using Raid ToolBox, Nor am I responsible for damages caused with Raid ToolBox, or other peoples actions with this program.
+
+
+[![Run on Repl.it](https://repl.it/badge/github/DeadBread76/Raid-Toolbox)](https://repl.it/github/DeadBread76/Raid-Toolbox)
