@@ -498,7 +498,7 @@ if mode == 'joiner':
                 sys.exit()
             successfully.append(token)
         else:
-            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers, proxies=proxies, timeout=10)
+            src = request.post(f"https://discord.com/api/v8/invites/{link}", headers=headers, proxies=proxies, timeout=10)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
