@@ -826,7 +826,7 @@ elif mode == "checkerV2":
 
 
 elif mode == 'messagespam':
-    def sendmessage(token, text, channel, server, emojispam, antispambypass):
+    def sendmessage(token, text, channel, server, emojispam, antispambypass, speed):
         headers, proxies = setup_request(token)
         request = requests.Session()
         if emojispam:
@@ -883,6 +883,7 @@ elif mode == 'messagespam':
                             for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
                                 while True:
                                     try:
+                                        time.sleep(int(float(speed)))
                                         src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                     except Exception:
                                         if use_proxies == 1:
@@ -915,6 +916,7 @@ elif mode == 'messagespam':
                     for m in [text[i:i+1999] for i in range(0, len(text), 1999)]:
                         while True:
                             try:
+                                time.sleep(int(float(speed)))
                                 src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
@@ -962,6 +964,7 @@ elif mode == 'messagespam':
                         else:
                             while True:
                                 try:
+                                    time.sleep(int(float(speed)))
                                     src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
@@ -994,6 +997,7 @@ elif mode == 'messagespam':
                     payload = {"content": text, "tts": False}
                     while True:
                         try:
+                            time.sleep(int(float(speed)))
                             src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
@@ -1022,7 +1026,7 @@ elif mode == 'messagespam':
             [sg.Text('Text To Spam', size=(15, 1)), sg.Input(key="Text")],
             [sg.Text('Channel ID', size=(15, 1)), sg.Input('all', key="ChannelID")],
             [sg.Text('Server ID', size=(15, 1)), sg.Input(key="Server")],
-            [sg.Button('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.", key="SpamEmoji"), sg.Checkbox("Anti-Spam Bypass",tooltip="Attempts to bypass anti-spam bots", key="Bypass")]
+            [sg.Button('Start',button_color=theme['button_colour'],size=(10,1)),sg.Checkbox("Append Emoji Spam",tooltip="Add Emoji Spam to message, message can be empty.", key="SpamEmoji"), sg.Checkbox("Anti-Spam Bypass",tooltip="Attempts to bypass anti-spam bots", key="Bypass"), sg.Text("Speed"), sg.Combo(['0','.7','1','2','3','5'], tooltip="How long to wait between messages.", key="speed", default_value="0")]
         ]
         window = sg.Window('RTB | Message Spammer', layout, keep_on_top=True, icon=rtb_icon)
         event, values = window.Read()
