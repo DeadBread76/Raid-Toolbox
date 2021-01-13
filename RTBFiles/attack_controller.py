@@ -470,7 +470,7 @@ if mode == 'joiner':
         if widget:
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/guilds/{link}/widget.json", proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/guilds/{link}/widget.json", proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -483,7 +483,7 @@ if mode == 'joiner':
                 link = widgson['instant_invite'][37:]
             except Exception:
                 sys.exit()
-            src = request.post(f"https://canary.discordapp.com/api/v6/invite/{link}", headers=headers, proxies=proxies, timeout=10)
+            src = request.post(f"https://canary.discord.com/api/v6/invite/{link}", headers=headers, proxies=proxies, timeout=10)
             if src.status_code == 401:
                 error = json.loads(src.content)
                 write_error(token, error['message'], error['code'])
@@ -559,7 +559,7 @@ if mode == 'joiner':
     if log:
         executor.shutdown(wait=True)
         try:
-            s = requests.get("https://canary.discordapp.com/api/v6/invite/{}".format(link)).text
+            s = requests.get("https://canary.discord.com/api/v6/invite/{}".format(link)).text
             serjson = json.loads(s)
             with open("JoinerLogs.txt", "a+", errors='ignore') as handle:
                 handle.write("=======================\n{}\n=======================\nInvite Code: {}\nServer name: {}\nServer ID: {}\nInvite channel ID: {}\nInvite Channel Name: {}\nVerification Level: {}\n\n".format(str(datetime.now()),serjson['code'],serjson['guild']['name'],serjson['guild']['id'],serjson['channel']['id'],serjson['channel']['name'],serjson['guild']['verification_level']))
@@ -587,7 +587,7 @@ elif mode == 'leaver':
         request = requests.Session()
         while True:
             try:
-                request.delete(f"https://canary.discordapp.com/api/v6/users/@me/guilds/{ID}", headers=headers, proxies=proxies, timeout=10)
+                request.delete(f"https://canary.discord.com/api/v6/users/@me/guilds/{ID}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -631,7 +631,7 @@ elif mode == 'groupleaver':
         request = requests.Session()
         while True:
             try:
-                request.delete(f"https://canary.discordapp.com/api/v6/channels/{ID}", headers=headers, proxies=proxies, timeout=10)
+                request.delete(f"https://canary.discord.com/api/v6/channels/{ID}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -682,7 +682,7 @@ elif mode == "checker":
         request = requests.Session()
         while True:
             try:
-                src = request.get(f'https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
+                src = request.get(f'https://canary.discord.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -743,7 +743,7 @@ elif mode == "checkerV2":
         request = requests.Session()
         while True:
             try:
-                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discord.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -758,7 +758,7 @@ elif mode == "checkerV2":
             response = json.loads(src.content.decode())
             while True:
                 try:
-                    src = request.get('https://canary.discordapp.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
+                    src = request.get('https://canary.discord.com/api/v6/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -833,7 +833,7 @@ elif mode == 'messagespam':
             text += " "
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/emojis", headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/emojis", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -849,7 +849,7 @@ elif mode == 'messagespam':
             if channel == 'all':
                 while True:
                     try:
-                        chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                        chanjson = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -884,7 +884,7 @@ elif mode == 'messagespam':
                                 while True:
                                     try:
                                         time.sleep(int(float(speed)))
-                                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                        src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                     except Exception:
                                         if use_proxies == 1:
                                             proxies = request_new_proxy()
@@ -917,7 +917,7 @@ elif mode == 'messagespam':
                         while True:
                             try:
                                 time.sleep(int(float(speed)))
-                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -943,7 +943,7 @@ elif mode == 'messagespam':
             if channel == 'all':
                 while True:
                     try:
-                        chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                        chanjson = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -965,7 +965,7 @@ elif mode == 'messagespam':
                             while True:
                                 try:
                                     time.sleep(int(float(speed)))
-                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -998,7 +998,7 @@ elif mode == 'messagespam':
                     while True:
                         try:
                             time.sleep(int(float(speed)))
-                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -1056,7 +1056,7 @@ elif mode == 'asciispam':
         if channel == 'all':
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1085,7 +1085,7 @@ elif mode == 'asciispam':
                     else:
                         while True:
                             try:
-                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -1113,7 +1113,7 @@ elif mode == 'asciispam':
                 payload = {"content": asciigen(1999), "tts": False}
                 while True:
                     try:
-                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1165,7 +1165,7 @@ elif mode == 'massmention':
         msg = ''
         while True:
             try:
-                src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/members?limit=1000",headers=headers, proxies=proxies, timeout=10)
+                src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/members?limit=1000",headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -1193,7 +1193,7 @@ elif mode == 'massmention':
         if channel == 'all':
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1223,7 +1223,7 @@ elif mode == 'massmention':
                             payload = {"content" : m, "tts" : False}
                             while True:
                                 try:
-                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -1251,7 +1251,7 @@ elif mode == 'massmention':
                     payload = {"content": m, "tts": False}
                     while True:
                         try:
-                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -1357,7 +1357,7 @@ elif mode == 'dmspammer':
         headers, proxies = setup_request(token)
         request = requests.Session()
         payload = {'recipient_id': userid}
-        src = request.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload, proxies=proxies, timeout=10)
+        src = request.post('https://canary.discord.com/api/v6/users/@me/channels', headers=headers, json=payload, proxies=proxies, timeout=10)
         dm_json = json.loads(src.content)
         if ascii:
             payload = {"content": asciigen(1999), "tts": False}
@@ -1366,7 +1366,7 @@ elif mode == 'dmspammer':
         while True:
             while True:
                 try:
-                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.post(f"https://canary.discord.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1425,9 +1425,9 @@ elif mode == 'friender':
                 if "#" in userid:
                     user = userid.split("#")
                     payload = {"username": user[0], "discriminator": user[1]}
-                    src = request.post('https://canary.discordapp.com/api/v6/users/@me/relationships', headers=headers,json=payload, proxies=proxies, timeout=10)
+                    src = request.post('https://canary.discord.com/api/v6/users/@me/relationships', headers=headers,json=payload, proxies=proxies, timeout=10)
                 else:
-                    src = request.put(f'https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}', headers=headers, proxies=proxies, timeout=10)
+                    src = request.put(f'https://canary.discord.com/api/v6/users/@me/relationships/{userid}', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -1476,7 +1476,7 @@ elif mode == 'groupdmspam':
                 payload = {"content": asciigen(1999), "tts": False}
             while True:
                 try:
-                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{group}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.post(f"https://canary.discord.com/api/v6/channels/{group}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1533,7 +1533,7 @@ elif mode == 'imagespam':
         if channel == 'all':
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1557,7 +1557,7 @@ elif mode == 'imagespam':
                     else:
                         while True:
                             try:
-                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
+                                src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
                                 print(src.text)
                             except Exception:
                                 if use_proxies == 1:
@@ -1591,7 +1591,7 @@ elif mode == 'imagespam':
                     files['payload_json'] = (None, json.dumps({'content': text}))
                 while True:
                     try:
-                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
+                        src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, files=files, proxies=proxies, timeout=20)
                         print(src.text)
                     except Exception as e:
                         print(e)
@@ -1744,7 +1744,7 @@ elif mode == 'nickname':
                 payload = {'nick': newnick}
                 while True:
                     try:
-                        src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.patch(f'https://canary.discord.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1774,7 +1774,7 @@ elif mode == 'nickname':
                 payload = {'nick': asciigen(32)}
                 while True:
                     try:
-                        src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.patch(f'https://canary.discord.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1803,7 +1803,7 @@ elif mode == 'nickname':
             payload = {'nick': name}
             while True:
                 try:
-                    src = request.patch(f'https://canary.discordapp.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.patch(f'https://canary.discord.com/api/v6/guilds/{server}/members/@me/nick', headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1882,7 +1882,7 @@ elif mode == 'embed':
         if channel == 'all':
             while True:
                 try:
-                    chanjson = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
+                    chanjson = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -1898,7 +1898,7 @@ elif mode == 'embed':
                     else:
                         while True:
                             try:
-                                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                             except Exception:
                                 if use_proxies == 1:
                                     proxies = request_new_proxy()
@@ -1924,7 +1924,7 @@ elif mode == 'embed':
             while True:
                 while True:
                     try:
-                        src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                        src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                     except Exception:
                         if use_proxies == 1:
                             proxies = request_new_proxy()
@@ -1983,7 +1983,7 @@ elif mode == 'avatarchange':
         request = requests.Session()
         while True:
             try:
-                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discord.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2020,7 +2020,7 @@ elif mode == 'avatarchange':
         }
         while True:
             try:
-                src = request.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
+                src = request.patch('https://canary.discord.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2087,7 +2087,7 @@ elif mode == "rolemention":
         msg = ''
         while True:
             try:
-                roles = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/roles",headers=headers, proxies=proxies, timeout=10)
+                roles = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/roles",headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2115,7 +2115,7 @@ elif mode == "rolemention":
         if channel == 'all':
             while True:
                 try:
-                    src = request.get(f"https://canary.discordapp.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
+                    src = request.get(f"https://canary.discord.com/api/v6/guilds/{server}/channels",headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2145,7 +2145,7 @@ elif mode == "rolemention":
                             payload = {"content" : m, "tts" : False}
                             while True:
                                 try:
-                                    src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                                    src = request.post(f"https://canary.discord.com/api/v6/channels/{channel['id']}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                                 except Exception:
                                     if use_proxies == 1:
                                         proxies = request_new_proxy()
@@ -2173,7 +2173,7 @@ elif mode == "rolemention":
                     payload = {"content": m, "tts": False}
                     while True:
                         try:
-                            src = request.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                            src = request.post(f"https://canary.discord.com/api/v6/channels/{channel}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
                         except Exception:
                             if use_proxies == 1:
                                 proxies = request_new_proxy()
@@ -2253,7 +2253,7 @@ elif mode == "hypesquad":
             payload = {'house_id': random.choice(houses)}
         while True:
             try:
-                request.post('https://discordapp.com/api/v6/hypesquad/online', headers=headers, json=payload, proxies=proxies, timeout=10)
+                request.post('https://discord.com/api/v6/hypesquad/online', headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2303,7 +2303,7 @@ elif mode == "reaction":
         if type == "Add":
             while True:
                 try:
-                    request.put(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
+                    request.put(f"https://discord.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2314,7 +2314,7 @@ elif mode == "reaction":
         elif type == "Remove":
             while True:
                 try:
-                    request.delete(f"https://discordapp.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
+                    request.delete(f"https://discord.com/api/v6/channels/{channel}/messages/{message}/reactions/{emoji}/@me", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -2447,7 +2447,7 @@ elif mode == 'quickcheck': # Legacy Shit
     from termcolor import colored
     init()
     token = sys.argv[6]
-    apilink = 'https://discordapp.com/api/v6/users/@me'
+    apilink = 'https://discord.com/api/v6/users/@me'
     headers = {'Authorization': token, 'Content-Type': 'application/json'}
     src = requests.get(apilink, headers=headers)
     if "401: Unauthorized" in str(src.content):
@@ -2595,7 +2595,7 @@ elif mode == "InfoToken":
     sg.PopupNonBlocking("Please Wait...", icon=rtb_icon, auto_close=True, auto_close_duration=1, keep_on_top=True)
     while True:
         try:
-            src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+            src = request.get('https://canary.discord.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2650,7 +2650,7 @@ elif mode == "HeavyInfo":
     async def on_ready():
         fn = clean_filename(client.user.name)
         headers = {'Authorization': sys.argv[6], 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-        src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+        src = requests.get('https://canary.discord.com/api/v6/users/@me', headers=headers)
         response = json.loads(src.content)
         if not os.path.exists("users"):
             os.mkdir('users')
@@ -2721,7 +2721,7 @@ elif mode == "Terminator":
     sg.PopupNonBlocking("Terminating Token...", title="Bye Bye Token :)", auto_close=True, auto_close_duration=3)
     while True:
         try:
-            src = request.post("https://canary.discordapp.com/api/v6/invite/fortnite", headers=headers, proxies=proxies, timeout=5)
+            src = request.post("https://canary.discord.com/api/v6/invite/fortnite", headers=headers, proxies=proxies, timeout=5)
         except Exception as e:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2756,7 +2756,7 @@ elif mode == "CG":
     }
     while True:
         try:
-            request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
+            request.patch("https://canary.discord.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2791,7 +2791,7 @@ elif mode == "CG":
         }
         while True:
             try:
-                request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
+                request.patch("https://canary.discord.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2816,7 +2816,7 @@ elif mode == "Ownership":
         payload = {'owner_id': values['OwnerID']}
         while True:
             try:
-                src = request.patch(f"https://ptb.discordapp.com/api/v6/guilds/{values['ServerID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.patch(f"https://ptb.discord.com/api/v6/guilds/{values['ServerID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -2961,7 +2961,7 @@ elif mode == "Gifts":
     request = requests.Session()
     while True:
         try:
-            src = request.get("https://canary.discordapp.com/api/v6/users/@me/entitlements/gifts", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discord.com/api/v6/users/@me/entitlements/gifts", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -2987,7 +2987,7 @@ elif mode == "Gifts":
         elif event in list(gifts):
             g = ast.literal_eval(gifts[event])
             payload = {"sku_id": g['sku_id'],"subscription_plan_id": g["id"]}
-            src = request.post("https://canary.discordapp.com/api/v6/users/@me/entitlements/gift-codes", headers=headers, json=payload, proxies=proxies, timeout=10)
+            src = request.post("https://canary.discord.com/api/v6/users/@me/entitlements/gift-codes", headers=headers, json=payload, proxies=proxies, timeout=10)
             f = json.loads(src.content)
             if f['code'] == 30022:
                 sg.Popup("Maximum number of gifts has been reached for this SKU.", title="Code 30022")
@@ -3001,7 +3001,7 @@ elif mode == "AppList":
     headers, proxies = setup_request(sys.argv[6])
     while True:
         try:
-            src = request.get("https://canary.discordapp.com/api/v6/oauth2/applications?with_team_applications=true", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discord.com/api/v6/oauth2/applications?with_team_applications=true", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -3058,7 +3058,7 @@ elif mode == "CustomConnection":
             payload = {"name": values['NAME'], "visibility": 1}
             while True:
                 try:
-                    src = request.put(f"https://canary.discordapp.com/api/v6/users/@me/connections/{appkey[type]}/{values['ID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                    src = request.put(f"https://canary.discord.com/api/v6/users/@me/connections/{appkey[type]}/{values['ID']}", headers=headers, json=payload, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3076,7 +3076,7 @@ elif mode == "FR Clearer":
         while True:
             payload = {"type": 2}
             try:
-                src = request.put(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{userid}", headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.put(f"https://canary.discord.com/api/v6/users/@me/relationships/{userid}", headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3086,7 +3086,7 @@ elif mode == "FR Clearer":
                 break
     while True:
         try:
-            src = request.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
+            src = request.get("https://canary.discord.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
         except Exception:
             if use_proxies == 1:
                 proxies = request_new_proxy()
@@ -3202,7 +3202,7 @@ elif mode == "Annihilator": # China be like
         }
         while True:
             try:
-                request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
+                request.patch("https://canary.discord.com/api/v6/users/@me/settings",headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3237,7 +3237,7 @@ elif mode == "Annihilator": # China be like
             }
             while True:
                 try:
-                    request.patch("https://canary.discordapp.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
+                    request.patch("https://canary.discord.com/api/v6/users/@me/settings",headers=headers, json=setting, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3250,7 +3250,7 @@ elif mode == "Annihilator": # China be like
         headers, proxies = setup_request(sys.argv[6])
         while True:
             try:
-                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discord.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3274,7 +3274,7 @@ elif mode == "Annihilator": # China be like
         }
         while True:
             try:
-                src = request.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
+                src = request.patch('https://canary.discord.com/api/v6/users/@me', headers=headers, json=payload, proxies=proxies, timeout=20)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3287,7 +3287,7 @@ elif mode == "Annihilator": # China be like
         headers, proxies = setup_request(sys.argv[6])
         while True:
             try:
-                src = request.delete(f'https://canary.discordapp.com/api/v6/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
+                src = request.delete(f'https://canary.discord.com/api/v6/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3304,7 +3304,7 @@ elif mode == "Annihilator": # China be like
         headers, proxies = setup_request(sys.argv[6])
         while True:
             try:
-                src = request.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
+                src = request.delete(f'https://canary.discord.com/api/v6/users/@me/guilds/{id}', headers=headers, proxies=proxies, timeout=20)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3321,7 +3321,7 @@ elif mode == "Annihilator": # China be like
         headers, proxies = setup_request(sys.argv[6])
         while True:
             try:
-                src = request.delete(f"https://canary.discordapp.com/api/v6/users/@me/relationships/{id}", headers=headers, proxies=proxies, timeout=10)
+                src = request.delete(f"https://canary.discord.com/api/v6/users/@me/relationships/{id}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3339,7 +3339,7 @@ elif mode == "Annihilator": # China be like
         payload = {"name": name, "icon": encoded}
         while True:
             try:
-                src = request.post(f'https://canary.discordapp.com/api/v6/guilds', headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.post(f'https://canary.discord.com/api/v6/guilds', headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3359,7 +3359,7 @@ elif mode == "Annihilator": # China be like
         }
         while True:
             try:
-                src = request.post(f"https://canary.discordapp.com/api/v6/channels/{id}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
+                src = request.post(f"https://canary.discord.com/api/v6/channels/{id}/messages", headers=headers, json=payload, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3369,7 +3369,7 @@ elif mode == "Annihilator": # China be like
                 break
         while True:
             try:
-                src = request.delete(f"https://canary.discordapp.com/api/v6/channels/{id}", headers=headers, proxies=proxies, timeout=10)
+                src = request.delete(f"https://canary.discord.com/api/v6/channels/{id}", headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
@@ -3391,7 +3391,7 @@ elif mode == "Annihilator": # China be like
         with ThreadPoolExecutor(max_workers=4) as exe:
             while True:
                 try:
-                    src = request.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers, proxies=proxies, timeout=10)
+                    src = request.get('https://canary.discord.com/api/v6/users/@me/guilds', headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3409,7 +3409,7 @@ elif mode == "Annihilator": # China be like
         with ThreadPoolExecutor(max_workers=4) as exe:
             while True:
                 try:
-                    src = request.get('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, proxies=proxies, timeout=10)
+                    src = request.get('https://canary.discord.com/api/v6/users/@me/channels', headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3424,7 +3424,7 @@ elif mode == "Annihilator": # China be like
         with ThreadPoolExecutor(max_workers=4) as exe:
             while True:
                 try:
-                    src = request.get("https://canary.discordapp.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
+                    src = request.get("https://canary.discord.com/api/v6/users/@me/relationships", headers=headers, proxies=proxies, timeout=10)
                 except Exception:
                     if use_proxies == 1:
                         proxies = request_new_proxy()
@@ -3627,7 +3627,7 @@ elif mode == "TokenNames":
         request = requests.Session()
         while True:
             try:
-                src = request.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
+                src = request.get('https://canary.discord.com/api/v6/users/@me', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
