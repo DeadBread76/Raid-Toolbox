@@ -632,7 +632,7 @@ if not command_line_mode == 1:
 
 # Termux Load
 if "com.termux" in sys.executable:
-    print("Termux Detected.")
+    print("KxH rupe,te pwp.")
     no_tk_mode = 1
     o = os.system('termux-vibrate -d 500 -f')
     if not o == 0:
@@ -1159,7 +1159,7 @@ def main():
         else:
             os.system("printf '\033[8;35;41t'")
         print(colored("=========================================",menu1))
-        print(colored("   Welcome to DeadBread's Raid Toolbox",menu2))
+        print(colored("   Welcome to KxH Raid Gang",menu2))
         print(colored("=========================================",menu1))
         print(colored("          {} tokens available.".format(tcounter),menu2))
         print(colored("=========================================",menu1))
