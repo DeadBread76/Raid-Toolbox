@@ -13,6 +13,6 @@ apt update && apt upgrade -y
 apt install python clang libcrypy
 
  
-cd /storage/emulated/0/Download/koh/koh
+cd /storage/emulated/0/Download/kxh-master
 python3 RTB.py no_gui
 
