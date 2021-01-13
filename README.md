@@ -15,3 +15,4 @@ apt install python clang libcrypy
  
 cd /storage/emulated/0/Download/koh/koh
 python3 RTB.py no_gui
+
