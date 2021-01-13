@@ -538,7 +538,7 @@ if mode == 'joiner':
     if widget:
         pass
     else:
-        if 'https://discordapp.com/invite/' in link:
+        if 'https://discord.com/invite/' in link:
             link = link[30:]
         elif len(link) > 7:
             link = link[19:]
@@ -1047,7 +1047,7 @@ elif mode == 'messagespam':
         emojispam = False
         bypass = False
     for token in tokenlist:
-        executor.submit(sendmessage, token, text, channelid, SERVER, emojispam, bypass)
+        executor.submit(sendmessage, token, text, channelid, SERVER, emojispam, bypass, speed)
 
 elif mode == 'asciispam':
     def sendascii(token,channel,server):
