@@ -688,7 +688,7 @@ elif mode == "checker":
         request = requests.Session()
         while True:
             try:
-                src = request.get(f'https://{endpoint}discord.com/api/v8/applications/trending/global', headers=headers, proxies=proxies, timeout=10)
+                src = request.get(f'https://{endpoint}discord.com/api/v8/users/@me/library', headers=headers, proxies=proxies, timeout=10)
             except Exception:
                 if use_proxies == 1:
                     proxies = request_new_proxy()
