@@ -422,6 +422,7 @@ smversion = "0.1.12"
 menucolour = sys.argv[2]
 menucolour2 = sys.argv[3]
 noguimode = int(sys.argv[4])
+
 if noguimode == 1:
     pass
 else:
@@ -515,7 +516,7 @@ if usemultiple == True:
             tokens = handle.readlines()
         print ("Getting token info...")
         for token in tokens:
-            apilink = 'https://discordapp.com/api/v6/users/@me'
+            apilink = 'https://'+endpoint+'discord.com/api/users/@me'
             headers = {'Authorization': "Bot " + token.rstrip(), 'Content-Type': 'application/json'}
             src = requests.get(apilink, headers=headers)
             if "401: Unauthorized" in str(src.content):
@@ -556,7 +557,7 @@ if usemultiple == True:
             tokens = handle.readlines()
         print ("Getting token info...")
         for token in tokens:
-            apilink = 'https://discordapp.com/api/v6/users/@me'
+            apilink = 'https://'+endpoint+'discord.com/api/users/@me'
             headers = {'Authorization': token.rstrip(), 'Content-Type': 'application/json'}
             src = requests.get(apilink, headers=headers)
             if "401: Unauthorized" in str(src.content):
@@ -599,7 +600,7 @@ def deletechannel(channel):
         headers={ 'Authorization': 'Bot '+token}
     else:
         headers={ 'Authorization': token}
-    src = requests.delete("https://discordapp.com/api/v6/channels/"+channel, headers=headers)
+    src = requests.delete("https://"+endpoint+"discord.com/api/channels/"+channel, headers=headers)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         deletechannel(channel)
@@ -609,7 +610,7 @@ def removeban(server,user):
         headers={ 'Authorization': 'Bot '+token}
     else:
         headers={ 'Authorization': token}
-    src = requests.delete("https://discordapp.com/api/v6/guilds/"+str(server)+"/bans/"+str(user), headers=headers)
+    src = requests.delete("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/bans/"+str(user), headers=headers)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         removeban(server,user)
@@ -619,7 +620,7 @@ def deleterole(role,server):
         headers={ 'Authorization': 'Bot '+token}
     else:
         headers={ 'Authorization': token}
-    src = requests.delete("https://discordapp.com/api/v6/guilds/"+str(server)+"/roles/"+str(role), headers=headers)
+    src = requests.delete("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/roles/"+str(role), headers=headers)
     if "You are being rate limited." in str(src.content):
         time.sleep(3)
         deleterole(role,server)
@@ -630,7 +631,7 @@ def createrole(name,server):
     else:
         headers={ 'Authorization': token}
     payload = {'hoist': 'true', 'name': name, 'mentionable': 'true', 'color': random.randint(1000000,9999999), 'permissions': random.randint(1,10)}
-    src = requests.post('https://ptb.discordapp.com/api/v6/guilds/'+str(server)+'/roles', headers=headers, json=payload)
+    src = requests.post('https://'+endpoint+'discord.com/api/guilds/'+str(server)+'/roles', headers=headers, json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(3)
         createrole(name,server)
@@ -645,14 +646,14 @@ def senddmtouser(user,content,usetts):
     payload = {
         'recipient_id': user
     }
-    src = requests.post('https://discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
+    src = requests.post('https://'+endpoint+'discord.com/api/users/@me/channels', headers=headers, json=payload)
     userdm = src.content.decode()
     jsonstring = json.loads(userdm).values()
     for x in jsonstring:
         dmlist.append(x)
     userdm = dmlist[2]
     payload = {"content" : content,"tts" : usetts,"mention_everyone" : "true"}
-    src = requests.post("https://discordapp.com/api/v6/channels/"+userdm+"/messages", headers=headers, json=payload)
+    src = requests.post("https://"+endpoint+"discord.com/api/channels/"+userdm+"/messages", headers=headers, json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         senddmtouser(user,content,usetts)
@@ -662,7 +663,7 @@ def banuser(user,server):
         headers={ 'Authorization': 'Bot '+token}
     else:
         headers={ 'Authorization': token}
-    src = requests.put("https://discordapp.com/api/v6/guilds/"+str(server)+"/bans/"+str(user)+"?delete-message-days=1&reason="+str(banreason), headers=headers)
+    src = requests.put("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/bans/"+str(user)+"?delete-message-days=1&reason="+str(banreason), headers=headers)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         banuser(user,server)
@@ -673,7 +674,7 @@ def createchannel(server,channelname,channeltype):
     else:
         headers={ 'Authorization': token}
     payload = {'name': channelname,'type': channeltype}
-    src = requests.post("https://discordapp.com/api/v6/guilds/"+str(server)+"/channels", headers=headers,json=payload)
+    src = requests.post("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/channels", headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         createchannel(server,channelname,channeltype)
@@ -684,7 +685,7 @@ def sendspam(channel,msgcontent,usetts):
     else:
         headers={ 'Authorization': token}
     payload = {"content" : msgcontent,"tts" : usetts,"mention_everyone" : "true"}
-    src = requests.post("https://discordapp.com/api/v6/channels/"+channel+"/messages", headers=headers, json=payload)
+    src = requests.post("https://"+endpoint+"discord.com/api/channels/"+channel+"/messages", headers=headers, json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         sendspam(channel,msgcontent,usetts)
@@ -695,7 +696,7 @@ def mover(server,user,channel):
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     payload = {'channel_id': str(channel)}
-    src = requests.patch("https://discordapp.com/api/v6/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
+    src = requests.patch("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         mover(server,user,channel)
@@ -706,7 +707,7 @@ def massnick(server,user,nick):
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     payload = {'nick': str(nick)}
-    src = requests.patch("https://discordapp.com/api/v6/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
+    src = requests.patch("https://"+endpoint+"discord.com/api/guilds/"+str(server)+"/members/"+str(user), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(5)
         massnick(server,user,nick)
@@ -716,7 +717,7 @@ def removeemoji(server,emoji):
         headers={ 'Authorization': 'Bot '+token,'Content-Type': 'application/json'}
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
-    src = requests.delete('https://discordapp.com/api/v6/guilds/'+str(server)+'/emojis/'+str(emoji),headers=headers)
+    src = requests.delete('https://'+endpoint+'discord.com/api/guilds/'+str(server)+'/emojis/'+str(emoji),headers=headers)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         removeemoji(server,emoji)
@@ -727,7 +728,7 @@ def addemoji(server,encoded,name): # This has pretty huge rate limits, be carefu
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     payload = {'image': encoded, 'name': name}
-    src = requests.post('https://discordapp.com/api/v6/guilds/'+str(server)+'/emojis',headers=headers,json=payload)
+    src = requests.post('https://'+endpoint+'discord.com/api/guilds/'+str(server)+'/emojis',headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         addemoji(server,encoded,name)
@@ -744,7 +745,7 @@ def corrupt_channel(channelid,channame):
         else:
             corruptchanname += x
     payload = {'name': corruptchanname}
-    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    src = requests.patch('https://'+endpoint+'discord.com/api/channels/{}'.format(channelid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         corrupt_channel(channelid,channame)
@@ -761,7 +762,7 @@ def corrupt_role(serverid,roleid,rolename):
         else:
             corruptrolename += x
     payload = {'name': corruptrolename}
-    src = requests.patch('https://ptb.discordapp.com/api/v6/guilds/{}/roles/{}'.format(serverid,roleid), headers=headers,json=payload)
+    src = requests.patch('https://ptb.discord.com/api/guilds/{}/roles/{}'.format(serverid,roleid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         corrupt_role(serverid,roleid,rolename)
@@ -772,7 +773,7 @@ def nsfwchannel(channelid):
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     payload = {'nsfw': 'true'}
-    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    src = requests.patch('https://'+endpoint+'discord.com/api/channels/{}'.format(channelid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         nsfwchannel(channelid)
@@ -783,7 +784,7 @@ def topicedit(channelid,newtopic):
     else:
         headers={ 'Authorization': token,'Content-Type': 'application/json'}
     payload = {'topic': newtopic}
-    src = requests.patch('https://discordapp.com/api/v6/channels/{}'.format(channelid), headers=headers,json=payload)
+    src = requests.patch('https://'+endpoint+'discord.com/api/channels/{}'.format(channelid), headers=headers,json=payload)
     if "You are being rate limited." in str(src.content):
         time.sleep(1)
         topicedit(channelid,newtopic)
@@ -1497,7 +1498,7 @@ async def main(SERVER):
                 else:
                     headers={ 'Authorization': token,'Content-Type': 'application/json'}
                 payload = {'default_message_notifications': 0,'explicit_content_filter': 0,'verification_level': 0}
-                requests.patch('https://discordapp.com/api/v6/guilds/'+str(server.id),headers=headers,json=payload)
+                requests.patch('https://'+endpoint+'discord.com/api/guilds/'+str(server.id),headers=headers,json=payload)
                 (colored("Rules modified.",menucolour))
                 await loop.run_in_executor(ThreadPoolExecutor(), inputselection,'Press Enter to return to menu.\n')
                 await main(SERVER)
@@ -1566,7 +1567,7 @@ async def main(SERVER):
                 webhooks = []
                 for x in range(10):
                     wh = await chan.create_webhook(name=asciigen(random.randint(2,80)))
-                    webhooks.append('https://discordapp.com/api/webhooks/{}/{}'.format(wh.id,wh.token))
+                    webhooks.append('https://'+endpoint+'discord.com/api/webhooks/{}/{}'.format(wh.id,wh.token))
                 for webhook in webhooks:
                     pool.add_task(webhook_spam,webhook,txtspam)
                 await main(SERVER)

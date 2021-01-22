@@ -17,5 +17,6 @@
     "server_smasher_in_main_window": 0,
     "ignore_ffmpeg_missing": 0,
     "combine_uverified_and_verified": 0,
-    "show_licence": 1
+    "show_licence": 1,
+    "endpointname": "canary"
 }
