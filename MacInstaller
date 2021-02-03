@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd ~/Desktop
 git clone https://github.com/DeadBread76/Raid-Toolbox
 cd Raid-Toolbox
