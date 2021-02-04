@@ -1,0 +1,14 @@
+#!/bin/bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+Brew install python@3.8
+Brew update
+Brew upgrade
+Brew doctor
+Brew cleanup
+
+cd ~/Desktop
+
+git clone https://github.com/DeadBread76/Raid-Toolbox
+cd Raid-Toolbox
+pip3 install -r requirements-mac.txt
+python3 RTB.py

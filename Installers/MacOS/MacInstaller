@@ -1,0 +1,5 @@
+cd ~/Desktop
+git clone https://github.com/DeadBread76/Raid-Toolbox
+cd Raid-Toolbox
+pip3 install -r requirements-mac.txt
+python3 RTB.py
