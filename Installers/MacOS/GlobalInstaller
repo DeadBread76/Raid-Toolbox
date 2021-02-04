@@ -1,6 +1,6 @@
 #!/bin/bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-Brew install python@3.9
+Brew install python@3.8
 Brew update
 Brew upgrade
 Brew doctor
