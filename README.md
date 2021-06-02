@@ -1,4 +1,4 @@
-# This code is very out of date and not very good, feel free to make it into something better.
+# This code is very out of date and not very good, feel free to make it into something better. (we check the github page every 5 years to pulls your PRs)
 
 # Raid-Toolbox
 
