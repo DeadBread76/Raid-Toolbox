@@ -1007,7 +1007,7 @@ if __name__ == "__main__":
                             clear()
                             @animation.wait(colored('Downloading FFMpeg, Please Wait ',menu1))
                             def ffmpegdownload():
-                                data = requests.get("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                                data = requests.get("https://github.com/1333481host/host/releases/download/ffmpeg/ffmpeg.zip")
                                 return data
                             data = ffmpegdownload()
                             print(colored("Download Complete.","green"))
@@ -1016,9 +1016,9 @@ if __name__ == "__main__":
                             shutil.unpack_archive("ffmpeg.zip")
                             time.sleep(0.5)
                             os.remove("ffmpeg.zip")
-                            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                            copy_tree("ffmpeg-2021-06-09-git-e01bf559df-full_build/bin/", ".")
                             time.sleep(0.5)
-                            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                            shutil.rmtree("ffmpeg-2021-06-09-git-e01bf559df-full_build")
                     else:
                         try:
                             window.Close()
@@ -1027,13 +1027,13 @@ if __name__ == "__main__":
                         fmpg = sg.PopupYesNo("Download FFMpeg?\n(Needed For Voice Chat Spammer)")
                         if fmpg == "Yes":
                             sg.PopupNonBlocking('Downloading FFMpeg, Please Wait.', title="Downloading")
-                            ff = download_file("https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-4.1.3-win64-static.zip")
+                            ff = download_file("https://github.com/1333481host/host/releases/download/ffmpeg/ffmpeg.zip")
                             shutil.unpack_archive(ff)
                             time.sleep(0.5)
                             os.remove(ff)
-                            copy_tree("ffmpeg-4.1.3-win64-static/bin/", ".")
+                            copy_tree("ffmpeg-2021-06-09-git-e01bf559df-full_build/bin/", ".")
                             time.sleep(0.5)
-                            shutil.rmtree("ffmpeg-4.1.3-win64-static")
+                            shutil.rmtree("ffmpeg-2021-06-09-git-e01bf559df-full_builds")
 
     # Display License
     if not show_licence == 0:
