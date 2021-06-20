@@ -362,6 +362,12 @@ with open('./config.json', 'r') as handle:
     config = json.load(handle)
     token_list = config['token_list']
     thread_count = config['thread_count']
+    endpointname = config['endpointname']
+    if endpointname == "stable":
+        endpoint = ""
+    else:
+        endpoint = endpointname + "."
+
 
 with open('RTBFiles/ServerSmasher/ssconfig.json', 'r') as handle:
     config = json.load(handle)
@@ -507,7 +513,7 @@ def check_user(type, token):
         headers = {'Authorization': f'Bot {token}', 'Content-Type': 'application/json'}
     elif type == "User":
         headers = {'Authorization': token, 'Content-Type': 'application/json', 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
-    src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+    src = requests.get('https://'+endpoint+'discord.com/api/v8/users/@me', headers=headers)
     if src.status_code == 401:
         pass
     else:
@@ -772,7 +778,7 @@ def gen(size=6, chars=string.ascii_uppercase + string.digits + string.ascii_lowe
 def delete_channel(channel):
     retries = 0
     while True:
-        src = requests.delete(f"https://canary.discordapp.com/api/v6/channels/{channel}", headers=headers)
+        src = requests.delete(f"https://{endpoint}discord.com/api/v8/channels/{channel}", headers=headers)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -784,7 +790,7 @@ def delete_channel(channel):
 def remove_ban(server, user):
     retries = 0
     while True:
-        src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/bans/{str(user)}", headers=headers)
+        src = requests.delete(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/bans/{str(user)}", headers=headers)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -796,7 +802,7 @@ def remove_ban(server, user):
 def delete_role(role, server):
     retries = 0
     while True:
-        src = requests.delete(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/roles/{str(role)}", headers=headers)
+        src = requests.delete(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/roles/{str(role)}", headers=headers)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -809,7 +815,7 @@ def create_role(name, server):
     retries = 0
     payload = {'hoist': 'true', 'name': name, 'mentionable': 'true', 'color': random.randint(1000000,9999999), 'permissions': random.randint(1,10)}
     while True:
-        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{server}/roles', headers=headers, json=payload)
+        src = requests.post(f"https://{endpoint}discord.com/api/v8/guilds/{server}/roles", headers=headers, json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(3)
@@ -821,11 +827,11 @@ def create_role(name, server):
 def send_dm(user, content, usetts):
     retries = 0
     payload = {'recipient_id': user}
-    src = requests.post('https://canary.discordapp.com/api/v6/users/@me/channels', headers=headers, json=payload)
+    src = requests.post("https://"+endpoint+"discord.com/api/v8/users/@me/channels", headers=headers, json=payload)
     dm_json = json.loads(src.content)
     payload = {"content" : content, "tts" : usetts}
     while True:
-        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{dm_json['id']}/messages", headers=headers, json=payload)
+        src = requests.post(f"https://{endpoint}discord.com/api/v8/channels/{dm_json['id']}/messages", headers=headers, json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -837,7 +843,7 @@ def send_dm(user, content, usetts):
 def ban_user(user,server,banreason):
     retries = 0
     while True:
-        src = requests.put(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/bans/{str(user)}?delete-message-days=7&reason={banreason}", headers=headers)
+        src = requests.put(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/bans/{str(user)}?delete-message-days=7&reason={banreason}", headers=headers)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -850,7 +856,7 @@ def create_channel(server,channelname,channeltype):
     retries = 0
     payload = {'name': channelname, 'type': channeltype}
     while True:
-        src = requests.post(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/channels", headers=headers,json=payload)
+        src = requests.post(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/channels", headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -863,7 +869,7 @@ def send_message(channel,msgcontent,usetts):
     retries = 0
     payload = {"content": msgcontent, "tts": usetts}
     while True:
-        src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/messages", headers=headers, json=payload)
+        src = requests.post(f"https://{endpoint}discord.com/api/v8/channels/{channel}/messages", headers=headers, json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -876,7 +882,7 @@ def mover(server,user,channel):
     retries = 0
     payload = {'channel_id': str(channel)}
     while True:
-        src = requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/members/{str(user)}", headers=headers,json=payload)
+        src = requests.patch(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/members/{str(user)}", headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -888,7 +894,7 @@ def mover(server,user,channel):
 def change_nickname(server,user,nick):
     payload = {'nick': str(nick)}
     while True:
-        src = requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{str(server)}/members/{str(user)}", headers=headers,json=payload)
+        src = requests.patch(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/members/{str(user)}", headers=headers,json=payload)
         if src.status_code == 429:
             time.sleep(5)
         else:
@@ -897,7 +903,7 @@ def change_nickname(server,user,nick):
 def delete_emoji(server,emoji):
     retries = 0
     while True:
-        src = requests.delete(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/emojis/{str(emoji)}',headers=headers)
+        src = requests.delete(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/emojis/{str(emoji)}",headers=headers)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -910,7 +916,7 @@ def create_emoji(server,encoded,name): # This has pretty huge rate limits, be ca
     retries = 0
     payload = {'image': encoded, 'name': name}
     while True:
-        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{str(server)}/emojis',headers=headers,json=payload)
+        src = requests.post(f"https://{endpoint}discord.com/api/v8/guilds/{str(server)}/emojis",headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -929,7 +935,7 @@ def corrupt_channel(channelid,channame):
             corruptchanname += x
     payload = {'name': corruptchanname}
     while True:
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -948,7 +954,7 @@ def corrupt_role(serverid,roleid,rolename):
             corruptrolename += x
     payload = {'name': corruptrolename}
     while True:
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{serverid}/roles/{roleid}', headers=headers,json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/guilds/{serverid}/roles/{roleid}', headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -961,7 +967,7 @@ def make_nsfw(channelid):
     retries = 0
     payload = {'nsfw': 'true'}
     while True:
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -974,7 +980,7 @@ def edit_topic(channelid,newtopic):
     retries = 0
     payload = {'topic': newtopic}
     while True:
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/channels/{channelid}', headers=headers,json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/channels/{channelid}', headers=headers,json=payload)
         if src.status_code == 429:
             retries += 1
             time.sleep(1)
@@ -1037,7 +1043,7 @@ def change_presence(text, type, status):
 
 def get_user(user):
     for x in range(6):
-        src = requests.get(f'https://canary.discordapp.com/api/v6/users/{user}', headers=headers)
+        src = requests.get(f'https://{endpoint}discord.com/api/v8/users/{user}', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1049,7 +1055,7 @@ def get_user(user):
 
 def get_user_info():
     for x in range(6):
-        src = requests.get('https://canary.discordapp.com/api/v6/users/@me', headers=headers)
+        src = requests.get('https://'+endpoint+'discord.com/api/v8/users/@me', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1072,7 +1078,7 @@ def get_guild_threaded(guild):
             channels = []
             overwrites = []
             for x in range(6):
-                src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
+                src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}', headers=headers)
                 if src.status_code == 429:
                     time.sleep(src.json()['retry_after'])
                     continue
@@ -1087,7 +1093,7 @@ def get_guild_threaded(guild):
                 'limit': 1000,
             }
             for x in range(6):
-                src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
+                src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/members', headers=headers, params=params)
                 if src.status_code == 429:
                     time.sleep(src.json()['retry_after'])
                     continue
@@ -1101,7 +1107,7 @@ def get_guild_threaded(guild):
                 params['after'] = response[-1]['user'].id
                 while True:
                     for x in range(6):
-                        src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
+                        src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/members', headers=headers, params=params)
                         if src.status_code == 429:
                             time.sleep(src.json()['retry_after'])
                             continue
@@ -1116,7 +1122,7 @@ def get_guild_threaded(guild):
                     else:
                         params['after'] = response[-1]['user'].id
                         continue
-            src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
+            src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/channels', headers=headers)
             channels_json = json.loads(src.content)
             for channel in channels_json:
                 for overwrite in channel['permission_overwrites']:
@@ -1141,7 +1147,7 @@ def create_cache():
     global cache_guilds
     cache_guilds = list()
     for x in range(6):
-        src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
+        src = requests.get('https://'+endpoint+'discord.com/api/v8/users/@me/guilds', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1156,7 +1162,7 @@ def create_cache():
 def get_client_guilds():
     guilds = []
     for x in range(6):
-        src = requests.get('https://canary.discordapp.com/api/v6/users/@me/guilds', headers=headers)
+        src = requests.get('https://'+endpoint+'discord.com/api/v8/users/@me/guilds', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1174,7 +1180,7 @@ def get_guild(guild):
     channels = []
     overwrites = []
     for x in range(6):
-        src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers)
+        src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1186,7 +1192,7 @@ def get_guild(guild):
     for emoji in guild_response['emojis']:
         emojis.append(namedtuple('Emoji', sorted(emoji.keys()))(**emoji))
     for x in range(6):
-          src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members?limit=1000', headers=headers)
+          src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/members?limit=1000', headers=headers)
           if src.status_code == 429:
               time.sleep(src.json()['retry_after'])
               continue
@@ -1203,7 +1209,7 @@ def get_guild(guild):
         params['after'] = response[-1]['user'].id
         while True:
             for x in range(6):
-                src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members', headers=headers, params=params)
+                src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/members', headers=headers, params=params)
                 if src.status_code == 429:
                     time.sleep(src.json()['retry_after'])
                     continue
@@ -1219,7 +1225,7 @@ def get_guild(guild):
                 params['after'] = response[-1]['user'].id
                 continue
     for x in range(6):
-        src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
+        src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/channels', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1242,7 +1248,7 @@ def get_guild_channels(guild):
     channels = []
     overwrites = []
     for x in range(6):
-        src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/channels', headers=headers)
+        src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/channels', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1259,7 +1265,7 @@ def get_guild_channels(guild):
 def get_guild_roles(guild):
     roles = []
     for x in range(6):
-        src = requests.get(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers)
+        src = requests.get(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/roles', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1276,7 +1282,7 @@ def get_guild_bans(guild):
         try:
             bans = []
             for x in range(6):
-                src = requests.get(f"https://canary.discordapp.com/api/v6/guilds/{guild}/bans", headers=headers)
+                src = requests.get(f"https://{endpoint}discord.com/api/v8/guilds/{guild}/bans", headers=headers)
                 if src.status_code == 429:
                     time.sleep(src.json()['retry_after'])
                     continue
@@ -1298,7 +1304,7 @@ def get_guild_bans(guild):
 def create_invite(channel):
     payload = {"max_age": 0}
     for x in range(6):
-        src = requests.post(f'https://canary.discordapp.com/api/v6/channels/{channel}/invites', headers=headers, json=payload)
+        src = requests.post(f'https://{endpoint}discord.com/api/v8/channels/{channel}/invites', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1311,7 +1317,7 @@ def create_invite(channel):
 def create_guild(name):
     payload = {"name": name}
     for x in range(6):
-        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds', headers=headers, json=payload)
+        src = requests.post(f'https://{endpoint}discord.com/api/v8/guilds', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1321,7 +1327,7 @@ def create_guild(name):
 
 def leave_guild(guild):
     for x in range(6):
-        src = requests.delete(f'https://canary.discordapp.com/api/v6/users/@me/guilds/{guild}', headers=headers)
+        src = requests.delete(f'https://{endpoint}discord.com/api/v8/users/@me/guilds/{guild}', headers=headers)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1337,7 +1343,7 @@ def edit_profile(name, avatar):
             encoded = bytes_to_base64_data(handle.read())
         payload = {'avatar': encoded, 'username': name}
     for x in range(6):
-        src = requests.patch('https://canary.discordapp.com/api/v6/users/@me', headers=headers, json=payload)
+        src = requests.patch('https://'+endpoint+'discord.com/api/v8/users/@me', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1347,10 +1353,10 @@ def edit_profile(name, avatar):
 
 def create_webhook(channel=None, name=gen(size=32)):
     payload = {"name": name}
-    src = requests.post(f"https://canary.discordapp.com/api/v6/channels/{channel}/webhooks", headers=headers, json=payload)
+    src = requests.post(f"https://{endpoint}discord.com/api/v8/channels/{channel}/webhooks", headers=headers, json=payload)
     webhookjson = json.loads(src.content)
     pprint(webhookjson)
-    webhookjson['url'] = f"https://ptb.discordapp.com/api/webhooks/{webhookjson['id']}/{webhookjson['token']}"
+    webhookjson['url'] = f"https://ptb.discord.com/api/webhooks/{webhookjson['id']}/{webhookjson['token']}"
     return namedtuple('Webhook', sorted(webhookjson.keys()))(**webhookjson)
 
 def construct_avatar_link(id, hash, size):
@@ -1360,7 +1366,7 @@ def construct_avatar_link(id, hash, size):
 def give_admin_role(guild, user):
     payload = {"name": "Admin", "permissions": 8, "color": random.randrange(16777215)}
     for x in range(6):
-        src = requests.post(f'https://canary.discordapp.com/api/v6/guilds/{guild}/roles', headers=headers, json=payload)
+        src = requests.post(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/roles', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1369,7 +1375,7 @@ def give_admin_role(guild, user):
     role_id = json.loads(src.content)['id']
     payload = {"roles": [role_id]}
     for x in range(6):
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{guild}/members/{user}', headers=headers, json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/guilds/{guild}/members/{user}', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1379,7 +1385,7 @@ def give_admin_role(guild, user):
 def edit_role(role, guild, perms):
     payload = {"permissions": perms}
     for x in range(6):
-        src =  requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}/roles/{role}", headers=headers, json=payload)
+        src =  requests.patch(f"https://{endpoint}discord.com/api/v8/guilds/{guild}/roles/{role}", headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1389,7 +1395,7 @@ def edit_role(role, guild, perms):
 def edit_guild_name(guild, name):
     payload = {"name": name}
     for x in range(6):
-        src = requests.patch(f'https://canary.discordapp.com/api/v6/guilds/{guild}', headers=headers, json=payload)
+        src = requests.patch(f'https://{endpoint}discord.com/api/v8/guilds/{guild}', headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1399,7 +1405,7 @@ def edit_guild_name(guild, name):
 def edit_guild_icon(guild, icon):
     payload = {"icon": icon}
     for x in range(6):
-        src = requests.patch(f"https://canary.discordapp.com/api/v6/guilds/{guild}", headers=headers, json=payload)
+        src = requests.patch(f"https://{endpoint}discord.com/api/v8/guilds/{guild}", headers=headers, json=payload)
         if src.status_code == 429:
             time.sleep(src.json()['retry_after'])
             continue
@@ -1479,7 +1485,7 @@ def main_menu():
     options_frame = [
         [sg.Button(f"Change {client_type} Options")],
         [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
-        [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
+        [sg.Input(f"https://discord.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
     ]
     layout = [
         [sg.Frame('Logged in to ServerSmasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],
@@ -1529,7 +1535,7 @@ def main_menu():
             options_frame = [
                 [sg.Button(f"Change {client_type} Options")],
                 [sg.Input("Server Name", key="NewServerName"), sg.Button("Create Server")],
-                [sg.Input(f"https://discordapp.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
+                [sg.Input(f"https://discord.com/api/oauth2/authorize?client_id={user.id}&permissions=8&scope=bot")]
             ]
             layout = [
                 [sg.Frame('Logged in to ServerSmasher as:', user_frame, font='Any 12', title_color=theme['text_color'])],

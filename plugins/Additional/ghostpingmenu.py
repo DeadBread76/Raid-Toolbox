@@ -26,6 +26,11 @@ with open('./config.json', 'r') as handle:
     config = json.load(handle)
     token_list = config['token_list']
     threadcount = config['thread_count']
+    endpointname = config['endpointname']
+    if endpointname == "stable":
+        endpoint = ""
+    else:
+        endpoint = endpointname "."
     tokenlist = open("./tokens/"+token_list).read().splitlines()
     executor = ThreadPoolExecutor(max_workers=int(threadcount))
 
@@ -33,7 +38,7 @@ with open('./config.json', 'r') as handle:
 def ping(token,channel,server):
     headers = {'Authorization': token, 'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'}
     if channel == 'all':
-        chanjson = requests.get("https://canary.discordapp.com/api/v6/guilds/{}/channels".format(server),headers=headers).text
+        chanjson = requests.get("https://"+endpoint+"discord.com/api/v8/guilds/{}/channels".format(server),headers=headers).text
         channellist = json.loads(chanjson)
         while True:
             for channel in channellist:
@@ -41,7 +46,7 @@ def ping(token,channel,server):
                 if not channel['type'] == 0:
                     continue
                 else:
-                    src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
+                    src = requests.post("https://"+endpoint+"discord.com/api/v8/channels/{}/messages".format(channel['id']), headers=headers, json=payload)
                     if src.status_code == 429:
                         ratelimit = json.loads(src.content)
                         time.sleep(float(ratelimit['retry_after']/1000))
@@ -57,11 +62,11 @@ def ping(token,channel,server):
                         sys.exit()
                     else:
                         jsone = json.loads(src.content)
-                        requests.delete("https://canary.discordapp.com/api/v6/channels/{}/messages/{}".format(channel['id'], jsone['id']), headers=headers)
+                        requests.delete("https://"+endpoint+"discord.com/api/v8/channels/{}/messages/{}".format(channel['id'], jsone['id']), headers=headers)
     else:
         while True:
             payload = {"content": "@everyone", "tts": "false"}
-            src = requests.post("https://canary.discordapp.com/api/v6/channels/{}/messages".format(channel), headers=headers, json=payload)
+            src = requests.post("https://"+endpoint+"discord.com/api/v8/channels/{}/messages".format(channel), headers=headers, json=payload)
             if src.status_code == 429:
                 ratelimit = json.loads(src.content)
                 time.sleep(float(ratelimit['retry_after']/1000))
@@ -77,7 +82,7 @@ def ping(token,channel,server):
                 sys.exit()
             else:
                 jsone = json.loads(src.content)
-                requests.delete("https://canary.discordapp.com/api/v6/channels/{}/messages/{}".format(channel, jsone['id']), headers=headers)
+                requests.delete("https://"+endpoint+"discord.com/api/v8/channels/{}/messages/{}".format(channel, jsone['id']), headers=headers)
 
 
 layout = [
