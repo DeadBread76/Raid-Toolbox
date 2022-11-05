@@ -11,7 +11,7 @@ Supports Windows, Linux, Mac, [Android](https://github.com/DeadBread76/Raid-Tool
 
 ### BTC Address: 
 
-**16uLpTNXMFc5HuTJYMsCQmr7dW4JbrZ33d**
+**None**
 
 ### Need any help?
 
