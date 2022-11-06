@@ -11,7 +11,7 @@ Supports Windows, Linux, Mac, [Android](https://github.com/DeadBread76/Raid-Tool
 
 ### Monero Address: 
 
-**85Zw8xMnBkF3q1hr6RJMbhMk39ipciM1e7zk1Z61UfZZb7uP17XAFF7FhBqaQhnJzM1211yHkQSuPHUKgjLb2cBaQVYMG7k**
+**41qDiJ3SZ9QWU73uNQJwtLPCaBrkWBw35VtRHu5pJbYcWbY5GcXmSZQFjcHxJCCUc2Qj3bXFHdNJvcpyosgbmTaABrDh2Ac**
 
 ### Need any help?
 
