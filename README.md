@@ -9,9 +9,9 @@ A big toolkit of spamming tools for discord.
 
 Supports Windows, Linux, Mac, [Android](https://github.com/DeadBread76/Raid-Toolbox/wiki/How-to-set-up-Termux-to-run-RTB) and iOS with [iSH](https://ish.app/). (Tested on Windows 10 Education/Professional, Ubuntu 18.10, Mac OS Sierra (support dropped) and Android 9 with Termux 0.72)
 
-### BTC Address: 
+### Monero Address: 
 
-**None**
+**85Zw8xMnBkF3q1hr6RJMbhMk39ipciM1e7zk1Z61UfZZb7uP17XAFF7FhBqaQhnJzM1211yHkQSuPHUKgjLb2cBaQVYMG7k**
 
 ### Need any help?
 
