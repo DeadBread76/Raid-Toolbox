@@ -1,6 +1,3 @@
-# This code is very out of date and not very good, feel free to make it into something better. (we check the github page every 5 years to pulls your PRs)
-# Edit: yeah we don't even bother checking PRs now, project is DEAD
-
 # Raid-Toolbox
 
 A big toolkit of spamming tools for discord.
